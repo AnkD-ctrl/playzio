@@ -1,23 +1,20 @@
 {
-  "name": "playzio-frontend",
+  "name": "playzio-bara",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "version": "1.0.0",
+  "description": "Application de gestion des disponibilités pour Tennis, Padel et Soirées",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "date-fns": "^4.1.0",
-    "lucide-react": "^0.541.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm start",
+    "build": "cd frontend && npm run build",
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
+    "start": "cd backend && npm start"
   },
   "devDependencies": {
-    "@types/react": "^18.2.43",
-    "@types/react-dom": "^18.2.17",
-    "@vitejs/plugin-react": "^4.2.1",
-    "vite": "^5.0.8"
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
