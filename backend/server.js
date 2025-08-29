@@ -14,7 +14,13 @@ const port = process.env.PORT || 3001
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5174', 'https://playzio.vercel.app'],
+  origin: [
+    'http://localhost:5173', 
+    'http://localhost:5174', 
+    'https://playzio.vercel.app',
+    'https://playzio-bara.vercel.app',
+    'https://playzio-git-main-ankd-ctrl.vercel.app'
+  ],
   credentials: true
 }))
 app.use(express.json())
