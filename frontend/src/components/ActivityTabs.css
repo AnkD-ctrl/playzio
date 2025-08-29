@@ -1,0 +1,63 @@
+.activity-tabs {
+  display: flex;
+  gap: 8px;
+  background: #4a4a4a;
+  border: 1px solid #5a5a5a;
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.activity-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #b0b0b0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  font-weight: 500;
+  flex: 1;
+  justify-content: center;
+}
+
+.activity-tab:hover {
+  background: #5a5a5a;
+  color: #e0e0e0;
+}
+
+.activity-tab.active {
+  background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(212, 175, 140, 0.3);
+}
+
+.tab-icon {
+  font-size: 1rem;
+}
+
+.tab-name {
+  font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+  .activity-tabs {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .activity-tab {
+    padding: 10px 12px;
+  }
+  
+  .tab-name {
+    display: none;
+  }
+  
+  .tab-icon {
+    font-size: 1.2rem;
+  }
+}

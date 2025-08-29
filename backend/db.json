@@ -1,0 +1,103 @@
+{
+  "slots": [
+    {
+      "id": "B7MoXWzW__dBqsyE8wYWP",
+      "date": "2025-07-25",
+      "heureDebut": "20:00",
+      "heureFin": "23:00",
+      "type": "tennis",
+      "participants": [
+        "SUPERUSER",
+        "TEST",
+        "U"
+      ]
+    },
+    {
+      "id": "07Kap9oRfmGlw8mrXzp7P",
+      "date": "2025-07-27",
+      "heureDebut": "20:00",
+      "heureFin": "22:00",
+      "type": "soiree",
+      "participants": [
+        "SUPERUSER"
+      ]
+    },
+    {
+      "id": "EzEXyH6dKq8WnH0ZoIA1r",
+      "date": "2025-08-29",
+      "participants": []
+    },
+    {
+      "id": "bCGVU5ffPEiAn8x_ZNt-k",
+      "date": "1015-08-20",
+      "heureDebut": "10:00",
+      "heureFin": "20:00",
+      "type": "soiree",
+      "participants": []
+    },
+    {
+      "id": "_cHyOSkaOmljS8GsLoqV3",
+      "date": "2025-08-29",
+      "heureDebut": "10:00",
+      "heureFin": "23:00",
+      "type": "Soirée",
+      "participants": []
+    },
+    {
+      "id": "padel_test_user_001",
+      "date": "2025-08-30",
+      "heureDebut": "18:00",
+      "heureFin": "20:00",
+      "type": "padel",
+      "createdBy": "TEST",
+      "participants": [
+        "TEST"
+      ]
+    }
+  ],
+  "users": [
+    {
+      "prenom": "Jack",
+      "password": "ecd71870d1963316a97e3ac3408c9835ad8cf0f3c1bc703527c30265534f75ae",
+      "email": "jack@playzio.com",
+      "friends": [],
+      "friendRequests": []
+    },
+    {
+      "prenom": "Jacques",
+      "password": "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824",
+      "email": "jacques@playzio.com",
+      "friends": [],
+      "friendRequests": []
+    },
+    {
+      "prenom": "SUPERUSER",
+      "password": "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824",
+      "role": "admin",
+      "email": "admin@playzio.com",
+      "friends": [
+        "TEST"
+      ],
+      "friendRequests": []
+    },
+    {
+      "prenom": "TEST",
+      "password": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+      "role": "user",
+      "email": "test@playzio.com",
+      "friends": [
+        "SUPERUSER"
+      ],
+      "friendRequests": []
+    },
+    {
+      "prenom": "U",
+      "password": "a25513c7e0f6eaa80a3337ee18081b9e2ed09e00af8531c8f7bb2542764027e7",
+      "role": "admin",
+      "email": "admin@playzio.com",
+      "friends": [],
+      "friendRequests": []
+    }
+  ],
+  "friendRequests": []
+}
