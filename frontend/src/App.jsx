@@ -9,8 +9,9 @@ import Calendar from './components/Calendar'
 import UserProfile from './components/UserProfile'
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [currentUser, setCurrentUser] = useState(null)
+  // TEMPORAIRE : Désactivation de la connexion pour test
+  const [isLoggedIn, setIsLoggedIn] = useState(true)
+  const [currentUser, setCurrentUser] = useState({ prenom: 'U', role: 'admin' })
   const [currentView, setCurrentView] = useState('welcome')
   const [selectedActivity, setSelectedActivity] = useState(null)
   const [selectedType, setSelectedType] = useState('list')
