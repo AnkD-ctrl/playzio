@@ -100,22 +100,5 @@
     }
   ],
   "friendRequests": [],
-  "groups": [
-    {
-      "id": "tennis_club_001",
-      "name": "Tennis Club",
-      "description": "Groupe pour les passionnés de tennis",
-      "creator": "U",
-      "members": ["U", "Jacques", "SUPERUSER"],
-      "createdAt": "2024-01-15T10:00:00Z"
-    },
-    {
-      "id": "amis_proches_002",
-      "name": "Amis Proches",
-      "description": "Groupe d'amis proches",
-      "creator": "Jacques",
-      "members": ["Jacques", "U"],
-      "createdAt": "2024-01-16T14:30:00Z"
-    }
-  ]
+  "groups": []
 }

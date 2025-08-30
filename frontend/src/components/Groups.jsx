@@ -4,7 +4,6 @@ import './Groups.css'
 
 const Groups = ({ currentUser }) => {
   const [groups, setGroups] = useState([])
-  const [users, setUsers] = useState([])
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [showManageForm, setShowManageForm] = useState(false)
   const [selectedGroup, setSelectedGroup] = useState(null)
@@ -16,7 +15,6 @@ const Groups = ({ currentUser }) => {
 
   useEffect(() => {
     fetchGroups()
-    fetchUsers()
   }, [])
 
   const fetchGroups = async () => {
@@ -29,15 +27,7 @@ const Groups = ({ currentUser }) => {
     }
   }
 
-  const fetchUsers = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/users/all`)
-      const data = await response.json()
-      setUsers(data)
-    } catch (error) {
-      console.error('Erreur lors du chargement des utilisateurs:', error)
-    }
-  }
+
 
   const handleCreateGroup = async (e) => {
     e.preventDefault()
@@ -69,7 +59,7 @@ const Groups = ({ currentUser }) => {
   }
 
   const handleAddMember = async (groupId) => {
-    if (!newMember) return
+    if (!newMember.trim()) return
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/groups/${groupId}/members`, {
@@ -78,7 +68,7 @@ const Groups = ({ currentUser }) => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          memberUsername: newMember,
+          memberUsername: newMember.trim(),
           requester: currentUser.prenom
         })
       })
@@ -232,23 +222,16 @@ const Groups = ({ currentUser }) => {
               {group.creator === currentUser.prenom && (
                 <div className="group-actions">
                   <div className="add-member-section">
-                    <select
+                    <input
+                      type="text"
+                      placeholder="Nom d'utilisateur"
                       value={newMember}
                       onChange={(e) => setNewMember(e.target.value)}
-                    >
-                      <option value="">Sélectionner un utilisateur</option>
-                      {users
-                        .filter(user => user.prenom !== currentUser.prenom && !group.members.includes(user.prenom))
-                        .map(user => (
-                          <option key={user.prenom} value={user.prenom}>
-                            {user.prenom}
-                          </option>
-                        ))
-                      }
-                    </select>
+                      onKeyPress={(e) => e.key === 'Enter' && handleAddMember(group.id)}
+                    />
                     <button
                       onClick={() => handleAddMember(group.id)}
-                      disabled={!newMember}
+                      disabled={!newMember.trim()}
                     >
                       Ajouter
                     </button>

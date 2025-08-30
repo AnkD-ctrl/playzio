@@ -50,7 +50,8 @@
 }
 
 .modal-content {
-  background: white;
+  background: #3a3a3a;
+  border: 1px solid #4a4a4a;
   padding: 30px;
   border-radius: 12px;
   width: 90%;
@@ -61,7 +62,7 @@
 .modal-content h3 {
   margin-top: 0;
   margin-bottom: 20px;
-  color: #333;
+  color: #e0e0e0;
 }
 
 .form-group {
@@ -72,15 +73,17 @@
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
-  color: #555;
+  color: #e0e0e0;
 }
 
 .form-group input,
 .form-group textarea {
   width: 100%;
   padding: 12px;
-  border: 2px solid #e1e5e9;
+  border: 2px solid #5a5a5a;
   border-radius: 8px;
+  background: #4a4a4a;
+  color: #e0e0e0;
   font-size: 16px;
   box-sizing: border-box;
 }
@@ -89,6 +92,7 @@
 .form-group textarea:focus {
   outline: none;
   border-color: #9370db;
+  background: #5a5a5a;
 }
 
 .form-actions {
@@ -107,12 +111,14 @@
 }
 
 .form-actions button[type="button"] {
-  background: #f5f5f5;
-  color: #666;
+  background: #4a4a4a;
+  color: #b0b0b0;
+  border: 1px solid #5a5a5a;
 }
 
 .form-actions button[type="button"]:hover {
-  background: #e5e5e5;
+  background: #5a5a5a;
+  color: #e0e0e0;
 }
 
 .form-actions button[type="submit"] {
@@ -137,8 +143,8 @@
 }
 
 .group-card {
-  background: white;
-  border: 2px solid #e1e5e9;
+  background: #3a3a3a;
+  border: 2px solid #4a4a4a;
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -159,7 +165,7 @@
 
 .group-header h3 {
   margin: 0;
-  color: #333;
+  color: #e0e0e0;
   font-size: 1.5rem;
 }
 
@@ -173,14 +179,14 @@
 }
 
 .group-description {
-  color: #666;
+  color: #b0b0b0;
   margin-bottom: 20px;
   line-height: 1.5;
 }
 
 .group-members h4 {
   margin: 0 0 12px 0;
-  color: #333;
+  color: #e0e0e0;
   font-size: 1.1rem;
 }
 
@@ -192,8 +198,8 @@
 }
 
 .member-tag {
-  background: #f0f0f0;
-  color: #333;
+  background: #4a4a4a;
+  color: #e0e0e0;
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 0.9rem;
@@ -222,7 +228,7 @@
 }
 
 .group-actions {
-  border-top: 1px solid #e1e5e9;
+  border-top: 1px solid #4a4a4a;
   padding-top: 20px;
 }
 
@@ -233,17 +239,20 @@
   align-items: center;
 }
 
-.add-member-section select {
+.add-member-section input {
   flex: 1;
   padding: 8px 12px;
-  border: 2px solid #e1e5e9;
+  border: 2px solid #5a5a5a;
   border-radius: 6px;
+  background: #4a4a4a;
+  color: #e0e0e0;
   font-size: 14px;
 }
 
-.add-member-section select:focus {
+.add-member-section input:focus {
   outline: none;
   border-color: #9370db;
+  background: #5a5a5a;
 }
 
 .add-member-section button {
