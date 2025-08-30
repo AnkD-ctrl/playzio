@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import './SlotList.css'
+import { API_BASE_URL } from '../config'
 
 function SlotList({ activity, currentUser, selectedDate }) {
   const [slots, setSlots] = useState([])
@@ -13,7 +14,7 @@ function SlotList({ activity, currentUser, selectedDate }) {
   const fetchSlots = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`http://localhost:3001/api/slots?type=${encodeURIComponent(activity.toLowerCase())}`)
+      const response = await fetch(`${API_BASE_URL}/api/slots?type=${encodeURIComponent(activity.toLowerCase())}`)
       
       if (response.ok) {
         const data = await response.json()
@@ -34,7 +35,7 @@ function SlotList({ activity, currentUser, selectedDate }) {
 
   const handleJoinSlot = async (slotId) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/slots/${slotId}/join`, {
+      const response = await fetch(`${API_BASE_URL}/api/slots/${slotId}/join`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -56,7 +57,7 @@ function SlotList({ activity, currentUser, selectedDate }) {
 
   const handleLeaveSlot = async (slotId) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/slots/${slotId}/leave`, {
+      const response = await fetch(`${API_BASE_URL}/api/slots/${slotId}/leave`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -82,7 +83,7 @@ function SlotList({ activity, currentUser, selectedDate }) {
     }
 
     try {
-      const response = await fetch(`http://localhost:3001/api/slots/${slotId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/slots/${slotId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

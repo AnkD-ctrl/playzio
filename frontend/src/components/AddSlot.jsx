@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import './AddSlot.css'
+import { API_BASE_URL } from '../config'
 
 function AddSlot({ activity, currentUser, onSlotAdded }) {
   const [formData, setFormData] = useState({
@@ -32,7 +33,7 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
         userId: currentUser.id
       }
 
-      const response = await fetch('http://localhost:3001/api/slots', {
+      const response = await fetch(`${API_BASE_URL}/api/slots`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
