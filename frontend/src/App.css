@@ -47,6 +47,7 @@ body {
   gap: 16px;
 }
 
+.groups-btn,
 .profile-btn,
 .logout-btn {
   padding: 8px 16px;
@@ -60,6 +61,7 @@ body {
   transition: all 0.2s ease;
 }
 
+.groups-btn:hover,
 .profile-btn:hover,
 .logout-btn:hover {
   background: #5a5a5a;

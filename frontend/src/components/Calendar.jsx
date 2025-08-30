@@ -15,7 +15,7 @@ function Calendar({ activity, currentUser, onDateSelect }) {
   const fetchSlots = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`${API_BASE_URL}/api/slots?type=${encodeURIComponent(activity.toLowerCase())}`)
+      const response = await fetch(`${API_BASE_URL}/api/slots?type=${encodeURIComponent(activity.toLowerCase())}&user=${encodeURIComponent(currentUser.prenom)}`)
       
       if (response.ok) {
         const data = await response.json()

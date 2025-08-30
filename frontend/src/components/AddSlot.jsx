@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './AddSlot.css'
 import { API_BASE_URL } from '../config'
 
@@ -9,8 +9,24 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
     heureFin: '',
     description: ''
   })
+  const [selectedGroups, setSelectedGroups] = useState([])
+  const [userGroups, setUserGroups] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    fetchUserGroups()
+  }, [])
+
+  const fetchUserGroups = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/groups?user=${currentUser.prenom}`)
+      const data = await response.json()
+      setUserGroups(data)
+    } catch (error) {
+      console.error('Erreur lors du chargement des groupes:', error)
+    }
+  }
 
   const handleInputChange = (e) => {
     setFormData({
@@ -18,6 +34,14 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
       [e.target.name]: e.target.value
     })
     setError('')
+  }
+
+  const handleGroupToggle = (groupId) => {
+    setSelectedGroups(prev => 
+      prev.includes(groupId) 
+        ? prev.filter(id => id !== groupId)
+        : [...prev, groupId]
+    )
   }
 
   const handleSubmit = async (e) => {
@@ -29,8 +53,8 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
       const slotData = {
         ...formData,
         type: activity,
-        user: currentUser.prenom,
-        userId: currentUser.id
+        createdBy: currentUser.prenom,
+        visibleToGroups: selectedGroups
       }
 
       const response = await fetch(`${API_BASE_URL}/api/slots`, {
@@ -44,6 +68,7 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
       if (response.ok) {
         alert('Disponibilité ajoutée avec succès !')
         setFormData({ date: '', heureDebut: '', heureFin: '', description: '' })
+        setSelectedGroups([])
         onSlotAdded()
       } else {
         const data = await response.json()
@@ -107,6 +132,35 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
               rows="4"
             />
           </div>
+
+          {userGroups.length > 0 && (
+            <div className="form-group">
+              <label>Visibilité (sélectionnez les groupes qui peuvent voir cette disponibilité)</label>
+              <div className="groups-selection">
+                {userGroups.map(group => (
+                  <label key={group.id} className="group-checkbox">
+                    <input
+                      type="checkbox"
+                      checked={selectedGroups.includes(group.id)}
+                      onChange={() => handleGroupToggle(group.id)}
+                    />
+                    <span className="group-name">{group.name}</span>
+                    <span className="group-members-count">({group.members.length} membres)</span>
+                  </label>
+                ))}
+              </div>
+              {selectedGroups.length === 0 && (
+                <p className="visibility-info">
+                  ⚠️ Aucun groupe sélectionné : cette disponibilité sera visible par tous les utilisateurs
+                </p>
+              )}
+              {selectedGroups.length > 0 && (
+                <p className="visibility-info">
+                  ✅ Cette disponibilité sera visible par {selectedGroups.length} groupe(s) sélectionné(s)
+                </p>
+              )}
+            </div>
+          )}
 
           {error && <div className="error-message">{error}</div>}
 

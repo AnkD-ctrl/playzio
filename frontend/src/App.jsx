@@ -7,6 +7,7 @@ import AddSlot from './components/AddSlot'
 import SlotList from './components/SlotList'
 import Calendar from './components/Calendar'
 import UserProfile from './components/UserProfile'
+import Groups from './components/Groups'
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -62,6 +63,12 @@ function App() {
           <div className="header-content">
             <div className="header-actions">
               <button 
+                className="groups-btn"
+                onClick={() => setCurrentView('groups')}
+              >
+                👥 Mes Groupes
+              </button>
+              <button 
                 className="profile-btn"
                 onClick={() => setShowUserProfile(true)}
               >
@@ -81,6 +88,10 @@ function App() {
             onActivitySelect={handleActivitySelect}
             currentUser={currentUser}
           />
+        )}
+
+        {currentView === 'groups' && (
+          <Groups currentUser={currentUser} />
         )}
 
         {currentView === 'activity' && selectedActivity && (

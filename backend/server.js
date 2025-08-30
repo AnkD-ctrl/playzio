@@ -41,7 +41,7 @@ function readDB() {
     const data = fs.readFileSync(path.join(__dirname, 'db.json'), 'utf8')
     return JSON.parse(data)
   } catch (error) {
-    return { slots: [], users: [], friendRequests: [] }
+    return { slots: [], users: [], friendRequests: [], groups: [] }
   }
 }
 
@@ -104,14 +104,34 @@ app.post('/api/register', (req, res) => {
 // Récupérer les créneaux
 app.get('/api/slots', (req, res) => {
   const db = readDB()
-  const { type } = req.query
+  const { type, user } = req.query
   
   let filteredSlots = db.slots
   
+  // Filtrer par type d'activité
   if (type) {
-    filteredSlots = db.slots.filter(slot => 
+    filteredSlots = filteredSlots.filter(slot => 
       slot.type && slot.type.toLowerCase() === type.toLowerCase()
     )
+  }
+  
+  // Filtrer par visibilité des groupes si un utilisateur est spécifié
+  if (user) {
+    // Récupérer les groupes de l'utilisateur
+    const userGroups = db.groups.filter(group => 
+      group.members.includes(user) || group.creator === user
+    ).map(group => group.id)
+    
+    // Filtrer les slots visibles pour cet utilisateur
+    filteredSlots = filteredSlots.filter(slot => {
+      // Si le slot n'a pas de groupes spécifiés, il est public (rétrocompatibilité)
+      if (!slot.visibleToGroups || slot.visibleToGroups.length === 0) {
+        return true
+      }
+      
+      // Vérifier si l'utilisateur est dans au moins un des groupes visibles
+      return slot.visibleToGroups.some(groupId => userGroups.includes(groupId))
+    })
   }
   
   res.json(filteredSlots)
@@ -119,7 +139,7 @@ app.get('/api/slots', (req, res) => {
 
 // Ajouter un créneau
 app.post('/api/slots', (req, res) => {
-  const { date, heureDebut, heureFin, type, participants } = req.body
+  const { date, heureDebut, heureFin, type, participants, createdBy, visibleToGroups } = req.body
   const db = readDB()
   
   const newSlot = {
@@ -128,6 +148,8 @@ app.post('/api/slots', (req, res) => {
     heureDebut,
     heureFin,
     type,
+    createdBy: createdBy || null,
+    visibleToGroups: visibleToGroups || [],
     participants: participants || []
   }
   
@@ -259,6 +281,148 @@ app.post('/api/friends/accept', (req, res) => {
   writeDB(db)
   
   res.json({ success: true })
+})
+
+// Routes pour les groupes
+
+// Créer un groupe
+app.post('/api/groups', (req, res) => {
+  const { name, description, creator } = req.body
+  const db = readDB()
+  
+  if (!name || !creator) {
+    return res.status(400).json({ error: 'Nom du groupe et créateur requis' })
+  }
+  
+  // Vérifier que le créateur existe
+  const creatorUser = db.users.find(u => u.prenom === creator)
+  if (!creatorUser) {
+    return res.status(404).json({ error: 'Créateur non trouvé' })
+  }
+  
+  const newGroup = {
+    id: nanoid(),
+    name,
+    description: description || '',
+    creator,
+    members: [creator],
+    createdAt: new Date().toISOString()
+  }
+  
+  db.groups.push(newGroup)
+  writeDB(db)
+  
+  res.json({ success: true, group: newGroup })
+})
+
+// Lister les groupes d'un utilisateur
+app.get('/api/groups', (req, res) => {
+  const { user } = req.query
+  const db = readDB()
+  
+  if (!user) {
+    return res.status(400).json({ error: 'Utilisateur requis' })
+  }
+  
+  // Récupérer les groupes où l'utilisateur est membre ou créateur
+  const userGroups = db.groups.filter(group => 
+    group.members.includes(user) || group.creator === user
+  )
+  
+  res.json(userGroups)
+})
+
+// Ajouter un membre à un groupe
+app.post('/api/groups/:id/members', (req, res) => {
+  const { id } = req.params
+  const { memberUsername, requester } = req.body
+  const db = readDB()
+  
+  const group = db.groups.find(g => g.id === id)
+  if (!group) {
+    return res.status(404).json({ error: 'Groupe non trouvé' })
+  }
+  
+  // Vérifier que le requester est le créateur du groupe
+  if (group.creator !== requester) {
+    return res.status(403).json({ error: 'Seul le créateur peut ajouter des membres' })
+  }
+  
+  // Vérifier que l'utilisateur à ajouter existe
+  const userToAdd = db.users.find(u => u.prenom === memberUsername)
+  if (!userToAdd) {
+    return res.status(404).json({ error: 'Utilisateur non trouvé' })
+  }
+  
+  // Ajouter le membre s'il n'est pas déjà dans le groupe
+  if (!group.members.includes(memberUsername)) {
+    group.members.push(memberUsername)
+    writeDB(db)
+  }
+  
+  res.json({ success: true, group })
+})
+
+// Supprimer un membre d'un groupe
+app.delete('/api/groups/:id/members', (req, res) => {
+  const { id } = req.params
+  const { memberUsername, requester } = req.body
+  const db = readDB()
+  
+  const group = db.groups.find(g => g.id === id)
+  if (!group) {
+    return res.status(404).json({ error: 'Groupe non trouvé' })
+  }
+  
+  // Vérifier que le requester est le créateur du groupe
+  if (group.creator !== requester) {
+    return res.status(403).json({ error: 'Seul le créateur peut supprimer des membres' })
+  }
+  
+  // Ne pas permettre de supprimer le créateur
+  if (memberUsername === group.creator) {
+    return res.status(400).json({ error: 'Le créateur ne peut pas être supprimé du groupe' })
+  }
+  
+  // Supprimer le membre
+  group.members = group.members.filter(member => member !== memberUsername)
+  writeDB(db)
+  
+  res.json({ success: true, group })
+})
+
+// Supprimer un groupe
+app.delete('/api/groups/:id', (req, res) => {
+  const { id } = req.params
+  const { requester } = req.body
+  const db = readDB()
+  
+  const group = db.groups.find(g => g.id === id)
+  if (!group) {
+    return res.status(404).json({ error: 'Groupe non trouvé' })
+  }
+  
+  // Vérifier que le requester est le créateur du groupe
+  if (group.creator !== requester) {
+    return res.status(403).json({ error: 'Seul le créateur peut supprimer le groupe' })
+  }
+  
+  // Supprimer le groupe
+  db.groups = db.groups.filter(g => g.id !== id)
+  writeDB(db)
+  
+  res.json({ success: true })
+})
+
+// Récupérer tous les utilisateurs (pour l'invitation dans les groupes)
+app.get('/api/users/all', (req, res) => {
+  const db = readDB()
+  const users = db.users.map(u => ({
+    prenom: u.prenom,
+    email: u.email,
+    role: u.role || 'user'
+  }))
+  res.json(users)
 })
 
 app.listen(port, () => {
