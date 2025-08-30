@@ -19,7 +19,8 @@ app.use(cors({
     'http://localhost:5174', 
     'https://playzio.vercel.app',
     'https://playzio-bara.vercel.app',
-    'https://playzio-git-main-ankd-ctrl.vercel.app'
+    'https://playzio-git-main-ankd-ctrl.vercel.app',
+    /^https:\/\/.*\.vercel\.app$/
   ],
   credentials: true
 }))
