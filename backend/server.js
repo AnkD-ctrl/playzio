@@ -21,6 +21,7 @@ app.use(cors({
     'https://playzio-bara.vercel.app',
     'https://playzio-git-main-ankd-ctrl.vercel.app',
     'https://playzio-348wy256a-jacks-projects-af0c7ecd.vercel.app',
+    'https://www.acebook.app',
     /^https:\/\/.*\.vercel\.app$/
   ],
   credentials: true
