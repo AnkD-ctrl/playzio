@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import './Agenda.css'
+import { API_BASE_URL } from '../config'
 
 function Agenda({ activity, currentUser }) {
   const [slots, setSlots] = useState([])
@@ -13,7 +14,7 @@ function Agenda({ activity, currentUser }) {
   const fetchSlots = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`http://localhost:3001/api/slots?activity=${encodeURIComponent(activity)}`)
+      const response = await fetch(`${API_BASE_URL}/api/slots?activity=${encodeURIComponent(activity)}`)
       
       if (response.ok) {
         const data = await response.json()
@@ -36,7 +37,7 @@ function Agenda({ activity, currentUser }) {
 
   const handleJoinSlot = async (slotId) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/slots/${slotId}/join`, {
+      const response = await fetch(`${API_BASE_URL}/api/slots/${slotId}/join`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -58,7 +59,7 @@ function Agenda({ activity, currentUser }) {
 
   const handleLeaveSlot = async (slotId) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/slots/${slotId}/leave`, {
+      const response = await fetch(`${API_BASE_URL}/api/slots/${slotId}/leave`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

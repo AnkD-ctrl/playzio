@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import './LoginScreen.css'
 import Logo from './Logo'
+import { API_BASE_URL } from '../config'
 
 function LoginScreen({ onLogin }) {
   const [isLogin, setIsLogin] = useState(true)
@@ -24,7 +25,7 @@ function LoginScreen({ onLogin }) {
 
     try {
       const endpoint = isLogin ? '/api/login' : '/api/register'
-      const response = await fetch(`http://localhost:3001${endpoint}`, {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
