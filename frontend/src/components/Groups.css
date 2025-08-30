@@ -314,6 +314,21 @@
   background: #c82333;
 }
 
+.leave-group-btn {
+  background: #ffc107;
+  color: #000;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.leave-group-btn:hover {
+  background: #e0a800;
+}
+
 @media (max-width: 768px) {
   .groups-container {
     padding: 15px;

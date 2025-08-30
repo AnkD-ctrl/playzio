@@ -391,6 +391,34 @@ app.delete('/api/groups/:id/members', (req, res) => {
   res.json({ success: true, group })
 })
 
+// Quitter un groupe (pour les membres)
+app.post('/api/groups/:id/leave', (req, res) => {
+  const { id } = req.params
+  const { memberUsername } = req.body
+  const db = readDB()
+  
+  const group = db.groups.find(g => g.id === id)
+  if (!group) {
+    return res.status(404).json({ error: 'Groupe non trouvé' })
+  }
+  
+  // Vérifier que l'utilisateur est membre du groupe
+  if (!group.members.includes(memberUsername)) {
+    return res.status(400).json({ error: 'Vous n\'êtes pas membre de ce groupe' })
+  }
+  
+  // Ne pas permettre au créateur de quitter son propre groupe
+  if (memberUsername === group.creator) {
+    return res.status(400).json({ error: 'Le créateur ne peut pas quitter son groupe. Supprimez le groupe à la place.' })
+  }
+  
+  // Retirer le membre
+  group.members = group.members.filter(member => member !== memberUsername)
+  writeDB(db)
+  
+  res.json({ success: true, group })
+})
+
 // Supprimer un groupe
 app.delete('/api/groups/:id', (req, res) => {
   const { id } = req.params

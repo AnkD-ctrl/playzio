@@ -111,6 +111,32 @@ const Groups = ({ currentUser, onBack }) => {
     }
   }
 
+  const handleLeaveGroup = async (groupId) => {
+    if (!confirm('Êtes-vous sûr de vouloir quitter ce groupe ?')) return
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/groups/${groupId}/leave`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          memberUsername: currentUser.prenom
+        })
+      })
+
+      if (response.ok) {
+        fetchGroups()
+      } else {
+        const error = await response.json()
+        alert(`Erreur: ${error.error}`)
+      }
+    } catch (error) {
+      console.error('Erreur lors de la sortie du groupe:', error)
+      alert('Erreur lors de la sortie du groupe')
+    }
+  }
+
   const handleDeleteGroup = async (groupId) => {
     if (!confirm('Êtes-vous sûr de vouloir supprimer ce groupe ?')) return
 
@@ -230,7 +256,7 @@ const Groups = ({ currentUser, onBack }) => {
                 </div>
               </div>
 
-              {group.creator === currentUser.prenom && (
+              {group.creator === currentUser.prenom ? (
                 <div className="group-actions">
                   <div className="add-member-section">
                     <input
@@ -253,6 +279,15 @@ const Groups = ({ currentUser, onBack }) => {
                     onClick={() => handleDeleteGroup(group.id)}
                   >
                     Supprimer le groupe
+                  </button>
+                </div>
+              ) : (
+                <div className="group-actions">
+                  <button
+                    className="leave-group-btn"
+                    onClick={() => handleLeaveGroup(group.id)}
+                  >
+                    Quitter le groupe
                   </button>
                 </div>
               )}
