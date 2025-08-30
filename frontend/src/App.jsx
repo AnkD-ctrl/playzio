@@ -91,7 +91,10 @@ function App() {
         )}
 
         {currentView === 'groups' && (
-          <Groups currentUser={currentUser} />
+          <Groups 
+            currentUser={currentUser} 
+            onBack={() => setCurrentView('welcome')}
+          />
         )}
 
         {currentView === 'activity' && selectedActivity && (

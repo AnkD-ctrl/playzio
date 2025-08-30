@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { API_BASE_URL } from '../config'
 import './Groups.css'
 
-const Groups = ({ currentUser }) => {
+const Groups = ({ currentUser, onBack }) => {
   const [groups, setGroups] = useState([])
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [showManageForm, setShowManageForm] = useState(false)
@@ -140,7 +140,18 @@ const Groups = ({ currentUser }) => {
   return (
     <div className="groups-container">
       <div className="groups-header">
-        <h2>Mes Groupes</h2>
+        <div className="groups-header-left">
+          {onBack && (
+            <button 
+              className="back-btn"
+              onClick={onBack}
+              title="Retour aux activités"
+            >
+              ← Retour
+            </button>
+          )}
+          <h2>Mes Groupes</h2>
+        </div>
         <button 
           className="create-group-btn"
           onClick={() => setShowCreateForm(true)}

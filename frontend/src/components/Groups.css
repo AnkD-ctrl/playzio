@@ -11,6 +11,12 @@
   margin-bottom: 30px;
 }
 
+.groups-header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
 .groups-header h2 {
   background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
   -webkit-background-clip: text;
@@ -34,6 +40,24 @@
 
 .create-group-btn:hover {
   transform: translateY(-2px);
+}
+
+.back-btn {
+  background: #4a4a4a;
+  color: #e0e0e0;
+  border: 1px solid #5a5a5a;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.back-btn:hover {
+  background: #5a5a5a;
+  border-color: #6a6a6a;
+  color: #ffffff;
 }
 
 .modal-overlay {
@@ -298,6 +322,12 @@
   .groups-header {
     flex-direction: column;
     gap: 15px;
+    align-items: stretch;
+  }
+  
+  .groups-header-left {
+    flex-direction: column;
+    gap: 10px;
     align-items: stretch;
   }
   
