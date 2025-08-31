@@ -94,3 +94,6 @@ temp/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Database files
+backend/db.json

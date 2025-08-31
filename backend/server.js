@@ -38,7 +38,10 @@ function hashPassword(password) {
 // Fonction pour lire la base de données
 function readDB() {
   try {
-    const data = fs.readFileSync(path.join(__dirname, 'db.json'), 'utf8')
+    const dbFile = fs.existsSync(path.join(__dirname, 'db.json')) 
+      ? 'db.json' 
+      : 'db.example.json'
+    const data = fs.readFileSync(path.join(__dirname, dbFile), 'utf8')
     return JSON.parse(data)
   } catch (error) {
     return { slots: [], users: [], friendRequests: [], groups: [] }
