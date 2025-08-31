@@ -3,7 +3,7 @@ import './SlotList.css'
 import { API_BASE_URL } from '../config'
 import { trackSlotJoin, trackSlotLeave } from '../utils/analytics'
 
-function SlotList({ activity, currentUser, selectedDate }) {
+function SlotList({ activity, currentUser, selectedDate, onClearDate }) {
   const [slots, setSlots] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -131,7 +131,14 @@ function SlotList({ activity, currentUser, selectedDate }) {
             <p>📅 Date sélectionnée : {selectedDate.split('-').reverse().join('/')}</p>
             <button 
               className="clear-date-btn"
-              onClick={() => window.location.reload()}
+              onClick={() => {
+                // Effacer la sélection de date
+                if (onClearDate) {
+                  onClearDate()
+                }
+                // Recharger les données
+                fetchSlots()
+              }}
               title="Afficher toutes les disponibilités"
             >
               ✕ Effacer la sélection

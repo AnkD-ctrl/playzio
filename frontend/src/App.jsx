@@ -146,6 +146,7 @@ function App() {
                   activity={selectedActivity}
                   currentUser={currentUser}
                   selectedDate={selectedDate}
+                  onClearDate={() => setSelectedDate(null)}
                 />
               )}
               {selectedType === 'calendar' && (
