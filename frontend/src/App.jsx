@@ -196,6 +196,12 @@ function App() {
                 >
                   <span>Autre</span>
                 </button>
+                <button 
+                  className={`activity-switch-btn ${selectedActivity === 'Tous' ? 'active' : ''}`}
+                  onClick={() => setSelectedActivity('Tous')}
+                >
+                  <span>Tous</span>
+                </button>
               </div>
             </div>
           </div>

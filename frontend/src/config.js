@@ -1,2 +1,2 @@
-// Configuration API - Local development
-export const API_BASE_URL = 'http://localhost:8080'
+// Configuration API - Production Railway
+export const API_BASE_URL = 'https://playzio-production.up.railway.app'

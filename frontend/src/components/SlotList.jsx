@@ -15,7 +15,13 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate }) {
   const fetchSlots = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`${API_BASE_URL}/api/slots?type=${encodeURIComponent(activity.toLowerCase())}&user=${encodeURIComponent(currentUser.prenom)}`)
+      
+      // Si "Tous" est sélectionné, ne pas filtrer par type d'activité
+      const url = activity === 'Tous' 
+        ? `${API_BASE_URL}/api/slots?user=${encodeURIComponent(currentUser.prenom)}`
+        : `${API_BASE_URL}/api/slots?type=${encodeURIComponent(activity.toLowerCase())}&user=${encodeURIComponent(currentUser.prenom)}`
+      
+      const response = await fetch(url)
       
       if (response.ok) {
         const data = await response.json()
@@ -125,12 +131,10 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate }) {
     )
   }
 
-  console.log('🎨 Rendering SlotList with:', { slots: slots.length, activity, selectedDate, loading, error })
-
   return (
     <div className="slot-list">
       <div className="slot-list-header">
-        <h3>Disponibilités {activity}</h3>
+        <h3>{activity === 'Tous' ? 'Toutes les disponibilités' : `Disponibilités ${activity}`}</h3>
         {selectedDate ? (
           <div className="selected-date-info">
             <p>📅 Disponibilités du {selectedDate.split('-').reverse().join('/')}</p>
@@ -156,7 +160,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate }) {
 
       {slots.length === 0 ? (
         <div className="no-slots">
-          <p>Aucune disponibilité pour {activity} pour le moment.</p>
+          <p>{activity === 'Tous' ? 'Aucune disponibilité pour le moment.' : `Aucune disponibilité pour ${activity} pour le moment.`}</p>
           <p>Soyez le premier à en créer une !</p>
         </div>
       ) : (
