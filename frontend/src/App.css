@@ -201,6 +201,8 @@ body {
   font-size: 0.875rem;
   font-weight: 500;
   min-width: 80px;
+  flex: 1;
+  max-width: 100px;
 }
 
 .activity-switch-btn:hover {
@@ -329,6 +331,22 @@ body {
     padding: 12px 8px;
     font-size: 0.9rem;
   }
+  
+  /* Mobile footer adjustments */
+  .activity-switcher-footer {
+    padding: 12px 16px;
+  }
+  
+  .activity-switcher {
+    gap: 8px;
+  }
+  
+  .activity-switch-btn {
+    padding: 10px 12px;
+    font-size: 0.8rem;
+    min-width: 60px;
+    max-width: 80px;
+  }
 }
 
 /* iPhone specific fixes */
@@ -341,5 +359,21 @@ body {
   .main-tab {
     padding: 12px 6px;
     font-size: 0.85rem;
+  }
+  
+  /* iPhone footer adjustments */
+  .activity-switcher-footer {
+    padding: 10px 12px;
+  }
+  
+  .activity-switcher {
+    gap: 6px;
+  }
+  
+  .activity-switch-btn {
+    padding: 8px 10px;
+    font-size: 0.75rem;
+    min-width: 50px;
+    max-width: 70px;
   }
 }
