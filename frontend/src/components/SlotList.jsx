@@ -15,17 +15,14 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate }) {
   const fetchSlots = async () => {
     try {
       setLoading(true)
-      console.log('Fetching slots for activity:', activity, 'user:', currentUser.prenom, 'selectedDate:', selectedDate)
       const response = await fetch(`${API_BASE_URL}/api/slots?type=${encodeURIComponent(activity.toLowerCase())}&user=${encodeURIComponent(currentUser.prenom)}`)
       
       if (response.ok) {
         const data = await response.json()
-        console.log('Raw data from API:', data)
         // Filtrer par date si une date est sélectionnée
         const filteredData = selectedDate 
           ? data.filter(slot => slot.date === selectedDate)
           : data
-        console.log('Filtered data:', filteredData)
         setSlots(filteredData)
       } else {
         setError('Erreur lors du chargement des disponibilités')
@@ -127,6 +124,8 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate }) {
       </div>
     )
   }
+
+  console.log('🎨 Rendering SlotList with:', { slots: slots.length, activity, selectedDate, loading, error })
 
   return (
     <div className="slot-list">
