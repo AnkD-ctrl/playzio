@@ -22,6 +22,39 @@
   margin: 0;
 }
 
+.selected-date-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.selected-date-info p {
+  color: #d4af8c;
+  font-weight: 500;
+  margin: 0;
+}
+
+.clear-date-btn {
+  padding: 6px 12px;
+  border: 1px solid #d4af8c;
+  border-radius: 16px;
+  background: rgba(212, 175, 140, 0.1);
+  color: #d4af8c;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.clear-date-btn:hover {
+  background: rgba(212, 175, 140, 0.2);
+  border-color: #c9a96e;
+  color: #c9a96e;
+  transform: translateY(-1px);
+}
+
 .loading,
 .error,
 .no-slots {
@@ -67,6 +100,29 @@
 .slot-card:hover {
   border-color: #d4af8c;
   box-shadow: 0 4px 12px rgba(212, 175, 140, 0.1);
+}
+
+.slot-card.selected-date {
+  border-color: #d4af8c;
+  border-width: 2px;
+  background: rgba(212, 175, 140, 0.08);
+  box-shadow: 0 4px 16px rgba(212, 175, 140, 0.2);
+  position: relative;
+}
+
+.slot-card.selected-date::before {
+  content: '📅 Date sélectionnée';
+  position: absolute;
+  top: -10px;
+  right: 10px;
+  background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  z-index: 1;
 }
 
 .slot-header {

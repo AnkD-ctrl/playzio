@@ -19,11 +19,8 @@ function SlotList({ activity, currentUser, selectedDate }) {
       
       if (response.ok) {
         const data = await response.json()
-        // Filtrer par date si une date est sélectionnée
-        const filteredData = selectedDate 
-          ? data.filter(slot => slot.date === selectedDate)
-          : data
-        setSlots(filteredData)
+        // Afficher tous les créneaux (plus de filtrage par date)
+        setSlots(data)
       } else {
         setError('Erreur lors du chargement des disponibilités')
       }
@@ -130,7 +127,16 @@ function SlotList({ activity, currentUser, selectedDate }) {
       <div className="slot-list-header">
         <h3>Disponibilités {activity}</h3>
         {selectedDate ? (
-          <p>Disponibilités du {selectedDate.split('-').reverse().join('/')}</p>
+          <div className="selected-date-info">
+            <p>📅 Date sélectionnée : {selectedDate.split('-').reverse().join('/')}</p>
+            <button 
+              className="clear-date-btn"
+              onClick={() => window.location.reload()}
+              title="Afficher toutes les disponibilités"
+            >
+              ✕ Effacer la sélection
+            </button>
+          </div>
         ) : (
           <p>{slots.length} disponibilité{slots.length !== 1 ? 's' : ''} trouvée{slots.length !== 1 ? 's' : ''}</p>
         )}
@@ -148,8 +154,10 @@ function SlotList({ activity, currentUser, selectedDate }) {
             const isOwner = slot.createdBy === currentUser.prenom
             const isAdmin = currentUser.role === 'admin'
             
+            const isSelectedDate = selectedDate && slot.date === selectedDate
+            
             return (
-              <div key={slot.id} className="slot-card">
+              <div key={slot.id} className={`slot-card ${isSelectedDate ? 'selected-date' : ''}`}>
                 <div className="slot-header">
                   <div className="slot-date">
                     <span className="date">{slot.date.split('-').reverse().join('/')}</span>
