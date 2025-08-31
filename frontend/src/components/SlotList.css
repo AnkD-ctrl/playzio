@@ -120,11 +120,15 @@
 }
 
 .slot-description {
-  color: #b0b0b0;
-  font-size: 0.875rem;
-  line-height: 1.4;
+  color: #d0d0d0;
+  font-size: 0.9rem;
+  line-height: 1.5;
   margin-bottom: 12px;
-  padding: 8px 0;
+  padding: 12px;
+  background: rgba(212, 175, 140, 0.05);
+  border-left: 3px solid #d4af8c;
+  border-radius: 4px;
+  font-style: italic;
 }
 
 .slot-participants {

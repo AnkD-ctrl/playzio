@@ -152,7 +152,7 @@ app.get('/api/slots', (req, res) => {
 
 // Ajouter un créneau
 app.post('/api/slots', (req, res) => {
-  const { date, heureDebut, heureFin, type, participants, createdBy, visibleToGroups } = req.body
+  const { date, heureDebut, heureFin, type, participants, createdBy, visibleToGroups, description } = req.body
   const db = readDB()
   
   const newSlot = {
@@ -161,6 +161,7 @@ app.post('/api/slots', (req, res) => {
     heureDebut,
     heureFin,
     type,
+    description: description || '',
     createdBy: createdBy || null,
     visibleToGroups: visibleToGroups || [],
     participants: participants || []
