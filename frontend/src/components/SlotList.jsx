@@ -19,8 +19,11 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate }) {
       
       if (response.ok) {
         const data = await response.json()
-        // Afficher tous les créneaux (plus de filtrage par date)
-        setSlots(data)
+        // Filtrer par date si une date est sélectionnée
+        const filteredData = selectedDate 
+          ? data.filter(slot => slot.date === selectedDate)
+          : data
+        setSlots(filteredData)
       } else {
         setError('Erreur lors du chargement des disponibilités')
       }
@@ -128,7 +131,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate }) {
         <h3>Disponibilités {activity}</h3>
         {selectedDate ? (
           <div className="selected-date-info">
-            <p>📅 Date sélectionnée : {selectedDate.split('-').reverse().join('/')}</p>
+            <p>📅 Disponibilités du {selectedDate.split('-').reverse().join('/')}</p>
             <button 
               className="clear-date-btn"
               onClick={() => {
@@ -141,7 +144,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate }) {
               }}
               title="Afficher toutes les disponibilités"
             >
-              ✕ Effacer la sélection
+              ✕ Voir toutes les disponibilités
             </button>
           </div>
         ) : (
@@ -161,10 +164,8 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate }) {
             const isOwner = slot.createdBy === currentUser.prenom
             const isAdmin = currentUser.role === 'admin'
             
-            const isSelectedDate = selectedDate && slot.date === selectedDate
-            
             return (
-              <div key={slot.id} className={`slot-card ${isSelectedDate ? 'selected-date' : ''}`}>
+              <div key={slot.id} className="slot-card">
                 <div className="slot-header">
                   <div className="slot-date">
                     <span className="date">{slot.date.split('-').reverse().join('/')}</span>
