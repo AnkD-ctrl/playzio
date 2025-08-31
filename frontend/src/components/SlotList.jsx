@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './SlotList.css'
 import { API_BASE_URL } from '../config'
+import { trackSlotJoin, trackSlotLeave } from '../utils/analytics'
 
 function SlotList({ activity, currentUser, selectedDate }) {
   const [slots, setSlots] = useState([])
@@ -44,6 +45,7 @@ function SlotList({ activity, currentUser, selectedDate }) {
       })
 
       if (response.ok) {
+        trackSlotJoin(activity)
         alert('Vous avez rejoint cette disponibilité !')
         fetchSlots()
       } else {
@@ -66,6 +68,7 @@ function SlotList({ activity, currentUser, selectedDate }) {
       })
 
       if (response.ok) {
+        trackSlotLeave(activity)
         alert('Vous avez quitté cette disponibilité')
         fetchSlots()
       } else {

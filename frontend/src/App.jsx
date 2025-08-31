@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './App.css'
 import Logo from './components/Logo'
 import LoginScreen from './components/LoginScreen'
@@ -8,6 +8,7 @@ import SlotList from './components/SlotList'
 import Calendar from './components/Calendar'
 import UserProfile from './components/UserProfile'
 import Groups from './components/Groups'
+import { trackPageView, trackLogin, trackLogout, trackActivitySelect, trackNavigation } from './utils/analytics'
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -18,13 +19,26 @@ function App() {
   const [selectedDate, setSelectedDate] = useState(null)
   const [showUserProfile, setShowUserProfile] = useState(false)
 
+  // Track page views when view changes
+  useEffect(() => {
+    if (currentView === 'welcome') {
+      trackPageView('Welcome Screen')
+    } else if (currentView === 'groups') {
+      trackPageView('Groups Page')
+    } else if (currentView === 'activity') {
+      trackPageView(`Activity: ${selectedActivity}`)
+    }
+  }, [currentView, selectedActivity])
+
   const handleLogin = (user) => {
     setCurrentUser(user)
     setIsLoggedIn(true)
     setCurrentView('welcome')
+    trackLogin(user.role || 'user')
   }
 
   const handleLogout = () => {
+    trackLogout()
     setIsLoggedIn(false)
     setCurrentUser(null)
     setCurrentView('welcome')
@@ -33,6 +47,7 @@ function App() {
   }
 
   const handleActivitySelect = (activity) => {
+    trackActivitySelect(activity)
     setSelectedActivity(activity)
     setCurrentView('activity')
     setSelectedType('list')
@@ -45,6 +60,7 @@ function App() {
   }
 
   const handleViewChange = (view) => {
+    trackNavigation(currentView, view)
     setCurrentView(view)
   }
 

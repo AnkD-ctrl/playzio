@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './AddSlot.css'
 import { API_BASE_URL } from '../config'
+import { trackSlotCreate } from '../utils/analytics'
 
 function AddSlot({ activity, currentUser, onSlotAdded }) {
   const [formData, setFormData] = useState({
@@ -66,6 +67,7 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
       })
 
       if (response.ok) {
+        trackSlotCreate(activity, selectedGroups.length > 0)
         alert('Disponibilité ajoutée avec succès !')
         setFormData({ date: '', heureDebut: '', heureFin: '', description: '' })
         setSelectedGroups([])

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { API_BASE_URL } from '../config'
 import './Groups.css'
+import { trackGroupCreate, trackGroupMemberAdd, trackGroupMemberRemove, trackGroupLeave, trackGroupDelete } from '../utils/analytics'
 
 const Groups = ({ currentUser, onBack }) => {
   const [groups, setGroups] = useState([])
@@ -45,6 +46,7 @@ const Groups = ({ currentUser, onBack }) => {
       })
 
       if (response.ok) {
+        trackGroupCreate()
         setCreateForm({ name: '', description: '' })
         setShowCreateForm(false)
         fetchGroups()
@@ -74,6 +76,7 @@ const Groups = ({ currentUser, onBack }) => {
       })
 
       if (response.ok) {
+        trackGroupMemberAdd()
         setNewMember('')
         fetchGroups()
       } else {
@@ -100,6 +103,7 @@ const Groups = ({ currentUser, onBack }) => {
       })
 
       if (response.ok) {
+        trackGroupMemberRemove()
         fetchGroups()
       } else {
         const error = await response.json()
@@ -126,6 +130,7 @@ const Groups = ({ currentUser, onBack }) => {
       })
 
       if (response.ok) {
+        trackGroupLeave()
         fetchGroups()
       } else {
         const error = await response.json()
@@ -152,6 +157,7 @@ const Groups = ({ currentUser, onBack }) => {
       })
 
       if (response.ok) {
+        trackGroupDelete()
         fetchGroups()
       } else {
         const error = await response.json()
