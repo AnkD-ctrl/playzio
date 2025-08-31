@@ -143,6 +143,7 @@ function App() {
             <div className="activity-content">
               {selectedType === 'list' && (
                 <SlotList 
+                  key={`${selectedActivity}-${selectedDate || 'all'}`}
                   activity={selectedActivity}
                   currentUser={currentUser}
                   selectedDate={selectedDate}
