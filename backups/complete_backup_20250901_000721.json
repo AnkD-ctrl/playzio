@@ -1,0 +1,17 @@
+{
+  "backupDate": "2025-08-31T22:07:22Z",
+  "backupSource": "playzio-production.up.railway.app",
+  "users": [{"prenom":"Jack","email":"jack@playzio.com","role":"user"},{"prenom":"Jacques","email":"jacques@playzio.com","role":"user"},{"prenom":"SUPERUSER","email":"admin@playzio.com","role":"admin"},{"prenom":"TEST","email":"test@playzio.com","role":"user"},{"prenom":"U","email":"admin@playzio.com","role":"admin"}],
+  "slots": [{"id":"B7MoXWzW__dBqsyE8wYWP","date":"2025-07-25","heureDebut":"20:00","heureFin":"23:00","type":"tennis","participants":["SUPERUSER","TEST","U"]},{"id":"07Kap9oRfmGlw8mrXzp7P","date":"2025-07-27","heureDebut":"20:00","heureFin":"22:00","type":"soiree","participants":["SUPERUSER"]},{"id":"EzEXyH6dKq8WnH0ZoIA1r","date":"2025-08-29","participants":[]},{"id":"bCGVU5ffPEiAn8x_ZNt-k","date":"1015-08-20","heureDebut":"10:00","heureFin":"20:00","type":"soiree","participants":[]},{"id":"_cHyOSkaOmljS8GsLoqV3","date":"2025-08-29","heureDebut":"10:00","heureFin":"23:00","type":"Soirée","participants":[]},{"id":"padel_test_user_001","date":"2025-08-30","heureDebut":"18:00","heureFin":"20:00","type":"padel","createdBy":"TEST","participants":["TEST"]}],
+  "groups": [],
+  "friendRequests": <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/friendRequests</pre>
+</body>
+</html>
+}

@@ -1,0 +1,8 @@
+{
+  "users": $(curl -s "https://playzio-production.up.railway.app/api/users"),
+  "slots": $(curl -s "https://playzio-production.up.railway.app/api/slots"),
+  "groups": $(curl -s "https://playzio-production.up.railway.app/api/groups?user=U"),
+  "friendRequests": $(curl -s "https://playzio-production.up.railway.app/api/friendRequests"),
+  "backupDate": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "backupSource": "playzio-production.up.railway.app"
+}

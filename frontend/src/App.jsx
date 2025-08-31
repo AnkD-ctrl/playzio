@@ -188,6 +188,12 @@ function App() {
                 >
                   <span>Soirée</span>
                 </button>
+                <button 
+                  className={`activity-switch-btn ${selectedActivity === 'Autre' ? 'active' : ''}`}
+                  onClick={() => setSelectedActivity('Autre')}
+                >
+                  <span>Autre</span>
+                </button>
               </div>
             </div>
           </div>

@@ -5,7 +5,8 @@ function WelcomeScreen({ onActivitySelect, currentUser }) {
   const activities = [
     { id: 'tennis', name: 'Tennis', icon: 'circle' },
     { id: 'padel', name: 'Padel', icon: 'square' },
-    { id: 'soiree', name: 'Soirée', icon: 'star' }
+    { id: 'soiree', name: 'Soirée', icon: 'star' },
+    { id: 'autre', name: 'Autre', icon: 'diamond' }
   ]
 
   return (

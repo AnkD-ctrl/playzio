@@ -1,0 +1,14 @@
+# Crontab pour Playzio - Backups automatiques
+# Chemin complet du script: /Users/jack/Desktop/playzioBARA/backups/backup_script.sh
+
+# Backup quotidien à 2h du matin
+0 2 * * * /Users/jack/Desktop/playzioBARA/backups/backup_script.sh >> /Users/jack/Desktop/playzioBARA/backups/backup.log 2>&1
+
+# Backup hebdomadaire le dimanche à 3h du matin (backup de sécurité)
+0 3 * * 0 /Users/jack/Desktop/playzioBARA/backups/backup_script.sh >> /Users/jack/Desktop/playzioBARA/backups/backup_weekly.log 2>&1
+
+# Backup mensuel le 1er de chaque mois à 4h du matin
+0 4 1 * * /Users/jack/Desktop/playzioBARA/backups/backup_script.sh >> /Users/jack/Desktop/playzioBARA/backups/backup_monthly.log 2>&1
+
+# Nettoyage des anciens backups (tous les jours à 5h du matin)
+0 5 * * * /Users/jack/Desktop/playzioBARA/backups/cleanup_backups.sh >> /Users/jack/Desktop/playzioBARA/backups/cleanup.log 2>&1

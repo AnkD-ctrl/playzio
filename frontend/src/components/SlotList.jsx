@@ -155,7 +155,9 @@ function SlotList({ activity, currentUser, selectedDate }) {
                     <span className="date">{slot.date.split('-').reverse().join('/')}</span>
                     <span className="time">{slot.heureDebut} - {slot.heureFin}</span>
                   </div>
-                  <div className="slot-activity">{slot.type}</div>
+                  <div className="slot-activity">
+                    {Array.isArray(slot.type) ? slot.type.join(', ') : slot.type}
+                  </div>
                 </div>
 
                 <div className="slot-content">

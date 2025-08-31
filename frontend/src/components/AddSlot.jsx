@@ -10,10 +10,13 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
     heureFin: '',
     description: ''
   })
+  const [selectedActivities, setSelectedActivities] = useState([activity])
   const [selectedGroups, setSelectedGroups] = useState([])
   const [userGroups, setUserGroups] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
+
+  const availableActivities = ['Tennis', 'Padel', 'Soirée', 'Autre']
 
   useEffect(() => {
     fetchUserGroups()
@@ -37,6 +40,14 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
     setError('')
   }
 
+  const handleActivityToggle = (activityName) => {
+    setSelectedActivities(prev => 
+      prev.includes(activityName) 
+        ? prev.filter(act => act !== activityName)
+        : [...prev, activityName]
+    )
+  }
+
   const handleGroupToggle = (groupId) => {
     setSelectedGroups(prev => 
       prev.includes(groupId) 
@@ -50,10 +61,16 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
     setIsSubmitting(true)
     setError('')
 
+    if (selectedActivities.length === 0) {
+      setError('Veuillez sélectionner au moins une activité')
+      setIsSubmitting(false)
+      return
+    }
+
     try {
       const slotData = {
         ...formData,
-        type: activity,
+        type: selectedActivities,
         createdBy: currentUser.prenom,
         visibleToGroups: selectedGroups
       }
@@ -67,9 +84,10 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
       })
 
       if (response.ok) {
-        trackSlotCreate(activity, selectedGroups.length > 0)
+        trackSlotCreate(selectedActivities.join(', '), selectedGroups.length > 0)
         alert('Disponibilité ajoutée avec succès !')
         setFormData({ date: '', heureDebut: '', heureFin: '', description: '' })
+        setSelectedActivities([activity])
         setSelectedGroups([])
         onSlotAdded()
       } else {
@@ -121,6 +139,32 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
               onChange={handleInputChange}
               required
             />
+          </div>
+
+          <div className="form-group">
+            <label>Activités concernées</label>
+            <div className="activities-selection">
+              {availableActivities.map(activityName => (
+                <label key={activityName} className="activity-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={selectedActivities.includes(activityName)}
+                    onChange={() => handleActivityToggle(activityName)}
+                  />
+                  <span className="activity-name">{activityName}</span>
+                </label>
+              ))}
+            </div>
+            {selectedActivities.length === 0 && (
+              <p className="selection-info">
+                ⚠️ Veuillez sélectionner au moins une activité
+              </p>
+            )}
+            {selectedActivities.length > 0 && (
+              <p className="selection-info">
+                ✅ Cette disponibilité sera visible pour : {selectedActivities.join(', ')}
+              </p>
+            )}
           </div>
 
           <div className="form-group">

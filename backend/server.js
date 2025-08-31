@@ -113,9 +113,19 @@ app.get('/api/slots', (req, res) => {
   
   // Filtrer par type d'activité
   if (type) {
-    filteredSlots = filteredSlots.filter(slot => 
-      slot.type && slot.type.toLowerCase() === type.toLowerCase()
-    )
+    filteredSlots = filteredSlots.filter(slot => {
+      if (!slot.type) return false
+      
+      // Si type est un tableau (activités multiples)
+      if (Array.isArray(slot.type)) {
+        return slot.type.some(activity => 
+          activity && activity.toLowerCase() === type.toLowerCase()
+        )
+      }
+      
+      // Si type est une chaîne (rétrocompatibilité)
+      return slot.type && slot.type.toLowerCase() === type.toLowerCase()
+    })
   }
   
   // Filtrer par visibilité des groupes si un utilisateur est spécifié

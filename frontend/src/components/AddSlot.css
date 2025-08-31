@@ -199,3 +199,67 @@
   border: 1px solid rgba(40, 167, 69, 0.3);
   color: #28a745;
 }
+
+/* Styles pour la sélection des activités */
+.activities-selection {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.activity-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #4a4a4a;
+  border: 1px solid #5a5a5a;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.activity-checkbox:hover {
+  background: #5a5a5a;
+  border-color: #6a6a6a;
+}
+
+.activity-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #d4af8c;
+  cursor: pointer;
+}
+
+.activity-name {
+  color: #e0e0e0;
+  font-weight: 500;
+  flex: 1;
+}
+
+.selection-info {
+  margin-top: 12px;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.selection-info:first-of-type {
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  color: #ffc107;
+}
+
+.selection-info:last-of-type {
+  background: rgba(40, 167, 69, 0.1);
+  border: 1px solid rgba(40, 167, 69, 0.3);
+  color: #28a745;
+}
+
+@media (max-width: 768px) {
+  .activities-selection {
+    grid-template-columns: 1fr;
+  }
+}
