@@ -292,6 +292,22 @@ export async function updateUserRole(prenom, role) {
   return result.rows[0]
 }
 
+export async function updateUserPassword(prenom, hashedPassword) {
+  const result = await pool.query(
+    'UPDATE users SET password = $1 WHERE prenom = $2 RETURNING prenom, email, role',
+    [hashedPassword, prenom]
+  )
+  return result.rows[0]
+}
+
+export async function updateUserEmail(prenom, email) {
+  const result = await pool.query(
+    'UPDATE users SET email = $1 WHERE prenom = $2 RETURNING prenom, email, role',
+    [email, prenom]
+  )
+  return result.rows[0]
+}
+
 // Fermer la connexion
 export async function closeDatabase() {
   await pool.end()

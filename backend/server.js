@@ -23,6 +23,8 @@ import {
   updateFriendRequestStatus,
   updateUserFriends,
   updateUserRole,
+  updateUserPassword,
+  updateUserEmail,
   closeDatabase
 } from './database.js'
 
@@ -91,6 +93,60 @@ app.post('/api/admin/users/:prenom/role', async (req, res) => {
     res.json({ success: true, user: updated })
   } catch (e) {
     res.status(500).json({ error: e.message })
+  }
+})
+
+// Changer le mot de passe d'un utilisateur
+app.post('/api/users/:prenom/password', async (req, res) => {
+  try {
+    const { prenom } = req.params
+    const { currentPassword, newPassword } = req.body
+    
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: 'Mot de passe actuel et nouveau requis' })
+    }
+    
+    // Vérifier le mot de passe actuel
+    const user = await getUserByPrenom(prenom)
+    if (!user) {
+      return res.status(404).json({ error: 'Utilisateur non trouvé' })
+    }
+    
+    const hashedCurrentPassword = hashPassword(currentPassword)
+    if (user.password !== hashedCurrentPassword) {
+      return res.status(401).json({ error: 'Mot de passe actuel incorrect' })
+    }
+    
+    // Mettre à jour avec le nouveau mot de passe
+    const hashedNewPassword = hashPassword(newPassword)
+    const updated = await updateUserPassword(prenom, hashedNewPassword)
+    
+    res.json({ success: true, user: updated })
+  } catch (error) {
+    console.error('Update password error:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
+// Changer l'email d'un utilisateur
+app.post('/api/users/:prenom/email', async (req, res) => {
+  try {
+    const { prenom } = req.params
+    const { newEmail } = req.body
+    
+    if (!newEmail) {
+      return res.status(400).json({ error: 'Nouvel email requis' })
+    }
+    
+    const updated = await updateUserEmail(prenom, newEmail)
+    if (!updated) {
+      return res.status(404).json({ error: 'Utilisateur non trouvé' })
+    }
+    
+    res.json({ success: true, user: updated })
+  } catch (error) {
+    console.error('Update email error:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
   }
 })
 

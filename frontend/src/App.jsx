@@ -212,6 +212,7 @@ function App() {
         <UserProfile 
           user={currentUser}
           onClose={() => setShowUserProfile(false)}
+          onUserUpdate={(updatedUser) => setCurrentUser(updatedUser)}
         />
       )}
     </div>
