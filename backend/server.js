@@ -73,7 +73,8 @@ app.get('/api/health', async (req, res) => {
       status: 'ok', 
       database: 'postgresql',
       DATABASE_URL: dbUrl,
-      users_count: testQuery.length
+      users_count: testQuery.length,
+      version: '1.0.1'
     })
   } catch (error) {
     res.json({ 
