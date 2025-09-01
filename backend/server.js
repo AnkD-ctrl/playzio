@@ -29,7 +29,9 @@ const app = express()
 const port = process.env.PORT || 8080
 
 // Initialize database on startup
-initDatabase().catch(console.error)
+initDatabase().catch(err => {
+  console.error('PostgreSQL initialization failed, falling back to JSON:', err)
+})
 
 // Middleware
 app.use(cors({
@@ -55,6 +57,27 @@ function hashPassword(password) {
 }
 
 // Database functions are now in database.js
+
+// Route de diagnostic
+app.get('/api/health', async (req, res) => {
+  try {
+    const dbUrl = process.env.DATABASE_URL ? 'configured' : 'missing'
+    const testQuery = await getAllUsers()
+    res.json({ 
+      status: 'ok', 
+      database: 'postgresql',
+      DATABASE_URL: dbUrl,
+      users_count: testQuery.length
+    })
+  } catch (error) {
+    res.json({ 
+      status: 'error', 
+      database: 'postgresql',
+      DATABASE_URL: process.env.DATABASE_URL ? 'configured' : 'missing',
+      error: error.message 
+    })
+  }
+})
 
 // Routes
 
