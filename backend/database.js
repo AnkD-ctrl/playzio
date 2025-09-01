@@ -284,6 +284,14 @@ export async function updateUserFriends(prenom, friends) {
   return result.rows[0]
 }
 
+export async function updateUserRole(prenom, role) {
+  const result = await pool.query(
+    'UPDATE users SET role = $1 WHERE prenom = $2 RETURNING prenom, email, role',
+    [role, prenom]
+  )
+  return result.rows[0]
+}
+
 // Fermer la connexion
 export async function closeDatabase() {
   await pool.end()

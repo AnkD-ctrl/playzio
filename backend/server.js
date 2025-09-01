@@ -22,6 +22,7 @@ import {
   getFriendRequestById,
   updateFriendRequestStatus,
   updateUserFriends,
+  updateUserRole,
   closeDatabase
 } from './database.js'
 
@@ -76,6 +77,20 @@ app.get('/api/health', async (req, res) => {
       DATABASE_URL: process.env.DATABASE_URL ? 'configured' : 'missing',
       error: error.message 
     })
+  }
+})
+
+// Admin: mettre à jour le rôle d'un utilisateur (temporaire)
+app.post('/api/admin/users/:prenom/role', async (req, res) => {
+  try {
+    const { prenom } = req.params
+    const { role } = req.body
+    if (!role) return res.status(400).json({ error: 'role requis' })
+    const updated = await updateUserRole(prenom, role)
+    if (!updated) return res.status(404).json({ error: 'Utilisateur non trouvé' })
+    res.json({ success: true, user: updated })
+  } catch (e) {
+    res.status(500).json({ error: e.message })
   }
 })
 
