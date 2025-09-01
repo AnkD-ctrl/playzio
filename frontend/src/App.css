@@ -82,7 +82,9 @@ body {
 /* Content */
 .app-content {
   min-height: calc(100vh - 80px);
-  padding-bottom: 100px; /* Space for floating footer */
+  padding-bottom: 120px; /* Space for floating footer */
+  position: relative;
+  z-index: 1;
 }
 
 /* Activity Container */
@@ -170,8 +172,11 @@ body {
   background: #3a3a3a;
   border-top: 1px solid #4a4a4a;
   padding: 16px 20px;
-  z-index: 1000;
+  z-index: 9999;
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform;
 }
 
 .footer-content {
