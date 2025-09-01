@@ -300,7 +300,42 @@ export async function updateUserPassword(prenom, hashedPassword) {
   return result.rows[0]
 }
 
+// Messages functions
+export async function getMessagesBySlotId(slotId) {
+  const result = await pool.query(
+    `SELECT m.id, m.message, m.created_at, m.updated_at, u.prenom as user_prenom, u.role as user_role
+     FROM messages m
+     JOIN users u ON m.user_prenom = u.prenom
+     WHERE m.slot_id = $1
+     ORDER BY m.created_at ASC`,
+    [slotId]
+  )
+  return result.rows
+}
 
+export async function createMessage(slotId, userPrenom, message) {
+  const result = await pool.query(
+    'INSERT INTO messages (slot_id, user_prenom, message) VALUES ($1, $2, $3) RETURNING *',
+    [slotId, userPrenom, message]
+  )
+  return result.rows[0]
+}
+
+export async function updateMessage(messageId, userPrenom, newMessage) {
+  const result = await pool.query(
+    'UPDATE messages SET message = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 AND user_prenom = $3 RETURNING *',
+    [newMessage, messageId, userPrenom]
+  )
+  return result.rows[0]
+}
+
+export async function deleteMessage(messageId, userPrenom) {
+  const result = await pool.query(
+    'DELETE FROM messages WHERE id = $1 AND user_prenom = $2 RETURNING *',
+    [messageId, userPrenom]
+  )
+  return result.rows[0]
+}
 
 // Fermer la connexion
 export async function closeDatabase() {

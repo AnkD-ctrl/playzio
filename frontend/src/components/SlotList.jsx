@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react'
 import './SlotList.css'
 import { API_BASE_URL } from '../config'
 import { trackSlotJoin, trackSlotLeave } from '../utils/analytics'
+import SlotDiscussion from './SlotDiscussion'
 
 function SlotList({ activity, currentUser, selectedDate, onClearDate }) {
   const [slots, setSlots] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [selectedSlot, setSelectedSlot] = useState(null)
 
   useEffect(() => {
     fetchSlots()
@@ -202,6 +204,14 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate }) {
 
                 <div className="slot-actions">
                   <div className="action-buttons">
+                    <button 
+                      className="discuss-btn"
+                      onClick={() => setSelectedSlot(slot)}
+                      title="Voir la discussion"
+                    >
+                      💬 Discussion
+                    </button>
+                    
                     {isParticipant ? (
                       <button 
                         className="leave-btn"
@@ -236,6 +246,14 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate }) {
             )
           })}
         </div>
+      )}
+      
+      {selectedSlot && (
+        <SlotDiscussion
+          slot={selectedSlot}
+          currentUser={currentUser}
+          onClose={() => setSelectedSlot(null)}
+        />
       )}
     </div>
   )

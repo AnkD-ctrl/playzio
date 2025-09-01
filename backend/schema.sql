@@ -45,6 +45,16 @@ CREATE TABLE IF NOT EXISTS friend_requests (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Messages table for slot discussions
+CREATE TABLE IF NOT EXISTS messages (
+    id SERIAL PRIMARY KEY,
+    slot_id VARCHAR(50) REFERENCES slots(id) ON DELETE CASCADE,
+    user_prenom VARCHAR(100) REFERENCES users(prenom) ON DELETE CASCADE,
+    message TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_users_prenom ON users(prenom);
 CREATE INDEX IF NOT EXISTS idx_slots_date ON slots(date);
@@ -52,3 +62,5 @@ CREATE INDEX IF NOT EXISTS idx_slots_type ON slots USING GIN ((type::jsonb)) WHE
 CREATE INDEX IF NOT EXISTS idx_groups_creator ON groups(creator);
 CREATE INDEX IF NOT EXISTS idx_groups_members ON groups USING GIN (members);
 CREATE INDEX IF NOT EXISTS idx_friend_requests_users ON friend_requests(from_user, to_user);
+CREATE INDEX IF NOT EXISTS idx_messages_slot_id ON messages(slot_id);
+CREATE INDEX IF NOT EXISTS idx_messages_created_at ON messages(created_at);

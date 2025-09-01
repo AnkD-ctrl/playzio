@@ -216,7 +216,8 @@
 
 .join-btn,
 .leave-btn,
-.delete-btn {
+.delete-btn,
+.discuss-btn {
   padding: 8px 16px;
   border: none;
   border-radius: 4px;
@@ -236,6 +237,17 @@
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(212, 175, 140, 0.4);
   filter: brightness(1.1);
+}
+
+.discuss-btn {
+  background: #2196F3;
+  color: white;
+}
+
+.discuss-btn:hover {
+  background: #1976D2;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
 }
 
 .leave-btn {

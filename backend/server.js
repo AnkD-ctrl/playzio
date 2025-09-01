@@ -24,6 +24,10 @@ import {
   updateUserFriends,
   updateUserRole,
   updateUserPassword,
+  getMessagesBySlotId,
+  createMessage,
+  updateMessage,
+  deleteMessage,
   closeDatabase
 } from './database.js'
 
@@ -182,6 +186,77 @@ app.post('/api/register', async (req, res) => {
     res.json({ success: true })
   } catch (error) {
     console.error('Register error:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
+// Messages routes
+app.get('/api/slots/:slotId/messages', async (req, res) => {
+  try {
+    const { slotId } = req.params
+    const messages = await getMessagesBySlotId(slotId)
+    res.json(messages)
+  } catch (error) {
+    console.error('Get messages error:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
+app.post('/api/slots/:slotId/messages', async (req, res) => {
+  try {
+    const { slotId } = req.params
+    const { userPrenom, message } = req.body
+    
+    if (!userPrenom || !message) {
+      return res.status(400).json({ error: 'Utilisateur et message requis' })
+    }
+    
+    const newMessage = await createMessage(slotId, userPrenom, message)
+    res.json(newMessage)
+  } catch (error) {
+    console.error('Create message error:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
+app.put('/api/messages/:messageId', async (req, res) => {
+  try {
+    const { messageId } = req.params
+    const { userPrenom, message } = req.body
+    
+    if (!userPrenom || !message) {
+      return res.status(400).json({ error: 'Utilisateur et message requis' })
+    }
+    
+    const updatedMessage = await updateMessage(messageId, userPrenom, message)
+    if (!updatedMessage) {
+      return res.status(404).json({ error: 'Message non trouvé ou non autorisé' })
+    }
+    
+    res.json(updatedMessage)
+  } catch (error) {
+    console.error('Update message error:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
+app.delete('/api/messages/:messageId', async (req, res) => {
+  try {
+    const { messageId } = req.params
+    const { userPrenom } = req.body
+    
+    if (!userPrenom) {
+      return res.status(400).json({ error: 'Utilisateur requis' })
+    }
+    
+    const deletedMessage = await deleteMessage(messageId, userPrenom)
+    if (!deletedMessage) {
+      return res.status(404).json({ error: 'Message non trouvé ou non autorisé' })
+    }
+    
+    res.json({ success: true })
+  } catch (error) {
+    console.error('Delete message error:', error)
     res.status(500).json({ error: 'Erreur serveur' })
   }
 })
