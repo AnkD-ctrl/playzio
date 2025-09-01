@@ -291,15 +291,60 @@
   .slots-grid {
     grid-template-columns: 1fr;
     gap: 16px;
+    justify-items: center;
   }
   
   .slot-card {
     padding: 16px;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
   }
   
   .slot-header {
     flex-direction: column;
     gap: 8px;
-    align-items: flex-start;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .slot-content {
+    text-align: center;
+  }
+  
+  .slot-actions {
+    align-items: center;
+  }
+  
+  .action-buttons {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 428px) {
+  .slot-list {
+    padding: 12px;
+  }
+  
+  .slots-grid {
+    gap: 12px;
+  }
+  
+  .slot-card {
+    padding: 12px;
+    max-width: 100%;
+  }
+  
+  .action-buttons {
+    gap: 6px;
+  }
+  
+  .join-btn,
+  .leave-btn,
+  .delete-btn,
+  .discuss-btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
   }
 }
