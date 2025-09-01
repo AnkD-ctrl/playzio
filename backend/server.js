@@ -150,8 +150,7 @@ app.post('/api/login', async (req, res) => {
       success: true, 
       user: { 
         prenom: user.prenom, 
-        role: user.role || 'user',
-        email: user.email 
+        role: user.role || 'user'
       } 
     })
   } catch (error) {

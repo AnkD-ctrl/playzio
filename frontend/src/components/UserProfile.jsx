@@ -159,7 +159,6 @@ function UserProfile({ user, onClose, onUserUpdate }) {
                       value={passwordForm.newPassword}
                       onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})}
                       required
-                      minLength={6}
                     />
                   </div>
                   <div className="form-group">
