@@ -240,14 +240,15 @@
 }
 
 .discuss-btn {
-  background: #2196F3;
-  color: white;
+  background: #4a4a4a;
+  color: #b0b0b0;
+  border: 1px solid #5a5a5a;
 }
 
 .discuss-btn:hover {
-  background: #1976D2;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+  background: #5a5a5a;
+  border-color: #6a6a6a;
+  color: #e0e0e0;
 }
 
 .leave-btn {

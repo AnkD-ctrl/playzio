@@ -209,7 +209,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate }) {
                       onClick={() => setSelectedSlot(slot)}
                       title="Voir la discussion"
                     >
-                      💬 Discussion
+                      Discussion
                     </button>
                     
                     {isParticipant ? (
