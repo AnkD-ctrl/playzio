@@ -27,7 +27,7 @@ export async function initDatabase() {
 
 // Users
 export async function getAllUsers() {
-  const result = await pool.query('SELECT prenom, email, role FROM users ORDER BY prenom')
+  const result = await pool.query('SELECT prenom, role FROM users ORDER BY prenom')
   return result.rows
 }
 
@@ -37,10 +37,10 @@ export async function getUserByPrenom(prenom) {
 }
 
 export async function createUser(userData) {
-  const { prenom, password, email, role = 'user' } = userData
+  const { prenom, password, role = 'user' } = userData
   const result = await pool.query(
-    'INSERT INTO users (prenom, password, email, role) VALUES ($1, $2, $3, $4) RETURNING *',
-    [prenom, password, email || `${prenom}@playzio.local`, role]
+    'INSERT INTO users (prenom, password, role) VALUES ($1, $2, $3) RETURNING *',
+    [prenom, password, role]
   )
   return result.rows[0]
 }
@@ -300,13 +300,7 @@ export async function updateUserPassword(prenom, hashedPassword) {
   return result.rows[0]
 }
 
-export async function updateUserEmail(prenom, email) {
-  const result = await pool.query(
-    'UPDATE users SET email = $1 WHERE prenom = $2 RETURNING prenom, email, role',
-    [email, prenom]
-  )
-  return result.rows[0]
-}
+
 
 // Fermer la connexion
 export async function closeDatabase() {

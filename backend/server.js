@@ -24,7 +24,6 @@ import {
   updateUserFriends,
   updateUserRole,
   updateUserPassword,
-  updateUserEmail,
   closeDatabase
 } from './database.js'
 
@@ -128,27 +127,7 @@ app.post('/api/users/:prenom/password', async (req, res) => {
   }
 })
 
-// Changer l'email d'un utilisateur
-app.post('/api/users/:prenom/email', async (req, res) => {
-  try {
-    const { prenom } = req.params
-    const { newEmail } = req.body
-    
-    if (!newEmail) {
-      return res.status(400).json({ error: 'Nouvel email requis' })
-    }
-    
-    const updated = await updateUserEmail(prenom, newEmail)
-    if (!updated) {
-      return res.status(404).json({ error: 'Utilisateur non trouvé' })
-    }
-    
-    res.json({ success: true, user: updated })
-  } catch (error) {
-    console.error('Update email error:', error)
-    res.status(500).json({ error: 'Erreur serveur' })
-  }
-})
+
 
 // Routes
 
@@ -184,7 +163,7 @@ app.post('/api/login', async (req, res) => {
 // Inscription
 app.post('/api/register', async (req, res) => {
   try {
-    const { prenom, password, email } = req.body
+    const { prenom, password } = req.body
     
     if (!prenom || !password) {
       return res.status(400).json({ error: 'Nom d\'utilisateur et mot de passe requis' })
@@ -198,8 +177,7 @@ app.post('/api/register', async (req, res) => {
     const hashedPassword = hashPassword(password)
     await createUser({
       prenom,
-      password: hashedPassword,
-      email: email || `${prenom}@playzio.local` // Email par défaut si non fourni
+      password: hashedPassword
     })
     
     res.json({ success: true })

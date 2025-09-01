@@ -4,7 +4,7 @@
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     prenom VARCHAR(100) UNIQUE NOT NULL,
-    email VARCHAR(255) NOT NULL,
+    email VARCHAR(255),
     password VARCHAR(255) NOT NULL,
     role VARCHAR(20) DEFAULT 'user',
     friends TEXT[] DEFAULT '{}',

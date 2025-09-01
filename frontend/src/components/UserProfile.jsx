@@ -4,14 +4,13 @@ import { API_BASE_URL } from '../config'
 
 function UserProfile({ user, onClose, onUserUpdate }) {
   const [showPasswordModal, setShowPasswordModal] = useState(false)
-  const [showEmailModal, setShowEmailModal] = useState(false)
   const [userGroups, setUserGroups] = useState([])
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
   })
-  const [newEmail, setNewEmail] = useState(user.email)
+
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
 
@@ -79,48 +78,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
     }
   }
 
-  const handleEmailChange = async (e) => {
-    e.preventDefault()
-    
-    if (!newEmail || !newEmail.includes('@')) {
-      setMessage('Veuillez saisir un email valide')
-      return
-    }
-    
-    setLoading(true)
-    setMessage('')
-    
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/users/${encodeURIComponent(user.prenom)}/email`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          newEmail: newEmail
-        })
-      })
-      
-      const data = await response.json()
-      
-      if (response.ok) {
-        setMessage('Email mis à jour avec succès')
-        if (onUserUpdate) {
-          onUserUpdate({ ...user, email: newEmail })
-        }
-        setTimeout(() => {
-          setShowEmailModal(false)
-          setMessage('')
-        }, 2000)
-      } else {
-        setMessage(data.error || 'Erreur lors de la mise à jour')
-      }
-    } catch (error) {
-      setMessage('Erreur de connexion')
-    } finally {
-      setLoading(false)
-    }
-  }
+
 
   return (
     <div className="user-profile-overlay" onClick={onClose}>
@@ -142,7 +100,6 @@ function UserProfile({ user, onClose, onUserUpdate }) {
             
             <div className="profile-details">
               <h4>{user.prenom}</h4>
-              <p className="user-email">{user.email}</p>
               <p className="user-role">
                 <span className="role-badge">{user.role}</span>
               </p>
@@ -172,12 +129,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
             >
               Modifier le mot de passe
             </button>
-            <button 
-              className="action-btn secondary"
-              onClick={() => setShowEmailModal(true)}
-            >
-              Modifier l'adresse mail
-            </button>
+
           </div>
           
           {/* Modal de changement de mot de passe */}
@@ -233,39 +185,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
             </div>
           )}
           
-          {/* Modal de changement d'email */}
-          {showEmailModal && (
-            <div className="sub-modal-overlay" onClick={() => setShowEmailModal(false)}>
-              <div className="sub-modal" onClick={(e) => e.stopPropagation()}>
-                <div className="modal-header">
-                  <h4>Modifier l'adresse mail</h4>
-                  <button className="close-btn" onClick={() => setShowEmailModal(false)}>
-                    ✕
-                  </button>
-                </div>
-                <form onSubmit={handleEmailChange}>
-                  <div className="form-group">
-                    <label>Nouvelle adresse mail</label>
-                    <input
-                      type="email"
-                      value={newEmail}
-                      onChange={(e) => setNewEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                  {message && <div className={`message ${message.includes('succès') ? 'success' : 'error'}`}>{message}</div>}
-                  <div className="form-actions">
-                    <button type="button" onClick={() => setShowEmailModal(false)} disabled={loading}>
-                      Annuler
-                    </button>
-                    <button type="submit" disabled={loading}>
-                      {loading ? 'Mise à jour...' : 'Mettre à jour'}
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          )}
+
         </div>
       </div>
     </div>
