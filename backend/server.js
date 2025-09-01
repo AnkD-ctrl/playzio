@@ -35,13 +35,43 @@ function hashPassword(password) {
   return crypto.createHash('sha256').update(password).digest('hex')
 }
 
+// Déterminer le chemin de la base de données (persistant si DB_PATH est défini)
+function getDbFilePath() {
+  const envPath = process.env.DB_PATH
+  if (envPath) {
+    try {
+      const resolved = path.isAbsolute(envPath)
+        ? envPath
+        : path.join(__dirname, envPath)
+      // Créer le dossier si nécessaire
+      const dir = path.dirname(resolved)
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true })
+      }
+      // Initialiser si fichier absent
+      if (!fs.existsSync(resolved)) {
+        const example = path.join(__dirname, 'db.example.json')
+        const initial = fs.existsSync(example)
+          ? fs.readFileSync(example, 'utf8')
+          : JSON.stringify({ slots: [], users: [], friendRequests: [], groups: [] }, null, 2)
+        fs.writeFileSync(resolved, initial)
+      }
+      return resolved
+    } catch (e) {
+      // Fallback local
+    }
+  }
+  const local = fs.existsSync(path.join(__dirname, 'db.json'))
+    ? path.join(__dirname, 'db.json')
+    : path.join(__dirname, 'db.example.json')
+  return local
+}
+
 // Fonction pour lire la base de données
 function readDB() {
   try {
-    const dbFile = fs.existsSync(path.join(__dirname, 'db.json')) 
-      ? 'db.json' 
-      : 'db.example.json'
-    const data = fs.readFileSync(path.join(__dirname, dbFile), 'utf8')
+    const filePath = getDbFilePath()
+    const data = fs.readFileSync(filePath, 'utf8')
     return JSON.parse(data)
   } catch (error) {
     return { slots: [], users: [], friendRequests: [], groups: [] }
@@ -50,7 +80,8 @@ function readDB() {
 
 // Fonction pour écrire dans la base de données
 function writeDB(data) {
-  fs.writeFileSync(path.join(__dirname, 'db.json'), JSON.stringify(data, null, 2))
+  const filePath = getDbFilePath()
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2))
 }
 
 // Routes
