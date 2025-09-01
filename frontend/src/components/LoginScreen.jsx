@@ -88,6 +88,8 @@ function LoginScreen({ onLogin }) {
             />
           </div>
 
+
+
           {error && <div className="error-message">{error}</div>}
 
           <button type="submit" className="submit-button">

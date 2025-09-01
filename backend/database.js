@@ -40,7 +40,7 @@ export async function createUser(userData) {
   const { prenom, password, email, role = 'user' } = userData
   const result = await pool.query(
     'INSERT INTO users (prenom, password, email, role) VALUES ($1, $2, $3, $4) RETURNING *',
-    [prenom, password, email, role]
+    [prenom, password, email || `${prenom}@playzio.local`, role]
   )
   return result.rows[0]
 }

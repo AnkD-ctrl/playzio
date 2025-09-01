@@ -186,6 +186,10 @@ app.post('/api/register', async (req, res) => {
   try {
     const { prenom, password, email } = req.body
     
+    if (!prenom || !password) {
+      return res.status(400).json({ error: 'Nom d\'utilisateur et mot de passe requis' })
+    }
+    
     const existingUser = await getUserByPrenom(prenom)
     if (existingUser) {
       return res.status(400).json({ error: 'Utilisateur déjà existant' })
@@ -195,7 +199,7 @@ app.post('/api/register', async (req, res) => {
     await createUser({
       prenom,
       password: hashedPassword,
-      email
+      email: email || `${prenom}@playzio.local` // Email par défaut si non fourni
     })
     
     res.json({ success: true })
