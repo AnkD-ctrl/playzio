@@ -80,7 +80,7 @@ function LoginScreen({ onLogin }) {
           <div className="logo-container">
             <Logo size="large" showText={true} />
           </div>
-          <p>Ne ratez pas une occasion de vous voir</p>
+          <p>Tu poses ta dispo → elle devient visible → si un membre d'un des groupes choisis la vois, il te contacte direct via la messagerie intégrée → et hop, ça crée des opportunités spontanées (tennis, padel, soirée, resto, sortie…).</p>
         </div>
 
         <form onSubmit={handleSubmit} className="login-form">
