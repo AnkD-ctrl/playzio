@@ -241,6 +241,35 @@
   to { box-shadow: 0 0 15px rgba(255, 107, 107, 0.6); }
 }
 
+.login-cta {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(212, 175, 140, 0.2);
+}
+
+.login-cta p {
+  color: #b0b0b0;
+  font-size: 0.8rem;
+  margin: 0;
+  text-align: center;
+}
+
+.cta-link {
+  background: none;
+  border: none;
+  color: #d4af8c;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.cta-link:hover {
+  color: #c9a96e;
+  text-decoration: none;
+}
+
 @media (max-width: 480px) {
   .login-container {
     padding: 24px;
