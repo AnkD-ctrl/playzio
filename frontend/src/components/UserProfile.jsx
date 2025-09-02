@@ -100,9 +100,15 @@ function UserProfile({ user, onClose, onUserUpdate }) {
             
             <div className="profile-details">
               <h4>{user.prenom}</h4>
-              <p className="user-role">
+              <div className="user-badges">
                 <span className="role-badge">{user.role}</span>
-              </p>
+                {user.isFounder && (
+                  <span className="founder-badge">
+                    <span className="founder-crown">👑</span>
+                    <span className="founder-text">Membre fondateur</span>
+                  </span>
+                )}
+              </div>
             </div>
           </div>
           

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './LoginScreen.css'
 import Logo from './Logo'
 import { API_BASE_URL } from '../config'
@@ -10,6 +10,24 @@ function LoginScreen({ onLogin }) {
     password: ''
   })
   const [error, setError] = useState('')
+  const [founderStats, setFounderStats] = useState(null)
+
+  // Charger les statistiques des membres fondateurs
+  useEffect(() => {
+    const fetchFounderStats = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/founder-stats`)
+        if (response.ok) {
+          const stats = await response.json()
+          setFounderStats(stats)
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des statistiques:', error)
+      }
+    }
+    
+    fetchFounderStats()
+  }, [])
 
   const handleInputChange = (e) => {
     setFormData({
@@ -41,7 +59,11 @@ function LoginScreen({ onLogin }) {
         } else {
           setIsLogin(true)
           setFormData({ prenom: '', password: '' })
-          alert('Compte créé avec succès !')
+          if (data.isFounder) {
+            alert(`🎉 ${data.message}\n\nVous êtes le ${data.founderCount}ème membre fondateur de Playzio !`)
+          } else {
+            alert('Compte créé avec succès !')
+          }
         }
       } else {
         setError(data.error || 'Une erreur est survenue')
@@ -107,6 +129,39 @@ function LoginScreen({ onLogin }) {
           </button>
         </div>
 
+        {/* Offre de lancement */}
+        {!isLogin && (
+          <div className="launch-offer">
+            <div className="offer-badge">
+              <span className="crown-icon">👑</span>
+              <span className="offer-text">Offre de lancement</span>
+            </div>
+            <div className="offer-content">
+              <h4>Premium offert aux 1 000 premiers inscrits</h4>
+              <p>Devenez membre fondateur de Playzio et profitez à vie de toutes les fonctionnalités avancées, gratuitement.</p>
+              {founderStats && (
+                <div className="founder-stats">
+                  <div className="stats-item">
+                    <span className="stats-number">{founderStats.founderCount}</span>
+                    <span className="stats-label">membres fondateurs</span>
+                  </div>
+                  <div className="stats-separator">•</div>
+                  <div className="stats-item">
+                    <span className={`stats-number ${founderStats.remainingFounderSlots <= 50 ? 'urgent' : ''}`}>
+                      {founderStats.remainingFounderSlots}
+                    </span>
+                    <span className="stats-label">places restantes</span>
+                  </div>
+                </div>
+              )}
+              {founderStats && founderStats.remainingFounderSlots <= 50 && founderStats.remainingFounderSlots > 0 && (
+                <div className="urgency-message">
+                  ⚡ Plus que {founderStats.remainingFounderSlots} places disponibles !
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
       </div>
     </div>

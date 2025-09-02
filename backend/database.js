@@ -27,7 +27,7 @@ export async function initDatabase() {
 
 // Users
 export async function getAllUsers() {
-  const result = await pool.query('SELECT prenom, role FROM users ORDER BY prenom')
+  const result = await pool.query('SELECT prenom, role, is_founder FROM users ORDER BY prenom')
   return result.rows
 }
 
@@ -37,21 +37,21 @@ export async function getUserByPrenom(prenom) {
 }
 
 export async function createUser(userData) {
-  const { prenom, password, role = 'user' } = userData
+  const { prenom, password, role = 'user', isFounder = false } = userData
   
   try {
     // Essayer d'abord sans email
     const result = await pool.query(
-      'INSERT INTO users (prenom, password, role) VALUES ($1, $2, $3) RETURNING *',
-      [prenom, password, role]
+      'INSERT INTO users (prenom, password, role, is_founder) VALUES ($1, $2, $3, $4) RETURNING *',
+      [prenom, password, role, isFounder]
     )
     return result.rows[0]
   } catch (error) {
     // Si ça échoue, essayer avec un email par défaut
     if (error.message.includes('email')) {
       const result = await pool.query(
-        'INSERT INTO users (prenom, password, email, role) VALUES ($1, $2, $3, $4) RETURNING *',
-        [prenom, password, `${prenom}@playzio.local`, role]
+        'INSERT INTO users (prenom, password, email, role, is_founder) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+        [prenom, password, `${prenom}@playzio.local`, role, isFounder]
       )
       return result.rows[0]
     }
@@ -308,10 +308,20 @@ export async function updateUserRole(prenom, role) {
 
 export async function updateUserPassword(prenom, hashedPassword) {
   const result = await pool.query(
-    'UPDATE users SET password = $1 WHERE prenom = $2 RETURNING prenom, email, role',
+    'UPDATE users SET password = $1 WHERE prenom = $2 RETURNING prenom, email, role, is_founder',
     [hashedPassword, prenom]
   )
   return result.rows[0]
+}
+
+export async function getUserCount() {
+  const result = await pool.query('SELECT COUNT(*) as count FROM users')
+  return parseInt(result.rows[0].count)
+}
+
+export async function getFounderCount() {
+  const result = await pool.query('SELECT COUNT(*) as count FROM users WHERE is_founder = true')
+  return parseInt(result.rows[0].count)
 }
 
 // Messages functions

@@ -100,7 +100,10 @@
   margin: 0 0 12px 0;
 }
 
-.user-role {
+.user-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   margin: 0;
 }
 
@@ -112,6 +115,31 @@
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
+}
+
+.founder-badge {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+  color: #8b4513;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+  border: 1px solid rgba(255, 215, 0, 0.5);
+}
+
+.founder-crown {
+  font-size: 0.8rem;
+  filter: drop-shadow(0 1px 2px rgba(139, 69, 19, 0.3));
+}
+
+.founder-text {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
 }
 
 .profile-stats {

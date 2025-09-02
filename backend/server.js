@@ -24,6 +24,8 @@ import {
   updateUserFriends,
   updateUserRole,
   updateUserPassword,
+  getUserCount,
+  getFounderCount,
   getMessagesBySlotId,
   createMessage,
   updateMessage,
@@ -155,7 +157,8 @@ app.post('/api/login', async (req, res) => {
       success: true, 
       user: { 
         prenom: user.prenom, 
-        role: user.role || 'user'
+        role: user.role || 'user',
+        isFounder: user.is_founder || false
       } 
     })
   } catch (error) {
@@ -178,13 +181,23 @@ app.post('/api/register', async (req, res) => {
       return res.status(400).json({ error: 'Utilisateur déjà existant' })
     }
     
+    // Vérifier si l'utilisateur peut être membre fondateur (1000 premiers)
+    const founderCount = await getFounderCount()
+    const isFounder = founderCount < 1000
+    
     const hashedPassword = hashPassword(password)
-    await createUser({
+    const newUser = await createUser({
       prenom,
-      password: hashedPassword
+      password: hashedPassword,
+      isFounder
     })
     
-    res.json({ success: true })
+    res.json({ 
+      success: true, 
+      isFounder,
+      founderCount: founderCount + 1,
+      message: isFounder ? 'Félicitations ! Vous êtes membre fondateur de Playzio !' : 'Compte créé avec succès'
+    })
   } catch (error) {
     console.error('Register error:', error)
     res.status(500).json({ error: 'Erreur serveur' })
@@ -663,6 +676,25 @@ app.get('/api/users/all', async (req, res) => {
     res.json(users)
   } catch (error) {
     console.error('Get all users error:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
+// Statistiques des membres fondateurs
+app.get('/api/founder-stats', async (req, res) => {
+  try {
+    const founderCount = await getFounderCount()
+    const totalUsers = await getUserCount()
+    const remainingFounderSlots = Math.max(0, 1000 - founderCount)
+    
+    res.json({
+      founderCount,
+      totalUsers,
+      remainingFounderSlots,
+      isFounderAvailable: remainingFounderSlots > 0
+    })
+  } catch (error) {
+    console.error('Get founder stats error:', error)
     res.status(500).json({ error: 'Erreur serveur' })
   }
 })
