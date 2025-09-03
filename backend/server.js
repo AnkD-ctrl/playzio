@@ -822,16 +822,60 @@ app.post('/api/contact', async (req, res) => {
       return res.status(400).json({ error: 'Message et nom d\'utilisateur requis' })
     }
     
-    console.log('💾 Insertion directe du message...')
-    // Insertion directe sans créer la table (elle doit exister)
-    const result = await pool.query(
-      'INSERT INTO contact_messages (from_user, from_email, message, created_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING *',
-      [fromUser, fromEmail, message]
-    )
+    // Essayer d'abord l'insertion en base de données
+    try {
+      console.log('💾 Tentative d\'insertion en base de données...')
+      const { pool } = await import('./database.js')
+      const result = await pool.query(
+        'INSERT INTO contact_messages (from_user, from_email, message, created_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING *',
+        [fromUser, fromEmail, message]
+      )
+      
+      const contactMessage = result.rows[0]
+      console.log('✅ Message inséré en base de données:', contactMessage.id)
+      res.json({ success: true, message: contactMessage })
+      return
+    } catch (dbError) {
+      console.log('⚠️ Erreur base de données, utilisation du fallback JSON:', dbError.message)
+    }
     
-    const contactMessage = result.rows[0]
-    console.log('✅ Message inséré avec succès:', contactMessage.id)
-    res.json({ success: true, message: contactMessage })
+    // Fallback : stockage dans un fichier JSON
+    console.log('💾 Stockage en fichier JSON (fallback)...')
+    const fs = await import('fs')
+    const path = await import('path')
+    
+    const contactData = {
+      id: Date.now(),
+      from_user: fromUser,
+      from_email: fromEmail,
+      message: message,
+      created_at: new Date().toISOString(),
+      is_read: false,
+      admin_response: null,
+      admin_response_at: null
+    }
+    
+    const filePath = path.join(process.cwd(), 'contact_messages.json')
+    
+    // Lire les messages existants ou créer un nouveau fichier
+    let messages = []
+    try {
+      const existingData = fs.readFileSync(filePath, 'utf8')
+      messages = JSON.parse(existingData)
+    } catch (fileError) {
+      console.log('📄 Création d\'un nouveau fichier contact_messages.json')
+      messages = []
+    }
+    
+    // Ajouter le nouveau message
+    messages.push(contactData)
+    
+    // Sauvegarder le fichier
+    fs.writeFileSync(filePath, JSON.stringify(messages, null, 2))
+    
+    console.log('✅ Message sauvegardé en fichier JSON:', contactData.id)
+    res.json({ success: true, message: contactData })
+    
   } catch (error) {
     console.error('❌ Erreur lors de la création du message de contact:', error)
     res.status(500).json({ error: 'Erreur serveur', details: error.message })
