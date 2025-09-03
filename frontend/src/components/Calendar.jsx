@@ -148,19 +148,11 @@ function Calendar({ activity, currentUser, onDateSelect }) {
                     <div className="day-number">{day.getDate()}</div>
                     {daySlots.length > 0 && (
                       <div className="day-slots">
-                        {daySlots.slice(0, 2).map(slot => {
-                          // Déterminer le type d'activité pour l'affichage
-                          let activityType = slot.type
-                          if (Array.isArray(slot.type)) {
-                            activityType = slot.type[0] // Prendre le premier type
-                          }
-                          
-                          return (
-                            <div key={slot.id} className={`slot-indicator ${activityType ? activityType.toLowerCase() : ''}`}>
-                              {slot.heureDebut || slot.time}
-                            </div>
-                          )
-                        })}
+                        {daySlots.slice(0, 2).map(slot => (
+                          <div key={slot.id} className="slot-indicator">
+                            {slot.heureDebut || slot.time}
+                          </div>
+                        ))}
                         {daySlots.length > 2 && (
                           <div className="more-slots">
                             +{daySlots.length - 2}
@@ -177,31 +169,10 @@ function Calendar({ activity, currentUser, onDateSelect }) {
       </div>
 
       <div className="calendar-legend">
-        {activity === 'Tous' ? (
-          <>
-            <div className="legend-item">
-              <div className="legend-color tennis"></div>
-              <span>Tennis</span>
-            </div>
-            <div className="legend-item">
-              <div className="legend-color padel"></div>
-              <span>Padel</span>
-            </div>
-            <div className="legend-item">
-              <div className="legend-color soirée"></div>
-              <span>Soirée</span>
-            </div>
-            <div className="legend-item">
-              <div className="legend-color autre"></div>
-              <span>Autre</span>
-            </div>
-          </>
-        ) : (
-          <div className="legend-item">
-            <div className="legend-color has-slots"></div>
-            <span>Disponibilités {activity}</span>
-          </div>
-        )}
+        <div className="legend-item">
+          <div className="legend-color has-slots"></div>
+          <span>Disponibilités</span>
+        </div>
       </div>
     </div>
   )
