@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import './UserProfile.css'
 import { API_BASE_URL } from '../config'
+import ContactModal from './ContactModal'
 
 function UserProfile({ user, onClose, onUserUpdate }) {
   const [showPasswordModal, setShowPasswordModal] = useState(false)
+  const [showContactModal, setShowContactModal] = useState(false)
   const [userGroups, setUserGroups] = useState([])
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: '',
@@ -135,7 +137,12 @@ function UserProfile({ user, onClose, onUserUpdate }) {
             >
               Modifier le mot de passe
             </button>
-
+            <button 
+              className="action-btn secondary"
+              onClick={() => setShowContactModal(true)}
+            >
+              💬 Nous contacter
+            </button>
           </div>
           
           {/* Modal de changement de mot de passe */}
@@ -190,6 +197,14 @@ function UserProfile({ user, onClose, onUserUpdate }) {
             </div>
           )}
           
+          {/* Modal de Contact */}
+          {showContactModal && (
+            <ContactModal 
+              isOpen={showContactModal}
+              onClose={() => setShowContactModal(false)}
+              currentUser={user}
+            />
+          )}
 
         </div>
       </div>

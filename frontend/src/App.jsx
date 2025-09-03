@@ -259,16 +259,7 @@ function App() {
         />
       )}
 
-      {/* Bouton Contact - visible sur toutes les pages sauf login/register */}
-      {currentView !== 'login' && currentView !== 'register' && (
-        <button 
-          className="contact-button"
-          onClick={() => setShowContactModal(true)}
-          title="Nous contacter"
-        >
-          💬 Contact
-        </button>
-      )}
+
 
       {/* Modal de Contact */}
       {showContactModal && (
