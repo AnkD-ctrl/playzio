@@ -105,13 +105,13 @@ function App() {
                 className="groups-btn"
                 onClick={() => setCurrentView('groups')}
               >
-                👥 Mes Groupes
+                Mes Groupes
               </button>
               <button 
                 className="profile-btn"
                 onClick={() => setShowUserProfile(true)}
               >
-                👤 {currentUser.prenom}
+                👤 Utilisateur
               </button>
               <button className="logout-btn" onClick={handleLogout}>
                 Déconnexion
