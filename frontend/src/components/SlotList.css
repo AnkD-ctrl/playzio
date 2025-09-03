@@ -153,13 +153,15 @@
 }
 
 .slot-activity {
-  background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 50%, #2a2a2a 100%);
+  color: #e0e0e0;
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
+  border: 1px solid #4a4a4a;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .slot-content {
