@@ -10,15 +10,35 @@ function Calendar({ activity, currentUser, onDateSelect }) {
   const [error, setError] = useState('')
   const [showSearchModal, setShowSearchModal] = useState(false)
   const [searchFilter, setSearchFilter] = useState('')
+  const [showOnlyMyGroups, setShowOnlyMyGroups] = useState(false)
+  const [userGroups, setUserGroups] = useState([])
 
   const handleActivitySelect = (activityName) => {
     setSearchFilter(activityName)
     setShowSearchModal(false)
   }
 
+  const handleGroupsFilterToggle = () => {
+    setShowOnlyMyGroups(!showOnlyMyGroups)
+  }
+
+  const fetchUserGroups = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/groups?user=${encodeURIComponent(currentUser.prenom)}`)
+      const data = await response.json()
+      setUserGroups(data)
+    } catch (error) {
+      console.error('Erreur lors du chargement des groupes:', error)
+    }
+  }
+
   useEffect(() => {
     fetchSlots()
-  }, [activity, searchFilter])
+  }, [activity, searchFilter, showOnlyMyGroups])
+
+  useEffect(() => {
+    fetchUserGroups()
+  }, [currentUser])
 
   const fetchSlots = async () => {
     try {
@@ -37,9 +57,19 @@ function Calendar({ activity, currentUser, onDateSelect }) {
         // Filtrer par activité personnalisée si un filtre de recherche est défini
         let filteredData = data
         if (searchFilter) {
-          filteredData = data.filter(slot => 
+          filteredData = filteredData.filter(slot => 
             slot.customActivity && slot.customActivity.toLowerCase().includes(searchFilter.toLowerCase())
           )
+        }
+        
+        // Filtrer par groupes si le filtre "Mes Groupes" est activé
+        if (showOnlyMyGroups && userGroups.length > 0) {
+          const userGroupIds = userGroups.map(group => group.id)
+          filteredData = filteredData.filter(slot => {
+            // Garder les slots qui ont des groupes visibles ET que l'utilisateur fait partie d'au moins un de ces groupes
+            return slot.visibleToGroups && slot.visibleToGroups.length > 0 && 
+                   slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId))
+          })
         }
         
         setSlots(filteredData)
@@ -133,25 +163,50 @@ function Calendar({ activity, currentUser, onDateSelect }) {
       <div className="calendar-title-header">
         <div className="header-title-container">
           <h3>Calendrier {activity === 'Tous' ? '' : activity}</h3>
-          <button 
-            className="search-btn"
-            onClick={() => setShowSearchModal(true)}
-            title="Rechercher une activité"
-          >
-            🔍
-          </button>
+          <div className="header-buttons">
+            <button 
+              className={`groups-filter-btn ${showOnlyMyGroups ? 'active' : ''}`}
+              onClick={handleGroupsFilterToggle}
+              title={showOnlyMyGroups ? "Afficher toutes les disponibilités" : "Afficher seulement mes groupes"}
+            >
+              👥
+            </button>
+            <button 
+              className="search-btn"
+              onClick={() => setShowSearchModal(true)}
+              title="Rechercher une activité"
+            >
+              🔍
+            </button>
+          </div>
         </div>
         
-        {searchFilter && (
-          <div className="search-filter-info">
-            <p>🔍 Filtre : "{searchFilter}"</p>
-            <button 
-              className="clear-filter-btn"
-              onClick={() => setSearchFilter('')}
-              title="Supprimer le filtre"
-            >
-              ✕
-            </button>
+        {(searchFilter || showOnlyMyGroups) && (
+          <div className="filters-info">
+            {searchFilter && (
+              <div className="search-filter-info">
+                <p>🔍 Filtre : "{searchFilter}"</p>
+                <button 
+                  className="clear-filter-btn"
+                  onClick={() => setSearchFilter('')}
+                  title="Supprimer le filtre"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+            {showOnlyMyGroups && (
+              <div className="groups-filter-info">
+                <p>👥 Affichage : Mes Groupes uniquement</p>
+                <button 
+                  className="clear-filter-btn"
+                  onClick={() => setShowOnlyMyGroups(false)}
+                  title="Afficher toutes les disponibilités"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>

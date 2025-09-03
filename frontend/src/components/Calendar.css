@@ -17,6 +17,12 @@
   margin-bottom: 8px;
 }
 
+.header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .calendar-title-header h3 {
   color: #e0e0e0;
   font-size: 1.5rem;
@@ -42,20 +48,67 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-.search-filter-info {
+.groups-filter-btn {
+  background: #4a4a4a;
+  color: #e0e0e0;
+  border: 1px solid #5a5a5a;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1.2rem;
+}
+
+.groups-filter-btn:hover {
+  background: #5a5a5a;
+  border-color: #6a6a6a;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.groups-filter-btn.active {
+  background: linear-gradient(45deg, #007bff 0%, #0056b3 50%, #007bff 100%);
+  color: #ffffff;
+  border-color: #0056b3;
+}
+
+.groups-filter-btn.active:hover {
+  background: linear-gradient(45deg, #0056b3 0%, #004085 50%, #0056b3 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.filters-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.search-filter-info,
+.groups-filter-info {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-bottom: 8px;
   padding: 8px 16px;
+  border-radius: 6px;
+}
+
+.search-filter-info {
   background: rgba(0, 123, 255, 0.1);
   border: 1px solid rgba(0, 123, 255, 0.3);
-  border-radius: 6px;
   color: #007bff;
 }
 
-.search-filter-info p {
+.groups-filter-info {
+  background: rgba(0, 200, 83, 0.1);
+  border: 1px solid rgba(0, 200, 83, 0.3);
+  color: #00c853;
+}
+
+.search-filter-info p,
+.groups-filter-info p {
   margin: 0;
   font-size: 0.9rem;
 }
@@ -281,17 +334,23 @@
     font-size: 1.3rem;
   }
   
-  .search-btn {
+  .header-buttons {
+    gap: 6px;
+  }
+  
+  .search-btn,
+  .groups-filter-btn {
     padding: 6px 10px;
     font-size: 1.1rem;
   }
   
-  .search-filter-info {
+  .search-filter-info,
+  .groups-filter-info {
     padding: 6px 12px;
-    margin-bottom: 6px;
   }
   
-  .search-filter-info p {
+  .search-filter-info p,
+  .groups-filter-info p {
     font-size: 0.8rem;
   }
   
@@ -347,7 +406,12 @@
     font-size: 1.2rem;
   }
   
-  .search-btn {
+  .header-buttons {
+    gap: 4px;
+  }
+  
+  .search-btn,
+  .groups-filter-btn {
     padding: 5px 8px;
     font-size: 1rem;
   }
