@@ -172,9 +172,6 @@ function MessagesList({ isOpen, onClose }) {
           <button onClick={fetchMessages} className="refresh-btn">
             🔄 Actualiser
           </button>
-          <button onClick={handleClose} className="close-btn">
-            Fermer
-          </button>
         </div>
       </div>
     </div>
