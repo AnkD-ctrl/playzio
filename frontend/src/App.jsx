@@ -9,6 +9,7 @@ import Calendar from './components/Calendar'
 import UserProfile from './components/UserProfile'
 import Groups from './components/Groups'
 import { trackPageView, trackLogin, trackLogout, trackActivitySelect, trackNavigation } from './utils/analytics'
+import { testAnalyticsExclusion } from './utils/testAnalytics'
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -18,6 +19,11 @@ function App() {
   const [selectedType, setSelectedType] = useState('list')
   const [selectedDate, setSelectedDate] = useState(null)
   const [showUserProfile, setShowUserProfile] = useState(false)
+
+  // Test d'exclusion d'IP au chargement
+  useEffect(() => {
+    testAnalyticsExclusion()
+  }, [])
 
   // Track page views when view changes
   useEffect(() => {

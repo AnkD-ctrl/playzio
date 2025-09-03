@@ -62,7 +62,39 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-08BY31MESY');
+      
+      // Configuration Google Analytics avec exclusion d'IP
+      gtag('config', 'G-08BY31MESY', {
+        // Exclure le trafic de développement local
+        custom_map: {
+          'custom_parameter_1': 'exclude_development'
+        },
+        // Paramètres pour exclure le trafic de test
+        send_page_view: true,
+        anonymize_ip: true
+      });
+      
+      // Fonction pour vérifier si on doit exclure le tracking
+      function shouldExcludeFromGA() {
+        // Exclure localhost et IPs de développement
+        const hostname = window.location.hostname;
+        const excludedHosts = ['localhost', '127.0.0.1', '::1'];
+        const excludedIPs = ['88.174.10.112']; // Votre IP
+        
+        if (excludedHosts.includes(hostname) || hostname.includes('localhost')) {
+          console.log('[GA] Tracking exclu - Environnement de développement');
+          return true;
+        }
+        
+        return false;
+      }
+      
+      // Intercepter les événements si on doit les exclure
+      if (shouldExcludeFromGA()) {
+        window.gtag = function() {
+          console.log('[GA] Événement bloqué:', arguments);
+        };
+      }
     </script>
   </head>
   <body>
