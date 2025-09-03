@@ -165,11 +165,22 @@ body {
   color: #b0b0b0;
 }
 
+.main-tab.add-tab.active {
+  background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+  border-color: #d4af8c;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(212, 175, 140, 0.3);
+}
+
 .add-icon {
   color: #b0b0b0;
   font-weight: bold;
   font-size: 1.2em;
   margin-right: 4px;
+}
+
+.main-tab.add-tab.active .add-icon {
+  color: #ffffff;
 }
 
 
@@ -390,11 +401,22 @@ body {
     color: #b0b0b0;
   }
   
+  .main-tab.add-tab.active {
+    background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+    border-color: #d4af8c;
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(212, 175, 140, 0.3);
+  }
+  
   .add-icon {
     color: #b0b0b0;
     font-weight: bold;
     font-size: 1.1em;
     margin-right: 4px;
+  }
+  
+  .main-tab.add-tab.active .add-icon {
+    color: #ffffff;
   }
   
   /* Mobile footer adjustments */
@@ -439,11 +461,22 @@ body {
     color: #b0b0b0;
   }
   
+  .main-tab.add-tab.active {
+    background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+    border-color: #d4af8c;
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(212, 175, 140, 0.3);
+  }
+  
   .add-icon {
     color: #b0b0b0;
     font-weight: bold;
     font-size: 1em;
     margin-right: 3px;
+  }
+  
+  .main-tab.add-tab.active .add-icon {
+    color: #ffffff;
   }
   
   .groups-btn,
