@@ -1,6 +1,5 @@
 import React from 'react'
 import './LandingPage.css'
-import Logo from './Logo'
 
 const LandingPage = ({ onLogin, onRegister }) => {
 
@@ -23,7 +22,6 @@ const LandingPage = ({ onLogin, onRegister }) => {
       {/* Header avec navigation */}
       <header className="landing-header">
         <div className="header-content">
-          <Logo />
           <div className="header-actions">
             <button 
               className="btn-secondary"
