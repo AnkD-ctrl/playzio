@@ -783,33 +783,6 @@ app.get('/api/founder-stats', async (req, res) => {
   }
 })
 
-// Endpoint temporaire pour créer la table contact_messages
-app.post('/api/admin/create-contact-table', async (req, res) => {
-  try {
-    console.log('🔄 Tentative de création de la table contact_messages...')
-    
-    // Utiliser la fonction createContactMessage pour tester si la table existe
-    // Si elle n'existe pas, on aura une erreur qu'on peut gérer
-    try {
-      // Test d'insertion d'un message de test
-      const testMessage = await createContactMessage('Test', 'test@test.com', 'Test de création de table')
-      console.log('✅ Table contact_messages existe déjà, message de test inséré:', testMessage.id)
-      
-      // Supprimer le message de test
-      const { pool } = await import('./database.js')
-      await pool.query('DELETE FROM contact_messages WHERE id = $1', [testMessage.id])
-      console.log('🗑️ Message de test supprimé')
-      
-      res.json({ success: true, message: 'Table contact_messages existe déjà' })
-    } catch (tableError) {
-      console.log('❌ Table n\'existe pas, erreur:', tableError.message)
-      res.status(500).json({ error: 'Table contact_messages n\'existe pas et ne peut pas être créée automatiquement' })
-    }
-  } catch (error) {
-    console.error('❌ Erreur lors de la vérification de la table contact_messages:', error)
-    res.status(500).json({ error: 'Erreur serveur', details: error.message })
-  }
-})
 
 // Routes pour le système de contact
 app.post('/api/contact', async (req, res) => {
@@ -822,59 +795,10 @@ app.post('/api/contact', async (req, res) => {
       return res.status(400).json({ error: 'Message et nom d\'utilisateur requis' })
     }
     
-    // Essayer d'abord l'insertion en base de données
-    try {
-      console.log('💾 Tentative d\'insertion en base de données...')
-      const { pool } = await import('./database.js')
-      const result = await pool.query(
-        'INSERT INTO contact_messages (from_user, from_email, message, created_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING *',
-        [fromUser, fromEmail, message]
-      )
-      
-      const contactMessage = result.rows[0]
-      console.log('✅ Message inséré en base de données:', contactMessage.id)
-      res.json({ success: true, message: contactMessage })
-      return
-    } catch (dbError) {
-      console.log('⚠️ Erreur base de données, utilisation du fallback JSON:', dbError.message)
-    }
-    
-    // Fallback : stockage dans un fichier JSON
-    console.log('💾 Stockage en fichier JSON (fallback)...')
-    const fs = await import('fs')
-    const path = await import('path')
-    
-    const contactData = {
-      id: Date.now(),
-      from_user: fromUser,
-      from_email: fromEmail,
-      message: message,
-      created_at: new Date().toISOString(),
-      is_read: false,
-      admin_response: null,
-      admin_response_at: null
-    }
-    
-    const filePath = path.join(process.cwd(), 'contact_messages.json')
-    
-    // Lire les messages existants ou créer un nouveau fichier
-    let messages = []
-    try {
-      const existingData = fs.readFileSync(filePath, 'utf8')
-      messages = JSON.parse(existingData)
-    } catch (fileError) {
-      console.log('📄 Création d\'un nouveau fichier contact_messages.json')
-      messages = []
-    }
-    
-    // Ajouter le nouveau message
-    messages.push(contactData)
-    
-    // Sauvegarder le fichier
-    fs.writeFileSync(filePath, JSON.stringify(messages, null, 2))
-    
-    console.log('✅ Message sauvegardé en fichier JSON:', contactData.id)
-    res.json({ success: true, message: contactData })
+    console.log('💾 Insertion en base de données PostgreSQL...')
+    const contactMessage = await createContactMessage(fromUser, fromEmail, message)
+    console.log('✅ Message inséré en base de données:', contactMessage.id)
+    res.json({ success: true, message: contactMessage })
     
   } catch (error) {
     console.error('❌ Erreur lors de la création du message de contact:', error)
@@ -885,29 +809,8 @@ app.post('/api/contact', async (req, res) => {
 // Route pour récupérer tous les messages de contact (admin seulement)
 app.get('/api/admin/contact-messages', async (req, res) => {
   try {
-    // Essayer d'abord la base de données
-    try {
-      const messages = await getAllContactMessages()
-      res.json(messages)
-      return
-    } catch (dbError) {
-      console.log('⚠️ Erreur base de données, lecture du fichier JSON:', dbError.message)
-    }
-    
-    // Fallback : lecture du fichier JSON
-    const fs = await import('fs')
-    const path = await import('path')
-    
-    const filePath = path.join(process.cwd(), 'contact_messages.json')
-    
-    try {
-      const fileData = fs.readFileSync(filePath, 'utf8')
-      const messages = JSON.parse(fileData)
-      res.json(messages)
-    } catch (fileError) {
-      console.log('📄 Aucun fichier de messages trouvé, retour d\'un tableau vide')
-      res.json([])
-    }
+    const messages = await getAllContactMessages()
+    res.json(messages)
   } catch (error) {
     console.error('Erreur lors de la récupération des messages:', error)
     res.status(500).json({ error: 'Erreur serveur' })
@@ -931,38 +834,14 @@ app.delete('/api/admin/contact-messages/:id', async (req, res) => {
     const messageId = req.params.id
     console.log('🗑️ Suppression du message:', messageId)
     
-    // Essayer d'abord la base de données
-    try {
-      const { pool } = await import('./database.js')
-      await pool.query('DELETE FROM contact_messages WHERE id = $1', [messageId])
+    const { pool } = await import('./database.js')
+    const result = await pool.query('DELETE FROM contact_messages WHERE id = $1 RETURNING *', [messageId])
+    
+    if (result.rows.length > 0) {
       console.log('✅ Message supprimé de la base de données')
       res.json({ success: true, message: 'Message supprimé avec succès' })
-      return
-    } catch (dbError) {
-      console.log('⚠️ Erreur base de données, suppression du fichier JSON:', dbError.message)
-    }
-    
-    // Fallback : suppression du fichier JSON
-    const fs = await import('fs')
-    const path = await import('path')
-    
-    const filePath = path.join(process.cwd(), 'contact_messages.json')
-    
-    try {
-      const fileData = fs.readFileSync(filePath, 'utf8')
-      const messages = JSON.parse(fileData)
-      
-      // Filtrer le message à supprimer
-      const updatedMessages = messages.filter(msg => msg.id != messageId)
-      
-      // Sauvegarder le fichier mis à jour
-      fs.writeFileSync(filePath, JSON.stringify(updatedMessages, null, 2))
-      
-      console.log('✅ Message supprimé du fichier JSON')
-      res.json({ success: true, message: 'Message supprimé avec succès' })
-    } catch (fileError) {
-      console.error('❌ Erreur lors de la suppression du fichier:', fileError)
-      res.status(500).json({ error: 'Erreur lors de la suppression' })
+    } else {
+      res.status(404).json({ error: 'Message non trouvé' })
     }
   } catch (error) {
     console.error('❌ Erreur lors de la suppression du message:', error)

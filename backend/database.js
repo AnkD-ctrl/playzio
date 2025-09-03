@@ -19,9 +19,49 @@ export async function initDatabase() {
     const schemaSQL = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8')
     await pool.query(schemaSQL)
     console.log('✅ Database schema initialized')
+    
+    // Créer la table contact_messages si elle n'existe pas
+    await createContactMessagesTable()
   } catch (error) {
     console.error('❌ Database initialization failed:', error)
     throw error
+  }
+}
+
+// Créer la table contact_messages
+async function createContactMessagesTable() {
+  try {
+    const createTableQuery = `
+      CREATE TABLE IF NOT EXISTS contact_messages (
+        id SERIAL PRIMARY KEY,
+        from_user VARCHAR(255) NOT NULL,
+        from_email VARCHAR(255),
+        message TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        is_read BOOLEAN DEFAULT FALSE,
+        admin_response TEXT,
+        admin_response_at TIMESTAMP
+      );
+    `
+    
+    await pool.query(createTableQuery)
+    console.log('✅ Table contact_messages created or already exists')
+    
+    // Créer des index pour améliorer les performances
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_contact_messages_created_at 
+      ON contact_messages(created_at DESC);
+    `)
+    
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_contact_messages_is_read 
+      ON contact_messages(is_read);
+    `)
+    
+    console.log('✅ Contact messages indexes created')
+  } catch (error) {
+    console.error('❌ Error creating contact_messages table:', error)
+    // Ne pas faire échouer l'initialisation si la table existe déjà
   }
 }
 
