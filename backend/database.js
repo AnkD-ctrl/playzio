@@ -361,6 +361,45 @@ export async function deleteMessage(messageId, userPrenom) {
   return result.rows[0]
 }
 
+// Fonctions pour le système de contact
+export async function createContactMessage(fromUser, fromEmail, message) {
+  const result = await pool.query(
+    'INSERT INTO contact_messages (from_user, from_email, message, created_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING *',
+    [fromUser, fromEmail, message]
+  )
+  return result.rows[0]
+}
+
+export async function getAllContactMessages() {
+  const result = await pool.query(
+    'SELECT * FROM contact_messages ORDER BY created_at DESC'
+  )
+  return result.rows
+}
+
+export async function getUnreadContactMessages() {
+  const result = await pool.query(
+    'SELECT * FROM contact_messages WHERE is_read = FALSE ORDER BY created_at DESC'
+  )
+  return result.rows
+}
+
+export async function markContactMessageAsRead(messageId) {
+  const result = await pool.query(
+    'UPDATE contact_messages SET is_read = TRUE WHERE id = $1 RETURNING *',
+    [messageId]
+  )
+  return result.rows[0]
+}
+
+export async function addAdminResponse(messageId, response) {
+  const result = await pool.query(
+    'UPDATE contact_messages SET admin_response = $1, admin_response_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *',
+    [response, messageId]
+  )
+  return result.rows[0]
+}
+
 // Fermer la connexion
 export async function closeDatabase() {
   await pool.end()

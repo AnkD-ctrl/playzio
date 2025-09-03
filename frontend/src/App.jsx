@@ -9,6 +9,7 @@ import SlotList from './components/SlotList'
 import Calendar from './components/Calendar'
 import UserProfile from './components/UserProfile'
 import Groups from './components/Groups'
+import ContactModal from './components/ContactModal'
 import { trackPageView, trackLogin, trackLogout, trackActivitySelect, trackNavigation } from './utils/analytics'
 import { testAnalyticsExclusion } from './utils/testAnalytics'
 
@@ -20,6 +21,7 @@ function App() {
   const [selectedType, setSelectedType] = useState('list')
   const [selectedDate, setSelectedDate] = useState(null)
   const [showUserProfile, setShowUserProfile] = useState(false)
+  const [showContactModal, setShowContactModal] = useState(false)
 
 
   // Test d'exclusion d'IP au chargement
@@ -254,6 +256,26 @@ function App() {
           user={currentUser}
           onClose={() => setShowUserProfile(false)}
           onUserUpdate={(updatedUser) => setCurrentUser(updatedUser)}
+        />
+      )}
+
+      {/* Bouton Contact - visible sur toutes les pages sauf landing/login/register */}
+      {currentView !== 'landing' && currentView !== 'login' && currentView !== 'register' && (
+        <button 
+          className="contact-button"
+          onClick={() => setShowContactModal(true)}
+          title="Nous contacter"
+        >
+          💬 Contact
+        </button>
+      )}
+
+      {/* Modal de Contact */}
+      {showContactModal && (
+        <ContactModal 
+          isOpen={showContactModal}
+          onClose={() => setShowContactModal(false)}
+          currentUser={currentUser}
         />
       )}
     </div>

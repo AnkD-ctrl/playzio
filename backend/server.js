@@ -28,6 +28,11 @@ import {
   getFounderCount,
   getMessagesBySlotId,
   createMessage,
+  createContactMessage,
+  getAllContactMessages,
+  getUnreadContactMessages,
+  markContactMessageAsRead,
+  addAdminResponse,
   updateMessage,
   deleteMessage,
   closeDatabase
@@ -775,6 +780,75 @@ app.get('/api/founder-stats', async (req, res) => {
       remainingFounderSlots: 762,
       isFounderAvailable: true
     })
+  }
+})
+
+// Routes pour le système de contact
+app.post('/api/contact', async (req, res) => {
+  try {
+    const { message, fromUser, fromEmail } = req.body
+    
+    if (!message || !fromUser) {
+      return res.status(400).json({ error: 'Message et nom d\'utilisateur requis' })
+    }
+    
+    const contactMessage = await createContactMessage(fromUser, fromEmail, message)
+    res.json({ success: true, message: contactMessage })
+  } catch (error) {
+    console.error('Erreur lors de la création du message de contact:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
+// Route pour récupérer tous les messages de contact (admin seulement)
+app.get('/api/admin/contact-messages', async (req, res) => {
+  try {
+    const messages = await getAllContactMessages()
+    res.json(messages)
+  } catch (error) {
+    console.error('Erreur lors de la récupération des messages:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
+// Route pour récupérer les messages non lus (admin seulement)
+app.get('/api/admin/contact-messages/unread', async (req, res) => {
+  try {
+    const messages = await getUnreadContactMessages()
+    res.json(messages)
+  } catch (error) {
+    console.error('Erreur lors de la récupération des messages non lus:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
+// Route pour marquer un message comme lu (admin seulement)
+app.put('/api/admin/contact-messages/:id/read', async (req, res) => {
+  try {
+    const { id } = req.params
+    const message = await markContactMessageAsRead(id)
+    res.json(message)
+  } catch (error) {
+    console.error('Erreur lors du marquage du message comme lu:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
+// Route pour ajouter une réponse admin
+app.put('/api/admin/contact-messages/:id/response', async (req, res) => {
+  try {
+    const { id } = req.params
+    const { response } = req.body
+    
+    if (!response) {
+      return res.status(400).json({ error: 'Réponse requise' })
+    }
+    
+    const message = await addAdminResponse(id, response)
+    res.json(message)
+  } catch (error) {
+    console.error('Erreur lors de l\'ajout de la réponse admin:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
   }
 })
 
