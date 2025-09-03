@@ -318,8 +318,8 @@ body {
   .header-actions {
     width: 100%;
     justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
+    gap: 8px;
+    flex-wrap: nowrap;
   }
   
   .groups-btn,
@@ -327,8 +327,9 @@ body {
   .logout-btn {
     white-space: nowrap;
     font-size: 0.8rem;
-    padding: 10px 16px;
-    min-width: 100px;
+    padding: 10px 12px;
+    min-width: 90px;
+    flex: 1;
   }
   
   .activity-container,
@@ -396,8 +397,9 @@ body {
   .profile-btn,
   .logout-btn {
     font-size: 0.75rem;
-    padding: 8px 12px;
-    min-width: 80px;
+    padding: 8px 10px;
+    min-width: 70px;
+    flex: 1;
   }
   
   /* iPhone footer adjustments */
