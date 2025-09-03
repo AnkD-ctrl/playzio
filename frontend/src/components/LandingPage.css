@@ -671,6 +671,13 @@
     align-items: center;
   }
   
+  .cta-buttons .cta-button.large,
+  .cta-buttons .btn-secondary.large {
+    width: 100%;
+    max-width: 300px;
+    min-width: 250px;
+  }
+  
   .header-actions {
     gap: 0.5rem;
   }
