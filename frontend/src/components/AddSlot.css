@@ -136,70 +136,17 @@
     width: 100%;
   }
   
-  /* CORRECTION DÉFINITIVE - Champs date/heure mobile */
-  .form-group {
-    margin-bottom: 12px;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 0;
-  }
-  
+  /* CORRECTION SIMPLE - Champs date/heure mobile */
   .form-group input[type="date"],
   .form-group input[type="time"] {
     font-size: 0.8rem;
-    padding: 8px;
-    width: 100%;
+    padding: 8px 12px;
+    width: calc(100% - 24px);
     height: 40px;
-    box-sizing: border-box;
-    max-width: 100%;
-    border: 1px solid #ddd;
-    border-radius: 4px;
   }
 }
 
-/* CORRECTION GLOBALE - Empêcher tout débordement */
-.add-slot {
-  width: 100%;
-  box-sizing: border-box;
-  overflow-x: hidden;
-}
 
-.add-slot-content {
-  width: 100%;
-  box-sizing: border-box;
-  overflow-x: hidden;
-  padding: 16px;
-}
-
-.slot-form {
-  width: 100%;
-  box-sizing: border-box;
-  overflow-x: hidden;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.form-group {
-  width: 100%;
-  box-sizing: border-box;
-  overflow-x: hidden;
-  margin: 0;
-  padding: 0;
-}
-
-.form-group input {
-  max-width: 100%;
-  box-sizing: border-box;
-  width: 100%;
-}
-
-.form-group input[type="date"],
-.form-group input[type="time"] {
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-}
 
 /* Styles pour la sélection des groupes */
 .groups-selection {
@@ -482,13 +429,9 @@
   .form-group input[type="date"],
   .form-group input[type="time"] {
     font-size: 0.75rem;
-    padding: 6px;
-    width: 100%;
+    padding: 6px 10px;
+    width: calc(100% - 20px);
     height: 36px;
-    box-sizing: border-box;
-    max-width: 100%;
-    border: 1px solid #ddd;
-    border-radius: 4px;
   }
   
   .slot-form {
@@ -569,13 +512,9 @@
   .form-group input[type="date"],
   .form-group input[type="time"] {
     font-size: 0.7rem;
-    padding: 5px;
-    width: 100%;
+    padding: 5px 8px;
+    width: calc(100% - 16px);
     height: 32px;
-    box-sizing: border-box;
-    max-width: 100%;
-    border: 1px solid #ddd;
-    border-radius: 4px;
   }
   
   .form-group {
@@ -617,4 +556,5 @@
     font-size: 0.7rem;
     padding: 5px 8px;
   }
+}
 }
