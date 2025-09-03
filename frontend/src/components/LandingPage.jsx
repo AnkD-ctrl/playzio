@@ -214,7 +214,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
               onClick={handleGetStarted}
             >
               <span className="cta-icon">👑</span>
-              Devenir membre premium gratuitement
+              Devenir membre
             </button>
             <button 
               className="btn-secondary large"
