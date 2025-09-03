@@ -925,6 +925,51 @@ app.get('/api/admin/contact-messages/unread', async (req, res) => {
   }
 })
 
+// Route pour supprimer un message de contact (admin seulement)
+app.delete('/api/admin/contact-messages/:id', async (req, res) => {
+  try {
+    const messageId = req.params.id
+    console.log('🗑️ Suppression du message:', messageId)
+    
+    // Essayer d'abord la base de données
+    try {
+      const { pool } = await import('./database.js')
+      await pool.query('DELETE FROM contact_messages WHERE id = $1', [messageId])
+      console.log('✅ Message supprimé de la base de données')
+      res.json({ success: true, message: 'Message supprimé avec succès' })
+      return
+    } catch (dbError) {
+      console.log('⚠️ Erreur base de données, suppression du fichier JSON:', dbError.message)
+    }
+    
+    // Fallback : suppression du fichier JSON
+    const fs = await import('fs')
+    const path = await import('path')
+    
+    const filePath = path.join(process.cwd(), 'contact_messages.json')
+    
+    try {
+      const fileData = fs.readFileSync(filePath, 'utf8')
+      const messages = JSON.parse(fileData)
+      
+      // Filtrer le message à supprimer
+      const updatedMessages = messages.filter(msg => msg.id != messageId)
+      
+      // Sauvegarder le fichier mis à jour
+      fs.writeFileSync(filePath, JSON.stringify(updatedMessages, null, 2))
+      
+      console.log('✅ Message supprimé du fichier JSON')
+      res.json({ success: true, message: 'Message supprimé avec succès' })
+    } catch (fileError) {
+      console.error('❌ Erreur lors de la suppression du fichier:', fileError)
+      res.status(500).json({ error: 'Erreur lors de la suppression' })
+    }
+  } catch (error) {
+    console.error('❌ Erreur lors de la suppression du message:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
 // Route pour marquer un message comme lu (admin seulement)
 app.put('/api/admin/contact-messages/:id/read', async (req, res) => {
   try {

@@ -6,6 +6,7 @@ function MessagesList({ isOpen, onClose }) {
   const [messages, setMessages] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [deletingMessage, setDeletingMessage] = useState(null)
 
   useEffect(() => {
     if (isOpen) {
@@ -30,6 +31,32 @@ function MessagesList({ isOpen, onClose }) {
       setError('Erreur de connexion')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const deleteMessage = async (messageId) => {
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce message ?')) {
+      return
+    }
+
+    setDeletingMessage(messageId)
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/admin/contact-messages/${messageId}`, {
+        method: 'DELETE'
+      })
+      
+      if (response.ok) {
+        // Supprimer le message de la liste locale
+        setMessages(messages.filter(msg => msg.id !== messageId))
+      } else {
+        alert('Erreur lors de la suppression du message')
+      }
+    } catch (err) {
+      console.error('Erreur lors de la suppression:', err)
+      alert('Erreur de connexion lors de la suppression')
+    } finally {
+      setDeletingMessage(null)
     }
   }
 
@@ -118,12 +145,22 @@ function MessagesList({ isOpen, onClose }) {
                     </div>
                   )}
                   
-                  <div className="message-status">
-                    {message.is_read ? (
-                      <span className="status-read">✅ Lu</span>
-                    ) : (
-                      <span className="status-unread">🔴 Non lu</span>
-                    )}
+                  <div className="message-actions">
+                    <div className="message-status">
+                      {message.is_read ? (
+                        <span className="status-read">✅ Lu</span>
+                      ) : (
+                        <span className="status-unread">🔴 Non lu</span>
+                      )}
+                    </div>
+                    <button 
+                      className="delete-message-btn"
+                      onClick={() => deleteMessage(message.id)}
+                      disabled={deletingMessage === message.id}
+                      title="Supprimer ce message"
+                    >
+                      {deletingMessage === message.id ? '⏳' : '🗑️'}
+                    </button>
                   </div>
                 </div>
               ))}
