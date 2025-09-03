@@ -783,6 +783,42 @@ app.get('/api/founder-stats', async (req, res) => {
   }
 })
 
+// Endpoint temporaire pour créer la table contact_messages
+app.post('/api/admin/create-contact-table', async (req, res) => {
+  try {
+    const createTableQuery = `
+      CREATE TABLE IF NOT EXISTS contact_messages (
+        id SERIAL PRIMARY KEY,
+        from_user VARCHAR(255) NOT NULL,
+        from_email VARCHAR(255),
+        message TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        is_read BOOLEAN DEFAULT FALSE,
+        admin_response TEXT,
+        admin_response_at TIMESTAMP
+      );
+    `
+    
+    await pool.query(createTableQuery)
+    
+    // Créer des index pour améliorer les performances
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_contact_messages_created_at 
+      ON contact_messages(created_at DESC);
+    `)
+    
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_contact_messages_is_read 
+      ON contact_messages(is_read);
+    `)
+    
+    res.json({ success: true, message: 'Table contact_messages créée avec succès' })
+  } catch (error) {
+    console.error('Erreur lors de la création de la table contact_messages:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
 // Routes pour le système de contact
 app.post('/api/contact', async (req, res) => {
   try {
