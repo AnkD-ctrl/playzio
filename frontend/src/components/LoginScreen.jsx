@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import './LoginScreen.css'
-import Logo from './Logo'
 import { API_BASE_URL } from '../config'
 
 function LoginScreen({ onLogin, isLogin: initialIsLogin = true, onBack }) {
@@ -71,9 +70,6 @@ function LoginScreen({ onLogin, isLogin: initialIsLogin = true, onBack }) {
               <span className="back-text">Retour</span>
             </button>
           )}
-          <div className="logo-container">
-            <Logo size="large" showText={true} />
-          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="login-form">
