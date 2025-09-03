@@ -13,7 +13,13 @@ const LandingPage = ({ onLogin, onRegister }) => {
   }
 
   return (
-    <div className="landing-page">
+    <div className="landing-page" style={{ 
+      minHeight: '100vh', 
+      background: 'linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 50%, #1a1a1a 100%)', 
+      color: '#ffffff',
+      position: 'relative',
+      zIndex: 1
+    }}>
       {/* Header avec navigation */}
       <header className="landing-header">
         <div className="header-content">
