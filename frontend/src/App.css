@@ -307,6 +307,20 @@ body {
   font-weight: 600;
 }
 
+/* Bouton de filtre des groupes */
+.groups-filter-btn {
+  transition: all 0.3s ease;
+}
+
+.groups-filter-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+.groups-filter-btn.active {
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.4);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .app-header {

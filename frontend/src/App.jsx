@@ -189,6 +189,32 @@ function App() {
               </button>
             </div>
 
+            {/* Bouton de filtre "Mes Groupes" indépendant */}
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              margin: '10px 0',
+              padding: '0 20px'
+            }}>
+              <button 
+                className={`groups-filter-btn ${showOnlyMyGroups ? 'active' : ''}`}
+                onClick={handleGroupsFilterToggle}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '20px',
+                  border: '2px solid #007bff',
+                  backgroundColor: showOnlyMyGroups ? '#007bff' : 'transparent',
+                  color: showOnlyMyGroups ? 'white' : '#007bff',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                {showOnlyMyGroups ? '📋 Mes Groupes' : '👥 Tous les groupes'}
+              </button>
+            </div>
+
             <div className="activity-content">
               {selectedType === 'list' && (
                 <SlotList 
@@ -199,6 +225,8 @@ function App() {
                   onClearDate={() => setSelectedDate(null)}
                   searchFilter={searchFilter}
                   onSearchFilterChange={handleSearchFilterChange}
+                  showOnlyMyGroups={showOnlyMyGroups}
+                  onGroupsFilterToggle={handleGroupsFilterToggle}
                 />
               )}
               {selectedType === 'calendar' && (
@@ -208,6 +236,8 @@ function App() {
                   onDateSelect={handleDateSelect}
                   searchFilter={searchFilter}
                   onSearchFilterChange={handleSearchFilterChange}
+                  showOnlyMyGroups={showOnlyMyGroups}
+                  onGroupsFilterToggle={handleGroupsFilterToggle}
                 />
               )}
               {selectedType === 'add' && (
