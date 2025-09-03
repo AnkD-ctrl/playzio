@@ -111,7 +111,7 @@ function App() {
                 className="profile-btn"
                 onClick={() => setShowUserProfile(true)}
               >
-                👤 Utilisateur
+                👤 Compte
               </button>
               <button className="logout-btn" onClick={handleLogout}>
                 Déconnexion
