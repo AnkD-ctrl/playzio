@@ -42,7 +42,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
         <div className="hero-content">
           <div className="hero-text">
             <h1 className="hero-title">
-              Organisez vos parties de <span className="highlight">Tennis</span>, <span className="highlight">Padel</span> et <span className="highlight">Soirées</span> en quelques clics
+              <span className="highlight">Playzio</span>
             </h1>
             <p className="hero-subtitle">
               Plus besoin de s'envoyer des messages dans tous les sens. Posez votre disponibilité, 
