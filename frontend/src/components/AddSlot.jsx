@@ -197,12 +197,7 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
                 ⚠️ Veuillez sélectionner au moins une activité
               </p>
             )}
-            {selectedActivities.length > 0 && (
-              <p className="selection-info">
-                ✅ Cette disponibilité sera visible pour : {selectedActivities.join(', ')}
-                {customActivityName && ` (${customActivityName})`}
-              </p>
-            )}
+
           </div>
 
           <div className="form-group">
@@ -233,11 +228,7 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
                   </label>
                 ))}
               </div>
-              {selectedGroups.length === 0 && (
-                <p className="visibility-info">
-                  ⚠️ Aucun groupe sélectionné : cette disponibilité sera visible par tous les utilisateurs
-                </p>
-              )}
+
               {selectedGroups.length > 0 && (
                 <p className="visibility-info">
                   ✅ Cette disponibilité sera visible par {selectedGroups.length} groupe(s) sélectionné(s)
