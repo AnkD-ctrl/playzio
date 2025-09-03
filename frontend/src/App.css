@@ -74,14 +74,14 @@ body {
 }
 
 .profile-btn {
-  background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
-  border-color: #d4af8c;
-  color: #ffffff;
+  background: #4a4a4a;
+  border-color: #5a5a5a;
+  color: #e0e0e0;
 }
 
 .profile-btn:hover {
-  background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
-  filter: brightness(1.1);
+  background: #5a5a5a;
+  border-color: #6a6a6a;
 }
 
 /* Content */
