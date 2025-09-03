@@ -3,25 +3,37 @@ import './LandingPage.css'
 import Logo from './Logo'
 import { API_BASE_URL } from '../config'
 
-const LandingPage = ({ onLogin, onRegister }) => {
+const LandingPage = ({ onLogin, onRegister, onStatsRefresh }) => {
   const [founderStats, setFounderStats] = useState(null)
 
-  // Charger les statistiques des membres premium
-  useEffect(() => {
-    const fetchFounderStats = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/founder-stats`)
-        if (response.ok) {
-          const stats = await response.json()
-          setFounderStats(stats)
-        }
-      } catch (error) {
-        console.error('Erreur lors du chargement des statistiques:', error)
+  // Fonction pour charger les statistiques des membres premium
+  const fetchFounderStats = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/founder-stats`)
+      if (response.ok) {
+        const stats = await response.json()
+        setFounderStats(stats)
       }
+    } catch (error) {
+      console.error('Erreur lors du chargement des statistiques:', error)
     }
+  }
 
+  // Charger les statistiques au montage du composant
+  useEffect(() => {
     fetchFounderStats()
   }, [])
+
+  // Recharger les statistiques toutes les 30 secondes pour avoir des données à jour
+  useEffect(() => {
+    const interval = setInterval(fetchFounderStats, 30000)
+    return () => clearInterval(interval)
+  }, [])
+
+  // Recharger les statistiques quand la landing page devient visible
+  useEffect(() => {
+    fetchFounderStats()
+  }, [onStatsRefresh])
 
   const handleGetStarted = () => {
     onRegister()
