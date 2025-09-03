@@ -159,10 +159,6 @@ function App() {
 
         {currentView === 'activity' && selectedActivity && (
           <div className="activity-container">
-            <div className="activity-header">
-              <h2 className="activity-title">{selectedActivity}</h2>
-            </div>
-
             <div className="main-tabs">
               <button 
                 className={`main-tab ${selectedType === 'list' ? 'active' : ''}`}
@@ -177,10 +173,10 @@ function App() {
                 📅 Calendrier
               </button>
               <button 
-                className={`main-tab add-tab ${selectedType === 'add' ? 'active' : ''}`}
+                className={`main-tab ${selectedType === 'add' ? 'active' : ''}`}
                 onClick={() => setSelectedType('add')}
               >
-                <span className="add-icon">+</span> Ajouter
+                ➕ Ajouter
               </button>
             </div>
 

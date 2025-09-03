@@ -96,7 +96,7 @@ body {
 .activity-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 20px 20px 0 20px;
 }
 
 .activity-header {
@@ -159,16 +159,7 @@ body {
   box-shadow: 0 2px 8px rgba(212, 175, 140, 0.3);
 }
 
-.main-tab.add-tab {
-  color: #ffffff !important;
-}
 
-.add-icon {
-  color: #ffffff !important;
-  font-weight: bold;
-  font-size: 1.4em;
-  margin-bottom: 2px;
-}
 
 .activity-content {
   margin-bottom: 24px;
