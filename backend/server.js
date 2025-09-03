@@ -838,7 +838,7 @@ app.delete('/api/admin/contact-messages/:id', async (req, res) => {
       return res.status(400).json({ error: 'ID de message invalide' })
     }
     
-    const { pool } = await import('./database.js')
+    // Utiliser directement la fonction de database.js
     const result = await pool.query('DELETE FROM contact_messages WHERE id = $1 RETURNING *', [messageId])
     
     if (result.rows.length > 0) {
@@ -849,7 +849,7 @@ app.delete('/api/admin/contact-messages/:id', async (req, res) => {
     }
   } catch (error) {
     console.error('❌ Erreur lors de la suppression du message:', error)
-    res.status(500).json({ error: 'Erreur serveur' })
+    res.status(500).json({ error: 'Erreur serveur', details: error.message })
   }
 })
 
