@@ -23,6 +23,7 @@ function App() {
 
   // Test d'exclusion d'IP au chargement
   useEffect(() => {
+    console.log('App loaded, currentView:', currentView)
     testAnalyticsExclusion()
   }, [])
 
@@ -118,10 +119,13 @@ function App() {
 
       <div className="app-content">
         {currentView === 'landing' && (
-          <LandingPage 
-            onLogin={handleLandingLogin}
-            onRegister={handleLandingRegister}
-          />
+          <>
+            {console.log('Rendering LandingPage')}
+            <LandingPage 
+              onLogin={handleLandingLogin}
+              onRegister={handleLandingRegister}
+            />
+          </>
         )}
 
         {currentView === 'welcome' && (
