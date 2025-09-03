@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import './ContactModal.css'
+import { API_BASE_URL } from '../config'
 
 function ContactModal({ isOpen, onClose, currentUser }) {
   const [message, setMessage] = useState('')
@@ -15,7 +16,7 @@ function ContactModal({ isOpen, onClose, currentUser }) {
     setSubmitStatus(null)
 
     try {
-      const response = await fetch('/api/contact', {
+      const response = await fetch(`${API_BASE_URL}/api/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

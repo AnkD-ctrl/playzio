@@ -1,13 +1,11 @@
-const { Pool } = require('pg')
-
-// Configuration de la base de données
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || 'postgresql://localhost:5432/playzio'
-})
+import { initDatabase, closeDatabase } from './database.js'
 
 async function createContactMessagesTable() {
   try {
     console.log('🔄 Création de la table contact_messages...')
+    
+    // Initialiser la connexion à la base de données
+    await initDatabase()
     
     const createTableQuery = `
       CREATE TABLE IF NOT EXISTS contact_messages (
@@ -22,6 +20,7 @@ async function createContactMessagesTable() {
       );
     `
     
+    const { pool } = await import('./database.js')
     await pool.query(createTableQuery)
     console.log('✅ Table contact_messages créée avec succès')
     
@@ -52,12 +51,13 @@ async function main() {
     console.error('💥 Échec de la migration:', error)
     process.exit(1)
   } finally {
-    await pool.end()
+    await closeDatabase()
   }
 }
 
-if (require.main === module) {
+// Exécuter la migration si le fichier est appelé directement
+if (import.meta.url === `file://${process.argv[1]}`) {
   main()
 }
 
-module.exports = { createContactMessagesTable }
+export { createContactMessagesTable }
