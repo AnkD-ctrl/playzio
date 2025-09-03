@@ -1,16 +1,24 @@
 import React, { useState, useEffect } from 'react'
 import './Calendar.css'
 import { API_BASE_URL } from '../config'
+import ActivitySearchModal from './ActivitySearchModal'
 
 function Calendar({ activity, currentUser, onDateSelect }) {
   const [slots, setSlots] = useState([])
   const [currentDate, setCurrentDate] = useState(new Date())
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [showSearchModal, setShowSearchModal] = useState(false)
+  const [searchFilter, setSearchFilter] = useState('')
+
+  const handleActivitySelect = (activityName) => {
+    setSearchFilter(activityName)
+    setShowSearchModal(false)
+  }
 
   useEffect(() => {
     fetchSlots()
-  }, [activity])
+  }, [activity, searchFilter])
 
   const fetchSlots = async () => {
     try {
@@ -25,7 +33,16 @@ function Calendar({ activity, currentUser, onDateSelect }) {
       
       if (response.ok) {
         const data = await response.json()
-        setSlots(data)
+        
+        // Filtrer par activité personnalisée si un filtre de recherche est défini
+        let filteredData = data
+        if (searchFilter) {
+          filteredData = data.filter(slot => 
+            slot.customActivity && slot.customActivity.toLowerCase().includes(searchFilter.toLowerCase())
+          )
+        }
+        
+        setSlots(filteredData)
       } else {
         setError('Erreur lors du chargement des disponibilités')
       }
@@ -113,6 +130,32 @@ function Calendar({ activity, currentUser, onDateSelect }) {
 
   return (
     <div className="calendar">
+      <div className="calendar-title-header">
+        <div className="header-title-container">
+          <h3>Calendrier {activity === 'Tous' ? '' : activity}</h3>
+          <button 
+            className="search-btn"
+            onClick={() => setShowSearchModal(true)}
+            title="Rechercher une activité"
+          >
+            🔍
+          </button>
+        </div>
+        
+        {searchFilter && (
+          <div className="search-filter-info">
+            <p>🔍 Filtre : "{searchFilter}"</p>
+            <button 
+              className="clear-filter-btn"
+              onClick={() => setSearchFilter('')}
+              title="Supprimer le filtre"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+      </div>
+      
       <div className="calendar-header">
         <button className="nav-btn" onClick={() => navigateMonth(-1)}>
           ←
@@ -174,6 +217,15 @@ function Calendar({ activity, currentUser, onDateSelect }) {
           <span>Disponibilités</span>
         </div>
       </div>
+      
+      {/* Modal de recherche d'activités */}
+      {showSearchModal && (
+        <ActivitySearchModal 
+          isOpen={showSearchModal}
+          onClose={() => setShowSearchModal(false)}
+          onSelectActivity={handleActivitySelect}
+        />
+      )}
     </div>
   )
 }

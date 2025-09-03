@@ -4,6 +4,78 @@
   margin: 0 auto;
 }
 
+.calendar-title-header {
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.header-title-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.calendar-title-header h3 {
+  color: #e0e0e0;
+  font-size: 1.5rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+.search-btn {
+  background: #4a4a4a;
+  color: #e0e0e0;
+  border: 1px solid #5a5a5a;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1.2rem;
+}
+
+.search-btn:hover {
+  background: #5a5a5a;
+  border-color: #6a6a6a;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.search-filter-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding: 8px 16px;
+  background: rgba(0, 123, 255, 0.1);
+  border: 1px solid rgba(0, 123, 255, 0.3);
+  border-radius: 6px;
+  color: #007bff;
+}
+
+.search-filter-info p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.clear-filter-btn {
+  background: #ff6b6b;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.clear-filter-btn:hover {
+  background: #ff5252;
+  transform: scale(1.1);
+}
+
 .calendar-header {
   display: flex;
   justify-content: space-between;
@@ -195,38 +267,122 @@
   margin: 20px;
 }
 
+/* Styles responsive pour le calendrier */
 @media (max-width: 768px) {
   .calendar {
-    padding: 16px;
+    padding: 10px;
+  }
+  
+  .calendar-title-header {
+    margin-bottom: 12px;
+  }
+  
+  .calendar-title-header h3 {
+    font-size: 1.3rem;
+  }
+  
+  .search-btn {
+    padding: 6px 10px;
+    font-size: 1.1rem;
+  }
+  
+  .search-filter-info {
+    padding: 6px 12px;
+    margin-bottom: 6px;
+  }
+  
+  .search-filter-info p {
+    font-size: 0.8rem;
+  }
+  
+  .calendar-header {
+    margin-bottom: 16px;
+    padding: 0 4px;
   }
   
   .calendar-header h3 {
-    font-size: 1.25rem;
+    font-size: 1.3rem;
   }
   
   .nav-btn {
-    width: 36px;
-    height: 36px;
-    font-size: 1rem;
+    width: 35px;
+    height: 35px;
+    font-size: 1.1rem;
+  }
+  
+  .calendar-grid {
+    gap: 1px;
+  }
+  
+  .weekday {
+    font-size: 0.8rem;
+    padding: 8px 4px;
   }
   
   .calendar-day {
-    min-height: 80px;
-    padding: 6px;
+    min-height: 60px;
+    padding: 4px;
   }
   
   .day-number {
-    font-size: 0.875rem;
+    font-size: 0.8rem;
   }
   
-  .slot-indicator,
-  .more-slots {
+  .slot-indicator {
     font-size: 0.7rem;
-    padding: 1px 4px;
+    padding: 2px 4px;
   }
   
-  .calendar-legend {
-    flex-direction: column;
-    gap: 12px;
+  .more-slots {
+    font-size: 0.6rem;
   }
 }
+
+@media (max-width: 480px) {
+  .calendar {
+    padding: 8px;
+  }
+  
+  .calendar-title-header h3 {
+    font-size: 1.2rem;
+  }
+  
+  .search-btn {
+    padding: 5px 8px;
+    font-size: 1rem;
+  }
+  
+  .calendar-header h3 {
+    font-size: 1.2rem;
+  }
+  
+  .nav-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+  
+  .weekday {
+    font-size: 0.75rem;
+    padding: 6px 2px;
+  }
+  
+  .calendar-day {
+    min-height: 50px;
+    padding: 3px;
+  }
+  
+  .day-number {
+    font-size: 0.75rem;
+  }
+  
+  .slot-indicator {
+    font-size: 0.65rem;
+    padding: 1px 3px;
+  }
+  
+  .more-slots {
+    font-size: 0.55rem;
+  }
+}
+
