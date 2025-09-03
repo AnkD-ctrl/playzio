@@ -12,6 +12,7 @@ import {
   createSlot,
   updateSlotParticipants,
   deleteSlot,
+  searchCustomActivities,
   getAllGroups,
   getGroupsByUser,
   getGroupById,
@@ -362,7 +363,7 @@ app.get('/api/slots', async (req, res) => {
 // Ajouter un créneau
 app.post('/api/slots', async (req, res) => {
   try {
-    const { date, heureDebut, heureFin, type, participants, createdBy, visibleToGroups, description } = req.body
+    const { date, heureDebut, heureFin, type, customActivity, participants, createdBy, visibleToGroups, description } = req.body
     
     const newSlot = await createSlot({
       id: nanoid(),
@@ -370,6 +371,7 @@ app.post('/api/slots', async (req, res) => {
       heureDebut,
       heureFin,
       type,
+      customActivity: customActivity || null,
       description: description || '',
       createdBy: createdBy || null,
       visibleToGroups: visibleToGroups || [],
@@ -379,6 +381,22 @@ app.post('/api/slots', async (req, res) => {
     res.json({ success: true, slot: newSlot })
   } catch (error) {
     console.error('Create slot error:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
+// Rechercher les activités personnalisées
+app.get('/api/activities/search', async (req, res) => {
+  try {
+    const { q } = req.query
+    if (!q || q.trim().length < 2) {
+      return res.json({ activities: [] })
+    }
+    
+    const activities = await searchCustomActivities(q.trim())
+    res.json({ activities })
+  } catch (error) {
+    console.error('Search activities error:', error)
     res.status(500).json({ error: 'Erreur serveur' })
   }
 })

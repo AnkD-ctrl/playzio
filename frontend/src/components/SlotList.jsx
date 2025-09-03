@@ -3,16 +3,24 @@ import './SlotList.css'
 import { API_BASE_URL } from '../config'
 import { trackSlotJoin, trackSlotLeave } from '../utils/analytics'
 import SlotDiscussion from './SlotDiscussion'
+import ActivitySearchModal from './ActivitySearchModal'
 
 function SlotList({ activity, currentUser, selectedDate, onClearDate }) {
   const [slots, setSlots] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [selectedSlot, setSelectedSlot] = useState(null)
+  const [showSearchModal, setShowSearchModal] = useState(false)
+  const [searchFilter, setSearchFilter] = useState('')
+
+  const handleActivitySelect = (activityName) => {
+    setSearchFilter(activityName)
+    setShowSearchModal(false)
+  }
 
   useEffect(() => {
     fetchSlots()
-  }, [activity, selectedDate])
+  }, [activity, selectedDate, searchFilter])
 
   const fetchSlots = async () => {
     try {
@@ -28,9 +36,17 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate }) {
       if (response.ok) {
         const data = await response.json()
         // Filtrer par date si une date est sélectionnée
-        const filteredData = selectedDate 
+        let filteredData = selectedDate 
           ? data.filter(slot => slot.date === selectedDate)
           : data
+        
+        // Filtrer par activité personnalisée si on est dans "Autre" et qu'un filtre est défini
+        if (activity === 'Autre' && searchFilter) {
+          filteredData = filteredData.filter(slot => 
+            slot.customActivity && slot.customActivity.toLowerCase().includes(searchFilter.toLowerCase())
+          )
+        }
+        
         setSlots(filteredData)
       } else {
         setError('Erreur lors du chargement des disponibilités')
@@ -136,7 +152,32 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate }) {
   return (
     <div className="slot-list">
       <div className="slot-list-header">
-        <h3>{activity === 'Tous' ? 'Toutes les disponibilités' : `Disponibilités ${activity}`}</h3>
+        <div className="header-title-container">
+          <h3>{activity === 'Tous' ? 'Toutes les disponibilités' : `Disponibilités ${activity}`}</h3>
+          {activity === 'Autre' && (
+            <button 
+              className="search-btn"
+              onClick={() => setShowSearchModal(true)}
+              title="Rechercher une activité"
+            >
+              🔍
+            </button>
+          )}
+        </div>
+        
+        {activity === 'Autre' && searchFilter && (
+          <div className="search-filter-info">
+            <p>🔍 Filtre : "{searchFilter}"</p>
+            <button 
+              className="clear-filter-btn"
+              onClick={() => setSearchFilter('')}
+              title="Supprimer le filtre"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+        
         {selectedDate ? (
           <div className="selected-date-info">
             <p>📅 Disponibilités du {selectedDate.split('-').reverse().join('/')}</p>
@@ -180,7 +221,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate }) {
                     <span className="time">{slot.heureDebut} - {slot.heureFin}</span>
                   </div>
                   <div className="slot-activity">
-                    {Array.isArray(slot.type) ? slot.type.join(', ') : slot.type}
+                    {slot.customActivity ? slot.customActivity : (Array.isArray(slot.type) ? slot.type.join(', ') : slot.type)}
                   </div>
                 </div>
 
@@ -253,6 +294,15 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate }) {
           slot={selectedSlot}
           currentUser={currentUser}
           onClose={() => setSelectedSlot(null)}
+        />
+      )}
+      
+      {/* Modal de recherche d'activités */}
+      {showSearchModal && (
+        <ActivitySearchModal 
+          isOpen={showSearchModal}
+          onClose={() => setShowSearchModal(false)}
+          onSelectActivity={handleActivitySelect}
         />
       )}
     </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import './AddSlot.css'
 import { API_BASE_URL } from '../config'
 import { trackSlotCreate } from '../utils/analytics'
+import CustomActivityModal from './CustomActivityModal'
 
 function AddSlot({ activity, currentUser, onSlotAdded }) {
   const [formData, setFormData] = useState({
@@ -15,6 +16,8 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
   const [userGroups, setUserGroups] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const [showCustomActivityModal, setShowCustomActivityModal] = useState(false)
+  const [customActivityName, setCustomActivityName] = useState('')
 
   const availableActivities = ['Tennis', 'Padel', 'Soirée', 'Autre']
 
@@ -56,6 +59,11 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
     )
   }
 
+  const handleCustomActivityConfirm = (activityName) => {
+    setCustomActivityName(activityName)
+    setShowCustomActivityModal(false)
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
@@ -71,6 +79,7 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
       const slotData = {
         ...formData,
         type: selectedActivities,
+        customActivity: customActivityName || null,
         createdBy: currentUser.prenom,
         visibleToGroups: selectedGroups
       }
@@ -89,6 +98,7 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
         setFormData({ date: '', heureDebut: '', heureFin: '', description: '' })
         setSelectedActivities([activity])
         setSelectedGroups([])
+        setCustomActivityName('')
         onSlotAdded()
       } else {
         const data = await response.json()
@@ -155,6 +165,33 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
                 </label>
               ))}
             </div>
+            
+            {selectedActivities.includes('Autre') && (
+              <div className="custom-activity-section">
+                {customActivityName ? (
+                  <div className="custom-activity-display">
+                    <span className="custom-activity-label">Activité personnalisée :</span>
+                    <span className="custom-activity-name">{customActivityName}</span>
+                    <button 
+                      type="button" 
+                      className="change-activity-btn"
+                      onClick={() => setShowCustomActivityModal(true)}
+                    >
+                      Modifier
+                    </button>
+                  </div>
+                ) : (
+                  <button 
+                    type="button" 
+                    className="add-custom-activity-btn"
+                    onClick={() => setShowCustomActivityModal(true)}
+                  >
+                    + Saisir le nom de l'activité
+                  </button>
+                )}
+              </div>
+            )}
+            
             {selectedActivities.length === 0 && (
               <p className="selection-info">
                 ⚠️ Veuillez sélectionner au moins une activité
@@ -163,6 +200,7 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
             {selectedActivities.length > 0 && (
               <p className="selection-info">
                 ✅ Cette disponibilité sera visible pour : {selectedActivities.join(', ')}
+                {customActivityName && ` (${customActivityName})`}
               </p>
             )}
           </div>
@@ -228,6 +266,15 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
           </div>
         </form>
       </div>
+      
+      {/* Modal pour saisir le nom d'activité personnalisée */}
+      {showCustomActivityModal && (
+        <CustomActivityModal 
+          isOpen={showCustomActivityModal}
+          onClose={() => setShowCustomActivityModal(false)}
+          onConfirm={handleCustomActivityConfirm}
+        />
+      )}
     </div>
   )
 }

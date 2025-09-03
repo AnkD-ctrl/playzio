@@ -123,6 +123,7 @@ export async function getAllSlots(filters = {}) {
     heureDebut: row.heure_debut,
     heureFin: row.heure_fin,
     type: typeof row.type === 'string' ? (row.type.startsWith('[') ? JSON.parse(row.type) : row.type) : row.type,
+    customActivity: row.custom_activity,
     description: row.description,
     createdBy: row.created_by,
     visibleToGroups: row.visible_to_groups,
@@ -141,6 +142,7 @@ export async function getSlotById(id) {
     heureDebut: row.heure_debut,
     heureFin: row.heure_fin,
     type: typeof row.type === 'string' ? (row.type.startsWith('[') ? JSON.parse(row.type) : row.type) : row.type,
+    customActivity: row.custom_activity,
     description: row.description,
     createdBy: row.created_by,
     visibleToGroups: row.visible_to_groups,
@@ -149,13 +151,13 @@ export async function getSlotById(id) {
 }
 
 export async function createSlot(slotData) {
-  const { id, date, heureDebut, heureFin, type, description = '', createdBy = null, visibleToGroups = [], participants = [] } = slotData
+  const { id, date, heureDebut, heureFin, type, customActivity = null, description = '', createdBy = null, visibleToGroups = [], participants = [] } = slotData
   
   const typeValue = Array.isArray(type) ? JSON.stringify(type) : type
   
   const result = await pool.query(
-    'INSERT INTO slots (id, date, heure_debut, heure_fin, type, description, created_by, visible_to_groups, participants) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
-    [id, date, heureDebut, heureFin, typeValue, description, createdBy, visibleToGroups, participants]
+    'INSERT INTO slots (id, date, heure_debut, heure_fin, type, custom_activity, description, created_by, visible_to_groups, participants) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *',
+    [id, date, heureDebut, heureFin, typeValue, customActivity, description, createdBy, visibleToGroups, participants]
   )
   
   const row = result.rows[0]
@@ -165,6 +167,7 @@ export async function createSlot(slotData) {
     heureDebut: row.heure_debut,
     heureFin: row.heure_fin,
     type: typeof row.type === 'string' ? (row.type.startsWith('[') ? JSON.parse(row.type) : row.type) : row.type,
+    customActivity: row.custom_activity,
     description: row.description,
     createdBy: row.created_by,
     visibleToGroups: row.visible_to_groups,
@@ -197,6 +200,15 @@ export async function updateSlotParticipants(id, participants) {
 export async function deleteSlot(id) {
   const result = await pool.query('DELETE FROM slots WHERE id = $1 RETURNING id', [id])
   return result.rows.length > 0
+}
+
+// Fonction pour rechercher les activités personnalisées
+export async function searchCustomActivities(searchTerm) {
+  const result = await pool.query(
+    'SELECT DISTINCT custom_activity FROM slots WHERE custom_activity ILIKE $1 AND custom_activity IS NOT NULL ORDER BY custom_activity',
+    [`%${searchTerm}%`]
+  )
+  return result.rows.map(row => row.custom_activity)
 }
 
 // Groups

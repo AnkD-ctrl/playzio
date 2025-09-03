@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS slots (
     heure_debut VARCHAR(10),
     heure_fin VARCHAR(10),
     type TEXT, -- Can be JSON array for multiple activities
+    custom_activity VARCHAR(100), -- For custom activity names when type is "Autre"
     description TEXT DEFAULT '',
     created_by VARCHAR(100) REFERENCES users(prenom),
     visible_to_groups TEXT[] DEFAULT '{}',
@@ -65,10 +66,20 @@ BEGIN
     END IF;
 END $$;
 
+-- Migration: Add custom_activity column if it doesn't exist
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'slots' AND column_name = 'custom_activity') THEN
+        ALTER TABLE slots ADD COLUMN custom_activity VARCHAR(100);
+    END IF;
+END $$;
+
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_users_prenom ON users(prenom);
 CREATE INDEX IF NOT EXISTS idx_slots_date ON slots(date);
 CREATE INDEX IF NOT EXISTS idx_slots_type ON slots USING GIN ((type::jsonb)) WHERE type IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_slots_custom_activity ON slots(custom_activity);
 CREATE INDEX IF NOT EXISTS idx_groups_creator ON groups(creator);
 CREATE INDEX IF NOT EXISTS idx_groups_members ON groups USING GIN (members);
 CREATE INDEX IF NOT EXISTS idx_friend_requests_users ON friend_requests(from_user, to_user);
