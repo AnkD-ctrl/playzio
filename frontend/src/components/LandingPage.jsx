@@ -230,7 +230,6 @@ const LandingPage = ({ onLogin, onRegister }) => {
       {/* Footer */}
       <footer className="landing-footer">
         <div className="footer-content">
-          <Logo />
           <p>Organisez vos activités entre amis, simplement.</p>
         </div>
       </footer>
