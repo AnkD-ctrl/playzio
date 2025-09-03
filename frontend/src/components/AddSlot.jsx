@@ -115,41 +115,41 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
     <div className="add-slot">
       <div className="add-slot-content">
         <form onSubmit={handleSubmit} className="slot-form">
-          <div className="form-group input-with-icon date-field">
-            <label htmlFor="date">Date</label>
-            <input
-              type="date"
-              id="date"
-              name="date"
-              value={formData.date}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
+                  <div className="form-group">
+          <label htmlFor="date">Date</label>
+          <input
+            type="date"
+            id="date"
+            name="date"
+            value={formData.date}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
 
-          <div className="form-group input-with-icon time-field">
-            <label htmlFor="heureDebut">Heure de début</label>
-            <input
-              type="time"
-              id="heureDebut"
-              name="heureDebut"
-              value={formData.heureDebut}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
+        <div className="form-group">
+          <label htmlFor="heureDebut">Heure de début</label>
+          <input
+            type="time"
+            id="heureDebut"
+            name="heureDebut"
+            value={formData.heureDebut}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
 
-          <div className="form-group input-with-icon time-field">
-            <label htmlFor="heureFin">Heure de fin</label>
-            <input
-              type="time"
-              id="heureFin"
-              name="heureFin"
-              value={formData.heureFin}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
+        <div className="form-group">
+          <label htmlFor="heureFin">Heure de fin</label>
+          <input
+            type="time"
+            id="heureFin"
+            name="heureFin"
+            value={formData.heureFin}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
 
           <div className="form-group">
             <label>Activités concernées</label>
