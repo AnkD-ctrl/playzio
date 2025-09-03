@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './App.css'
 import Logo from './components/Logo'
+import LandingPage from './components/LandingPage'
 import LoginScreen from './components/LoginScreen'
 import WelcomeScreen from './components/WelcomeScreen'
 import AddSlot from './components/AddSlot'
@@ -14,7 +15,7 @@ import { testAnalyticsExclusion } from './utils/testAnalytics'
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [currentUser, setCurrentUser] = useState(null)
-  const [currentView, setCurrentView] = useState('welcome')
+  const [currentView, setCurrentView] = useState('landing') // Commencer par la landing page
   const [selectedActivity, setSelectedActivity] = useState(null)
   const [selectedType, setSelectedType] = useState('list')
   const [selectedDate, setSelectedDate] = useState(null)
@@ -47,9 +48,20 @@ function App() {
     trackLogout()
     setIsLoggedIn(false)
     setCurrentUser(null)
-    setCurrentView('welcome')
+    setCurrentView('landing') // Retourner à la landing page après déconnexion
     setSelectedActivity(null)
     setSelectedType('list')
+  }
+
+  // Fonctions pour la navigation depuis la landing page
+  const handleLandingLogin = () => {
+    setCurrentView('login')
+    trackNavigation('landing', 'login')
+  }
+
+  const handleLandingRegister = () => {
+    setCurrentView('register')
+    trackNavigation('landing', 'register')
   }
 
   const handleActivitySelect = (activity) => {
@@ -105,10 +117,33 @@ function App() {
       )}
 
       <div className="app-content">
+        {currentView === 'landing' && (
+          <LandingPage 
+            onLogin={handleLandingLogin}
+            onRegister={handleLandingRegister}
+          />
+        )}
+
         {currentView === 'welcome' && (
           <WelcomeScreen 
             onActivitySelect={handleActivitySelect}
             currentUser={currentUser}
+          />
+        )}
+
+        {currentView === 'login' && (
+          <LoginScreen 
+            onLogin={handleLogin}
+            isLogin={true}
+            onBack={() => setCurrentView('landing')}
+          />
+        )}
+
+        {currentView === 'register' && (
+          <LoginScreen 
+            onLogin={handleLogin}
+            isLogin={false}
+            onBack={() => setCurrentView('landing')}
           />
         )}
 

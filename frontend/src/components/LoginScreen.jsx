@@ -3,8 +3,8 @@ import './LoginScreen.css'
 import Logo from './Logo'
 import { API_BASE_URL } from '../config'
 
-function LoginScreen({ onLogin }) {
-  const [isLogin, setIsLogin] = useState(true)
+function LoginScreen({ onLogin, isLogin: initialIsLogin = true, onBack }) {
+  const [isLogin, setIsLogin] = useState(initialIsLogin)
   const [formData, setFormData] = useState({
     prenom: '',
     password: ''
@@ -77,6 +77,15 @@ function LoginScreen({ onLogin }) {
     <div className="login-screen">
       <div className="login-container">
         <div className="login-header">
+          {onBack && (
+            <button 
+              type="button" 
+              className="back-button"
+              onClick={onBack}
+            >
+              ← Retour
+            </button>
+          )}
           <div className="logo-container">
             <Logo size="large" showText={true} />
           </div>
