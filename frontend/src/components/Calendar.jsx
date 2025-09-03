@@ -170,7 +170,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
             >
               👥
             </button>
-            {(activity === 'Tous' || activity === 'Autre' || activity === 'Sport') && (
+            {(activity === 'Tous' || activity === 'Autre' || activity === 'Sport' || activity === 'Social') && (
               <button 
                 className="search-btn"
                 onClick={() => setShowSearchModal(true)}

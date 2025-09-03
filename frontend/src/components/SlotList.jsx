@@ -191,7 +191,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
             >
               👥
             </button>
-            {(activity === 'Tous' || activity === 'Autre' || activity === 'Sport') && (
+            {(activity === 'Tous' || activity === 'Autre' || activity === 'Sport' || activity === 'Social') && (
               <button 
                 className="search-btn"
                 onClick={() => setShowSearchModal(true)}
