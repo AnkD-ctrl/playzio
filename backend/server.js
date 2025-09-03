@@ -822,14 +822,17 @@ app.post('/api/admin/create-contact-table', async (req, res) => {
 // Routes pour le système de contact
 app.post('/api/contact', async (req, res) => {
   try {
+    console.log('📧 Nouveau message de contact reçu:', req.body)
     const { message, fromUser, fromEmail } = req.body
     
     if (!message || !fromUser) {
+      console.log('❌ Données manquantes:', { message: !!message, fromUser: !!fromUser })
       return res.status(400).json({ error: 'Message et nom d\'utilisateur requis' })
     }
     
     // Créer la table si elle n'existe pas
     try {
+      console.log('🔄 Création de la table contact_messages...')
       await pool.query(`
         CREATE TABLE IF NOT EXISTS contact_messages (
           id SERIAL PRIMARY KEY,
@@ -842,15 +845,19 @@ app.post('/api/contact', async (req, res) => {
           admin_response_at TIMESTAMP
         );
       `)
+      console.log('✅ Table contact_messages créée ou existe déjà')
     } catch (tableError) {
-      console.log('Table contact_messages existe déjà ou erreur de création:', tableError.message)
+      console.error('❌ Erreur lors de la création de la table:', tableError)
+      return res.status(500).json({ error: 'Erreur lors de la création de la table' })
     }
     
+    console.log('💾 Insertion du message...')
     const contactMessage = await createContactMessage(fromUser, fromEmail, message)
+    console.log('✅ Message inséré avec succès:', contactMessage.id)
     res.json({ success: true, message: contactMessage })
   } catch (error) {
-    console.error('Erreur lors de la création du message de contact:', error)
-    res.status(500).json({ error: 'Erreur serveur' })
+    console.error('❌ Erreur lors de la création du message de contact:', error)
+    res.status(500).json({ error: 'Erreur serveur', details: error.message })
   }
 })
 
