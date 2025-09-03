@@ -227,18 +227,12 @@ function App() {
           <div className="activity-switcher-footer">
             <div className="footer-content">
               <div className="activity-switcher">
-                <button 
-                  className={`activity-switch-btn ${selectedActivity === 'Tennis' ? 'active' : ''}`}
-                  onClick={() => setSelectedActivity('Tennis')}
-                >
-                  <span>Tennis</span>
-                </button>
-                <button 
-                  className={`activity-switch-btn ${selectedActivity === 'Padel' ? 'active' : ''}`}
-                  onClick={() => setSelectedActivity('Padel')}
-                >
-                  <span>Padel</span>
-                </button>
+                              <button 
+                className={`activity-switch-btn ${selectedActivity === 'Sport' ? 'active' : ''}`}
+                onClick={() => setSelectedActivity('Sport')}
+              >
+                <span>Sport</span>
+              </button>
                 <button 
                   className={`activity-switch-btn ${selectedActivity === 'Soirée' ? 'active' : ''}`}
                   onClick={() => setSelectedActivity('Soirée')}

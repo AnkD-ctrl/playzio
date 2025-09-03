@@ -19,7 +19,7 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
   const [showCustomActivityModal, setShowCustomActivityModal] = useState(false)
   const [customActivityName, setCustomActivityName] = useState('')
 
-  const availableActivities = ['Tennis', 'Padel', 'Soirée', 'Autre']
+  const availableActivities = ['Sport', 'Soirée', 'Autre']
 
   useEffect(() => {
     fetchUserGroups()
@@ -166,7 +166,7 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
               ))}
             </div>
             
-            {selectedActivities.includes('Autre') && (
+            {(selectedActivities.includes('Autre') || selectedActivities.includes('Sport')) && (
               <div className="custom-activity-section">
                 {customActivityName ? (
                   <div className="custom-activity-display">
