@@ -34,7 +34,7 @@ function App() {
       trackPageView('Groups Page')
     } else if (currentView === 'activity') {
       trackPageView(`Activity: ${selectedActivity}`)
-
+    }
   }, [currentView, selectedActivity])
 
   const handleLogin = (user) => {
