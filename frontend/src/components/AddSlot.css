@@ -383,6 +383,8 @@
   .activity-checkbox {
     padding: 8px 12px;
     font-size: 0.9rem;
+    flex-direction: row;
+    align-items: center;
   }
   
   .custom-activity-section {
@@ -409,6 +411,8 @@
   .group-checkbox {
     padding: 8px 12px;
     font-size: 0.85rem;
+    flex-direction: row;
+    align-items: center;
   }
   
   .form-actions {
@@ -469,6 +473,8 @@
   .activity-checkbox {
     padding: 6px 10px;
     font-size: 0.85rem;
+    flex-direction: row;
+    align-items: center;
   }
   
   .custom-activity-section {
@@ -483,6 +489,8 @@
   .group-checkbox {
     padding: 6px 10px;
     font-size: 0.8rem;
+    flex-direction: row;
+    align-items: center;
   }
   
   .cancel-btn,
@@ -548,6 +556,8 @@
   .activity-checkbox {
     padding: 5px 8px;
     font-size: 0.8rem;
+    flex-direction: row;
+    align-items: center;
   }
   
   .custom-activity-section {
