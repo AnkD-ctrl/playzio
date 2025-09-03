@@ -5,18 +5,17 @@ import { trackSlotJoin, trackSlotLeave } from '../utils/analytics'
 import SlotDiscussion from './SlotDiscussion'
 import ActivitySearchModal from './ActivitySearchModal'
 
-function SlotList({ activity, currentUser, selectedDate, onClearDate }) {
+function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilter, onSearchFilterChange }) {
   const [slots, setSlots] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [selectedSlot, setSelectedSlot] = useState(null)
   const [showSearchModal, setShowSearchModal] = useState(false)
-  const [searchFilter, setSearchFilter] = useState('')
   const [showOnlyMyGroups, setShowOnlyMyGroups] = useState(false)
   const [userGroups, setUserGroups] = useState([])
 
   const handleActivitySelect = (activityName) => {
-    setSearchFilter(activityName)
+    onSearchFilterChange(activityName)
     setShowSearchModal(false)
   }
 
@@ -60,8 +59,8 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate }) {
           ? data.filter(slot => slot.date === selectedDate)
           : data
         
-        // Filtrer par activité personnalisée si on est dans "Autre" et qu'un filtre est défini
-        if (activity === 'Autre' && searchFilter) {
+        // Filtrer par activité personnalisée si un filtre de recherche est défini
+        if (searchFilter) {
           filteredData = filteredData.filter(slot => 
             slot.customActivity && slot.customActivity.toLowerCase().includes(searchFilter.toLowerCase())
           )
@@ -192,7 +191,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate }) {
             >
               👥
             </button>
-            {activity === 'Autre' && (
+            {(activity === 'Tous' || activity === 'Autre') && (
               <button 
                 className="search-btn"
                 onClick={() => setShowSearchModal(true)}
@@ -206,12 +205,12 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate }) {
         
         {(searchFilter || showOnlyMyGroups) && (
           <div className="filters-info">
-            {activity === 'Autre' && searchFilter && (
+            {searchFilter && (
               <div className="search-filter-info">
                 <p>🔍 Filtre : "{searchFilter}"</p>
                 <button 
                   className="clear-filter-btn"
-                  onClick={() => setSearchFilter('')}
+                  onClick={() => onSearchFilterChange('')}
                   title="Supprimer le filtre"
                 >
                   ✕

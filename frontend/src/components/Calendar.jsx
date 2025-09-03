@@ -3,18 +3,17 @@ import './Calendar.css'
 import { API_BASE_URL } from '../config'
 import ActivitySearchModal from './ActivitySearchModal'
 
-function Calendar({ activity, currentUser, onDateSelect }) {
+function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchFilterChange }) {
   const [slots, setSlots] = useState([])
   const [currentDate, setCurrentDate] = useState(new Date())
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [showSearchModal, setShowSearchModal] = useState(false)
-  const [searchFilter, setSearchFilter] = useState('')
   const [showOnlyMyGroups, setShowOnlyMyGroups] = useState(false)
   const [userGroups, setUserGroups] = useState([])
 
   const handleActivitySelect = (activityName) => {
-    setSearchFilter(activityName)
+    onSearchFilterChange(activityName)
     setShowSearchModal(false)
   }
 
@@ -171,13 +170,15 @@ function Calendar({ activity, currentUser, onDateSelect }) {
             >
               👥
             </button>
-            <button 
-              className="search-btn"
-              onClick={() => setShowSearchModal(true)}
-              title="Rechercher une activité"
-            >
-              🔍
-            </button>
+            {(activity === 'Tous' || activity === 'Autre') && (
+              <button 
+                className="search-btn"
+                onClick={() => setShowSearchModal(true)}
+                title="Rechercher une activité"
+              >
+                🔍
+              </button>
+            )}
           </div>
         </div>
         
@@ -188,7 +189,7 @@ function Calendar({ activity, currentUser, onDateSelect }) {
                 <p>🔍 Filtre : "{searchFilter}"</p>
                 <button 
                   className="clear-filter-btn"
-                  onClick={() => setSearchFilter('')}
+                  onClick={() => onSearchFilterChange('')}
                   title="Supprimer le filtre"
                 >
                   ✕

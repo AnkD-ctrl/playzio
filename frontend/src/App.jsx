@@ -22,6 +22,7 @@ function App() {
   const [selectedDate, setSelectedDate] = useState(null)
   const [showUserProfile, setShowUserProfile] = useState(false)
   const [showContactModal, setShowContactModal] = useState(false)
+  const [searchFilter, setSearchFilter] = useState('')
 
 
   // Test d'exclusion d'IP au chargement
@@ -77,6 +78,7 @@ function App() {
     setCurrentView('activity')
     setSelectedType('calendar')
     setSelectedDate(null)
+    setSearchFilter('') // Réinitialiser le filtre de recherche
   }
 
   const handleDateSelect = (date) => {
@@ -91,6 +93,10 @@ function App() {
 
   const handleTypeChange = (type) => {
     setSelectedType(type)
+  }
+
+  const handleSearchFilterChange = (filter) => {
+    setSearchFilter(filter)
   }
 
   // Suppression de la redirection automatique pour permettre la landing page
@@ -191,6 +197,8 @@ function App() {
                   currentUser={currentUser}
                   selectedDate={selectedDate}
                   onClearDate={() => setSelectedDate(null)}
+                  searchFilter={searchFilter}
+                  onSearchFilterChange={handleSearchFilterChange}
                 />
               )}
               {selectedType === 'calendar' && (
@@ -198,6 +206,8 @@ function App() {
                   activity={selectedActivity}
                   currentUser={currentUser}
                   onDateSelect={handleDateSelect}
+                  searchFilter={searchFilter}
+                  onSearchFilterChange={handleSearchFilterChange}
                 />
               )}
               {selectedType === 'add' && (
