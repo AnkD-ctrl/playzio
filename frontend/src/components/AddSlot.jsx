@@ -229,6 +229,11 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
                 ))}
               </div>
 
+              {selectedGroups.length === 0 && (
+                <p className="visibility-info">
+                  ⚠️ Aucun groupe sélectionné : cette disponibilité sera visible par tous les utilisateurs
+                </p>
+              )}
               {selectedGroups.length > 0 && (
                 <p className="visibility-info">
                   ✅ Cette disponibilité sera visible par {selectedGroups.length} groupe(s) sélectionné(s)
