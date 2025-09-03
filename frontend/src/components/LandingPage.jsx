@@ -3,15 +3,12 @@ import './LandingPage.css'
 import Logo from './Logo'
 
 const LandingPage = ({ onLogin, onRegister }) => {
-  const [showLogin, setShowLogin] = useState(false)
-  const [showRegister, setShowRegister] = useState(false)
-
   const handleGetStarted = () => {
-    setShowRegister(true)
+    onRegister()
   }
 
   const handleAlreadyMember = () => {
-    setShowLogin(true)
+    onLogin()
   }
 
   return (
@@ -218,48 +215,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
         </div>
       </footer>
 
-      {/* Modals pour login/register */}
-      {showLogin && (
-        <div className="modal-overlay" onClick={() => setShowLogin(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={() => setShowLogin(false)}>×</button>
-            <div className="modal-body">
-              <h3>Se connecter</h3>
-              <p>Connectez-vous à votre compte Playzio</p>
-              <button 
-                className="btn-primary full-width"
-                onClick={() => {
-                  setShowLogin(false)
-                  onLogin()
-                }}
-              >
-                Aller à la connexion
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
-      {showRegister && (
-        <div className="modal-overlay" onClick={() => setShowRegister(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={() => setShowRegister(false)}>×</button>
-            <div className="modal-body">
-              <h3>Rejoindre Playzio</h3>
-              <p>Créez votre compte et devenez membre fondateur</p>
-              <button 
-                className="btn-primary full-width"
-                onClick={() => {
-                  setShowRegister(false)
-                  onRegister()
-                }}
-              >
-                Créer mon compte
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
