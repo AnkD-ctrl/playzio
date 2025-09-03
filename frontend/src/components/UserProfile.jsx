@@ -105,7 +105,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
                 {user.isFounder && (
                   <span className="founder-badge">
                     <span className="founder-crown">👑</span>
-                    <span className="founder-text">Membre fondateur</span>
+                    <span className="founder-text">Membre premium</span>
                   </span>
                 )}
               </div>

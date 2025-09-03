@@ -35,7 +35,7 @@ async function migrateFounderColumn() {
     
     console.log('✅ Colonne is_founder ajoutée avec succès')
     
-    // Marquer les 1000 premiers utilisateurs comme membres fondateurs
+    // Marquer les 1000 premiers utilisateurs comme membres premium
     const result = await pool.query(`
       UPDATE users 
       SET is_founder = TRUE 
@@ -46,7 +46,7 @@ async function migrateFounderColumn() {
       )
     `)
     
-    console.log(`✅ ${result.rowCount} utilisateurs marqués comme membres fondateurs`)
+    console.log(`✅ ${result.rowCount} utilisateurs marqués comme membres premium`)
     
     // Afficher les statistiques
     const stats = await pool.query(`
@@ -59,7 +59,7 @@ async function migrateFounderColumn() {
     const { total_users, founder_count } = stats.rows[0]
     console.log(`📊 Statistiques finales:`)
     console.log(`   - Total utilisateurs: ${total_users}`)
-    console.log(`   - Membres fondateurs: ${founder_count}`)
+    console.log(`   - Membres premium: ${founder_count}`)
     console.log(`   - Places restantes: ${Math.max(0, 1000 - founder_count)}`)
     
   } catch (error) {

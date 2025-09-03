@@ -6,7 +6,7 @@ import { API_BASE_URL } from '../config'
 const LandingPage = ({ onLogin, onRegister }) => {
   const [founderStats, setFounderStats] = useState(null)
 
-  // Charger les statistiques des membres fondateurs
+  // Charger les statistiques des membres premium
   useEffect(() => {
     const fetchFounderStats = async () => {
       try {
@@ -74,7 +74,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
                 Rejoindre Playzio
               </button>
               <p className="cta-note">
-                Gratuit • {founderStats ? founderStats.founderCount : '238'} membres fondateurs déjà inscrits
+                Gratuit • {founderStats ? founderStats.founderCount : '238'} membres premium déjà inscrits
               </p>
               <div className="social-proof">
                 <div className="user-avatars">
@@ -213,12 +213,12 @@ const LandingPage = ({ onLogin, onRegister }) => {
           </div>
           <div className="offer-main">
             <h2>Premium offert aux 1 000 premiers inscrits</h2>
-            <p>Devenez membre fondateur de Playzio et profitez à vie de toutes les fonctionnalités avancées, gratuitement.</p>
+            <p>Devenez membre premium de Playzio et profitez à vie de toutes les fonctionnalités avancées, gratuitement.</p>
             {founderStats && (
               <div className="founder-stats">
                 <div className="stats-item">
                   <span className="stats-number">{founderStats.founderCount}</span>
-                  <span className="stats-label">membres fondateurs</span>
+                  <span className="stats-label">membres premium</span>
                 </div>
                 <div className="stats-separator">•</div>
                 <div className="stats-item">
@@ -242,14 +242,14 @@ const LandingPage = ({ onLogin, onRegister }) => {
       <section className="final-cta-section">
         <div className="cta-content">
           <h2>Prêt à organiser vos activités ?</h2>
-          <p>Rejoignez les {founderStats ? founderStats.founderCount : '238'} membres fondateurs et profitez de toutes les fonctionnalités gratuitement</p>
+          <p>Rejoignez les {founderStats ? founderStats.founderCount : '238'} membres premium et profitez de toutes les fonctionnalités gratuitement</p>
           <div className="cta-buttons">
             <button 
               className="cta-button large"
               onClick={handleGetStarted}
             >
               <span className="cta-icon">👑</span>
-              Devenir membre fondateur
+              Devenir membre premium
             </button>
             <button 
               className="btn-secondary large"

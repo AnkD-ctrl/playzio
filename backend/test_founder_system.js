@@ -14,7 +14,7 @@ const pool = new Pool({
 
 async function testFounderSystem() {
   try {
-    console.log('🧪 Test du système de membres fondateurs...\n')
+    console.log('🧪 Test du système de membres premium...\n')
     
     // 1. Vérifier la structure de la table
     console.log('1. Vérification de la structure de la table users:')
@@ -41,12 +41,12 @@ async function testFounderSystem() {
     
     const { total_users, founder_count, regular_count } = stats.rows[0]
     console.log(`   - Total utilisateurs: ${total_users}`)
-    console.log(`   - Membres fondateurs: ${founder_count}`)
+    console.log(`   - Membres premium: ${founder_count}`)
     console.log(`   - Utilisateurs réguliers: ${regular_count}`)
     console.log(`   - Places restantes: ${Math.max(0, 1000 - founder_count)}`)
     
-    // 3. Afficher les premiers membres fondateurs
-    console.log('\n3. Premiers membres fondateurs:')
+    // 3. Afficher les premiers membres premium
+    console.log('\n3. Premiers membres premium:')
     const founders = await pool.query(`
       SELECT prenom, created_at, is_founder
       FROM users 
@@ -60,7 +60,7 @@ async function testFounderSystem() {
         console.log(`   ${index + 1}. ${user.prenom} (inscrit le ${user.created_at})`)
       })
     } else {
-      console.log('   Aucun membre fondateur trouvé')
+      console.log('   Aucun membre premium trouvé')
     }
     
     // 4. Test de l'API endpoint

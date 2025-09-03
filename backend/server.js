@@ -207,7 +207,7 @@ app.post('/api/register', async (req, res) => {
     
     // Vérifier si l'utilisateur peut être membre fondateur (1000 premiers)
     const founderCount = await getFounderCount()
-    // Simuler 238 membres fondateurs existants pour le lancement
+    // Simuler 238 membres premium existants pour le lancement
     const adjustedFounderCount = Math.max(founderCount, 238)
     const isFounder = adjustedFounderCount < 1000
     
@@ -222,7 +222,7 @@ app.post('/api/register', async (req, res) => {
       success: true, 
       isFounder,
       founderCount: adjustedFounderCount + 1,
-      message: isFounder ? 'Félicitations ! Vous êtes membre fondateur de Playzio !' : 'Compte créé avec succès'
+      message: isFounder ? 'Félicitations ! Vous êtes membre premium de Playzio !' : 'Compte créé avec succès'
     })
   } catch (error) {
     console.error('Register error:', error)
@@ -740,7 +740,7 @@ app.post('/api/admin/cleanup-old-slots', async (req, res) => {
   }
 })
 
-// Statistiques des membres fondateurs
+// Statistiques des membres premium
 app.get('/api/founder-stats', async (req, res) => {
   try {
     let founderCount = 238 // Valeur par défaut pour le lancement
@@ -749,7 +749,7 @@ app.get('/api/founder-stats', async (req, res) => {
     try {
       founderCount = await getFounderCount()
       totalUsers = await getUserCount()
-      // Simuler 238 membres fondateurs existants pour le lancement
+      // Simuler 238 membres premium existants pour le lancement
       founderCount = Math.max(founderCount, 238)
     } catch (dbError) {
       // Si la base de données n'est pas disponible, utiliser les valeurs par défaut
