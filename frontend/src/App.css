@@ -160,14 +160,13 @@ body {
 }
 
 .main-tab.add-tab {
-  background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
-  border-color: #d4af8c;
-  color: #ffffff;
-  box-shadow: 0 2px 8px rgba(212, 175, 140, 0.3);
+  background: #4a4a4a;
+  border-color: #5a5a5a;
+  color: #b0b0b0;
 }
 
 .add-icon {
-  color: #ffffff;
+  color: #b0b0b0;
   font-weight: bold;
   font-size: 1.2em;
   margin-right: 4px;
@@ -372,14 +371,13 @@ body {
   }
   
   .main-tab.add-tab {
-    background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
-    border-color: #d4af8c;
-    color: #ffffff;
-    box-shadow: 0 2px 8px rgba(212, 175, 140, 0.3);
+    background: #4a4a4a;
+    border-color: #5a5a5a;
+    color: #b0b0b0;
   }
   
   .add-icon {
-    color: #ffffff;
+    color: #b0b0b0;
     font-weight: bold;
     font-size: 1.1em;
     margin-right: 4px;
@@ -422,14 +420,13 @@ body {
   }
   
   .main-tab.add-tab {
-    background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
-    border-color: #d4af8c;
-    color: #ffffff;
-    box-shadow: 0 2px 8px rgba(212, 175, 140, 0.3);
+    background: #4a4a4a;
+    border-color: #5a5a5a;
+    color: #b0b0b0;
   }
   
   .add-icon {
-    color: #ffffff;
+    color: #b0b0b0;
     font-weight: bold;
     font-size: 1em;
     margin-right: 3px;
