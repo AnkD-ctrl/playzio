@@ -164,19 +164,19 @@ function App() {
                 className={`main-tab ${selectedType === 'list' ? 'active' : ''}`}
                 onClick={() => setSelectedType('list')}
               >
-                📋 Disponibilités
+                Disponibilités
               </button>
               <button 
                 className={`main-tab ${selectedType === 'calendar' ? 'active' : ''}`}
                 onClick={() => setSelectedType('calendar')}
               >
-                📅 Calendrier
+                Calendrier
               </button>
               <button 
-                className={`main-tab ${selectedType === 'add' ? 'active' : ''}`}
+                className={`main-tab add-tab ${selectedType === 'add' ? 'active' : ''}`}
                 onClick={() => setSelectedType('add')}
               >
-                ➕ Ajouter
+                <span className="add-icon">+</span> Ajouter
               </button>
             </div>
 

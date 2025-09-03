@@ -159,6 +159,20 @@ body {
   box-shadow: 0 2px 8px rgba(212, 175, 140, 0.3);
 }
 
+.main-tab.add-tab {
+  background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+  border-color: #d4af8c;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(212, 175, 140, 0.3);
+}
+
+.add-icon {
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 1.2em;
+  margin-right: 4px;
+}
+
 
 
 .activity-content {
@@ -345,11 +359,30 @@ body {
     padding: 0 16px;
     margin-left: 0;
     margin-right: 0;
+    gap: 6px;
   }
   
   .main-tab {
-    padding: 12px 8px;
+    padding: 14px 12px;
     font-size: 0.9rem;
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+    border-radius: 6px;
+  }
+  
+  .main-tab.add-tab {
+    background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+    border-color: #d4af8c;
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(212, 175, 140, 0.3);
+  }
+  
+  .add-icon {
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-right: 4px;
   }
   
   /* Mobile footer adjustments */
@@ -380,8 +413,26 @@ body {
   }
   
   .main-tab {
-    padding: 12px 6px;
+    padding: 12px 8px;
     font-size: 0.85rem;
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+    border-radius: 6px;
+  }
+  
+  .main-tab.add-tab {
+    background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+    border-color: #d4af8c;
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(212, 175, 140, 0.3);
+  }
+  
+  .add-icon {
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 1em;
+    margin-right: 3px;
   }
   
   .groups-btn,
