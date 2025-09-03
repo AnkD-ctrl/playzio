@@ -135,6 +135,15 @@
   .submit-btn {
     width: 100%;
   }
+  
+  /* Optimisation des champs de date et heure sur mobile */
+  .form-group input[type="date"],
+  .form-group input[type="time"] {
+    font-size: 0.875rem;
+    padding: 10px 12px;
+    min-width: 0;
+    width: 100%;
+  }
 }
 
 /* Styles pour la sélection des groupes */
@@ -414,6 +423,15 @@
     padding: 16px;
   }
   
+  /* Champs de date et heure optimisés pour petits écrans */
+  .form-group input[type="date"],
+  .form-group input[type="time"] {
+    font-size: 0.85rem;
+    padding: 9px 11px;
+    min-width: 0;
+    width: 100%;
+  }
+  
   .slot-form {
     gap: 12px;
   }
@@ -486,6 +504,15 @@
   
   .slot-form {
     gap: 10px;
+  }
+  
+  /* Champs de date et heure ultra-compacts */
+  .form-group input[type="date"],
+  .form-group input[type="time"] {
+    font-size: 0.8rem;
+    padding: 8px 10px;
+    min-width: 0;
+    width: 100%;
   }
   
   .form-group {
