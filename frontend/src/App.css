@@ -459,6 +459,14 @@ body {
     max-width: 80px;
     flex: 1;
   }
+  
+  /* Contact Button sur iPhone */
+  .contact-button {
+    bottom: 120px; /* Ajustement pour iPhone */
+    right: 12px;
+    padding: 8px 14px;
+    font-size: 0.8rem;
+  }
 }
 
 /* Contact Button */
@@ -495,7 +503,7 @@ body {
 /* Mobile Contact Button */
 @media (max-width: 768px) {
   .contact-button {
-    bottom: 16px;
+    bottom: 140px; /* Au-dessus du footer mobile */
     right: 16px;
     padding: 10px 16px;
     font-size: 0.85rem;
