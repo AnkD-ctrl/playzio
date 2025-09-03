@@ -131,6 +131,24 @@
   white-space: nowrap;
 }
 
+/* Styles spécifiques par type d'activité */
+.slot-indicator.tennis {
+  background: linear-gradient(45deg, #22c55e 0%, #16a34a 100%);
+}
+
+.slot-indicator.padel {
+  background: linear-gradient(45deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+.slot-indicator.soirée,
+.slot-indicator.soiree {
+  background: linear-gradient(45deg, #a855f7 0%, #7c3aed 100%);
+}
+
+.slot-indicator.autre {
+  background: linear-gradient(45deg, #f59e0b 0%, #d97706 100%);
+}
+
 .more-slots {
   background: #5a5a5a;
   color: #b0b0b0;
@@ -173,6 +191,22 @@
 
 .legend-color.has-slots {
   background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+}
+
+.legend-color.tennis {
+  background: linear-gradient(45deg, #22c55e 0%, #16a34a 100%);
+}
+
+.legend-color.padel {
+  background: linear-gradient(45deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+.legend-color.soirée {
+  background: linear-gradient(45deg, #a855f7 0%, #7c3aed 100%);
+}
+
+.legend-color.autre {
+  background: linear-gradient(45deg, #f59e0b 0%, #d97706 100%);
 }
 
 .loading,
