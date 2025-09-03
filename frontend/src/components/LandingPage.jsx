@@ -89,14 +89,14 @@ const LandingPage = ({ onLogin, onRegister }) => {
                       <div className="mockup-day active">
                         <span className="day-number">15</span>
                         <div className="day-slots">
-                          <div className="slot tennis">14h</div>
-                          <div className="slot padel">16h</div>
+                          <div className="slot sport">14h</div>
+                          <div className="slot social">16h</div>
                         </div>
                       </div>
                       <div className="mockup-day">
                         <span className="day-number">16</span>
                         <div className="day-slots">
-                          <div className="slot soirée">20h</div>
+                          <div className="slot autre">20h</div>
                         </div>
                       </div>
                       <div className="mockup-day">
@@ -104,9 +104,9 @@ const LandingPage = ({ onLogin, onRegister }) => {
                       </div>
                     </div>
                     <div className="mockup-activity-tabs">
-                      <div className="tab active">Tennis</div>
-                      <div className="tab">Padel</div>
-                      <div className="tab">Soirée</div>
+                      <div className="tab active">Sport</div>
+                      <div className="tab">Social</div>
+                      <div className="tab">Autre</div>
                     </div>
                   </div>
                 </div>
@@ -179,10 +179,10 @@ const LandingPage = ({ onLogin, onRegister }) => {
               <div className="after-mockup">
                 <div className="mockup-title">Avec Playzio</div>
                 <div className="playzio-mockup">
-                  <div className="availability">🎾 Tennis - 15h</div>
-                  <div className="availability">🏓 Padel - 17h</div>
-                  <div className="availability">🍻 Soirée - 20h</div>
-                  <div className="contact">💬 "Je rejoins le tennis !"</div>
+                  <div className="availability">⚽ Sport - 15h</div>
+                  <div className="availability">🍻 Social - 17h</div>
+                  <div className="availability">🎯 Autre - 20h</div>
+                  <div className="contact">💬 "Je rejoins le sport !"</div>
                 </div>
               </div>
             </div>

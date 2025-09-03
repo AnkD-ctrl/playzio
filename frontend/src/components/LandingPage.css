@@ -348,15 +348,15 @@
   font-weight: 600;
 }
 
-.slot.tennis {
+.slot.sport {
   background: linear-gradient(45deg, #22c55e, #16a34a);
 }
 
-.slot.padel {
+.slot.social {
   background: linear-gradient(45deg, #3b82f6, #1d4ed8);
 }
 
-.slot.soirée {
+.slot.autre {
   background: linear-gradient(45deg, #a855f7, #7c3aed);
 }
 
