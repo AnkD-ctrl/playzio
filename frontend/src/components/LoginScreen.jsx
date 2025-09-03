@@ -65,8 +65,10 @@ function LoginScreen({ onLogin, isLogin: initialIsLogin = true, onBack }) {
               type="button" 
               className="back-button"
               onClick={onBack}
+              title="Retour à l'accueil"
             >
-              ← Retour
+              <span className="back-icon">←</span>
+              <span className="back-text">Retour</span>
             </button>
           )}
           <div className="logo-container">

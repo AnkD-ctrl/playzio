@@ -27,19 +27,46 @@
   position: absolute;
   top: 0;
   left: 0;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: #ffffff;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
+  background: linear-gradient(135deg, rgba(212, 175, 140, 0.1) 0%, rgba(147, 112, 219, 0.1) 100%);
+  border: 1px solid rgba(212, 175, 140, 0.3);
+  color: #d4af8c;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 0.9rem;
+  font-weight: 500;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .back-button:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.5);
+  background: linear-gradient(135deg, rgba(212, 175, 140, 0.2) 0%, rgba(147, 112, 219, 0.2) 100%);
+  border-color: rgba(212, 175, 140, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 175, 140, 0.2);
+}
+
+.back-button:active {
+  transform: translateY(0);
+}
+
+.back-icon {
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: transform 0.2s ease;
+}
+
+.back-button:hover .back-icon {
+  transform: translateX(-2px);
+}
+
+.back-text {
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .logo-container {
@@ -295,6 +322,19 @@
 @media (max-width: 480px) {
   .login-container {
     padding: 24px;
+  }
+  
+  .back-button {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+  }
+  
+  .back-icon {
+    font-size: 1rem;
+  }
+  
+  .back-text {
+    font-size: 0.85rem;
   }
   
   .launch-offer {
