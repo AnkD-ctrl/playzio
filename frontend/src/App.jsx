@@ -41,6 +41,7 @@ function App() {
     setCurrentUser(user)
     setIsLoggedIn(true)
     setSelectedActivity('Tous') // Aller directement à l'activité "Tous"
+    setSelectedType('calendar') // Afficher le calendrier par défaut
     setCurrentView('activity')
     trackLogin(user.role || 'user')
   }
@@ -72,7 +73,7 @@ function App() {
     trackActivitySelect(activity)
     setSelectedActivity(activity)
     setCurrentView('activity')
-    setSelectedType('list')
+    setSelectedType('calendar')
     setSelectedDate(null)
   }
 
