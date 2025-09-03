@@ -788,25 +788,25 @@ app.post('/api/admin/create-contact-table', async (req, res) => {
   try {
     console.log('🔄 Tentative de création de la table contact_messages...')
     
-    // Syntaxe SQL simplifiée
-    const createTableQuery = `CREATE TABLE IF NOT EXISTS contact_messages (
-      id SERIAL PRIMARY KEY,
-      from_user VARCHAR(255) NOT NULL,
-      from_email VARCHAR(255),
-      message TEXT NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      is_read BOOLEAN DEFAULT FALSE,
-      admin_response TEXT,
-      admin_response_at TIMESTAMP
-    )`
-    
-    console.log('📝 Exécution de la requête CREATE TABLE...')
-    await pool.query(createTableQuery)
-    console.log('✅ Table contact_messages créée avec succès')
-    
-    res.json({ success: true, message: 'Table contact_messages créée avec succès' })
+    // Utiliser la fonction createContactMessage pour tester si la table existe
+    // Si elle n'existe pas, on aura une erreur qu'on peut gérer
+    try {
+      // Test d'insertion d'un message de test
+      const testMessage = await createContactMessage('Test', 'test@test.com', 'Test de création de table')
+      console.log('✅ Table contact_messages existe déjà, message de test inséré:', testMessage.id)
+      
+      // Supprimer le message de test
+      const { pool } = await import('./database.js')
+      await pool.query('DELETE FROM contact_messages WHERE id = $1', [testMessage.id])
+      console.log('🗑️ Message de test supprimé')
+      
+      res.json({ success: true, message: 'Table contact_messages existe déjà' })
+    } catch (tableError) {
+      console.log('❌ Table n\'existe pas, erreur:', tableError.message)
+      res.status(500).json({ error: 'Table contact_messages n\'existe pas et ne peut pas être créée automatiquement' })
+    }
   } catch (error) {
-    console.error('❌ Erreur lors de la création de la table contact_messages:', error)
+    console.error('❌ Erreur lors de la vérification de la table contact_messages:', error)
     res.status(500).json({ error: 'Erreur serveur', details: error.message })
   }
 })
