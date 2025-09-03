@@ -3,7 +3,7 @@ import './App.css'
 import Logo from './components/Logo'
 import LandingPage from './components/LandingPage'
 import LoginScreen from './components/LoginScreen'
-import WelcomeScreen from './components/WelcomeScreen'
+
 import AddSlot from './components/AddSlot'
 import SlotList from './components/SlotList'
 import Calendar from './components/Calendar'
@@ -29,9 +29,7 @@ function App() {
 
   // Track page views when view changes
   useEffect(() => {
-    if (currentView === 'welcome') {
-      trackPageView('Welcome Screen')
-    } else if (currentView === 'groups') {
+    if (currentView === 'groups') {
       trackPageView('Groups Page')
     } else if (currentView === 'activity') {
       trackPageView(`Activity: ${selectedActivity}`)
@@ -41,7 +39,8 @@ function App() {
   const handleLogin = (user) => {
     setCurrentUser(user)
     setIsLoggedIn(true)
-    setCurrentView('welcome')
+    setSelectedActivity('Tous') // Aller directement à l'activité "Tous"
+    setCurrentView('activity')
     trackLogin(user.role || 'user')
   }
 
@@ -94,7 +93,7 @@ function App() {
 
   return (
     <div className="app">
-      {currentView !== 'welcome' && currentView !== 'landing' && currentView !== 'login' && currentView !== 'register' && isLoggedIn && (
+      {currentView !== 'landing' && currentView !== 'login' && currentView !== 'register' && isLoggedIn && (
         <div className="app-header">
           <div className="header-content">
             <div className="header-actions">
@@ -129,12 +128,7 @@ function App() {
           </>
         )}
 
-        {currentView === 'welcome' && (
-          <WelcomeScreen 
-            onActivitySelect={handleActivitySelect}
-            currentUser={currentUser}
-          />
-        )}
+
 
         {currentView === 'login' && (
           <LoginScreen 
