@@ -786,36 +786,28 @@ app.get('/api/founder-stats', async (req, res) => {
 // Endpoint temporaire pour créer la table contact_messages
 app.post('/api/admin/create-contact-table', async (req, res) => {
   try {
-    const createTableQuery = `
-      CREATE TABLE IF NOT EXISTS contact_messages (
-        id SERIAL PRIMARY KEY,
-        from_user VARCHAR(255) NOT NULL,
-        from_email VARCHAR(255),
-        message TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        is_read BOOLEAN DEFAULT FALSE,
-        admin_response TEXT,
-        admin_response_at TIMESTAMP
-      );
-    `
+    console.log('🔄 Tentative de création de la table contact_messages...')
     
+    // Syntaxe SQL simplifiée
+    const createTableQuery = `CREATE TABLE IF NOT EXISTS contact_messages (
+      id SERIAL PRIMARY KEY,
+      from_user VARCHAR(255) NOT NULL,
+      from_email VARCHAR(255),
+      message TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      is_read BOOLEAN DEFAULT FALSE,
+      admin_response TEXT,
+      admin_response_at TIMESTAMP
+    )`
+    
+    console.log('📝 Exécution de la requête CREATE TABLE...')
     await pool.query(createTableQuery)
-    
-    // Créer des index pour améliorer les performances
-    await pool.query(`
-      CREATE INDEX IF NOT EXISTS idx_contact_messages_created_at 
-      ON contact_messages(created_at DESC);
-    `)
-    
-    await pool.query(`
-      CREATE INDEX IF NOT EXISTS idx_contact_messages_is_read 
-      ON contact_messages(is_read);
-    `)
+    console.log('✅ Table contact_messages créée avec succès')
     
     res.json({ success: true, message: 'Table contact_messages créée avec succès' })
   } catch (error) {
-    console.error('Erreur lors de la création de la table contact_messages:', error)
-    res.status(500).json({ error: 'Erreur serveur' })
+    console.error('❌ Erreur lors de la création de la table contact_messages:', error)
+    res.status(500).json({ error: 'Erreur serveur', details: error.message })
   }
 })
 
@@ -830,29 +822,14 @@ app.post('/api/contact', async (req, res) => {
       return res.status(400).json({ error: 'Message et nom d\'utilisateur requis' })
     }
     
-    // Créer la table si elle n'existe pas
-    try {
-      console.log('🔄 Création de la table contact_messages...')
-      await pool.query(`
-        CREATE TABLE IF NOT EXISTS contact_messages (
-          id SERIAL PRIMARY KEY,
-          from_user VARCHAR(255) NOT NULL,
-          from_email VARCHAR(255),
-          message TEXT NOT NULL,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          is_read BOOLEAN DEFAULT FALSE,
-          admin_response TEXT,
-          admin_response_at TIMESTAMP
-        );
-      `)
-      console.log('✅ Table contact_messages créée ou existe déjà')
-    } catch (tableError) {
-      console.error('❌ Erreur lors de la création de la table:', tableError)
-      return res.status(500).json({ error: 'Erreur lors de la création de la table' })
-    }
+    console.log('💾 Insertion directe du message...')
+    // Insertion directe sans créer la table (elle doit exister)
+    const result = await pool.query(
+      'INSERT INTO contact_messages (from_user, from_email, message, created_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING *',
+      [fromUser, fromEmail, message]
+    )
     
-    console.log('💾 Insertion du message...')
-    const contactMessage = await createContactMessage(fromUser, fromEmail, message)
+    const contactMessage = result.rows[0]
     console.log('✅ Message inséré avec succès:', contactMessage.id)
     res.json({ success: true, message: contactMessage })
   } catch (error) {
