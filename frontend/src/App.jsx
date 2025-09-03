@@ -259,8 +259,8 @@ function App() {
         />
       )}
 
-      {/* Bouton Contact - visible sur toutes les pages sauf landing/login/register */}
-      {currentView !== 'landing' && currentView !== 'login' && currentView !== 'register' && (
+      {/* Bouton Contact - visible sur toutes les pages sauf login/register */}
+      {currentView !== 'login' && currentView !== 'register' && (
         <button 
           className="contact-button"
           onClick={() => setShowContactModal(true)}

@@ -3,6 +3,7 @@ import './ContactModal.css'
 
 function ContactModal({ isOpen, onClose, currentUser }) {
   const [message, setMessage] = useState('')
+  const [email, setEmail] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState(null) // 'success', 'error', null
 
@@ -21,8 +22,8 @@ function ContactModal({ isOpen, onClose, currentUser }) {
         },
         body: JSON.stringify({
           message: message.trim(),
-          fromUser: currentUser.prenom,
-          fromEmail: currentUser.email || 'N/A'
+          fromUser: currentUser?.prenom || 'Visiteur',
+          fromEmail: currentUser?.email || email || 'N/A'
         }),
       })
 
@@ -47,6 +48,7 @@ function ContactModal({ isOpen, onClose, currentUser }) {
   const handleClose = () => {
     if (!isSubmitting) {
       setMessage('')
+      setEmail('')
       setSubmitStatus(null)
       onClose()
     }
@@ -75,6 +77,20 @@ function ContactModal({ isOpen, onClose, currentUser }) {
           </p>
 
           <form onSubmit={handleSubmit} className="contact-form">
+            {!currentUser && (
+              <div className="contact-form-group">
+                <label htmlFor="email">Votre email (optionnel) :</label>
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="votre@email.com"
+                  disabled={isSubmitting}
+                />
+              </div>
+            )}
+            
             <div className="contact-form-group">
               <label htmlFor="message">Votre message :</label>
               <textarea
