@@ -87,13 +87,14 @@ function App() {
     setSelectedType(type)
   }
 
-  if (!isLoggedIn) {
-    return <LoginScreen onLogin={handleLogin} />
-  }
+  // Suppression de la redirection automatique pour permettre la landing page
+  // if (!isLoggedIn) {
+  //   return <LoginScreen onLogin={handleLogin} />
+  // }
 
   return (
     <div className="app">
-      {currentView !== 'welcome' && (
+      {currentView !== 'welcome' && currentView !== 'landing' && currentView !== 'login' && currentView !== 'register' && isLoggedIn && (
         <div className="app-header">
           <div className="header-content">
             <div className="header-actions">
