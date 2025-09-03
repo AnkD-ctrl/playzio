@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './LandingPage.css'
+import ContactModal from './ContactModal'
 
 const LandingPage = ({ onLogin, onRegister }) => {
+  const [showContactModal, setShowContactModal] = useState(false)
 
   const handleGetStarted = () => {
     onRegister()
@@ -226,12 +228,33 @@ const LandingPage = ({ onLogin, onRegister }) => {
         </div>
       </section>
 
+      {/* Contact Section */}
+      <section className="contact-section">
+        <div className="contact-content">
+          <button 
+            className="contact-btn"
+            onClick={() => setShowContactModal(true)}
+          >
+            💬 Nous contacter
+          </button>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="landing-footer">
         <div className="footer-content">
           <p>Organisez vos activités entre amis, simplement.</p>
         </div>
       </footer>
+
+      {/* Modal de Contact */}
+      {showContactModal && (
+        <ContactModal 
+          isOpen={showContactModal}
+          onClose={() => setShowContactModal(false)}
+          currentUser={null}
+        />
+      )}
 
 
     </div>
