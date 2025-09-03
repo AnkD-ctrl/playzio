@@ -47,8 +47,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
               <span className="highlight">Playzio</span>
             </h1>
             <p className="hero-subtitle">
-              Plus besoin de s'envoyer des messages dans tous les sens. Posez votre disponibilité, 
-              les membres de vos groupes la voient instantanément et vous contactent directement.
+              Fini les boucles WhatsApp : posez vos dispos, vos amis les voient et vous rejoignent.
             </p>
             <div className="hero-cta">
               <button 
