@@ -212,6 +212,19 @@
   border-color: #6a6a6a;
 }
 
+.action-btn.admin {
+  background: linear-gradient(45deg, #8a2be2 0%, #9370db 50%, #8a2be2 100%);
+  color: #ffffff;
+  border: 1px solid #9d4edd;
+}
+
+.action-btn.admin:hover {
+  background: linear-gradient(45deg, #9d4edd 0%, #a569d1 50%, #9d4edd 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(138, 43, 226, 0.4);
+  filter: brightness(1.1);
+}
+
 @media (max-width: 768px) {
   .user-profile-overlay {
     padding: 16px;

@@ -885,8 +885,29 @@ app.post('/api/contact', async (req, res) => {
 // Route pour récupérer tous les messages de contact (admin seulement)
 app.get('/api/admin/contact-messages', async (req, res) => {
   try {
-    const messages = await getAllContactMessages()
-    res.json(messages)
+    // Essayer d'abord la base de données
+    try {
+      const messages = await getAllContactMessages()
+      res.json(messages)
+      return
+    } catch (dbError) {
+      console.log('⚠️ Erreur base de données, lecture du fichier JSON:', dbError.message)
+    }
+    
+    // Fallback : lecture du fichier JSON
+    const fs = await import('fs')
+    const path = await import('path')
+    
+    const filePath = path.join(process.cwd(), 'contact_messages.json')
+    
+    try {
+      const fileData = fs.readFileSync(filePath, 'utf8')
+      const messages = JSON.parse(fileData)
+      res.json(messages)
+    } catch (fileError) {
+      console.log('📄 Aucun fichier de messages trouvé, retour d\'un tableau vide')
+      res.json([])
+    }
   } catch (error) {
     console.error('Erreur lors de la récupération des messages:', error)
     res.status(500).json({ error: 'Erreur serveur' })
