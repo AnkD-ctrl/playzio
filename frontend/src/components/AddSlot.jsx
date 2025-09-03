@@ -115,7 +115,7 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
     <div className="add-slot">
       <div className="add-slot-content">
         <form onSubmit={handleSubmit} className="slot-form">
-          <div className="form-group">
+          <div className="form-group input-with-icon date-field">
             <label htmlFor="date">Date</label>
             <input
               type="date"
@@ -127,7 +127,7 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
             />
           </div>
 
-          <div className="form-group">
+          <div className="form-group input-with-icon time-field">
             <label htmlFor="heureDebut">Heure de début</label>
             <input
               type="time"
@@ -139,7 +139,7 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
             />
           </div>
 
-          <div className="form-group">
+          <div className="form-group input-with-icon time-field">
             <label htmlFor="heureFin">Heure de fin</label>
             <input
               type="time"
