@@ -1,8 +1,28 @@
 import React, { useState, useEffect } from 'react'
 import './LandingPage.css'
 import Logo from './Logo'
+import { API_BASE_URL } from '../config'
 
 const LandingPage = ({ onLogin, onRegister }) => {
+  const [founderStats, setFounderStats] = useState(null)
+
+  // Charger les statistiques des membres fondateurs
+  useEffect(() => {
+    const fetchFounderStats = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/founder-stats`)
+        if (response.ok) {
+          const stats = await response.json()
+          setFounderStats(stats)
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des statistiques:', error)
+      }
+    }
+
+    fetchFounderStats()
+  }, [])
+
   const handleGetStarted = () => {
     onRegister()
   }
@@ -54,7 +74,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
                 Rejoindre Playzio
               </button>
               <p className="cta-note">
-                Gratuit • 238 membres fondateurs déjà inscrits
+                Gratuit • {founderStats ? founderStats.founderCount : '238'} membres fondateurs déjà inscrits
               </p>
               <div className="social-proof">
                 <div className="user-avatars">
@@ -184,11 +204,45 @@ const LandingPage = ({ onLogin, onRegister }) => {
         </div>
       </section>
 
+      {/* Offre de lancement */}
+      <section className="launch-offer-section">
+        <div className="launch-offer-content">
+          <div className="offer-badge">
+            <span className="crown-icon">👑</span>
+            <span className="offer-text">Offre de lancement</span>
+          </div>
+          <div className="offer-main">
+            <h2>Premium offert aux 1 000 premiers inscrits</h2>
+            <p>Devenez membre fondateur de Playzio et profitez à vie de toutes les fonctionnalités avancées, gratuitement.</p>
+            {founderStats && (
+              <div className="founder-stats">
+                <div className="stats-item">
+                  <span className="stats-number">{founderStats.founderCount}</span>
+                  <span className="stats-label">membres fondateurs</span>
+                </div>
+                <div className="stats-separator">•</div>
+                <div className="stats-item">
+                  <span className={`stats-number ${founderStats.remainingFounderSlots <= 50 ? 'urgent' : ''}`}>
+                    {founderStats.remainingFounderSlots}
+                  </span>
+                  <span className="stats-label">places restantes</span>
+                </div>
+              </div>
+            )}
+            {founderStats && founderStats.remainingFounderSlots <= 50 && founderStats.remainingFounderSlots > 0 && (
+              <div className="urgency-message">
+                ⚡ Plus que {founderStats.remainingFounderSlots} places disponibles !
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="final-cta-section">
         <div className="cta-content">
           <h2>Prêt à organiser vos activités ?</h2>
-          <p>Rejoignez les 238 membres fondateurs et profitez de toutes les fonctionnalités gratuitement</p>
+          <p>Rejoignez les {founderStats ? founderStats.founderCount : '238'} membres fondateurs et profitez de toutes les fonctionnalités gratuitement</p>
           <div className="cta-buttons">
             <button 
               className="cta-button large"

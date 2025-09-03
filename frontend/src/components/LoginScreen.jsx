@@ -10,24 +10,7 @@ function LoginScreen({ onLogin, isLogin: initialIsLogin = true, onBack }) {
     password: ''
   })
   const [error, setError] = useState('')
-  const [founderStats, setFounderStats] = useState(null)
-
-  // Charger les statistiques des membres fondateurs
-  useEffect(() => {
-    const fetchFounderStats = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/founder-stats`)
-        if (response.ok) {
-          const stats = await response.json()
-          setFounderStats(stats)
-        }
-      } catch (error) {
-        console.error('Erreur lors du chargement des statistiques:', error)
-      }
-    }
-    
-    fetchFounderStats()
-  }, [])
+  
 
   const handleInputChange = (e) => {
     setFormData({
@@ -89,7 +72,6 @@ function LoginScreen({ onLogin, isLogin: initialIsLogin = true, onBack }) {
           <div className="logo-container">
             <Logo size="large" showText={true} />
           </div>
-          <p>Tu poses ta dispo → elle devient visible pour les membres selectionnés → si un membre la vois, il te contacte direct via la messagerie intégrée → et hop, ça crée des opportunités spontanées</p>
         </div>
 
         <form onSubmit={handleSubmit} className="login-form">
@@ -138,48 +120,7 @@ function LoginScreen({ onLogin, isLogin: initialIsLogin = true, onBack }) {
           </button>
         </div>
 
-        {/* Offre de lancement */}
-        <div className="launch-offer">
-          <div className="offer-badge">
-            <span className="crown-icon">👑</span>
-            <span className="offer-text">Offre de lancement</span>
-          </div>
-          <div className="offer-content">
-            <h4>Premium offert aux 1 000 premiers inscrits</h4>
-            <p>Devenez membre fondateur de Playzio et profitez à vie de toutes les fonctionnalités avancées, gratuitement.</p>
-            {founderStats && (
-              <div className="founder-stats">
-                <div className="stats-item">
-                  <span className="stats-number">{founderStats.founderCount}</span>
-                  <span className="stats-label">membres fondateurs</span>
-                </div>
-                <div className="stats-separator">•</div>
-                <div className="stats-item">
-                  <span className={`stats-number ${founderStats.remainingFounderSlots <= 50 ? 'urgent' : ''}`}>
-                    {founderStats.remainingFounderSlots}
-                  </span>
-                  <span className="stats-label">places restantes</span>
-                </div>
-              </div>
-            )}
-            {founderStats && founderStats.remainingFounderSlots <= 50 && founderStats.remainingFounderSlots > 0 && (
-              <div className="urgency-message">
-                ⚡ Plus que {founderStats.remainingFounderSlots} places disponibles !
-              </div>
-            )}
-            {isLogin && (
-              <div className="login-cta">
-                <p>Pas encore membre ? <button 
-                  type="button" 
-                  onClick={() => setIsLogin(false)}
-                  className="cta-link"
-                >
-                  Rejoignez les membres fondateurs
-                </button></p>
-              </div>
-            )}
-          </div>
-        </div>
+
 
       </div>
     </div>
