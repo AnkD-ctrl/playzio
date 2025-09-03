@@ -64,6 +64,30 @@ function hashPassword(password) {
   return crypto.createHash('sha256').update(password).digest('hex')
 }
 
+// Fonction pour vérifier si une disponibilité est encore valide (pas passée)
+function isSlotStillValid(slot) {
+  const now = new Date()
+  const today = now.toISOString().split('T')[0] // Format YYYY-MM-DD
+  
+  // Si la date est dans le passé, la disponibilité n'est plus valide
+  if (slot.date < today) {
+    return false
+  }
+  
+  // Si c'est aujourd'hui, vérifier l'heure de fin
+  if (slot.date === today && slot.heureFin) {
+    const currentTime = now.toTimeString().split(' ')[0] // Format HH:MM:SS
+    const slotEndTime = slot.heureFin + ':00' // Ajouter les secondes si nécessaire
+    
+    // Si l'heure de fin est passée, la disponibilité n'est plus valide
+    if (slotEndTime < currentTime) {
+      return false
+    }
+  }
+  
+  return true
+}
+
 // Database functions are now in database.js
 
 // Route de diagnostic
@@ -284,6 +308,9 @@ app.get('/api/slots', async (req, res) => {
     
     // Récupérer tous les slots
     let filteredSlots = await getAllSlots()
+    
+    // Filtrer les disponibilités passées (amélioration UX + optimisation base)
+    filteredSlots = filteredSlots.filter(slot => isSlotStillValid(slot))
     
     // Filtrer par type d'activité
     if (type) {
@@ -679,6 +706,37 @@ app.get('/api/users/all', async (req, res) => {
   } catch (error) {
     console.error('Get all users error:', error)
     res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
+// Nettoyer les anciennes disponibilités (route admin)
+app.post('/api/admin/cleanup-old-slots', async (req, res) => {
+  try {
+    const allSlots = await getAllSlots()
+    const validSlots = allSlots.filter(slot => isSlotStillValid(slot))
+    const oldSlots = allSlots.filter(slot => !isSlotStillValid(slot))
+    
+    // Supprimer les anciennes disponibilités
+    let deletedCount = 0
+    for (const slot of oldSlots) {
+      try {
+        const deleted = await deleteSlot(slot.id)
+        if (deleted) deletedCount++
+      } catch (error) {
+        console.error(`Erreur lors de la suppression du slot ${slot.id}:`, error)
+      }
+    }
+    
+    res.json({
+      success: true,
+      totalSlots: allSlots.length,
+      validSlots: validSlots.length,
+      deletedSlots: deletedCount,
+      message: `${deletedCount} anciennes disponibilités supprimées`
+    })
+  } catch (error) {
+    console.error('Cleanup error:', error)
+    res.status(500).json({ error: 'Erreur lors du nettoyage' })
   }
 })
 
