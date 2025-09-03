@@ -831,8 +831,12 @@ app.get('/api/admin/contact-messages/unread', async (req, res) => {
 // Route pour supprimer un message de contact (admin seulement)
 app.delete('/api/admin/contact-messages/:id', async (req, res) => {
   try {
-    const messageId = req.params.id
+    const messageId = parseInt(req.params.id)
     console.log('🗑️ Suppression du message:', messageId)
+    
+    if (isNaN(messageId)) {
+      return res.status(400).json({ error: 'ID de message invalide' })
+    }
     
     const { pool } = await import('./database.js')
     const result = await pool.query('DELETE FROM contact_messages WHERE id = $1 RETURNING *', [messageId])
