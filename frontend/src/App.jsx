@@ -20,7 +20,7 @@ function App() {
   const [selectedType, setSelectedType] = useState('list')
   const [selectedDate, setSelectedDate] = useState(null)
   const [showUserProfile, setShowUserProfile] = useState(false)
-  const [landingRefreshKey, setLandingRefreshKey] = useState(0)
+
 
   // Test d'exclusion d'IP au chargement
   useEffect(() => {
@@ -34,10 +34,7 @@ function App() {
       trackPageView('Groups Page')
     } else if (currentView === 'activity') {
       trackPageView(`Activity: ${selectedActivity}`)
-    } else if (currentView === 'landing') {
-      // Recharger les statistiques quand on revient à la landing page
-      refreshLandingStats()
-    }
+
   }, [currentView, selectedActivity])
 
   const handleLogin = (user) => {
@@ -55,7 +52,7 @@ function App() {
     setCurrentView('landing') // Retourner à la landing page après déconnexion
     setSelectedActivity(null)
     setSelectedType('list')
-    refreshLandingStats() // Recharger les statistiques de la landing page
+
   }
 
   // Fonctions pour la navigation depuis la landing page
@@ -69,10 +66,7 @@ function App() {
     trackNavigation('landing', 'register')
   }
 
-  // Fonction pour recharger les statistiques de la landing page
-  const refreshLandingStats = () => {
-    setLandingRefreshKey(prev => prev + 1)
-  }
+
 
   const handleActivitySelect = (activity) => {
     trackActivitySelect(activity)
@@ -132,10 +126,8 @@ function App() {
           <>
             {console.log('Rendering LandingPage')}
             <LandingPage 
-              key={landingRefreshKey}
               onLogin={handleLandingLogin}
               onRegister={handleLandingRegister}
-              onStatsRefresh={refreshLandingStats}
             />
           </>
         )}

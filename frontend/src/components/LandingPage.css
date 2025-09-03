@@ -578,57 +578,7 @@
   line-height: 1.6;
 }
 
-.founder-stats {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-}
 
-.stats-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.stats-number {
-  font-size: 2rem;
-  font-weight: 800;
-  color: #d4af8c;
-}
-
-.stats-number.urgent {
-  color: #ff6b6b;
-  animation: pulse 2s infinite;
-}
-
-.stats-label {
-  font-size: 0.9rem;
-  color: #888;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.stats-separator {
-  font-size: 1.5rem;
-  color: #666;
-  font-weight: 700;
-}
-
-.urgency-message {
-  background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 1.1rem;
-  display: inline-block;
-  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
-  animation: pulse 2s infinite;
-}
 
 /* Final CTA Section */
 .final-cta-section {
