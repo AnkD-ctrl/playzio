@@ -122,8 +122,8 @@ function App() {
               >
                 👤 Compte
               </button>
-              <button className="logout-btn" onClick={handleLogout}>
-                Déconnexion
+              <button className="logout-btn" onClick={handleLogout} title="Déconnexion">
+                🚪
               </button>
             </div>
           </div>

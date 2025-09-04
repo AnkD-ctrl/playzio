@@ -50,16 +50,16 @@ body {
 .groups-btn,
 .profile-btn,
 .logout-btn {
-  padding: 12px 20px;
+  padding: 12px 16px;
   border: 1px solid #5a5a5a;
   border-radius: 8px;
   background: #4a4a4a;
   color: #e0e0e0;
   cursor: pointer;
-  font-size: 0.875rem;
+  font-size: 1.2rem;
   font-weight: 500;
   transition: all 0.2s ease;
-  min-width: 120px;
+  min-width: 48px;
   text-align: center;
   display: flex;
   align-items: center;
@@ -352,13 +352,19 @@ body {
   }
   
   .groups-btn,
-  .profile-btn,
-  .logout-btn {
+  .profile-btn {
     white-space: nowrap;
     font-size: 0.8rem;
     padding: 10px 12px;
     min-width: 90px;
     flex: 1;
+  }
+  
+  .logout-btn {
+    font-size: 1.1rem;
+    padding: 10px 12px;
+    min-width: 48px;
+    flex: 0;
   }
   
   .activity-container,
@@ -480,12 +486,18 @@ body {
   }
   
   .groups-btn,
-  .profile-btn,
-  .logout-btn {
+  .profile-btn {
     font-size: 0.75rem;
     padding: 8px 10px;
     min-width: 70px;
     flex: 1;
+  }
+  
+  .logout-btn {
+    font-size: 1rem;
+    padding: 8px 10px;
+    min-width: 44px;
+    flex: 0;
   }
   
   /* iPhone footer adjustments */
