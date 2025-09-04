@@ -225,11 +225,41 @@ const LandingPage = ({ onLogin, onRegister }) => {
               <div className="arrow">→</div>
               <div className="after-mockup">
                 <div className="mockup-title">Avec Playzio</div>
-                <div className="playzio-steps">
-                  <div className="step">1. Créez votre dispo</div>
-                  <div className="step">2. Visible par vos groupes</div>
-                  <div className="step">3. Discussion intégrée</div>
-                  <div className="step">4. Rejoignez facilement</div>
+                <div className="playzio-screens">
+                  <div className="screen-step">
+                    <div className="step-title">Créez votre dispo</div>
+                    <div className="screen-mockup add-screen">
+                      <div className="add-button">+ Ajouter ma dispo</div>
+                    </div>
+                  </div>
+                  
+                  <div className="screen-step">
+                    <div className="step-title">Ou choisissez une dispo</div>
+                    <div className="screen-mockup slot-screen">
+                      <div className="slot-compact">
+                        <div className="slot-info">
+                          <span className="slot-activity">⚽ Sport</span>
+                          <span className="slot-time">15h00 - 17h00</span>
+                        </div>
+                        <div className="slot-participants">👥 2</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="screen-step">
+                    <div className="step-title">Discutez en</div>
+                    <div className="screen-mockup chat-screen">
+                      <div className="chat-bubble">"Je peux venir !"</div>
+                      <div className="chat-bubble sent">"Parfait !"</div>
+                    </div>
+                  </div>
+                  
+                  <div className="screen-step">
+                    <div className="step-title">Rejoignez facilement</div>
+                    <div className="screen-mockup join-screen">
+                      <button className="join-button">Rejoindre</button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

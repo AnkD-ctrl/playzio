@@ -628,31 +628,137 @@
   font-size: 14px;
 }
 
-.playzio-steps {
+.playzio-screens {
   background: #2a2a2a;
   border-radius: 12px;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 1rem;
   width: 280px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-.step {
-  background: linear-gradient(45deg, #d4af8c, #8a2be2);
-  color: white;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
+.screen-step {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.step-title {
+  color: #e0e0e0;
+  font-size: 0.8rem;
   font-weight: 600;
   text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.screen-mockup {
+  background: #1a1a1a;
+  border-radius: 8px;
+  padding: 0.75rem;
+  border: 1px solid #3a3a3a;
+  width: 100%;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-screen {
+  background: #2a2a2a;
+}
+
+.add-button {
+  background: linear-gradient(45deg, #d4af8c, #8a2be2);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.slot-screen {
+  background: #3a3a3a;
+}
+
+.slot-compact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 8px;
+}
+
+.slot-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.slot-activity {
+  background: linear-gradient(45deg, #d4af8c, #8a2be2);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.slot-time {
+  color: #e0e0e0;
+  font-size: 0.7rem;
+}
+
+.slot-participants {
+  color: #b0b0b0;
+  font-size: 0.7rem;
+  min-width: 20px;
+  text-align: center;
+}
+
+.chat-screen {
+  background: #2a2a2a;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.chat-bubble {
+  background: #4a4a4a;
+  color: #e0e0e0;
+  padding: 6px 10px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  max-width: 80%;
+  align-self: flex-start;
+}
+
+.chat-bubble.sent {
+  background: #d4af8c;
+  color: #000;
+  align-self: flex-end;
+}
+
+.join-screen {
+  background: #3a3a3a;
+}
+
+.join-button {
+  background: #4a7c59;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.step:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(212, 175, 140, 0.3);
+.join-button:hover {
+  background: #5a8c69;
 }
 
 .availability, .contact {
