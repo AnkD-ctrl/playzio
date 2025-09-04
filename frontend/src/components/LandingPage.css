@@ -511,7 +511,7 @@
   background: #075e54;
   border-radius: 12px;
   width: 280px;
-  height: 400px;
+  height: 320px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -636,6 +636,7 @@
   flex-direction: column;
   gap: 0.75rem;
   width: 280px;
+  height: 320px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
