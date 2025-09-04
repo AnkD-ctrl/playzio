@@ -136,7 +136,7 @@ body {
   max-width: 100%;
   box-sizing: border-box;
   justify-content: center;
-  padding-bottom: 16px;
+  padding-bottom: 12px;
 }
 
 .main-tab {
@@ -168,7 +168,7 @@ body {
 .main-tab.active::after {
   content: '';
   position: absolute;
-  bottom: -16px;
+  bottom: -8px;
   left: 0;
   right: 0;
   height: 3px;
@@ -423,7 +423,7 @@ body {
     margin-left: 0;
     margin-right: 0;
     gap: 16px;
-    padding-bottom: 16px;
+    padding-bottom: 10px;
     flex-wrap: nowrap;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -448,7 +448,7 @@ body {
   .main-tab.active::after {
     content: '';
     position: absolute;
-    bottom: -12px;
+    bottom: -6px;
     left: 0;
     right: 0;
     height: 2px;
@@ -484,7 +484,7 @@ body {
   .main-tabs {
     padding: 0 12px;
     gap: 12px;
-    padding-bottom: 14px;
+    padding-bottom: 8px;
     flex-wrap: nowrap;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -509,7 +509,7 @@ body {
   .main-tab.active::after {
     content: '';
     position: absolute;
-    bottom: -10px;
+    bottom: -5px;
     left: 0;
     right: 0;
     height: 2px;

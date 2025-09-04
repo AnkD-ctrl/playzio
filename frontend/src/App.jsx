@@ -189,7 +189,7 @@ function App() {
                 className={`main-tab add-tab ${selectedType === 'add' ? 'active' : ''}`}
                 onClick={() => setSelectedType('add')}
               >
-                <span className="add-icon">+</span> Ajouter
+                Ajouter ma dispo
               </div>
             </div>
 
