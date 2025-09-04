@@ -351,6 +351,10 @@
   font-weight: 500;
   flex: 1;
   font-size: 0.95rem;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .slot-item-participants {

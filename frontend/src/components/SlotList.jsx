@@ -392,7 +392,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                     </div>
                     <div className="slot-item-activity">
                       {slot.customActivity 
-                        ? (slot.customActivity.length > 8 ? slot.customActivity.substring(0, 8) + '...' : slot.customActivity)
+                        ? (slot.customActivity.length > 6 ? slot.customActivity.substring(0, 6) + '...' : slot.customActivity)
                         : (Array.isArray(slot.type) ? slot.type.join(', ') : slot.type)
                       }
                     </div>
@@ -436,11 +436,9 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                       <strong>Activité:</strong> {slot.customActivity || (Array.isArray(slot.type) ? slot.type.join(', ') : slot.type)}
                     </div>
 
-                    {slot.description && (
-                      <div className="slot-description">
-                        <strong>Description:</strong> {slot.description}
-                      </div>
-                    )}
+                    <div className="slot-description">
+                      <strong>Description:</strong> {slot.description || 'Aucune description'}
+                    </div>
 
                     <div className="slot-participants-detail">
                       <strong>Participants ({slot.participants ? slot.participants.length : 0}):</strong>
