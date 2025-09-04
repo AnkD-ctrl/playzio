@@ -32,16 +32,37 @@
   font-weight: 600;
 }
 
-.search-input {
+.search-container {
+  display: flex;
+  align-items: center;
   background: #4a4a4a;
-  color: #e0e0e0;
   border: 1px solid #5a5a5a;
   border-radius: 6px;
-  padding: 8px 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  min-width: 200px;
+}
+
+.search-container:hover {
+  background: #5a5a5a;
+  border-color: #6a6a6a;
+}
+
+.search-container:focus-within {
+  background: #5a5a5a;
+  border-color: #d4af8c;
+  box-shadow: 0 0 0 2px rgba(212, 175, 140, 0.2);
+}
+
+.search-input {
+  background: transparent;
+  color: #e0e0e0;
+  border: none;
+  padding: 8px 12px;
   font-size: 0.9rem;
   font-weight: 500;
-  min-width: 140px;
-  transition: all 0.3s ease;
+  flex: 1;
+  outline: none;
 }
 
 .search-input::placeholder {
@@ -49,16 +70,25 @@
   font-style: italic;
 }
 
-.search-input:focus {
-  outline: none;
-  background: #5a5a5a;
-  border-color: #d4af8c;
-  box-shadow: 0 0 0 2px rgba(212, 175, 140, 0.2);
+.search-confirm-btn {
+  background: transparent;
+  border: none;
+  color: #d4af8c;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.search-input:hover {
-  background: #5a5a5a;
-  border-color: #6a6a6a;
+.search-confirm-btn:hover {
+  color: #e0e0e0;
+  background: rgba(212, 175, 140, 0.1);
+}
+
+.search-confirm-btn:active {
+  transform: scale(0.95);
 }
 
 .filter-dropdown {
@@ -468,10 +498,14 @@
   }
 
   .filter-btn,
-  .search-input {
+  .search-container {
     min-width: auto;
     flex: 1;
     text-align: center;
+  }
+
+  .search-container {
+    min-width: 150px;
   }
   
   .slots-grid {
