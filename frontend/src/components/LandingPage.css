@@ -177,7 +177,7 @@
   transition: all 0.3s ease;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
   box-shadow: 0 6px 25px rgba(212, 175, 140, 0.3);
   white-space: nowrap;
   flex-shrink: 0;

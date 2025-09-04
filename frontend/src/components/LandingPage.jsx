@@ -56,7 +56,6 @@ const LandingPage = ({ onLogin, onRegister }) => {
                 className="cta-button"
                 onClick={handleGetStarted}
               >
-                <span className="cta-icon">🚀</span>
                 Commencer gratuitement
               </button>
               <p className="cta-note">
