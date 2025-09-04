@@ -127,76 +127,94 @@ body {
   letter-spacing: -0.5px;
 }
 
-/* Main Tabs */
+/* Main Tabs - Style texte souligné */
 .main-tabs {
   display: flex;
-  gap: 8px;
+  gap: 32px;
   margin-bottom: 24px;
   padding: 0 20px;
   max-width: 100%;
   box-sizing: border-box;
+  justify-content: center;
+  border-bottom: 1px solid #4a4a4a;
+  padding-bottom: 16px;
 }
 
 .main-tab {
-  flex: 1;
-  padding: 16px 20px;
-  border: 1px solid #5a5a5a;
-  border-radius: 8px;
-  background: #4a4a4a;
+  position: relative;
+  padding: 8px 0;
   color: #b0b0b0;
   cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-size: 1.1rem;
   font-weight: 500;
   text-align: center;
+  background: none;
+  border: none;
+  text-decoration: none;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 .main-tab:hover {
-  background: #5a5a5a;
-  border-color: #6a6a6a;
   color: #e0e0e0;
 }
 
 .main-tab.active {
-  background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
-  border-color: #d4af8c;
-  color: #ffffff;
-  box-shadow: 0 2px 8px rgba(212, 175, 140, 0.3);
+  color: #d4af8c;
 }
 
-.main-tab.add-tab {
-  background: #4a4a4a;
-  border-color: #5a5a5a;
-  color: #b0b0b0;
+.main-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -16px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+  border-radius: 2px;
+  animation: slideIn 0.3s ease-out;
 }
 
-.main-tab.add-tab.active {
-  background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
-  border-color: #d4af8c;
-  color: #ffffff;
-  box-shadow: 0 2px 8px rgba(212, 175, 140, 0.3);
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 .add-icon {
-  color: #b0b0b0;
   font-weight: bold;
-  font-size: 1.2em;
-  margin-right: 4px;
-}
-
-.main-tab.add-tab.active .add-icon {
-  color: #ffffff;
+  font-size: 1.1em;
 }
 
 
 
 .activity-content {
   margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.activity-content > * {
+  animation: slideInContent 0.4s ease-out;
+}
+
+@keyframes slideInContent {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 /* Activity Switcher Footer */
@@ -404,41 +422,18 @@ body {
     padding: 0 16px;
     margin-left: 0;
     margin-right: 0;
-    gap: 6px;
+    gap: 24px;
+    padding-bottom: 12px;
   }
   
   .main-tab {
-    padding: 14px 12px;
-    font-size: 0.9rem;
-    flex: 1;
+    padding: 6px 0;
+    font-size: 1rem;
+    flex: 0;
     min-width: 0;
     text-align: center;
-    border-radius: 6px;
   }
   
-  .main-tab.add-tab {
-    background: #4a4a4a;
-    border-color: #5a5a5a;
-    color: #b0b0b0;
-  }
-  
-  .main-tab.add-tab.active {
-    background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
-    border-color: #d4af8c;
-    color: #ffffff;
-    box-shadow: 0 2px 8px rgba(212, 175, 140, 0.3);
-  }
-  
-  .add-icon {
-    color: #b0b0b0;
-    font-weight: bold;
-    font-size: 1.1em;
-    margin-right: 4px;
-  }
-  
-  .main-tab.add-tab.active .add-icon {
-    color: #ffffff;
-  }
   
   /* Mobile footer adjustments */
   .activity-switcher-footer {
@@ -464,40 +459,16 @@ body {
 @media screen and (max-width: 428px) {
   .main-tabs {
     padding: 0 12px;
-    gap: 6px;
+    gap: 20px;
+    padding-bottom: 10px;
   }
   
   .main-tab {
-    padding: 12px 8px;
-    font-size: 0.85rem;
-    flex: 1;
+    padding: 5px 0;
+    font-size: 0.9rem;
+    flex: 0;
     min-width: 0;
     text-align: center;
-    border-radius: 6px;
-  }
-  
-  .main-tab.add-tab {
-    background: #4a4a4a;
-    border-color: #5a5a5a;
-    color: #b0b0b0;
-  }
-  
-  .main-tab.add-tab.active {
-    background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
-    border-color: #d4af8c;
-    color: #ffffff;
-    box-shadow: 0 2px 8px rgba(212, 175, 140, 0.3);
-  }
-  
-  .add-icon {
-    color: #b0b0b0;
-    font-weight: bold;
-    font-size: 1em;
-    margin-right: 3px;
-  }
-  
-  .main-tab.add-tab.active .add-icon {
-    color: #ffffff;
   }
   
   .groups-btn,
