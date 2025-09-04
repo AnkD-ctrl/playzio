@@ -162,7 +162,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
       <section className="benefits-section">
         <div className="benefits-content">
           <div className="benefits-text">
-            <h2>Fini les messages perdus dans les groupes WhatsApp</h2>
+            <h2>Efficace</h2>
             <div className="benefits-list">
               <div className="benefit-item">
                 <span className="benefit-icon">✅</span>
