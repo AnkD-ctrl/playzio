@@ -13,10 +13,17 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
   const [userGroups, setUserGroups] = useState([])
   const [showFilterDropdown, setShowFilterDropdown] = useState(false)
   const [groupFilterType, setGroupFilterType] = useState('tous') // 'tous', 'mes-groupes', 'hors-groupes'
+  const [searchInput, setSearchInput] = useState('')
 
   const handleActivitySelect = (activityName) => {
     onSearchFilterChange(activityName)
     setShowSearchModal(false)
+  }
+
+  const handleSearchInputChange = (e) => {
+    const value = e.target.value
+    setSearchInput(value)
+    onSearchFilterChange(value)
   }
 
   const handleGroupsFilterToggle = () => {
@@ -45,7 +52,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
 
   useEffect(() => {
     fetchSlots()
-  }, [activity, searchFilter, groupFilterType])
+  }, [activity, searchInput, groupFilterType])
 
   useEffect(() => {
     fetchUserGroups()
@@ -81,9 +88,9 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
         
         // Filtrer par activité personnalisée si un filtre de recherche est défini
         let filteredData = data
-        if (searchFilter) {
+        if (searchInput) {
           filteredData = filteredData.filter(slot => 
-            slot.customActivity && slot.customActivity.toLowerCase().includes(searchFilter.toLowerCase())
+            slot.customActivity && slot.customActivity.toLowerCase().includes(searchInput.toLowerCase())
           )
         }
         
@@ -196,11 +203,11 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
           <div className="header-buttons">
             <div className="filter-dropdown">
               <button 
-                className={`filter-btn ${showOnlyMyGroups ? 'active' : ''}`}
+                className={`filter-btn ${groupFilterType !== 'tous' ? 'active' : ''}`}
                 onClick={() => setShowFilterDropdown(!showFilterDropdown)}
                 title="Filtrer par groupes"
               >
-                Filtre
+                Filtre groupe
               </button>
               {showFilterDropdown && (
                 <div className="filter-dropdown-menu">
@@ -226,25 +233,29 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
               )}
             </div>
             {(activity === 'Tous' || activity === 'Autre' || activity === 'Sport' || activity === 'Social') && (
-              <button 
-                className="search-btn"
-                onClick={() => setShowSearchModal(true)}
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Recherche..."
+                value={searchInput}
+                onChange={handleSearchInputChange}
                 title="Rechercher une activité"
-              >
-                Rechercher une activité
-              </button>
+              />
             )}
           </div>
         </div>
         
-        {(searchFilter || groupFilterType !== 'tous') && (
+        {(searchInput || groupFilterType !== 'tous') && (
           <div className="filters-info">
-            {searchFilter && (
+            {searchInput && (
               <div className="search-filter-info">
-                <p>🔍 Filtre : "{searchFilter}"</p>
+                <p>🔍 Filtre : "{searchInput}"</p>
                 <button 
                   className="clear-filter-btn"
-                  onClick={() => onSearchFilterChange('')}
+                  onClick={() => {
+                    setSearchInput('')
+                    onSearchFilterChange('')
+                  }}
                   title="Supprimer le filtre"
                 >
                   ✕

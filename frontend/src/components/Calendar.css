@@ -20,7 +20,9 @@
 .header-buttons {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .calendar-title-header h3 {
@@ -30,24 +32,33 @@
   font-weight: 600;
 }
 
-.search-btn {
+.search-input {
   background: #4a4a4a;
   color: #e0e0e0;
   border: 1px solid #5a5a5a;
   border-radius: 6px;
   padding: 8px 16px;
-  cursor: pointer;
-  transition: all 0.3s ease;
   font-size: 0.9rem;
   font-weight: 500;
-  white-space: nowrap;
+  min-width: 140px;
+  transition: all 0.3s ease;
 }
 
-.search-btn:hover {
+.search-input::placeholder {
+  color: #888;
+  font-style: italic;
+}
+
+.search-input:focus {
+  outline: none;
+  background: #5a5a5a;
+  border-color: #d4af8c;
+  box-shadow: 0 0 0 2px rgba(212, 175, 140, 0.2);
+}
+
+.search-input:hover {
   background: #5a5a5a;
   border-color: #6a6a6a;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .filter-dropdown {
@@ -65,7 +76,8 @@
   transition: all 0.3s ease;
   font-size: 0.9rem;
   font-weight: 500;
-  min-width: 80px;
+  min-width: 100px;
+  white-space: nowrap;
 }
 
 .filter-btn:hover {
@@ -380,13 +392,18 @@
   }
   
   .header-buttons {
-    gap: 6px;
+    gap: 8px;
+    flex-direction: column;
+    align-items: stretch;
   }
-  
-  .search-btn,
-  .groups-filter-btn {
-    padding: 6px 10px;
-    font-size: 1.1rem;
+
+  .filter-btn,
+  .search-input {
+    min-width: auto;
+    width: 100%;
+    text-align: center;
+    padding: 8px 16px;
+    font-size: 0.9rem;
   }
   
   .search-filter-info,
