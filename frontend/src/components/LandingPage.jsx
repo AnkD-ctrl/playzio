@@ -198,19 +198,15 @@ const LandingPage = ({ onLogin, onRegister }) => {
                   <div className="whatsapp-messages">
                     <div className="message received">
                       <div className="message-content">Qui est libre demain ?</div>
-                      <div className="message-time">14:32</div>
                     </div>
                     <div className="message sent">
                       <div className="message-content">Moi mais pas avant 16h</div>
-                      <div className="message-time">14:35</div>
                     </div>
                     <div className="message received">
                       <div className="message-content">Et moi qu'à 14h</div>
-                      <div className="message-time">14:36</div>
                     </div>
                     <div className="message received">
                       <div className="message-content">Bon bah on reporte ? 😅</div>
-                      <div className="message-time">14:38</div>
                     </div>
                   </div>
                   <div className="whatsapp-input">
