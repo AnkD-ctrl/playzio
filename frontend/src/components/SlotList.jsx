@@ -126,14 +126,15 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         if (groupFilterType === 'mes-groupes' && userGroups.length > 0) {
           const userGroupIds = userGroups.map(group => group.id)
           filteredData = filteredData.filter(slot => {
-            // Garder les slots qui ont des groupes visibles ET que l'utilisateur fait partie d'au moins un de ces groupes
-            return slot.visibleToGroups && slot.visibleToGroups.length > 0 && 
-                   slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId))
+            // Garder les slots visibles par tous OU qui ont des groupes visibles ET que l'utilisateur fait partie d'au moins un de ces groupes
+            return slot.visibleToAll || 
+                   (slot.visibleToGroups && slot.visibleToGroups.length > 0 && 
+                    slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId)))
           })
         } else if (groupFilterType === 'hors-groupes') {
-          // Garder seulement les slots qui n'ont pas de groupes visibles (disponibilités publiques)
+          // Garder seulement les slots visibles par tous OU qui n'ont pas de groupes visibles (disponibilités publiques)
           filteredData = filteredData.filter(slot => {
-            return !slot.visibleToGroups || slot.visibleToGroups.length === 0
+            return slot.visibleToAll || !slot.visibleToGroups || slot.visibleToGroups.length === 0
           })
         }
         // Si groupFilterType === 'tous', on ne filtre pas par groupes

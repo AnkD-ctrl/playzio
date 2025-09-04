@@ -75,6 +75,15 @@ BEGIN
     END IF;
 END $$;
 
+-- Migration: Add visible_to_all column if it doesn't exist
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'slots' AND column_name = 'visible_to_all') THEN
+        ALTER TABLE slots ADD COLUMN visible_to_all BOOLEAN DEFAULT TRUE;
+    END IF;
+END $$;
+
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_users_prenom ON users(prenom);
 CREATE INDEX IF NOT EXISTS idx_slots_date ON slots(date);

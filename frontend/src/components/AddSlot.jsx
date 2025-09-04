@@ -13,6 +13,7 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
   })
   const [selectedActivities, setSelectedActivities] = useState([activity])
   const [selectedGroups, setSelectedGroups] = useState([])
+  const [visibleToAll, setVisibleToAll] = useState(true)
   const [userGroups, setUserGroups] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -59,6 +60,14 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
     )
   }
 
+  const handleVisibleToAllToggle = () => {
+    setVisibleToAll(prev => !prev)
+    if (!visibleToAll) {
+      // Si on active "Tous", on désactive tous les groupes
+      setSelectedGroups([])
+    }
+  }
+
   const handleCustomActivityConfirm = (activityName) => {
     setCustomActivityName(activityName)
     setShowCustomActivityModal(false)
@@ -81,7 +90,8 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
         type: selectedActivities,
         customActivity: customActivityName || null,
         createdBy: currentUser.prenom,
-        visibleToGroups: selectedGroups
+        visibleToGroups: visibleToAll ? [] : selectedGroups,
+        visibleToAll: visibleToAll
       }
 
       const response = await fetch(`${API_BASE_URL}/api/slots`, {
@@ -212,35 +222,53 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
             />
           </div>
 
-          {userGroups.length > 0 && (
-            <div className="form-group">
-              <label>Visibilité (sélectionnez les groupes qui peuvent voir cette disponibilité)</label>
+          <div className="form-group">
+            <label>Visibilité</label>
+            <div className="visibility-options">
+              <label className="visibility-option">
+                <input
+                  type="checkbox"
+                  checked={visibleToAll}
+                  onChange={handleVisibleToAllToggle}
+                />
+                <span className="visibility-label">Tous (visible par tout le monde)</span>
+              </label>
+            </div>
+            
+            {userGroups.length > 0 && (
               <div className="groups-selection">
+                <label className="groups-subtitle">Groupes spécifiques (optionnel)</label>
                 {userGroups.map(group => (
                   <label key={group.id} className="group-checkbox">
                     <input
                       type="checkbox"
                       checked={selectedGroups.includes(group.id)}
                       onChange={() => handleGroupToggle(group.id)}
+                      disabled={visibleToAll}
                     />
                     <span className="group-name">{group.name}</span>
                     <span className="group-members-count">({group.members.length} membres)</span>
                   </label>
                 ))}
               </div>
+            )}
 
-              {selectedGroups.length === 0 && (
-                <p className="visibility-info">
-                  ⚠️ Aucun groupe sélectionné : cette disponibilité sera visible par tous les utilisateurs
-                </p>
-              )}
-              {selectedGroups.length > 0 && (
-                <p className="visibility-info">
-                  ✅ Cette disponibilité sera visible par {selectedGroups.length} groupe(s) sélectionné(s)
-                </p>
-              )}
-            </div>
-          )}
+            {visibleToAll && (
+              <p className="visibility-info">
+                ✅ Cette disponibilité sera visible par tout le monde
+              </p>
+            )}
+            {!visibleToAll && selectedGroups.length === 0 && (
+              <p className="visibility-info">
+                ⚠️ Aucun groupe sélectionné : cette disponibilité sera visible par tous les utilisateurs
+              </p>
+            )}
+            {!visibleToAll && selectedGroups.length > 0 && (
+              <p className="visibility-info">
+                ✅ Cette disponibilité sera visible par {selectedGroups.length} groupe(s) sélectionné(s)
+              </p>
+            )}
+          </div>
 
           {error && <div className="error-message">{error}</div>}
 
