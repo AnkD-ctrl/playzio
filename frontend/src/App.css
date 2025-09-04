@@ -424,7 +424,7 @@ body {
     margin-left: 0;
     margin-right: 0;
     gap: 16px;
-    padding-bottom: 12px;
+    padding-bottom: 16px;
     flex-wrap: nowrap;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -443,6 +443,20 @@ body {
     min-width: fit-content;
     text-align: center;
     white-space: nowrap;
+    position: relative;
+  }
+  
+  .main-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+    border-radius: 1px;
+    animation: slideIn 0.3s ease-out;
+    transform-origin: left center;
   }
   
   
@@ -471,7 +485,7 @@ body {
   .main-tabs {
     padding: 0 12px;
     gap: 12px;
-    padding-bottom: 10px;
+    padding-bottom: 14px;
     flex-wrap: nowrap;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -490,6 +504,20 @@ body {
     min-width: fit-content;
     text-align: center;
     white-space: nowrap;
+    position: relative;
+  }
+  
+  .main-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+    border-radius: 1px;
+    animation: slideIn 0.3s ease-out;
+    transform-origin: left center;
   }
   
   .groups-btn,
