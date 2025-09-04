@@ -11,6 +11,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
   const [showSearchModal, setShowSearchModal] = useState(false)
   const [showOnlyMyGroups, setShowOnlyMyGroups] = useState(false)
   const [userGroups, setUserGroups] = useState([])
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false)
 
   const handleActivitySelect = (activityName) => {
     onSearchFilterChange(activityName)
@@ -19,6 +20,17 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
 
   const handleGroupsFilterToggle = () => {
     setShowOnlyMyGroups(!showOnlyMyGroups)
+  }
+
+  const handleFilterSelect = (filterType) => {
+    if (filterType === 'mes-groupes') {
+      setShowOnlyMyGroups(true)
+    } else if (filterType === 'hors-groupes') {
+      setShowOnlyMyGroups(false)
+    } else {
+      setShowOnlyMyGroups(false)
+    }
+    setShowFilterDropdown(false)
   }
 
   const fetchUserGroups = async () => {
@@ -38,6 +50,20 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
   useEffect(() => {
     fetchUserGroups()
   }, [currentUser])
+
+  // Fermer le menu déroulant quand on clique ailleurs
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showFilterDropdown && !event.target.closest('.filter-dropdown')) {
+        setShowFilterDropdown(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showFilterDropdown])
 
   const fetchSlots = async () => {
     try {
@@ -162,13 +188,37 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
       <div className="calendar-title-header">
         <div className="header-title-container">
           <div className="header-buttons">
-            <button 
-              className={`groups-filter-btn ${showOnlyMyGroups ? 'active' : ''}`}
-              onClick={handleGroupsFilterToggle}
-              title={showOnlyMyGroups ? "Afficher toutes les disponibilités" : "Afficher seulement mes groupes"}
-            >
-              👥
-            </button>
+            <div className="filter-dropdown">
+              <button 
+                className={`filter-btn ${showOnlyMyGroups ? 'active' : ''}`}
+                onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+                title="Filtrer par groupes"
+              >
+                Filtre
+              </button>
+              {showFilterDropdown && (
+                <div className="filter-dropdown-menu">
+                  <button 
+                    className={`filter-option ${!showOnlyMyGroups ? 'selected' : ''}`}
+                    onClick={() => handleFilterSelect('tous')}
+                  >
+                    Tous
+                  </button>
+                  <button 
+                    className={`filter-option ${showOnlyMyGroups ? 'selected' : ''}`}
+                    onClick={() => handleFilterSelect('mes-groupes')}
+                  >
+                    Mes groupes
+                  </button>
+                  <button 
+                    className="filter-option"
+                    onClick={() => handleFilterSelect('hors-groupes')}
+                  >
+                    Hors groupes
+                  </button>
+                </div>
+              )}
+            </div>
             {(activity === 'Tous' || activity === 'Autre' || activity === 'Sport' || activity === 'Social') && (
               <button 
                 className="search-btn"
