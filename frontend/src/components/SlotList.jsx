@@ -391,7 +391,10 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                       <span className="time">{slot.heureDebut} - {slot.heureFin}</span>
                     </div>
                     <div className="slot-item-activity">
-                      {slot.customActivity ? slot.customActivity : (Array.isArray(slot.type) ? slot.type.join(', ') : slot.type)}
+                      {slot.customActivity 
+                        ? (slot.customActivity.length > 8 ? slot.customActivity.substring(0, 8) + '...' : slot.customActivity)
+                        : (Array.isArray(slot.type) ? slot.type.join(', ') : slot.type)
+                      }
                     </div>
                     <div className="slot-item-participants">
                       👥 {slot.participants ? slot.participants.length : 0}
@@ -429,6 +432,10 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
 
                 {isExpanded && (
                   <div className="slot-item-details">
+                    <div className="slot-activity-detail">
+                      <strong>Activité:</strong> {slot.customActivity || (Array.isArray(slot.type) ? slot.type.join(', ') : slot.type)}
+                    </div>
+
                     {slot.description && (
                       <div className="slot-description">
                         <strong>Description:</strong> {slot.description}
