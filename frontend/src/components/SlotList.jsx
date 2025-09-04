@@ -14,6 +14,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   const [showOnlyMyGroups, setShowOnlyMyGroups] = useState(false)
   const [userGroups, setUserGroups] = useState([])
   const [showFilterDropdown, setShowFilterDropdown] = useState(false)
+  const [groupFilterType, setGroupFilterType] = useState('tous') // 'tous', 'mes-groupes', 'hors-groupes'
 
   const handleActivitySelect = (activityName) => {
     onSearchFilterChange(activityName)
@@ -25,10 +26,9 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   }
 
   const handleFilterSelect = (filterType) => {
+    setGroupFilterType(filterType)
     if (filterType === 'mes-groupes') {
       setShowOnlyMyGroups(true)
-    } else if (filterType === 'hors-groupes') {
-      setShowOnlyMyGroups(false)
     } else {
       setShowOnlyMyGroups(false)
     }
@@ -47,7 +47,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
 
   useEffect(() => {
     fetchSlots()
-  }, [activity, selectedDate, searchFilter, showOnlyMyGroups])
+  }, [activity, selectedDate, searchFilter, groupFilterType])
 
   useEffect(() => {
     fetchUserGroups()
@@ -92,15 +92,21 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           )
         }
         
-        // Filtrer par groupes si le filtre "Mes Groupes" est activé
-        if (showOnlyMyGroups && userGroups.length > 0) {
+        // Filtrer par groupes selon le type de filtre sélectionné
+        if (groupFilterType === 'mes-groupes' && userGroups.length > 0) {
           const userGroupIds = userGroups.map(group => group.id)
           filteredData = filteredData.filter(slot => {
             // Garder les slots qui ont des groupes visibles ET que l'utilisateur fait partie d'au moins un de ces groupes
             return slot.visibleToGroups && slot.visibleToGroups.length > 0 && 
                    slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId))
           })
+        } else if (groupFilterType === 'hors-groupes') {
+          // Garder seulement les slots qui n'ont pas de groupes visibles (disponibilités publiques)
+          filteredData = filteredData.filter(slot => {
+            return !slot.visibleToGroups || slot.visibleToGroups.length === 0
+          })
         }
+        // Si groupFilterType === 'tous', on ne filtre pas par groupes
         
         setSlots(filteredData)
       } else {
@@ -220,19 +226,19 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
               {showFilterDropdown && (
                 <div className="filter-dropdown-menu">
                   <button 
-                    className={`filter-option ${!showOnlyMyGroups ? 'selected' : ''}`}
+                    className={`filter-option ${groupFilterType === 'tous' ? 'selected' : ''}`}
                     onClick={() => handleFilterSelect('tous')}
                   >
                     Tous
                   </button>
                   <button 
-                    className={`filter-option ${showOnlyMyGroups ? 'selected' : ''}`}
+                    className={`filter-option ${groupFilterType === 'mes-groupes' ? 'selected' : ''}`}
                     onClick={() => handleFilterSelect('mes-groupes')}
                   >
                     Mes groupes
                   </button>
                   <button 
-                    className="filter-option"
+                    className={`filter-option ${groupFilterType === 'hors-groupes' ? 'selected' : ''}`}
                     onClick={() => handleFilterSelect('hors-groupes')}
                   >
                     Hors groupes
@@ -252,7 +258,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           </div>
         </div>
         
-        {(searchFilter || showOnlyMyGroups) && (
+        {(searchFilter || groupFilterType !== 'tous') && (
           <div className="filters-info">
             {searchFilter && (
               <div className="search-filter-info">
@@ -266,12 +272,24 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                 </button>
               </div>
             )}
-            {showOnlyMyGroups && (
+            {groupFilterType === 'mes-groupes' && (
               <div className="groups-filter-info">
                 <p>👥 Affichage : Mes Groupes uniquement</p>
                 <button 
                   className="clear-filter-btn"
-                  onClick={() => setShowOnlyMyGroups(false)}
+                  onClick={() => handleFilterSelect('tous')}
+                  title="Afficher toutes les disponibilités"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+            {groupFilterType === 'hors-groupes' && (
+              <div className="groups-filter-info">
+                <p>🌐 Affichage : Hors groupes uniquement</p>
+                <button 
+                  className="clear-filter-btn"
+                  onClick={() => handleFilterSelect('tous')}
                   title="Afficher toutes les disponibilités"
                 >
                   ✕
