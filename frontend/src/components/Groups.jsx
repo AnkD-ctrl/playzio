@@ -9,6 +9,7 @@ const Groups = ({ currentUser, onBack }) => {
   const [showManageForm, setShowManageForm] = useState(false)
   const [selectedGroup, setSelectedGroup] = useState(null)
   const [newMember, setNewMember] = useState('')
+  const [expandedGroups, setExpandedGroups] = useState(new Set())
   const [createForm, setCreateForm] = useState({
     name: '',
     description: ''
@@ -26,6 +27,16 @@ const Groups = ({ currentUser, onBack }) => {
     } catch (error) {
       console.error('Erreur lors du chargement des groupes:', error)
     }
+  }
+
+  const toggleGroupExpansion = (groupId) => {
+    const newExpanded = new Set(expandedGroups)
+    if (newExpanded.has(groupId)) {
+      newExpanded.delete(groupId)
+    } else {
+      newExpanded.add(groupId)
+    }
+    setExpandedGroups(newExpanded)
   }
 
 
@@ -229,76 +240,114 @@ const Groups = ({ currentUser, onBack }) => {
         {groups.length === 0 ? (
           <p className="no-groups">Vous n'êtes membre d'aucun groupe pour le moment.</p>
         ) : (
-          groups.map(group => (
-            <div key={group.id} className="group-card">
-              <div className="group-header">
-                <h3>{group.name}</h3>
-                {group.creator === currentUser.prenom && (
-                  <span className="creator-badge">Créateur</span>
-                )}
-              </div>
+          <div className="groups-list">
+            {groups.map(group => {
+              const isExpanded = expandedGroups.has(group.id)
+              const isCreator = group.creator === currentUser.prenom
               
-              {group.description && (
-                <p className="group-description">{group.description}</p>
-              )}
-              
-              <div className="group-members">
-                <h4>Membres ({group.members.length})</h4>
-                <div className="members-list">
-                  {group.members.map(member => (
-                    <span key={member} className="member-tag">
-                      {member}
-                      {group.creator === currentUser.prenom && member !== group.creator && (
-                        <button
-                          className="remove-member-btn"
-                          onClick={() => handleRemoveMember(group.id, member)}
-                          title="Supprimer ce membre"
-                        >
-                          ×
-                        </button>
-                      )}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {group.creator === currentUser.prenom ? (
-                <div className="group-actions">
-                  <div className="add-member-section">
-                    <input
-                      type="text"
-                      placeholder="Nom d'utilisateur"
-                      value={newMember}
-                      onChange={(e) => setNewMember(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && handleAddMember(group.id)}
-                    />
-                    <button
-                      onClick={() => handleAddMember(group.id)}
-                      disabled={!newMember.trim()}
-                    >
-                      Ajouter
-                    </button>
+              return (
+                <div key={group.id} className={`group-item ${isExpanded ? 'expanded' : ''}`}>
+                  <div className="group-item-header" onClick={() => toggleGroupExpansion(group.id)}>
+                    <div className="group-item-main">
+                      <div className="group-item-name">
+                        <h3>{group.name}</h3>
+                        {isCreator && (
+                          <span className="creator-badge">Créateur</span>
+                        )}
+                      </div>
+                      <div className="group-item-members">
+                        👥 {group.members.length}
+                      </div>
+                    </div>
+                    <div className="group-item-actions">
+                      <div className="expand-icon">
+                        {isExpanded ? '▼' : '▶'}
+                      </div>
+                    </div>
                   </div>
-                  
-                  <button
-                    className="delete-group-btn"
-                    onClick={() => handleDeleteGroup(group.id)}
-                  >
-                    Supprimer le groupe
-                  </button>
+
+                  {isExpanded && (
+                    <div className="group-item-details">
+                      {group.description && (
+                        <div className="group-description-detail">
+                          <strong>Description:</strong> {group.description}
+                        </div>
+                      )}
+
+                      <div className="group-members-detail">
+                        <strong>Membres ({group.members.length}):</strong>
+                        <div className="members-list">
+                          {group.members.map(member => (
+                            <span key={member} className="member-tag">
+                              {member}
+                              {isCreator && member !== group.creator && (
+                                <button
+                                  className="remove-member-btn"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    handleRemoveMember(group.id, member)
+                                  }}
+                                  title="Supprimer ce membre"
+                                >
+                                  ×
+                                </button>
+                              )}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {isCreator ? (
+                        <div className="group-actions-detail">
+                          <div className="add-member-section">
+                            <input
+                              type="text"
+                              placeholder="Nom d'utilisateur"
+                              value={newMember}
+                              onChange={(e) => setNewMember(e.target.value)}
+                              onKeyPress={(e) => e.key === 'Enter' && handleAddMember(group.id)}
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleAddMember(group.id)
+                              }}
+                              disabled={!newMember.trim()}
+                            >
+                              Ajouter
+                            </button>
+                          </div>
+                          
+                          <button
+                            className="delete-group-btn"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleDeleteGroup(group.id)
+                            }}
+                          >
+                            Supprimer le groupe
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="group-actions-detail">
+                          <button
+                            className="leave-group-btn"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleLeaveGroup(group.id)
+                            }}
+                          >
+                            Quitter le groupe
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
-              ) : (
-                <div className="group-actions">
-                  <button
-                    className="leave-group-btn"
-                    onClick={() => handleLeaveGroup(group.id)}
-                  >
-                    Quitter le groupe
-                  </button>
-                </div>
-              )}
-            </div>
-          ))
+              )
+            })}
+          </div>
         )}
       </div>
     </div>
