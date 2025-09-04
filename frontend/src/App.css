@@ -176,15 +176,16 @@ body {
   background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
   border-radius: 2px;
   animation: slideIn 0.3s ease-out;
+  transform-origin: left center;
 }
 
 @keyframes slideIn {
   from {
-    transform: translateX(-100%);
+    transform: scaleX(0);
     opacity: 0;
   }
   to {
-    transform: translateX(0);
+    transform: scaleX(1);
     opacity: 1;
   }
 }
@@ -422,16 +423,26 @@ body {
     padding: 0 16px;
     margin-left: 0;
     margin-right: 0;
-    gap: 24px;
+    gap: 16px;
     padding-bottom: 12px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .main-tabs::-webkit-scrollbar {
+    display: none;
   }
   
   .main-tab {
     padding: 6px 0;
-    font-size: 1rem;
-    flex: 0;
-    min-width: 0;
+    font-size: 0.9rem;
+    flex: 0 0 auto;
+    min-width: fit-content;
     text-align: center;
+    white-space: nowrap;
   }
   
   
@@ -459,16 +470,26 @@ body {
 @media screen and (max-width: 428px) {
   .main-tabs {
     padding: 0 12px;
-    gap: 20px;
+    gap: 12px;
     padding-bottom: 10px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .main-tabs::-webkit-scrollbar {
+    display: none;
   }
   
   .main-tab {
     padding: 5px 0;
-    font-size: 0.9rem;
-    flex: 0;
-    min-width: 0;
+    font-size: 0.85rem;
+    flex: 0 0 auto;
+    min-width: fit-content;
     text-align: center;
+    white-space: nowrap;
   }
   
   .groups-btn,
