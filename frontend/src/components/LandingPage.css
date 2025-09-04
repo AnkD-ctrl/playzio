@@ -511,7 +511,7 @@
   background: #075e54;
   border-radius: 12px;
   width: 280px;
-  height: 400px;
+  height: 450px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -561,10 +561,10 @@
 
 .whatsapp-messages {
   flex: 1;
-  padding: 8px;
+  padding: 6px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
   overflow-y: auto;
   background: #0a0a0a;
 }
@@ -573,7 +573,7 @@
   max-width: 80%;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .message.received {
@@ -585,29 +585,29 @@
 }
 
 .message-content {
-  padding: 6px 10px;
-  border-radius: 12px;
-  font-size: 11px;
-  line-height: 1.3;
+  padding: 4px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  line-height: 1.2;
   word-wrap: break-word;
 }
 
 .message.received .message-content {
   background: #2a2a2a;
   color: #e0e0e0;
-  border-bottom-left-radius: 3px;
+  border-bottom-left-radius: 2px;
 }
 
 .message.sent .message-content {
   background: #dcf8c6;
   color: #000;
-  border-bottom-right-radius: 3px;
+  border-bottom-right-radius: 2px;
 }
 
 .message-time {
-  font-size: 9px;
+  font-size: 8px;
   color: #888;
-  padding: 0 6px;
+  padding: 0 4px;
   align-self: flex-end;
 }
 
@@ -617,7 +617,7 @@
 
 .whatsapp-input {
   background: #2a2a2a;
-  padding: 8px 12px;
+  padding: 6px 10px;
   display: flex;
   align-items: center;
   border-top: 1px solid #333;
@@ -625,7 +625,7 @@
 
 .input-placeholder {
   color: #888;
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .playzio-screens {
@@ -636,7 +636,7 @@
   flex-direction: column;
   gap: 0.75rem;
   width: 280px;
-  height: 320px;
+  height: 450px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
