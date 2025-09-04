@@ -226,10 +226,22 @@ const LandingPage = ({ onLogin, onRegister }) => {
               <div className="after-mockup">
                 <div className="mockup-title">Avec Playzio</div>
                 <div className="playzio-mockup">
-                  <div className="availability">⚽ Sport - 15h</div>
-                  <div className="availability">🍻 Social - 17h</div>
-                  <div className="availability">🎯 Autre - 20h</div>
-                  <div className="contact">💬 "Je rejoins le sport !"</div>
+                  <div className="playzio-header">
+                    <h3>Disponibilités</h3>
+                    <button className="add-slot-btn">+ Ajouter dispo</button>
+                  </div>
+                  <div className="slot-card-demo">
+                    <div className="slot-header">
+                      <div className="slot-activity">⚽ Sport</div>
+                      <div className="slot-time">15h00 - 17h00</div>
+                    </div>
+                    <div className="slot-date">Demain 15/01</div>
+                    <div className="slot-participants">👥 2 participants</div>
+                    <div className="slot-actions">
+                      <button className="discuss-btn">💬 Discussion</button>
+                      <button className="join-btn">Rejoindre</button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
