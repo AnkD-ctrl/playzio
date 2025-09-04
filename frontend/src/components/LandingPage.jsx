@@ -68,7 +68,6 @@ const LandingPage = ({ onLogin, onRegister }) => {
                   <div className="avatar">👩</div>
                   <div className="avatar">👨</div>
                   <div className="avatar">👩‍💼</div>
-                  <div className="avatar">👨‍🎓</div>
                 </div>
                 <p className="social-text">Rejoignez des centaines d'utilisateurs qui organisent déjà leurs activités</p>
               </div>

@@ -169,17 +169,18 @@
   background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
   color: white;
   border: none;
-  padding: 1rem 2rem;
+  padding: 0.8rem 1.5rem;
   border-radius: 12px;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
   box-shadow: 0 6px 25px rgba(212, 175, 140, 0.3);
-  max-width: 300px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .cta-button:hover {
@@ -654,6 +655,12 @@
   
   .hero-title {
     font-size: 2.5rem;
+  }
+  
+  .cta-button {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
+    gap: 0.4rem;
   }
   
   .benefits-content {
