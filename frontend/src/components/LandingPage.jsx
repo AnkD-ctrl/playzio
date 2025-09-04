@@ -121,19 +121,39 @@ const LandingPage = ({ onLogin, onRegister }) => {
           <h2 className="section-title">Comment ça marche ?</h2>
           <div className="features-grid">
             <div className="feature-card">
-              <div className="feature-icon">📅</div>
-              <h3>1. Posez votre dispo</h3>
-              <p>Ajoutez vos créneaux libres en quelques secondes : Tennis, Padel, Soirée...</p>
+              <div className="feature-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="#d4af8c" strokeWidth="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6" stroke="#d4af8c" strokeWidth="2"/>
+                  <line x1="8" y1="2" x2="8" y2="6" stroke="#d4af8c" strokeWidth="2"/>
+                  <line x1="3" y1="10" x2="21" y2="10" stroke="#d4af8c" strokeWidth="2"/>
+                </svg>
+              </div>
+              <h3>Posez vos dispo</h3>
+              <p>Ajoutez vos créneaux libres en quelques secondes : Sport, Social, Autre...</p>
             </div>
             <div className="feature-card">
-              <div className="feature-icon">👥</div>
-              <h3>2. Visible par vos groupes</h3>
+              <div className="feature-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="#d4af8c" strokeWidth="2"/>
+                  <circle cx="9" cy="7" r="4" stroke="#d4af8c" strokeWidth="2"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="#d4af8c" strokeWidth="2"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="#d4af8c" strokeWidth="2"/>
+                </svg>
+              </div>
+              <h3>Visible par vos groupes</h3>
               <p>Vos disponibilités apparaissent automatiquement pour les membres de vos groupes.</p>
             </div>
             <div className="feature-card">
-              <div className="feature-icon">💬</div>
-              <h3>3. Contact direct</h3>
-              <p>Ils vous contactent via la messagerie intégrée et hop, c'est parti !</p>
+              <div className="feature-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="#d4af8c" strokeWidth="2"/>
+                  <path d="M8 9h8" stroke="#d4af8c" strokeWidth="2"/>
+                  <path d="M8 13h6" stroke="#d4af8c" strokeWidth="2"/>
+                </svg>
+              </div>
+              <h3>Chaque dispo a sa discussion</h3>
+              <p>Chaque dispo a sa discussion → plus besoin de groupes WhatsApp inutiles.</p>
             </div>
           </div>
         </div>

@@ -425,8 +425,15 @@
 }
 
 .feature-icon {
-  font-size: 3rem;
   margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.feature-icon svg {
+  width: 48px;
+  height: 48px;
 }
 
 .feature-card h3 {
