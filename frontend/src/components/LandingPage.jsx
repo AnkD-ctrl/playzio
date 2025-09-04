@@ -57,7 +57,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
                 onClick={handleGetStarted}
               >
                 <span className="cta-icon">🚀</span>
-                Rejoindre Playzio
+                Commencer gratuitement
               </button>
               <p className="cta-note">
                 Gratuit • Rejoignez la communauté
