@@ -16,6 +16,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   const [showFilterDropdown, setShowFilterDropdown] = useState(false)
   const [groupFilterType, setGroupFilterType] = useState('tous') // 'tous', 'mes-groupes', 'hors-groupes'
   const [searchInput, setSearchInput] = useState('')
+  const [searchTimeout, setSearchTimeout] = useState(null)
 
   const handleActivitySelect = (activityName) => {
     onSearchFilterChange(activityName)
@@ -25,7 +26,18 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   const handleSearchInputChange = (e) => {
     const value = e.target.value
     setSearchInput(value)
-    onSearchFilterChange(value)
+    
+    // Annuler le timeout précédent s'il existe
+    if (searchTimeout) {
+      clearTimeout(searchTimeout)
+    }
+    
+    // Créer un nouveau timeout pour la recherche
+    const newTimeout = setTimeout(() => {
+      onSearchFilterChange(value)
+    }, 300) // Délai de 300ms
+    
+    setSearchTimeout(newTimeout)
   }
 
   const handleGroupsFilterToggle = () => {
@@ -54,7 +66,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
 
   useEffect(() => {
     fetchSlots()
-  }, [activity, selectedDate, searchInput, groupFilterType])
+  }, [activity, selectedDate, searchFilter, groupFilterType])
 
   useEffect(() => {
     fetchUserGroups()
@@ -93,9 +105,9 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           : data
         
         // Filtrer par activité personnalisée si un filtre de recherche est défini
-        if (searchInput) {
+        if (searchFilter) {
           filteredData = filteredData.filter(slot => 
-            slot.customActivity && slot.customActivity.toLowerCase().includes(searchInput.toLowerCase())
+            slot.customActivity && slot.customActivity.toLowerCase().includes(searchFilter.toLowerCase())
           )
         }
         
@@ -266,11 +278,11 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           </div>
         </div>
         
-        {(searchInput || groupFilterType !== 'tous') && (
+        {(searchFilter || groupFilterType !== 'tous') && (
           <div className="filters-info">
-            {searchInput && (
+            {searchFilter && (
               <div className="search-filter-info">
-                <p>🔍 Filtre : "{searchInput}"</p>
+                <p>🔍 Filtre : "{searchFilter}"</p>
                 <button 
                   className="clear-filter-btn"
                   onClick={() => {
