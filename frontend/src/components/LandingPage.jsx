@@ -187,10 +187,39 @@ const LandingPage = ({ onLogin, onRegister }) => {
               <div className="before-mockup">
                 <div className="mockup-title">Avant</div>
                 <div className="whatsapp-mockup">
-                  <div className="message">"Qui est libre demain ?"</div>
-                  <div className="message">"Moi mais pas avant 16h"</div>
-                  <div className="message">"Et moi je peux qu'à 14h"</div>
-                  <div className="message">"Bon bah on reporte ?"</div>
+                  <div className="whatsapp-header">
+                    <div className="whatsapp-avatar">👥</div>
+                    <div className="whatsapp-info">
+                      <div className="whatsapp-name">Groupe Tennis</div>
+                      <div className="whatsapp-status">5 membres</div>
+                    </div>
+                    <div className="whatsapp-actions">⋮</div>
+                  </div>
+                  <div className="whatsapp-messages">
+                    <div className="message received">
+                      <div className="message-content">Qui est libre demain pour un tennis ?</div>
+                      <div className="message-time">14:32</div>
+                    </div>
+                    <div className="message sent">
+                      <div className="message-content">Moi mais pas avant 16h</div>
+                      <div className="message-time">14:35</div>
+                    </div>
+                    <div className="message received">
+                      <div className="message-content">Et moi je peux qu'à 14h</div>
+                      <div className="message-time">14:36</div>
+                    </div>
+                    <div className="message received">
+                      <div className="message-content">Bon bah on reporte ? 😅</div>
+                      <div className="message-time">14:38</div>
+                    </div>
+                    <div className="message received">
+                      <div className="message-content">+1</div>
+                      <div className="message-time">14:40</div>
+                    </div>
+                  </div>
+                  <div className="whatsapp-input">
+                    <div className="input-placeholder">Tapez un message...</div>
+                  </div>
                 </div>
               </div>
               <div className="arrow">→</div>

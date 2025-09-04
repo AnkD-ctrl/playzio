@@ -507,21 +507,134 @@
   color: #d4af8c;
 }
 
-.whatsapp-mockup, .playzio-mockup {
+.whatsapp-mockup {
+  background: #075e54;
+  border-radius: 12px;
+  width: 280px;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.whatsapp-header {
+  background: #128c7e;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid #0d6b5f;
+}
+
+.whatsapp-avatar {
+  width: 40px;
+  height: 40px;
+  background: #34b7f1;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.whatsapp-info {
+  flex: 1;
+}
+
+.whatsapp-name {
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.whatsapp-status {
+  color: #e0e0e0;
+  font-size: 12px;
+}
+
+.whatsapp-actions {
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.whatsapp-messages {
+  flex: 1;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  background: #0a0a0a;
+}
+
+.message {
+  max-width: 80%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.message.received {
+  align-self: flex-start;
+}
+
+.message.sent {
+  align-self: flex-end;
+}
+
+.message-content {
+  padding: 8px 12px;
+  border-radius: 18px;
+  font-size: 14px;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.message.received .message-content {
+  background: #2a2a2a;
+  color: #e0e0e0;
+  border-bottom-left-radius: 4px;
+}
+
+.message.sent .message-content {
+  background: #dcf8c6;
+  color: #000;
+  border-bottom-right-radius: 4px;
+}
+
+.message-time {
+  font-size: 11px;
+  color: #888;
+  padding: 0 8px;
+  align-self: flex-end;
+}
+
+.message.sent .message-time {
+  align-self: flex-start;
+}
+
+.whatsapp-input {
+  background: #2a2a2a;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #333;
+}
+
+.input-placeholder {
+  color: #888;
+  font-size: 14px;
+}
+
+.playzio-mockup {
   background: #2a2a2a;
   border-radius: 12px;
   padding: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-}
-
-.message {
-  background: #1a1a1a;
-  padding: 0.5rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  color: #888;
 }
 
 .availability, .contact {
