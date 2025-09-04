@@ -161,27 +161,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
       {/* Benefits Section */}
       <section className="benefits-section">
         <div className="benefits-content">
-          <div className="benefits-text">
-            <h2>Efficace</h2>
-            <div className="benefits-list">
-              <div className="benefit-item">
-                <span className="benefit-icon">✅</span>
-                <span>Organisation claire et centralisée</span>
-              </div>
-              <div className="benefit-item">
-                <span className="benefit-icon">✅</span>
-                <span>Plus de créneaux ratés</span>
-              </div>
-              <div className="benefit-item">
-                <span className="benefit-icon">✅</span>
-                <span>Messagerie intégrée</span>
-              </div>
-              <div className="benefit-item">
-                <span className="benefit-icon">✅</span>
-                <span>Calendrier visuel</span>
-              </div>
-            </div>
-          </div>
+          <h2 className="section-title">Efficace</h2>
           <div className="benefits-mockup">
             <div className="mockup-comparison">
               <div className="before-mockup">
