@@ -18,6 +18,11 @@ function CustomActivityModal({ isOpen, onClose, onConfirm }) {
       return
     }
     
+    if (activityName.trim().length > 8) {
+      setError('Le nom ne peut pas dépasser 8 caractères')
+      return
+    }
+    
     onConfirm(activityName.trim())
     setActivityName('')
     setError('')
@@ -50,7 +55,8 @@ function CustomActivityModal({ isOpen, onClose, onConfirm }) {
                 setActivityName(e.target.value)
                 setError('')
               }}
-              placeholder="Ex: Football, Basketball, Cinéma..."
+              placeholder="Ex: Football, Basketball, Cinéma... (max 8 caractères)"
+              maxLength={8}
               autoFocus
             />
             {error && <div className="error-message">{error}</div>}
