@@ -231,7 +231,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
                 onClick={() => setShowSearchModal(true)}
                 title="Rechercher une activité"
               >
-                🔍
+                Rechercher une activité
               </button>
             )}
           </div>

@@ -252,7 +252,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                 onClick={() => setShowSearchModal(true)}
                 title="Rechercher une activité"
               >
-                🔍
+                Rechercher une activité
               </button>
             )}
           </div>
