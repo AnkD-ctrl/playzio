@@ -629,13 +629,13 @@
   font-size: 10px;
 }
 
-.playzio-screens {
+.playzio-simple {
   background: #2a2a2a;
   border-radius: 12px;
-  padding: 1rem;
+  padding: 1.5rem;
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  align-items: center;
+  justify-content: center;
   width: 280px;
   height: 450px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
@@ -761,6 +761,75 @@
 
 .join-button:hover {
   background: #5a8c69;
+}
+
+.slot-card-demo {
+  background: #3a3a3a;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #4a4a4a;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 200px;
+}
+
+.slot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.slot-activity {
+  background: linear-gradient(45deg, #d4af8c, #8a2be2);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.slot-time {
+  color: #e0e0e0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.slot-date {
+  color: #b0b0b0;
+  font-size: 13px;
+}
+
+.slot-participants {
+  color: #b0b0b0;
+  font-size: 13px;
+}
+
+.arrow-to-button {
+  color: #d4af8c;
+  font-size: 24px;
+  text-align: center;
+  margin: 8px 0;
+}
+
+.join-button {
+  background: #4a7c59;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.join-button:hover {
+  background: #5a8c69;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 124, 89, 0.3);
 }
 
 .availability, .contact {
