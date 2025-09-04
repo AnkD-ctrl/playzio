@@ -462,14 +462,15 @@
 
   .header-buttons {
     gap: 8px;
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
   }
 
   .filter-btn,
   .search-input {
     min-width: auto;
-    width: 100%;
+    flex: 1;
     text-align: center;
   }
   

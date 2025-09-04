@@ -257,7 +257,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
               <input
                 type="text"
                 className="search-input"
-                placeholder="Recherche..."
+                placeholder="Recherche activité..."
                 value={searchInput}
                 onChange={handleSearchInputChange}
                 title="Rechercher une activité"
