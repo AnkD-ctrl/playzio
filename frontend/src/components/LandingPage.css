@@ -119,7 +119,7 @@
 
 /* Hero Section */
 .hero-section {
-  padding: 8rem 2rem 4rem;
+  padding: 5rem 2rem 4rem;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -642,6 +642,10 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  .hero-section {
+    padding: 4rem 1rem 3rem;
+  }
+  
   .hero-content {
     grid-template-columns: 1fr;
     gap: 2rem;

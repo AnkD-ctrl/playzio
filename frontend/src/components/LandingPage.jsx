@@ -46,7 +46,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
         <div className="hero-content">
           <div className="hero-text">
             <h1 className="hero-title">
-              <span className="highlight">Playzio</span>
+              <span className="highlight">C'est gratuit!</span>
             </h1>
             <p className="hero-subtitle">
               Fini les boucles WhatsApp : posez vos dispos, vos amis les voient et vous rejoignent.
