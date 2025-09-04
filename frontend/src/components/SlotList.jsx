@@ -182,7 +182,6 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
     <div className="slot-list">
       <div className="slot-list-header">
         <div className="header-title-container">
-          <h3>{activity === 'Tous' ? 'Toutes les disponibilités' : `Disponibilités ${activity}`}</h3>
           <div className="header-buttons">
             <button 
               className={`groups-filter-btn ${showOnlyMyGroups ? 'active' : ''}`}

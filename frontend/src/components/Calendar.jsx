@@ -161,7 +161,6 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
     <div className="calendar">
       <div className="calendar-title-header">
         <div className="header-title-container">
-          <h3>Calendrier {activity === 'Tous' ? '' : activity}</h3>
           <div className="header-buttons">
             <button 
               className={`groups-filter-btn ${showOnlyMyGroups ? 'active' : ''}`}
