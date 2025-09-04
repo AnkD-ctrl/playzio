@@ -17,6 +17,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   const [groupFilterType, setGroupFilterType] = useState('tous') // 'tous', 'mes-groupes', 'hors-groupes'
   const [searchInput, setSearchInput] = useState('')
   const [searchTimeout, setSearchTimeout] = useState(null)
+  const [expandedSlots, setExpandedSlots] = useState(new Set())
 
   const handleActivitySelect = (activityName) => {
     onSearchFilterChange(activityName)
@@ -36,6 +37,18 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
     if (e.key === 'Enter') {
       handleSearchConfirm()
     }
+  }
+
+  const toggleSlotExpansion = (slotId) => {
+    setExpandedSlots(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(slotId)) {
+        newSet.delete(slotId)
+      } else {
+        newSet.add(slotId)
+      }
+      return newSet
+    })
   }
 
   const handleGroupsFilterToggle = () => {
@@ -362,82 +375,102 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           <p>Soyez le premier à en créer une !</p>
         </div>
       ) : (
-        <div className="slots-grid">
+        <div className="slots-list">
           {slots.map(slot => {
             const isParticipant = slot.participants && slot.participants.includes(currentUser.prenom)
             const isOwner = slot.createdBy === currentUser.prenom
             const isAdmin = currentUser.role === 'admin'
+            const isExpanded = expandedSlots.has(slot.id)
             
             return (
-              <div key={slot.id} className="slot-card">
-                <div className="slot-header">
-                  <div className="slot-date">
-                    <span className="date">{slot.date.split('-').reverse().join('/')}</span>
-                    <span className="time">{slot.heureDebut} - {slot.heureFin}</span>
-                  </div>
-                  <div className="slot-activity">
-                    {slot.customActivity ? slot.customActivity : (Array.isArray(slot.type) ? slot.type.join(', ') : slot.type)}
-                  </div>
-                </div>
-
-                <div className="slot-content">
-                  
-                  {slot.description && (
-                    <div className="slot-description">
-                      {slot.description}
+              <div key={slot.id} className={`slot-item ${isExpanded ? 'expanded' : ''}`}>
+                <div className="slot-item-header" onClick={() => toggleSlotExpansion(slot.id)}>
+                  <div className="slot-item-main">
+                    <div className="slot-item-date">
+                      <span className="date">{slot.date.split('-').reverse().join('/')}</span>
+                      <span className="time">{slot.heureDebut} - {slot.heureFin}</span>
                     </div>
-                  )}
-
-                  <div className="slot-participants">
-                    <span>👥 {slot.participants ? slot.participants.length : 0} participant{(slot.participants ? slot.participants.length : 0) !== 1 ? 's' : ''}</span>
-                    {slot.participants && slot.participants.length > 0 && (
-                      <div className="participants-list">
-                        {slot.participants.join(', ')}
-                      </div>
-                    )}
+                    <div className="slot-item-activity">
+                      {slot.customActivity ? slot.customActivity : (Array.isArray(slot.type) ? slot.type.join(', ') : slot.type)}
+                    </div>
+                    <div className="slot-item-participants">
+                      👥 {slot.participants ? slot.participants.length : 0}
+                    </div>
                   </div>
-                </div>
-
-                <div className="slot-actions">
-                  <div className="action-buttons">
-                    <button 
-                      className="discuss-btn"
-                      onClick={() => setSelectedSlot(slot)}
-                      title="Voir la discussion"
-                    >
-                      Discussion
-                    </button>
-                    
+                  <div className="slot-item-actions">
                     {isParticipant ? (
                       <button 
-                        className="leave-btn"
-                        onClick={() => handleLeaveSlot(slot.id)}
+                        className="quick-action-btn leave-btn"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleLeaveSlot(slot.id)
+                        }}
+                        title="Quitter"
                       >
                         Quitter
                       </button>
                     ) : (
                       <button 
-                        className="join-btn"
-                        onClick={() => handleJoinSlot(slot.id)}
+                        className="quick-action-btn join-btn"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleJoinSlot(slot.id)
+                        }}
+                        title="Rejoindre"
                       >
                         Rejoindre
                       </button>
                     )}
-                    
-                    {(isAdmin || isOwner) && (
-                      <button 
-                        className="delete-btn"
-                        onClick={() => handleDeleteSlot(slot.id)}
-                      >
-                        Supprimer
-                      </button>
-                    )}
+                    <div className="expand-icon">
+                      {isExpanded ? '▼' : '▶'}
+                    </div>
                   </div>
-                  
-                  {isOwner && (
-                    <span className="owner-badge">Vous êtes l'organisateur</span>
-                  )}
                 </div>
+
+                {isExpanded && (
+                  <div className="slot-item-details">
+                    {slot.description && (
+                      <div className="slot-description">
+                        <strong>Description:</strong> {slot.description}
+                      </div>
+                    )}
+
+                    <div className="slot-participants-detail">
+                      <strong>Participants ({slot.participants ? slot.participants.length : 0}):</strong>
+                      {slot.participants && slot.participants.length > 0 ? (
+                        <div className="participants-list">
+                          {slot.participants.join(', ')}
+                        </div>
+                      ) : (
+                        <span>Aucun participant pour le moment</span>
+                      )}
+                    </div>
+
+                    <div className="slot-item-actions-detail">
+                      <button 
+                        className="action-btn discuss-btn"
+                        onClick={() => setSelectedSlot(slot)}
+                        title="Voir la discussion"
+                      >
+                        Discussion
+                      </button>
+                      
+                      {(isAdmin || isOwner) && (
+                        <button 
+                          className="action-btn delete-btn"
+                          onClick={() => handleDeleteSlot(slot.id)}
+                          title="Supprimer"
+                        >
+                          Supprimer
+                        </button>
+                      )}
+                      
+                      {isOwner && (
+                        <span className="owner-badge">Vous êtes l'organisateur</span>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             )
           })}
