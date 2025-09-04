@@ -561,10 +561,10 @@
 
 .whatsapp-messages {
   flex: 1;
-  padding: 6px;
+  padding: 4px;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 1px;
   overflow-y: auto;
   background: #0a0a0a;
 }
@@ -573,7 +573,7 @@
   max-width: 80%;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 0px;
 }
 
 .message.received {
@@ -585,10 +585,10 @@
 }
 
 .message-content {
-  padding: 4px 8px;
-  border-radius: 10px;
+  padding: 3px 6px;
+  border-radius: 8px;
   font-size: 10px;
-  line-height: 1.2;
+  line-height: 1.1;
   word-wrap: break-word;
 }
 
@@ -607,8 +607,9 @@
 .message-time {
   font-size: 8px;
   color: #888;
-  padding: 0 4px;
+  padding: 0 2px;
   align-self: flex-end;
+  margin-top: 1px;
 }
 
 .message.sent .message-time {
