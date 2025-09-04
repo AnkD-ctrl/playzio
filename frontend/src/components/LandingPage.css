@@ -628,129 +628,31 @@
   font-size: 14px;
 }
 
-.playzio-mockup {
+.playzio-steps {
   background: #2a2a2a;
   border-radius: 12px;
-  width: 280px;
-  height: 400px;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  gap: 1rem;
+  width: 280px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-.playzio-header {
-  background: #3a3a3a;
-  padding: 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #4a4a4a;
-}
-
-.playzio-header h3 {
-  color: #e0e0e0;
-  font-size: 18px;
-  font-weight: 600;
-  margin: 0;
-}
-
-.add-slot-btn {
+.step {
   background: linear-gradient(45deg, #d4af8c, #8a2be2);
   color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.add-slot-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(212, 175, 140, 0.3);
-}
-
-.slot-card-demo {
-  background: #3a3a3a;
-  margin: 16px;
-  padding: 16px;
+  padding: 0.75rem 1rem;
   border-radius: 8px;
-  border: 1px solid #4a4a4a;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.slot-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.slot-activity {
-  background: linear-gradient(45deg, #d4af8c, #8a2be2);
-  color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 14px;
+  font-size: 0.9rem;
   font-weight: 600;
-}
-
-.slot-time {
-  color: #e0e0e0;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.slot-date {
-  color: #b0b0b0;
-  font-size: 13px;
-}
-
-.slot-participants {
-  color: #b0b0b0;
-  font-size: 13px;
-}
-
-.slot-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.discuss-btn {
-  background: #4a4a4a;
-  color: #e0e0e0;
-  border: 1px solid #5a5a5a;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  cursor: pointer;
+  text-align: center;
   transition: all 0.3s ease;
-  flex: 1;
 }
 
-.discuss-btn:hover {
-  background: #5a5a5a;
-}
-
-.join-btn {
-  background: #4a7c59;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  flex: 1;
-}
-
-.join-btn:hover {
-  background: #5a8c69;
+.step:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(212, 175, 140, 0.3);
 }
 
 .availability, .contact {
