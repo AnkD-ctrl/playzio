@@ -363,7 +363,7 @@
 .slot-item-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .quick-action-btn {
@@ -377,12 +377,12 @@
 }
 
 .quick-action-btn.join-btn {
-  background: #28a745;
+  background: #4a7c59;
   color: white;
 }
 
 .quick-action-btn.join-btn:hover {
-  background: #218838;
+  background: #5a8c69;
 }
 
 .quick-action-btn.leave-btn {
