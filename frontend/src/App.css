@@ -66,6 +66,16 @@ body {
   justify-content: center;
 }
 
+.logout-btn svg {
+  width: 18px;
+  height: 18px;
+  transition: all 0.2s ease;
+}
+
+.logout-btn:hover svg {
+  transform: scale(1.1);
+}
+
 .groups-btn:hover,
 .profile-btn:hover,
 .logout-btn:hover {
@@ -367,6 +377,11 @@ body {
     flex: 0;
   }
   
+  .logout-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+  
   .activity-container,
   .add-slot-container {
     padding: 16px;
@@ -498,6 +513,11 @@ body {
     padding: 8px 10px;
     min-width: 44px;
     flex: 0;
+  }
+  
+  .logout-btn svg {
+    width: 14px;
+    height: 14px;
   }
   
   /* iPhone footer adjustments */
