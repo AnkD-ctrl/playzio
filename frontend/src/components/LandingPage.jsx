@@ -223,8 +223,8 @@ const LandingPage = ({ onLogin, onRegister }) => {
             <span className="offer-text">Offre de lancement</span>
           </div>
           <div className="offer-main">
-            <h2>Premium offert aux 1 000 premiers inscrits</h2>
-            <p>Devenez membre premium de Playzio et profitez à vie de toutes les fonctionnalités avancées, gratuitement.</p>
+            <h2>Récompenses exclusives pour les 1 000 premiers inscrits</h2>
+            <p>Toutes les fonctionnalités restent gratuites pour tous. Les membres premium reçoivent des récompenses exclusives et des avantages spéciaux.</p>
 
           </div>
         </div>
