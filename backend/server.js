@@ -1013,15 +1013,12 @@ app.post('/api/forgot-password', async (req, res) => {
     const resetToken = nanoid(32)
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 heures
     
-    // Sauvegarder le token en base (temporairement désactivé)
-    console.log('Token de réinitialisation simulé:', resetToken)
-    // await createPasswordResetToken(email, resetToken, expiresAt)
+    // Sauvegarder le token en base
+    await createPasswordResetToken(email, resetToken, expiresAt)
     
-    // Envoyer l'email (temporairement désactivé)
+    // Envoyer l'email
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173'
-    console.log('Email de réinitialisation simulé pour:', email)
-    console.log('Lien de réinitialisation:', `${frontendUrl}/reset-password?token=${resetToken}`)
-    // await sendPasswordResetEmail(email, resetToken, frontendUrl)
+    await sendPasswordResetEmail(email, resetToken, frontendUrl)
     
     res.json({ 
       success: true, 
