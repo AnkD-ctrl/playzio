@@ -148,132 +148,126 @@ function App() {
         </div>
       )}
 
-      <div className="app-content">
-        {currentView === 'landing' && (
-          <>
-            {console.log('Rendering LandingPage')}
-            <LandingPage 
-              onLogin={handleLandingLogin}
-              onRegister={handleLandingRegister}
-            />
-          </>
-        )}
-
-
-
-        {currentView === 'login' && (
-          <LoginScreen 
-            onLogin={handleLogin}
-            isLogin={true}
-            onBack={() => setCurrentView('landing')}
+      {currentView === 'landing' && (
+        <>
+          {console.log('Rendering LandingPage')}
+          <LandingPage 
+            onLogin={handleLandingLogin}
+            onRegister={handleLandingRegister}
           />
-        )}
+        </>
+      )}
 
-        {currentView === 'register' && (
-          <LoginScreen 
-            onLogin={handleLogin}
-            isLogin={false}
-            onBack={() => setCurrentView('landing')}
-          />
-        )}
+      {currentView === 'login' && (
+        <LoginScreen 
+          onLogin={handleLogin}
+          isLogin={true}
+          onBack={() => setCurrentView('landing')}
+        />
+      )}
 
-        {currentView === 'groups' && (
-          <Groups 
-            currentUser={currentUser} 
-            onBack={() => setCurrentView('activity')}
-          />
-        )}
+      {currentView === 'register' && (
+        <LoginScreen 
+          onLogin={handleLogin}
+          isLogin={false}
+          onBack={() => setCurrentView('landing')}
+        />
+      )}
 
-        {currentView === 'activity' && selectedActivity && (
-          <div className="activity-container">
-            <div className="main-tabs">
-              <div 
-                className={`main-tab ${selectedType === 'list' ? 'active' : ''}`}
-                onClick={() => setSelectedType('list')}
-              >
-                Disponibilités
-              </div>
-              <div 
-                className={`main-tab ${selectedType === 'calendar' ? 'active' : ''}`}
-                onClick={() => setSelectedType('calendar')}
-              >
-                Calendrier
-              </div>
-              <div 
-                className={`main-tab add-tab ${selectedType === 'add' ? 'active' : ''}`}
-                onClick={() => setSelectedType('add')}
-              >
-                Ajouter ma dispo
-              </div>
+      {currentView === 'groups' && (
+        <Groups 
+          currentUser={currentUser} 
+          onBack={() => setCurrentView('activity')}
+        />
+      )}
+
+      {currentView === 'activity' && selectedActivity && (
+        <div className="activity-container">
+          <div className="main-tabs">
+            <div 
+              className={`main-tab ${selectedType === 'list' ? 'active' : ''}`}
+              onClick={() => setSelectedType('list')}
+            >
+              Disponibilités
             </div>
-
-
-
-            <div className="activity-content">
-              {selectedType === 'list' && (
-                <SlotList 
-                  key={`${selectedActivity}-${selectedDate || 'all'}`}
-                  activity={selectedActivity}
-                  currentUser={currentUser}
-                  selectedDate={selectedDate}
-                  onClearDate={() => setSelectedDate(null)}
-                  searchFilter={searchFilter}
-                  onSearchFilterChange={handleSearchFilterChange}
-                />
-              )}
-              {selectedType === 'calendar' && (
-                <Calendar 
-                  activity={selectedActivity}
-                  currentUser={currentUser}
-                  onDateSelect={handleDateSelect}
-                  searchFilter={searchFilter}
-                  onSearchFilterChange={handleSearchFilterChange}
-                />
-              )}
-              {selectedType === 'add' && (
-                <AddSlot 
-                  activity={selectedActivity}
-                  currentUser={currentUser}
-                  onSlotAdded={() => setSelectedType('list')}
-                />
-              )}
+            <div 
+              className={`main-tab ${selectedType === 'calendar' ? 'active' : ''}`}
+              onClick={() => setSelectedType('calendar')}
+            >
+              Calendrier
+            </div>
+            <div 
+              className={`main-tab add-tab ${selectedType === 'add' ? 'active' : ''}`}
+              onClick={() => setSelectedType('add')}
+            >
+              Ajouter ma dispo
             </div>
           </div>
-        )}
 
-        {currentView === 'activity' && selectedActivity && (
-          <div className="activity-switcher-footer">
-            <div className="footer-content">
-              <div className="activity-switcher">
-                              <button 
+          <div className="activity-content">
+            {selectedType === 'list' && (
+              <SlotList 
+                key={`${selectedActivity}-${selectedDate || 'all'}`}
+                activity={selectedActivity}
+                currentUser={currentUser}
+                selectedDate={selectedDate}
+                onClearDate={() => setSelectedDate(null)}
+                searchFilter={searchFilter}
+                onSearchFilterChange={handleSearchFilterChange}
+              />
+            )}
+            {selectedType === 'calendar' && (
+              <Calendar 
+                activity={selectedActivity}
+                currentUser={currentUser}
+                onDateSelect={handleDateSelect}
+                searchFilter={searchFilter}
+                onSearchFilterChange={handleSearchFilterChange}
+              />
+            )}
+            {selectedType === 'add' && (
+              <AddSlot 
+                activity={selectedActivity}
+                currentUser={currentUser}
+                onSlotAdded={() => setSelectedType('list')}
+              />
+            )}
+          </div>
+        </div>
+      )}
+
+      {currentView === 'activity' && selectedActivity && (
+        <div className="activity-switcher-footer">
+          <div className="footer-content">
+            <div className="activity-switcher">
+              <button 
                 className={`activity-switch-btn ${selectedActivity === 'Sport' ? 'active' : ''}`}
                 onClick={() => setSelectedActivity('Sport')}
               >
                 <span>Sport</span>
               </button>
-                <button 
-                  className={`activity-switch-btn ${selectedActivity === 'Social' ? 'active' : ''}`}
-                  onClick={() => setSelectedActivity('Social')}
-                >
-                  <span>Social</span>
-                </button>
-                <button 
-                  className={`activity-switch-btn ${selectedActivity === 'Autre' ? 'active' : ''}`}
-                  onClick={() => setSelectedActivity('Autre')}
-                >
-                  <span>Autre</span>
-                </button>
-                <button 
-                  className={`activity-switch-btn ${selectedActivity === 'Tous' ? 'active' : ''}`}
-                  onClick={() => setSelectedActivity('Tous')}
-                >
-                  <span>Tous</span>
-                </button>
-              </div>
+              <button 
+                className={`activity-switch-btn ${selectedActivity === 'Social' ? 'active' : ''}`}
+                onClick={() => setSelectedActivity('Social')}
+              >
+                <span>Social</span>
+              </button>
+              <button 
+                className={`activity-switch-btn ${selectedActivity === 'Autre' ? 'active' : ''}`}
+                onClick={() => setSelectedActivity('Autre')}
+              >
+                <span>Autre</span>
+              </button>
+              <button 
+                className={`activity-switch-btn ${selectedActivity === 'Tous' ? 'active' : ''}`}
+                onClick={() => setSelectedActivity('Tous')}
+              >
+                <span>Tous</span>
+              </button>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {showUserProfile && (
         <UserProfile 

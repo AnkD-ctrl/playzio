@@ -94,13 +94,7 @@ body {
   border-color: #6a6a6a;
 }
 
-/* Content */
-.app-content {
-  min-height: calc(100vh - 80px);
-  padding-bottom: 120px; /* Space for floating footer */
-  position: relative;
-  z-index: 1;
-}
+/* Content - app-content supprimé car inutile */
 
 /* Activity Container */
 .activity-container {
