@@ -372,23 +372,36 @@ export async function getUserByEmail(email) {
 
 export async function updateUserEmail(prenom, email) {
   try {
+    console.log('Tentative de mise à jour email:', { prenom, email })
+    
     const result = await pool.query(
       'UPDATE users SET email = $1 WHERE prenom = $2 RETURNING prenom, email, role, is_founder',
       [email, prenom]
     )
+    
+    console.log('Email mis à jour avec succès:', result.rows[0])
     return result.rows[0]
   } catch (error) {
+    console.error('Erreur lors de la mise à jour email:', error.message)
+    
     // Si la colonne email n'existe pas, l'ajouter d'abord
     if (error.message.includes('column "email" does not exist')) {
       console.log('Colonne email manquante, ajout en cours...')
-      await pool.query('ALTER TABLE users ADD COLUMN email VARCHAR(255)')
-      
-      // Réessayer la mise à jour
-      const result = await pool.query(
-        'UPDATE users SET email = $1 WHERE prenom = $2 RETURNING prenom, email, role, is_founder',
-        [email, prenom]
-      )
-      return result.rows[0]
+      try {
+        await pool.query('ALTER TABLE users ADD COLUMN email VARCHAR(255)')
+        console.log('Colonne email ajoutée avec succès')
+        
+        // Réessayer la mise à jour
+        const result = await pool.query(
+          'UPDATE users SET email = $1 WHERE prenom = $2 RETURNING prenom, email, role, is_founder',
+          [email, prenom]
+        )
+        console.log('Email mis à jour après ajout de colonne:', result.rows[0])
+        return result.rows[0]
+      } catch (migrationError) {
+        console.error('Erreur lors de l\'ajout de la colonne email:', migrationError.message)
+        throw migrationError
+      }
     }
     throw error
   }

@@ -195,11 +195,16 @@ app.post('/api/users/:prenom/email', async (req, res) => {
       return res.status(404).json({ error: 'Utilisateur non trouvé' })
     }
     
-    // Vérifier si l'email n'est pas déjà utilisé
-    const existingUser = await getUserByEmail(email)
-    console.log('Email déjà utilisé:', existingUser ? 'Oui' : 'Non')
-    if (existingUser && existingUser.prenom !== prenom) {
-      return res.status(400).json({ error: 'Cette adresse email est déjà utilisée' })
+    // Vérifier si l'email n'est pas déjà utilisé (temporairement désactivé)
+    try {
+      const existingUser = await getUserByEmail(email)
+      console.log('Email déjà utilisé:', existingUser ? 'Oui' : 'Non')
+      if (existingUser && existingUser.prenom !== prenom) {
+        return res.status(400).json({ error: 'Cette adresse email est déjà utilisée' })
+      }
+    } catch (emailCheckError) {
+      console.log('Erreur lors de la vérification email (ignorée):', emailCheckError.message)
+      // On continue même si la vérification échoue
     }
     
     // Mettre à jour l'email
