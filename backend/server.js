@@ -176,28 +176,36 @@ app.post('/api/users/:prenom/email', async (req, res) => {
     const { prenom } = req.params
     const { email } = req.body
     
+    console.log('Tentative d\'ajout d\'email:', { prenom, email })
+    
     if (!email) {
+      console.log('Erreur: Email requis')
       return res.status(400).json({ error: 'Email requis' })
     }
     
     // Validation email
     if (!isValidEmail(email)) {
+      console.log('Erreur: Email invalide')
       return res.status(400).json({ error: 'Adresse email invalide' })
     }
     
     const user = await getUserByPrenom(prenom)
+    console.log('Utilisateur trouvé:', user ? 'Oui' : 'Non')
     if (!user) {
       return res.status(404).json({ error: 'Utilisateur non trouvé' })
     }
     
     // Vérifier si l'email n'est pas déjà utilisé
     const existingUser = await getUserByEmail(email)
+    console.log('Email déjà utilisé:', existingUser ? 'Oui' : 'Non')
     if (existingUser && existingUser.prenom !== prenom) {
       return res.status(400).json({ error: 'Cette adresse email est déjà utilisée' })
     }
     
     // Mettre à jour l'email
+    console.log('Mise à jour de l\'email...')
     const updated = await updateUserEmail(prenom, email)
+    console.log('Email mis à jour avec succès:', updated)
     
     res.json({ success: true, user: updated })
   } catch (error) {

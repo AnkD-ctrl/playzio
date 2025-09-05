@@ -58,6 +58,8 @@ function UserProfile({ user, onClose, onUserUpdate }) {
     setMessage('')
     
     try {
+      console.log('Envoi de l\'email:', emailForm.email, 'pour l\'utilisateur:', user.prenom)
+      
       const response = await fetch(`${API_BASE_URL}/api/users/${encodeURIComponent(user.prenom)}/email`, {
         method: 'POST',
         headers: {
@@ -68,7 +70,10 @@ function UserProfile({ user, onClose, onUserUpdate }) {
         })
       })
       
+      console.log('Réponse du serveur:', response.status, response.statusText)
+      
       const data = await response.json()
+      console.log('Données reçues:', data)
       
       if (response.ok) {
         setMessage('Email ajouté avec succès !')
@@ -80,6 +85,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
         setMessage(data.error || 'Erreur lors de l\'ajout de l\'email')
       }
     } catch (error) {
+      console.error('Erreur lors de l\'ajout de l\'email:', error)
       setMessage('Erreur de connexion au serveur')
     } finally {
       setLoading(false)
