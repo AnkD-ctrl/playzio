@@ -6,6 +6,7 @@ import {
   initDatabase,
   getAllUsers,
   getUserByPrenom,
+  getUserByEmail,
   createUser,
   getAllSlots,
   getSlotById,
