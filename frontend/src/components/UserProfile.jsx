@@ -165,9 +165,9 @@ function UserProfile({ user, onClose, onUserUpdate }) {
               {/* Email directement sous le nom */}
               <div className="user-email">
                 {user.email ? (
-                  <span className="email-value">📧 {user.email}</span>
+                  <span className="email-value">{user.email}</span>
                 ) : (
-                  <span className="email-warning-text">⚠️ Aucun email associé</span>
+                  <span className="email-warning-text">Aucun email associé</span>
                 )}
               </div>
               
@@ -188,14 +188,15 @@ function UserProfile({ user, onClose, onUserUpdate }) {
               <span className="stat-label">Membre depuis</span>
               <span className="stat-value">2024</span>
             </div>
-            <div className="stat-item">
-              <span className="stat-label">Groupes</span>
-              <span className="stat-value">
+            <div className="stat-item groups-item">
+              <div className="groups-label">Groupes</div>
+              <div className="groups-spacer"></div>
+              <div className="groups-list">
                 {userGroups.length > 0 
                   ? userGroups.map(group => group.name).join(', ')
                   : 'Aucun groupe'
                 }
-              </span>
+              </div>
             </div>
           </div>
           
