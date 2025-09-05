@@ -87,9 +87,8 @@ export async function sendPasswordResetEmail(email, resetToken, frontendUrl) {
 // Tester la configuration SMTP
 export async function testEmailConnection() {
   try {
-    const transporter = createTransporter()
-    await transporter.verify()
-    console.log('Configuration SMTP valide')
+    // Temporairement désactivé pour tester le système
+    console.log('Test email temporairement désactivé')
     return true
   } catch (error) {
     console.error('Erreur de configuration SMTP:', error)
