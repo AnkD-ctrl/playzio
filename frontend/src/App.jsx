@@ -32,6 +32,11 @@ function App() {
     if (urlParams.get('token')) {
       setCurrentView('reset-password')
     }
+    
+    // Vérifier aussi le pathname pour /reset-password
+    if (window.location.pathname === '/reset-password') {
+      setCurrentView('reset-password')
+    }
   }, [])
 
   // Test d'exclusion d'IP au chargement
