@@ -25,6 +25,7 @@ import {
   updateUserFriends,
   updateUserRole,
   updateUserPassword,
+  updateUserEmail,
   getUserCount,
   getFounderCount,
   getMessagesBySlotId,
