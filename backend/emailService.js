@@ -75,11 +75,9 @@ export async function sendPasswordResetEmail(email, resetToken, frontendUrl) {
   }
   
   try {
-    // Temporairement désactivé pour éviter l'erreur SMTP
-    console.log('Email de réinitialisation simulé pour:', email)
-    console.log('Lien de réinitialisation:', resetUrl)
-    console.log('IMPORTANT: Copiez ce lien pour tester la réinitialisation')
-    return { success: true, messageId: 'simulated' }
+    const info = await transporter.sendMail(mailOptions)
+    console.log('Email de réinitialisation envoyé:', info.messageId)
+    return { success: true, messageId: info.messageId }
   } catch (error) {
     console.error('Erreur lors de l\'envoi de l\'email:', error)
     throw new Error('Erreur lors de l\'envoi de l\'email de réinitialisation')
