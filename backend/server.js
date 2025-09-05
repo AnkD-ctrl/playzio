@@ -251,8 +251,9 @@ app.post('/api/login', async (req, res) => {
       user: { 
         prenom: user.prenom, 
         role: user.role || 'user',
-        isFounder: user.is_founder || false
-      } 
+        isFounder: user.is_founder || false,
+        email: user.email || null
+      }
     })
   } catch (error) {
     console.error('Login error:', error)
@@ -297,7 +298,13 @@ app.post('/api/register', async (req, res) => {
       success: true, 
       isFounder,
       founderCount: adjustedFounderCount + 1,
-      message: isFounder ? 'Félicitations ! Vous êtes membre premium de Playzio !' : 'Compte créé avec succès'
+      message: isFounder ? 'Félicitations ! Vous êtes membre premium de Playzio !' : 'Compte créé avec succès',
+      user: {
+        prenom: newUser.prenom,
+        role: newUser.role || 'user',
+        isFounder: newUser.is_founder || false,
+        email: newUser.email || null
+      }
     })
   } catch (error) {
     console.error('Register error:', error)
