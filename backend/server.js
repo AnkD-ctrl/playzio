@@ -70,6 +70,12 @@ function hashPassword(password) {
   return crypto.createHash('sha256').update(password).digest('hex')
 }
 
+// Fonction de validation email
+function isValidEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
+}
+
 // Fonction pour vérifier si une disponibilité est encore valide (pas passée)
 function isSlotStillValid(slot) {
   const now = new Date()
@@ -200,10 +206,15 @@ app.post('/api/login', async (req, res) => {
 // Inscription
 app.post('/api/register', async (req, res) => {
   try {
-    const { prenom, password } = req.body
+    const { prenom, password, email } = req.body
     
     if (!prenom || !password) {
       return res.status(400).json({ error: 'Nom d\'utilisateur et mot de passe requis' })
+    }
+
+    // Validation email si fourni
+    if (email && !isValidEmail(email)) {
+      return res.status(400).json({ error: 'Adresse email invalide' })
     }
     
     const existingUser = await getUserByPrenom(prenom)
@@ -221,6 +232,7 @@ app.post('/api/register', async (req, res) => {
     const newUser = await createUser({
       prenom,
       password: hashedPassword,
+      email: email || null,
       isFounder
     })
     

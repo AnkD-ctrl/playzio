@@ -6,7 +6,8 @@ function LoginScreen({ onLogin, isLogin: initialIsLogin = true, onBack }) {
   const [isLogin, setIsLogin] = useState(initialIsLogin)
   const [formData, setFormData] = useState({
     prenom: '',
-    password: ''
+    password: '',
+    email: ''
   })
   const [error, setError] = useState('')
   
@@ -19,9 +20,20 @@ function LoginScreen({ onLogin, isLogin: initialIsLogin = true, onBack }) {
     setError('')
   }
 
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+
+    // Validation email si fourni
+    if (!isLogin && formData.email && !validateEmail(formData.email)) {
+      setError('Veuillez entrer une adresse email valide')
+      return
+    }
 
     try {
       const endpoint = isLogin ? '/api/login' : '/api/register'
@@ -40,7 +52,7 @@ function LoginScreen({ onLogin, isLogin: initialIsLogin = true, onBack }) {
           onLogin(data.user)
         } else {
           setIsLogin(true)
-          setFormData({ prenom: '', password: '' })
+          setFormData({ prenom: '', password: '', email: '' })
           if (data.isFounder) {
             alert(`🎉 ${data.message}\n\nVous êtes le ${data.founderCount}ème membre premium de Playzio !`)
           } else {
@@ -98,6 +110,24 @@ function LoginScreen({ onLogin, isLogin: initialIsLogin = true, onBack }) {
               placeholder="Entrez votre mot de passe"
             />
           </div>
+
+          {!isLogin && (
+            <div className="form-group">
+              <label htmlFor="email">Email (optionnel)</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder="votre@email.com"
+              />
+              <div className="email-disclaimer">
+                <p>⚠️ <strong>Important :</strong> Sans email, vous ne pourrez pas récupérer votre compte si vous oubliez votre mot de passe.</p>
+                <p>💡 Vous pourrez ajouter votre email plus tard dans "Mon compte".</p>
+              </div>
+            </div>
+          )}
 
 
 

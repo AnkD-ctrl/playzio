@@ -113,6 +113,27 @@ function UserProfile({ user, onClose, onUserUpdate }) {
                   </span>
                 )}
               </div>
+              
+              {/* Section Email */}
+              <div className="email-section">
+                {user.email ? (
+                  <div className="email-info">
+                    <span className="email-label">📧 Email :</span>
+                    <span className="email-value">{user.email}</span>
+                  </div>
+                ) : (
+                  <div className="email-warning">
+                    <p>⚠️ <strong>Aucun email associé</strong></p>
+                    <p>Ajoutez votre email pour pouvoir récupérer votre compte en cas d'oubli de mot de passe.</p>
+                    <button 
+                      className="add-email-btn"
+                      onClick={() => setMessage('Fonctionnalité à venir : ajout d\'email')}
+                    >
+                      Ajouter un email
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           

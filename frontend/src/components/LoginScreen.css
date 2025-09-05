@@ -364,3 +364,40 @@
     line-height: 1.5;
   }
 }
+
+/* Styles pour le disclaimer email */
+.email-disclaimer {
+  margin-top: 8px;
+  padding: 12px;
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  border-radius: 6px;
+}
+
+.email-disclaimer p {
+  margin: 0 0 8px 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: #ffc107;
+}
+
+.email-disclaimer p:last-child {
+  margin-bottom: 0;
+  color: #b0b0b0;
+}
+
+.email-disclaimer strong {
+  color: #ffc107;
+  font-weight: 600;
+}
+
+/* Responsive pour le disclaimer */
+@media (max-width: 768px) {
+  .email-disclaimer {
+    padding: 10px;
+  }
+  
+  .email-disclaimer p {
+    font-size: 0.75rem;
+  }
+}

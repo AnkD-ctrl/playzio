@@ -375,3 +375,83 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+/* Styles pour la section email */
+.email-section {
+  margin-top: 16px;
+  padding: 12px;
+  background: #2a2a2a;
+  border-radius: 8px;
+  border: 1px solid #3a3a3a;
+}
+
+.email-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.email-label {
+  color: #d4af8c;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.email-value {
+  color: #e0e0e0;
+  font-size: 0.9rem;
+}
+
+.email-warning {
+  text-align: center;
+}
+
+.email-warning p {
+  margin: 0 0 8px 0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.email-warning p:first-child {
+  color: #ffc107;
+  font-weight: 600;
+}
+
+.email-warning p:last-child {
+  color: #b0b0b0;
+  margin-bottom: 12px;
+}
+
+.add-email-btn {
+  background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-email-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 175, 140, 0.4);
+}
+
+/* Responsive pour la section email */
+@media (max-width: 768px) {
+  .email-section {
+    margin-top: 12px;
+    padding: 10px;
+  }
+  
+  .email-warning p {
+    font-size: 0.8rem;
+  }
+  
+  .add-email-btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+}

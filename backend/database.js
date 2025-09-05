@@ -77,26 +77,13 @@ export async function getUserByPrenom(prenom) {
 }
 
 export async function createUser(userData) {
-  const { prenom, password, role = 'user', isFounder = false } = userData
+  const { prenom, password, email = null, role = 'user', isFounder = false } = userData
   
-  try {
-    // Essayer d'abord sans email
-    const result = await pool.query(
-      'INSERT INTO users (prenom, password, role, is_founder) VALUES ($1, $2, $3, $4) RETURNING *',
-      [prenom, password, role, isFounder]
-    )
-    return result.rows[0]
-  } catch (error) {
-    // Si ça échoue, essayer avec un email par défaut
-    if (error.message.includes('email')) {
-      const result = await pool.query(
-        'INSERT INTO users (prenom, password, email, role, is_founder) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-        [prenom, password, `${prenom}@playzio.local`, role, isFounder]
-      )
-      return result.rows[0]
-    }
-    throw error
-  }
+  const result = await pool.query(
+    'INSERT INTO users (prenom, password, email, role, is_founder) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+    [prenom, password, email, role, isFounder]
+  )
+  return result.rows[0]
 }
 
 // Slots

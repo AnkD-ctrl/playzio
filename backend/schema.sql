@@ -84,6 +84,15 @@ BEGIN
     END IF;
 END $$;
 
+-- Migration: Add email column if it doesn't exist
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'users' AND column_name = 'email') THEN
+        ALTER TABLE users ADD COLUMN email VARCHAR(255);
+    END IF;
+END $$;
+
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_users_prenom ON users(prenom);
 CREATE INDEX IF NOT EXISTS idx_slots_date ON slots(date);
