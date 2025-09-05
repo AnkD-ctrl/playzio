@@ -54,11 +54,6 @@ export async function sendPasswordResetEmail(email, resetToken, frontendUrl) {
             <p style="color: #999; font-size: 14px; line-height: 1.6; margin: 30px 0 0 0;">
               <strong>Important :</strong> Ce lien est valide pendant 24 heures. Si vous n'avez pas demandé cette réinitialisation, ignorez cet email.
             </p>
-            
-            <p style="color: #999; font-size: 14px; line-height: 1.6; margin: 10px 0 0 0;">
-              Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :<br>
-              <a href="${resetUrl}" style="color: #d4af8c; word-break: break-all;">${resetUrl}</a>
-            </p>
           </div>
           
           <div style="text-align: center; margin-top: 20px; color: #999; font-size: 12px;">
