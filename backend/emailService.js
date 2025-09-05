@@ -8,7 +8,7 @@ export async function sendPasswordResetEmail(email, resetToken, frontendUrl) {
     throw new Error('SENDGRID_API_KEY non configurée')
   }
 
-  const resetUrl = `${frontendUrl}/reset-password?token=${resetToken}`
+  const resetUrl = `${frontendUrl}/?token=${resetToken}`
   
   const emailData = {
     personalizations: [{
