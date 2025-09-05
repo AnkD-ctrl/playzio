@@ -170,6 +170,42 @@ app.post('/api/users/:prenom/password', async (req, res) => {
   }
 })
 
+// Ajouter un email à un utilisateur
+app.post('/api/users/:prenom/email', async (req, res) => {
+  try {
+    const { prenom } = req.params
+    const { email } = req.body
+    
+    if (!email) {
+      return res.status(400).json({ error: 'Email requis' })
+    }
+    
+    // Validation email
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ error: 'Adresse email invalide' })
+    }
+    
+    const user = await getUserByPrenom(prenom)
+    if (!user) {
+      return res.status(404).json({ error: 'Utilisateur non trouvé' })
+    }
+    
+    // Vérifier si l'email n'est pas déjà utilisé
+    const existingUser = await getUserByEmail(email)
+    if (existingUser && existingUser.prenom !== prenom) {
+      return res.status(400).json({ error: 'Cette adresse email est déjà utilisée' })
+    }
+    
+    // Mettre à jour l'email
+    const updated = await updateUserEmail(prenom, email)
+    
+    res.json({ success: true, user: updated })
+  } catch (error) {
+    console.error('Update email error:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
 
 
 // Routes

@@ -6,6 +6,7 @@ import MessagesList from './MessagesList'
 
 function UserProfile({ user, onClose, onUserUpdate }) {
   const [showPasswordModal, setShowPasswordModal] = useState(false)
+  const [showEmailModal, setShowEmailModal] = useState(false)
   const [showContactModal, setShowContactModal] = useState(false)
   const [showMessagesList, setShowMessagesList] = useState(false)
   const [userGroups, setUserGroups] = useState([])
@@ -13,6 +14,9 @@ function UserProfile({ user, onClose, onUserUpdate }) {
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
+  })
+  const [emailForm, setEmailForm] = useState({
+    email: ''
   })
 
   const [loading, setLoading] = useState(false)
@@ -32,6 +36,53 @@ function UserProfile({ user, onClose, onUserUpdate }) {
       }
     } catch (error) {
       console.error('Erreur lors du chargement des groupes:', error)
+    }
+  }
+
+  const handleEmailAdd = async (e) => {
+    e.preventDefault()
+    
+    if (!emailForm.email) {
+      setMessage('Veuillez entrer une adresse email')
+      return
+    }
+    
+    // Validation email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(emailForm.email)) {
+      setMessage('Veuillez entrer une adresse email valide')
+      return
+    }
+    
+    setLoading(true)
+    setMessage('')
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/users/${encodeURIComponent(user.prenom)}/email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: emailForm.email
+        })
+      })
+      
+      const data = await response.json()
+      
+      if (response.ok) {
+        setMessage('Email ajouté avec succès !')
+        setEmailForm({ email: '' })
+        setShowEmailModal(false)
+        // Mettre à jour l'utilisateur localement
+        onUserUpdate({ ...user, email: emailForm.email })
+      } else {
+        setMessage(data.error || 'Erreur lors de l\'ajout de l\'email')
+      }
+    } catch (error) {
+      setMessage('Erreur de connexion au serveur')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -127,7 +178,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
                     <p>Ajoutez votre email pour pouvoir récupérer votre compte en cas d'oubli de mot de passe.</p>
                     <button 
                       className="add-email-btn"
-                      onClick={() => setMessage('Fonctionnalité à venir : ajout d\'email')}
+                      onClick={() => setShowEmailModal(true)}
                     >
                       Ajouter un email
                     </button>
@@ -221,6 +272,46 @@ function UserProfile({ user, onClose, onUserUpdate }) {
                     </button>
                     <button type="submit" disabled={loading}>
                       {loading ? 'Mise à jour...' : 'Mettre à jour'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* Modal d'ajout d'email */}
+          {showEmailModal && (
+            <div className="sub-modal-overlay" onClick={() => setShowEmailModal(false)}>
+              <div className="sub-modal" onClick={(e) => e.stopPropagation()}>
+                <div className="modal-header">
+                  <h4>Ajouter un email</h4>
+                  <button className="close-btn" onClick={() => setShowEmailModal(false)}>
+                    ✕
+                  </button>
+                </div>
+                <form onSubmit={handleEmailAdd}>
+                  <div className="form-group">
+                    <label htmlFor="email">Adresse email</label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={emailForm.email}
+                      onChange={(e) => setEmailForm({ email: e.target.value })}
+                      placeholder="votre@email.com"
+                      required
+                    />
+                    <p className="form-help">
+                      Cet email vous permettra de récupérer votre compte en cas d'oubli de mot de passe.
+                    </p>
+                  </div>
+                  {message && <div className={`message ${message.includes('succès') ? 'success' : 'error'}`}>{message}</div>}
+                  <div className="form-actions">
+                    <button type="button" onClick={() => setShowEmailModal(false)} disabled={loading}>
+                      Annuler
+                    </button>
+                    <button type="submit" disabled={loading}>
+                      {loading ? 'Ajout...' : 'Ajouter l\'email'}
                     </button>
                   </div>
                 </form>

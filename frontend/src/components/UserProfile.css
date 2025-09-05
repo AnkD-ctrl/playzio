@@ -376,6 +376,13 @@
   cursor: not-allowed;
 }
 
+.form-help {
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: #b0b0b0;
+  line-height: 1.4;
+}
+
 /* Styles pour la section email */
 .email-section {
   margin-top: 16px;

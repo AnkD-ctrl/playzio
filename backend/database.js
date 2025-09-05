@@ -356,6 +356,19 @@ export async function updateUserPassword(prenom, hashedPassword) {
   return result.rows[0]
 }
 
+export async function getUserByEmail(email) {
+  const result = await pool.query('SELECT * FROM users WHERE email = $1', [email])
+  return result.rows[0]
+}
+
+export async function updateUserEmail(prenom, email) {
+  const result = await pool.query(
+    'UPDATE users SET email = $1 WHERE prenom = $2 RETURNING prenom, email, role, is_founder',
+    [email, prenom]
+  )
+  return result.rows[0]
+}
+
 export async function getUserCount() {
   const result = await pool.query('SELECT COUNT(*) as count FROM users')
   return parseInt(result.rows[0].count)
