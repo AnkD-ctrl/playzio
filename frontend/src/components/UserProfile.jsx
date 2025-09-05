@@ -175,8 +175,16 @@ function UserProfile({ user, onClose, onUserUpdate }) {
               <div className="email-section">
                 {user.email ? (
                   <div className="email-info">
-                    <span className="email-label">📧 Email :</span>
-                    <span className="email-value">{user.email}</span>
+                    <div className="email-display">
+                      <span className="email-label">📧 Email :</span>
+                      <span className="email-value">{user.email}</span>
+                    </div>
+                    <button 
+                      className="modify-email-btn"
+                      onClick={() => setShowEmailModal(true)}
+                    >
+                      Modifier l'email
+                    </button>
                   </div>
                 ) : (
                   <div className="email-warning">
@@ -285,12 +293,12 @@ function UserProfile({ user, onClose, onUserUpdate }) {
             </div>
           )}
 
-          {/* Modal d'ajout d'email */}
+          {/* Modal d'ajout/modification d'email */}
           {showEmailModal && (
             <div className="sub-modal-overlay" onClick={() => setShowEmailModal(false)}>
               <div className="sub-modal" onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
-                  <h4>Ajouter un email</h4>
+                  <h4>{user.email ? 'Modifier l\'email' : 'Ajouter un email'}</h4>
                   <button className="close-btn" onClick={() => setShowEmailModal(false)}>
                     ✕
                   </button>
@@ -304,11 +312,14 @@ function UserProfile({ user, onClose, onUserUpdate }) {
                       name="email"
                       value={emailForm.email}
                       onChange={(e) => setEmailForm({ email: e.target.value })}
-                      placeholder="votre@email.com"
+                      placeholder={user.email || "votre@email.com"}
                       required
                     />
                     <p className="form-help">
-                      Cet email vous permettra de récupérer votre compte en cas d'oubli de mot de passe.
+                      {user.email 
+                        ? "Modifiez votre adresse email pour la récupération de mot de passe."
+                        : "Cet email vous permettra de récupérer votre compte en cas d'oubli de mot de passe."
+                      }
                     </p>
                   </div>
                   {message && <div className={`message ${message.includes('succès') ? 'success' : 'error'}`}>{message}</div>}
@@ -317,7 +328,10 @@ function UserProfile({ user, onClose, onUserUpdate }) {
                       Annuler
                     </button>
                     <button type="submit" disabled={loading}>
-                      {loading ? 'Ajout...' : 'Ajouter l\'email'}
+                      {loading 
+                        ? (user.email ? 'Modification...' : 'Ajout...') 
+                        : (user.email ? 'Modifier l\'email' : 'Ajouter l\'email')
+                      }
                     </button>
                   </div>
                 </form>

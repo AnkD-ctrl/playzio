@@ -429,7 +429,14 @@
   margin-bottom: 12px;
 }
 
-.add-email-btn {
+.email-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.add-email-btn, .modify-email-btn {
   background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
   color: white;
   border: none;
@@ -441,7 +448,7 @@
   transition: all 0.2s ease;
 }
 
-.add-email-btn:hover {
+.add-email-btn:hover, .modify-email-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(212, 175, 140, 0.4);
 }
@@ -457,8 +464,14 @@
     font-size: 0.8rem;
   }
   
-  .add-email-btn {
+  .add-email-btn, .modify-email-btn {
     padding: 6px 12px;
     font-size: 0.8rem;
+  }
+  
+  .email-display {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
   }
 }
