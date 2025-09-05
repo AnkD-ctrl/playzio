@@ -500,6 +500,39 @@ export async function addAdminResponse(messageId, response) {
   return result.rows[0]
 }
 
+// Password reset functions
+export async function createPasswordResetToken(email, token, expiresAt) {
+  const id = nanoid()
+  const result = await pool.query(
+    'INSERT INTO password_reset_tokens (id, user_email, token, expires_at) VALUES ($1, $2, $3, $4) RETURNING *',
+    [id, email, token, expiresAt]
+  )
+  return result.rows[0]
+}
+
+export async function getPasswordResetToken(token) {
+  const result = await pool.query(
+    'SELECT * FROM password_reset_tokens WHERE token = $1 AND expires_at > NOW() AND used = FALSE',
+    [token]
+  )
+  return result.rows[0]
+}
+
+export async function markTokenAsUsed(token) {
+  const result = await pool.query(
+    'UPDATE password_reset_tokens SET used = TRUE WHERE token = $1 RETURNING *',
+    [token]
+  )
+  return result.rows[0]
+}
+
+export async function cleanupExpiredTokens() {
+  const result = await pool.query(
+    'DELETE FROM password_reset_tokens WHERE expires_at < NOW() OR used = TRUE'
+  )
+  return result.rowCount
+}
+
 // Fermer la connexion
 export async function closeDatabase() {
   await pool.end()

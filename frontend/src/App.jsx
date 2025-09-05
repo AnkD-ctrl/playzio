@@ -3,6 +3,7 @@ import './App.css'
 import Logo from './components/Logo'
 import LandingPage from './components/LandingPage'
 import LoginScreen from './components/LoginScreen'
+import ResetPassword from './components/ResetPassword'
 
 import AddSlot from './components/AddSlot'
 import SlotList from './components/SlotList'
@@ -24,6 +25,14 @@ function App() {
   const [showContactModal, setShowContactModal] = useState(false)
   const [searchFilter, setSearchFilter] = useState('')
 
+
+  // Vérifier si on est sur la page de réinitialisation de mot de passe
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    if (urlParams.get('token')) {
+      setCurrentView('reset-password')
+    }
+  }, [])
 
   // Test d'exclusion d'IP au chargement
   useEffect(() => {
@@ -270,6 +279,11 @@ function App() {
       )}
 
 
+
+      {/* Page de réinitialisation de mot de passe */}
+      {currentView === 'reset-password' && (
+        <ResetPassword />
+      )}
 
       {/* Modal de Contact */}
       {showContactModal && (

@@ -401,3 +401,22 @@
     font-size: 0.75rem;
   }
 }
+
+.forgot-password-link {
+  text-align: center;
+  margin: 16px 0;
+}
+
+.forgot-password-button {
+  background: none;
+  border: none;
+  color: #b0b0b0;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.forgot-password-button:hover {
+  color: #d4af8c;
+}

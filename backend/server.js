@@ -37,8 +37,13 @@ import {
   addAdminResponse,
   updateMessage,
   deleteMessage,
+  createPasswordResetToken,
+  getPasswordResetToken,
+  markTokenAsUsed,
+  cleanupExpiredTokens,
   closeDatabase
 } from './database.js'
+import { sendPasswordResetEmail, testEmailConnection } from './emailService.js'
 
 const app = express()
 const port = process.env.PORT || 8080
@@ -975,6 +980,123 @@ app.put('/api/admin/contact-messages/:id/response', async (req, res) => {
     res.json(message)
   } catch (error) {
     console.error('Erreur lors de l\'ajout de la réponse admin:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
+// Mot de passe oublié - Demander la réinitialisation
+app.post('/api/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body
+    
+    if (!email) {
+      return res.status(400).json({ error: 'Email requis' })
+    }
+    
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ error: 'Adresse email invalide' })
+    }
+    
+    // Vérifier si l'utilisateur existe avec cet email
+    const user = await getUserByEmail(email)
+    if (!user) {
+      // Pour des raisons de sécurité, on retourne toujours un succès
+      // même si l'email n'existe pas
+      return res.json({ 
+        success: true, 
+        message: 'Si cet email est associé à un compte, vous recevrez un lien de réinitialisation.' 
+      })
+    }
+    
+    // Générer un token de réinitialisation
+    const resetToken = nanoid(32)
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 heures
+    
+    // Sauvegarder le token en base
+    await createPasswordResetToken(email, resetToken, expiresAt)
+    
+    // Envoyer l'email
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173'
+    await sendPasswordResetEmail(email, resetToken, frontendUrl)
+    
+    res.json({ 
+      success: true, 
+      message: 'Si cet email est associé à un compte, vous recevrez un lien de réinitialisation.' 
+    })
+  } catch (error) {
+    console.error('Erreur forgot password:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
+// Mot de passe oublié - Réinitialiser avec le token
+app.post('/api/reset-password', async (req, res) => {
+  try {
+    const { token, newPassword } = req.body
+    
+    if (!token || !newPassword) {
+      return res.status(400).json({ error: 'Token et nouveau mot de passe requis' })
+    }
+    
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: 'Le mot de passe doit contenir au moins 6 caractères' })
+    }
+    
+    // Vérifier le token
+    const resetToken = await getPasswordResetToken(token)
+    if (!resetToken) {
+      return res.status(400).json({ error: 'Token invalide ou expiré' })
+    }
+    
+    // Trouver l'utilisateur par email
+    const user = await getUserByEmail(resetToken.user_email)
+    if (!user) {
+      return res.status(400).json({ error: 'Utilisateur non trouvé' })
+    }
+    
+    // Hasher le nouveau mot de passe
+    const hashedPassword = hashPassword(newPassword)
+    
+    // Mettre à jour le mot de passe
+    await updateUserPassword(user.prenom, hashedPassword)
+    
+    // Marquer le token comme utilisé
+    await markTokenAsUsed(token)
+    
+    res.json({ 
+      success: true, 
+      message: 'Mot de passe mis à jour avec succès' 
+    })
+  } catch (error) {
+    console.error('Erreur reset password:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
+// Nettoyer les tokens expirés (à appeler périodiquement)
+app.post('/api/cleanup-tokens', async (req, res) => {
+  try {
+    const deletedCount = await cleanupExpiredTokens()
+    res.json({ 
+      success: true, 
+      message: `${deletedCount} tokens expirés supprimés` 
+    })
+  } catch (error) {
+    console.error('Erreur cleanup tokens:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
+// Tester la configuration email
+app.get('/api/test-email', async (req, res) => {
+  try {
+    const isWorking = await testEmailConnection()
+    res.json({ 
+      success: isWorking, 
+      message: isWorking ? 'Configuration email OK' : 'Configuration email invalide' 
+    })
+  } catch (error) {
+    console.error('Erreur test email:', error)
     res.status(500).json({ error: 'Erreur serveur' })
   }
 })

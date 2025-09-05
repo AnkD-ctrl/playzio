@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './LoginScreen.css'
 import { API_BASE_URL } from '../config'
+import ForgotPassword from './ForgotPassword'
 
 function LoginScreen({ onLogin, isLogin: initialIsLogin = true, onBack }) {
   const [isLogin, setIsLogin] = useState(initialIsLogin)
@@ -10,6 +11,7 @@ function LoginScreen({ onLogin, isLogin: initialIsLogin = true, onBack }) {
     email: ''
   })
   const [error, setError] = useState('')
+  const [showForgotPassword, setShowForgotPassword] = useState(false)
   
 
   const handleInputChange = (e) => {
@@ -138,6 +140,18 @@ function LoginScreen({ onLogin, isLogin: initialIsLogin = true, onBack }) {
           </button>
         </form>
 
+        {isLogin && (
+          <div className="forgot-password-link">
+            <button
+              type="button"
+              onClick={() => setShowForgotPassword(true)}
+              className="forgot-password-button"
+            >
+              Mot de passe oublié ?
+            </button>
+          </div>
+        )}
+
         <div className="toggle-form">
           <button
             type="button"
@@ -148,7 +162,13 @@ function LoginScreen({ onLogin, isLogin: initialIsLogin = true, onBack }) {
           </button>
         </div>
 
-
+        {/* Modal Mot de passe oublié */}
+        {showForgotPassword && (
+          <ForgotPassword
+            onBack={() => setShowForgotPassword(false)}
+            onSuccess={() => setShowForgotPassword(false)}
+          />
+        )}
 
       </div>
     </div>
