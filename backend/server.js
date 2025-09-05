@@ -1017,12 +1017,16 @@ app.post('/api/forgot-password', async (req, res) => {
     console.log('Token de réinitialisation simulé:', resetToken)
     // await createPasswordResetToken(email, resetToken, expiresAt)
     
-    // Envoyer l'email (temporairement désactivé)
+    // Envoyer l'email
     const frontendUrl = process.env.FRONTEND_URL || 'https://playzio.fr'
-    console.log('Email de réinitialisation simulé pour:', email)
-    console.log('Lien de réinitialisation:', `${frontendUrl}/?token=${resetToken}`)
-    console.log('IMPORTANT: Copiez ce lien pour tester la réinitialisation')
-    // await sendPasswordResetEmail(email, resetToken, frontendUrl)
+    try {
+      await sendPasswordResetEmail(email, resetToken, frontendUrl)
+      console.log('Email envoyé avec succès à:', email)
+    } catch (error) {
+      console.error('Erreur lors de l\'envoi de l\'email:', error)
+      // Afficher le lien dans les logs en cas d'erreur
+      console.log('Lien de réinitialisation (en cas d\'erreur email):', `${frontendUrl}/?token=${resetToken}`)
+    }
     
     res.json({ 
       success: true, 
