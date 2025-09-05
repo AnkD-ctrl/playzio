@@ -357,16 +357,41 @@ export async function updateUserPassword(prenom, hashedPassword) {
 }
 
 export async function getUserByEmail(email) {
-  const result = await pool.query('SELECT * FROM users WHERE email = $1', [email])
-  return result.rows[0]
+  try {
+    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email])
+    return result.rows[0]
+  } catch (error) {
+    // Si la colonne email n'existe pas, retourner null
+    if (error.message.includes('column "email" does not exist')) {
+      console.log('Colonne email manquante, aucun utilisateur trouvé')
+      return null
+    }
+    throw error
+  }
 }
 
 export async function updateUserEmail(prenom, email) {
-  const result = await pool.query(
-    'UPDATE users SET email = $1 WHERE prenom = $2 RETURNING prenom, email, role, is_founder',
-    [email, prenom]
-  )
-  return result.rows[0]
+  try {
+    const result = await pool.query(
+      'UPDATE users SET email = $1 WHERE prenom = $2 RETURNING prenom, email, role, is_founder',
+      [email, prenom]
+    )
+    return result.rows[0]
+  } catch (error) {
+    // Si la colonne email n'existe pas, l'ajouter d'abord
+    if (error.message.includes('column "email" does not exist')) {
+      console.log('Colonne email manquante, ajout en cours...')
+      await pool.query('ALTER TABLE users ADD COLUMN email VARCHAR(255)')
+      
+      // Réessayer la mise à jour
+      const result = await pool.query(
+        'UPDATE users SET email = $1 WHERE prenom = $2 RETURNING prenom, email, role, is_founder',
+        [email, prenom]
+      )
+      return result.rows[0]
+    }
+    throw error
+  }
 }
 
 export async function getUserCount() {
