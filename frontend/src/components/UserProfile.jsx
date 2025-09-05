@@ -161,6 +161,16 @@ function UserProfile({ user, onClose, onUserUpdate }) {
             
             <div className="profile-details">
               <h4>{user.prenom}</h4>
+              
+              {/* Email directement sous le nom */}
+              <div className="user-email">
+                {user.email ? (
+                  <span className="email-value">📧 {user.email}</span>
+                ) : (
+                  <span className="email-warning-text">⚠️ Aucun email associé</span>
+                )}
+              </div>
+              
               <div className="user-badges">
                 <span className="role-badge">{user.role}</span>
                 {user.isFounder && (
@@ -168,35 +178,6 @@ function UserProfile({ user, onClose, onUserUpdate }) {
                     <span className="founder-crown">👑</span>
                     <span className="founder-text">Membre premium</span>
                   </span>
-                )}
-              </div>
-              
-              {/* Section Email */}
-              <div className="email-section">
-                {user.email ? (
-                  <div className="email-info">
-                    <div className="email-display">
-                      <span className="email-label">📧 Email :</span>
-                      <span className="email-value">{user.email}</span>
-                    </div>
-                    <button 
-                      className="modify-email-btn"
-                      onClick={() => setShowEmailModal(true)}
-                    >
-                      Modifier l'email
-                    </button>
-                  </div>
-                ) : (
-                  <div className="email-warning">
-                    <p>⚠️ <strong>Aucun email associé</strong></p>
-                    <p>Ajoutez votre email pour pouvoir récupérer votre compte en cas d'oubli de mot de passe.</p>
-                    <button 
-                      className="add-email-btn"
-                      onClick={() => setShowEmailModal(true)}
-                    >
-                      Ajouter un email
-                    </button>
-                  </div>
                 )}
               </div>
             </div>
@@ -218,7 +199,16 @@ function UserProfile({ user, onClose, onUserUpdate }) {
             </div>
           </div>
           
+          {/* Espace entre groupes et actions */}
+          <div className="profile-spacer"></div>
+          
           <div className="profile-actions">
+            <button 
+              className="action-btn primary"
+              onClick={() => setShowEmailModal(true)}
+            >
+              {user.email ? 'Modifier l\'email' : 'Ajouter un email'}
+            </button>
             <button 
               className="action-btn primary"
               onClick={() => setShowPasswordModal(true)}

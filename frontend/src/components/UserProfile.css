@@ -117,9 +117,25 @@
 .profile-details h4 {
   color: #ffffff;
   font-size: 1.75rem;
-  margin: 0 0 12px 0;
+  margin: 0 0 8px 0;
   font-weight: 700;
   letter-spacing: -0.5px;
+}
+
+.user-email {
+  margin-bottom: 12px;
+}
+
+.user-email .email-value {
+  color: #d4af8c;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.user-email .email-warning-text {
+  color: #ffa500;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .user-badges {
@@ -166,79 +182,6 @@
   letter-spacing: 0.3px;
 }
 
-/* Email Section */
-.email-section {
-  background: #3a3a3a;
-  border: 1px solid #4a4a4a;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 24px;
-}
-
-.email-info {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.email-display {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.email-label {
-  color: #d4af8c;
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.email-value {
-  color: #ffffff;
-  font-weight: 500;
-  font-size: 0.95rem;
-  word-break: break-all;
-}
-
-.email-warning {
-  text-align: center;
-}
-
-.email-warning p {
-  color: #b0b0b0;
-  margin: 0 0 8px 0;
-  font-size: 0.9rem;
-  line-height: 1.4;
-}
-
-.email-warning p:first-child {
-  color: #ffa500;
-  font-weight: 600;
-}
-
-.email-warning p:last-child {
-  color: #a0a0a0;
-  margin-bottom: 16px;
-}
-
-.add-email-btn, .modify-email-btn {
-  background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(212, 175, 140, 0.3);
-}
-
-.add-email-btn:hover, .modify-email-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(212, 175, 140, 0.4);
-}
 
 /* Profile Stats */
 .profile-stats {
@@ -247,6 +190,10 @@
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 28px;
+}
+
+.profile-spacer {
+  height: 20px;
 }
 
 .stat-item {
@@ -514,15 +461,6 @@
     justify-content: center;
   }
   
-  .email-section {
-    padding: 16px;
-  }
-  
-  .email-display {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
   
   .profile-stats {
     padding: 20px;
@@ -576,9 +514,6 @@
     font-size: 1.25rem;
   }
   
-  .email-section {
-    padding: 12px;
-  }
   
   .profile-stats {
     padding: 16px;
