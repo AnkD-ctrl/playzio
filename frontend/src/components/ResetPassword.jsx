@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { useSearchParams, useNavigate } from 'react-router-dom'
 import './ResetPassword.css'
 import { API_BASE_URL } from '../config'
 
 function ResetPassword() {
-  const [searchParams] = useSearchParams()
-  const navigate = useNavigate()
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [success, setSuccess] = useState(false)
   
-  const token = searchParams.get('token')
+  const token = new URLSearchParams(window.location.search).get('token')
 
   useEffect(() => {
     if (!token) {
@@ -61,7 +58,7 @@ function ResetPassword() {
         
         // Rediriger vers la page de connexion après 3 secondes
         setTimeout(() => {
-          navigate('/')
+          window.location.href = '/'
         }, 3000)
       } else {
         setMessage(data.error || 'Erreur lors de la réinitialisation')
