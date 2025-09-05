@@ -67,7 +67,7 @@ async function createContactMessagesTable() {
 
 // Users
 export async function getAllUsers() {
-  const result = await pool.query('SELECT prenom, role, is_founder FROM users ORDER BY prenom')
+  const result = await pool.query('SELECT prenom, role, is_founder, email FROM users ORDER BY prenom')
   return result.rows
 }
 
