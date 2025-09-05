@@ -93,6 +93,17 @@ BEGIN
     END IF;
 END $$;
 
+-- Migration: Ensure email column allows NULL values
+DO $$ 
+BEGIN
+    -- Check if email column exists and modify it to allow NULL
+    IF EXISTS (SELECT 1 FROM information_schema.columns 
+               WHERE table_name = 'users' AND column_name = 'email') THEN
+        -- Alter the column to explicitly allow NULL
+        ALTER TABLE users ALTER COLUMN email DROP NOT NULL;
+    END IF;
+END $$;
+
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_users_prenom ON users(prenom);
 CREATE INDEX IF NOT EXISTS idx_slots_date ON slots(date);
