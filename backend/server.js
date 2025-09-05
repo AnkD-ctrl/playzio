@@ -1110,6 +1110,25 @@ app.get('/api/test-email', async (req, res) => {
   }
 })
 
+// Test d'envoi d'email réel
+app.post('/api/test-send-email', async (req, res) => {
+  try {
+    const { email } = req.body
+    if (!email) {
+      return res.status(400).json({ error: 'Email requis' })
+    }
+    
+    const frontendUrl = process.env.FRONTEND_URL || 'https://playzio.fr'
+    const testToken = 'test-token-123'
+    
+    await sendPasswordResetEmail(email, testToken, frontendUrl)
+    res.json({ success: true, message: 'Email de test envoyé avec succès' })
+  } catch (error) {
+    console.error('Erreur envoi email test:', error)
+    res.status(500).json({ error: 'Erreur envoi email: ' + error.message })
+  }
+})
+
 app.listen(port, () => {
   console.log(`🚀 Playzio Backend listening on port ${port}`)
 })
