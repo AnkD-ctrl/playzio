@@ -1017,15 +1017,12 @@ app.post('/api/forgot-password', async (req, res) => {
     console.log('Token de réinitialisation simulé:', resetToken)
     // await createPasswordResetToken(email, resetToken, expiresAt)
     
-    // Envoyer l'email
+    // Envoyer l'email (temporairement désactivé)
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173'
-    try {
-      await sendPasswordResetEmail(email, resetToken, frontendUrl)
-      console.log('Email envoyé avec succès à:', email)
-    } catch (error) {
-      console.error('Erreur lors de l\'envoi de l\'email:', error)
-      // Continuer même si l'email échoue
-    }
+    console.log('Email de réinitialisation simulé pour:', email)
+    console.log('Lien de réinitialisation:', `${frontendUrl}/reset-password?token=${resetToken}`)
+    console.log('IMPORTANT: Copiez ce lien pour tester la réinitialisation')
+    // await sendPasswordResetEmail(email, resetToken, frontendUrl)
     
     res.json({ 
       success: true, 
