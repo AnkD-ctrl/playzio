@@ -72,8 +72,15 @@ export async function getAllUsers() {
 }
 
 export async function getUserByPrenom(prenom) {
-  const result = await pool.query('SELECT * FROM users WHERE prenom = $1', [prenom])
-  return result.rows[0]
+  try {
+    console.log('Recherche utilisateur:', prenom)
+    const result = await pool.query('SELECT * FROM users WHERE prenom = $1', [prenom])
+    console.log('Résultat requête utilisateur:', result.rows.length, 'lignes')
+    return result.rows[0]
+  } catch (error) {
+    console.error('Erreur lors de la recherche utilisateur:', error.message)
+    throw error
+  }
 }
 
 export async function createUser(userData) {

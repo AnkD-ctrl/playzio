@@ -191,7 +191,9 @@ app.post('/api/users/:prenom/email', async (req, res) => {
     
     const user = await getUserByPrenom(prenom)
     console.log('Utilisateur trouvé:', user ? 'Oui' : 'Non')
+    console.log('Détails utilisateur:', user)
     if (!user) {
+      console.log('Erreur: Utilisateur non trouvé pour:', prenom)
       return res.status(404).json({ error: 'Utilisateur non trouvé' })
     }
     
@@ -209,10 +211,16 @@ app.post('/api/users/:prenom/email', async (req, res) => {
     
     // Mettre à jour l'email
     console.log('Mise à jour de l\'email...')
-    const updated = await updateUserEmail(prenom, email)
-    console.log('Email mis à jour avec succès:', updated)
-    
-    res.json({ success: true, user: updated })
+    try {
+      const updated = await updateUserEmail(prenom, email)
+      console.log('Email mis à jour avec succès:', updated)
+      
+      res.json({ success: true, user: updated })
+    } catch (updateError) {
+      console.error('Erreur lors de la mise à jour email:', updateError.message)
+      console.error('Stack trace:', updateError.stack)
+      res.status(500).json({ error: 'Erreur lors de la mise à jour de l\'email: ' + updateError.message })
+    }
   } catch (error) {
     console.error('Update email error:', error)
     res.status(500).json({ error: 'Erreur serveur' })
