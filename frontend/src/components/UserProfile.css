@@ -12,6 +12,9 @@
   z-index: 2000;
   padding: 16px;
   backdrop-filter: blur(4px);
+  /* Assurer que le contenu n'est pas caché par la barre d'URL mobile */
+  padding-top: max(16px, env(safe-area-inset-top, 16px));
+  padding-bottom: max(16px, env(safe-area-inset-bottom, 16px));
 }
 
 .user-profile-modal {
@@ -24,6 +27,8 @@
   overflow-y: auto;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
   animation: modalSlideIn 0.3s ease-out;
+  /* Assurer une marge minimale en haut sur mobile */
+  margin-top: max(20px, env(safe-area-inset-top, 20px));
 }
 
 @keyframes modalSlideIn {
@@ -443,11 +448,14 @@
 @media (max-width: 768px) {
   .user-profile-overlay {
     padding: 12px;
+    padding-top: max(60px, env(safe-area-inset-top, 60px));
+    padding-bottom: max(12px, env(safe-area-inset-bottom, 12px));
   }
   
   .user-profile-modal {
     max-height: 95vh;
     border-radius: 12px;
+    margin-top: 0;
   }
   
   .modal-header {
@@ -516,6 +524,8 @@
 @media (max-width: 480px) {
   .user-profile-overlay {
     padding: 8px;
+    padding-top: max(50px, env(safe-area-inset-top, 50px));
+    padding-bottom: max(8px, env(safe-area-inset-bottom, 8px));
   }
   
   .modal-header {
