@@ -310,6 +310,9 @@
 
 .mockup-slots-list {
   margin-bottom: 1rem;
+  max-width: 320px;
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 .mockup-slot-item {
@@ -330,7 +333,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  padding: 12px 16px;
   cursor: pointer;
   border-bottom: 1px solid #4a4a4a;
 }
@@ -383,9 +386,11 @@
 }
 
 .mockup-slot-item-content {
-  padding: 16px 20px;
+  padding: 12px 16px;
   background: rgba(0, 0, 0, 0.1);
   border-top: 1px solid #4a4a4a;
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 .mockup-slot-description {
@@ -414,10 +419,10 @@
   background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
   color: #ffffff;
   border: none;
-  padding: 8px 16px;
+  padding: 6px 12px;
   border-radius: 4px;
   font-weight: 500;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -433,9 +438,9 @@
   background: #4a4a4a;
   color: #b0b0b0;
   border: 1px solid #5a5a5a;
-  padding: 8px 16px;
+  padding: 6px 12px;
   border-radius: 4px;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
