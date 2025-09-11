@@ -12,6 +12,7 @@ import UserProfile from './components/UserProfile'
 import Groups from './components/Groups'
 import ContactModal from './components/ContactModal'
 import CookieBanner from './components/CookieBanner'
+import PWAInstaller from './components/PWAInstaller'
 import { trackPageView, trackLogin, trackLogout, trackActivitySelect, trackNavigation } from './utils/analytics'
 import { testAnalyticsExclusion } from './utils/testAnalytics'
 
@@ -340,6 +341,9 @@ function App() {
 
       {/* Bannière de cookies */}
       <CookieBanner />
+      
+      {/* PWA Installer */}
+      <PWAInstaller />
     </div>
   )
 }
