@@ -46,10 +46,12 @@ const LandingPage = ({ onLogin, onRegister }) => {
         <div className="hero-content">
           <div className="hero-text">
             <h1 className="hero-title">
-              <span className="highlight">Simple</span>
+              <span className="highlight">Arretez de vous manquer!</span>
             </h1>
             <p className="hero-subtitle">
-              Fini les boucles WhatsApp : posez vos dispos, vos amis les voient et vous rejoignent.
+              Playzio te permet simplement d’indiquer quand tu es libre, sans engager ni déranger personne.
+              Tes proches voient ta disponibilité et peuvent te rejoindre spontanément : moins de messages, plus de moments.
+              Et ca marche dans l'autre sens, laisse toi tenter par une dispo! 
             </p>
             <div className="hero-cta">
               <button 
@@ -68,7 +70,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
                   <div className="avatar">👨</div>
                   <div className="avatar">👩‍💼</div>
                 </div>
-                <p className="social-text">Rejoignez +500 utilisateurs qui organisent déjà leurs activités</p>
+                <p className="social-text">Rejoignez +500 utilisateurs qui affichent déjà leurs dispo</p>
               </div>
             </div>
           </div>
