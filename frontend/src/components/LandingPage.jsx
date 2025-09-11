@@ -162,6 +162,43 @@ const LandingPage = ({ onLogin, onRegister }) => {
         </div>
       </section>
 
+      {/* What Playzio is NOT Section */}
+      <section className="what-not-section">
+        <div className="what-not-content">
+          <h2 className="section-title">Playzio n'est PAS...</h2>
+          <div className="what-not-grid">
+            <div className="what-not-item negative">
+              <div className="what-not-icon">❌</div>
+              <div className="what-not-text">
+                <h3>Pas un agenda connecté</h3>
+                <p>Pas besoin de synchroniser vos calendriers</p>
+              </div>
+            </div>
+            <div className="what-not-item negative">
+              <div className="what-not-icon">❌</div>
+              <div className="what-not-text">
+                <h3>Pas un sondage Doodle</h3>
+                <p>Pas de questions à répondre, pas de contraintes</p>
+              </div>
+            </div>
+            <div className="what-not-item negative">
+              <div className="what-not-icon">❌</div>
+              <div className="what-not-text">
+                <h3>Pas une messagerie de plus</h3>
+                <p>Pas de notifications en continu, pas de spam</p>
+              </div>
+            </div>
+            <div className="what-not-item positive">
+              <div className="what-not-icon">✅</div>
+              <div className="what-not-text">
+                <h3>C'est juste le bouton "Je suis dispo"</h3>
+                <p>Partagé avec tes amis, c'est tout !</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Benefits Section */}
       <section className="benefits-section">
         <div className="benefits-content">

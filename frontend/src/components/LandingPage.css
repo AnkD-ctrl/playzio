@@ -468,6 +468,83 @@
   color: white;
 }
 
+/* What NOT Section */
+.what-not-section {
+  padding: 6rem 2rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.what-not-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.what-not-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.what-not-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 2rem;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.what-not-item.negative {
+  background: rgba(220, 53, 69, 0.05);
+  border-color: rgba(220, 53, 69, 0.1);
+}
+
+.what-not-item.negative:hover {
+  background: rgba(220, 53, 69, 0.08);
+  border-color: rgba(220, 53, 69, 0.2);
+  transform: translateY(-2px);
+}
+
+.what-not-item.positive {
+  background: rgba(40, 167, 69, 0.05);
+  border-color: rgba(40, 167, 69, 0.1);
+}
+
+.what-not-item.positive:hover {
+  background: rgba(40, 167, 69, 0.08);
+  border-color: rgba(40, 167, 69, 0.2);
+  transform: translateY(-2px);
+}
+
+.what-not-icon {
+  font-size: 2rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.what-not-text h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #e0e0e0;
+}
+
+.what-not-item.negative .what-not-text h3 {
+  color: #ff6b6b;
+}
+
+.what-not-item.positive .what-not-text h3 {
+  color: #51cf66;
+}
+
+.what-not-text p {
+  color: #b0b0b0;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
 /* Features Section */
 .features-section {
   padding: 6rem 2rem;
