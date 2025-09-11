@@ -281,12 +281,6 @@ const LandingPage = ({ onLogin, onRegister }) => {
             >
               Commencer gratuitement
             </button>
-            <button 
-              className="btn-secondary large"
-              onClick={handleAlreadyMember}
-            >
-              J'ai déjà un compte
-            </button>
           </div>
         </div>
       </section>
