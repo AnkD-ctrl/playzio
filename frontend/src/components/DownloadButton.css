@@ -1,5 +1,5 @@
 .download-button {
-  background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
   color: white;
   border: none;
   padding: 0.8rem 1.5rem;
@@ -13,13 +13,14 @@
   justify-content: center;
   gap: 0.5rem;
   margin: 0.5rem auto;
-  min-width: 200px;
-  box-shadow: 0 4px 15px rgba(212, 175, 140, 0.3);
+  width: 100%;
+  max-width: 100%;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
 }
 
 .download-button:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 30px rgba(212, 175, 140, 0.4);
+  box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
   animation: pulse 2s infinite;
 }
 
@@ -38,7 +39,7 @@
   .download-button {
     padding: 0.7rem 1.2rem;
     font-size: 0.9rem;
-    min-width: 180px;
+    max-width: 100%;
     gap: 0.4rem;
   }
 }
