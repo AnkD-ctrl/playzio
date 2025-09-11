@@ -46,12 +46,10 @@ const LandingPage = ({ onLogin, onRegister }) => {
         <div className="hero-content">
           <div className="hero-text">
             <h1 className="hero-title">
-              <span className="highlight">Arretez de vous manquer!</span>
+              <span className="highlight">Vivez les tous!</span>
             </h1>
             <p className="hero-subtitle">
-              Playzio te permet simplement d’indiquer quand tu es libre, sans engager ni déranger personne.
-              Tes proches voient ta disponibilité et peuvent te rejoindre spontanément : moins de messages, plus de moments.
-              Et ca marche dans l'autre sens, laisse toi tenter par une dispo! 
+              Combien de fois tu n'as pas vu tes amis alors que vous étiez dispo?
             </p>
             <div className="hero-cta">
               <button 
