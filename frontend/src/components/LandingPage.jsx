@@ -175,6 +175,12 @@ const LandingPage = ({ onLogin, onRegister }) => {
             </div>
             <div className="what-not-item negative">
               <div className="what-not-text">
+                <h3>Ce n'est pas un sondage</h3>
+                <p>Pas de questions à répondre, pas de contraintes</p>
+              </div>
+            </div>
+            <div className="what-not-item negative">
+              <div className="what-not-text">
                 <h3>Ce n'est pas une messagerie de plus</h3>
                 <p>Pas de notifications en continu, pas de spam</p>
               </div>
