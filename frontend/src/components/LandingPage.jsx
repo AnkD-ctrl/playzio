@@ -85,15 +85,15 @@ const LandingPage = ({ onLogin, onRegister }) => {
                             <div className="mockup-slot-item-activity">
                               Padel
                             </div>
-                            <div className="mockup-slot-item-participants">
-                              <span className="participant-count">2/4</span>
-                            </div>
                           </div>
                           <div className="mockup-slot-item-arrow">▼</div>
                         </div>
                         <div className="mockup-slot-item-content">
                           <div className="mockup-slot-description">
-                            Partie de padel entre amis, niveau intermédiaire. Venez nombreux !
+                            Partie de padel entre amis, niveau intermédiaire.
+                          </div>
+                          <div className="mockup-slot-participants">
+                            👥 2 participants
                           </div>
                           <div className="mockup-slot-location">
                             📍 Club de tennis
