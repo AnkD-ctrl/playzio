@@ -83,22 +83,21 @@ const LandingPage = ({ onLogin, onRegister }) => {
                     <div className="mockup-title">Playzio</div>
                   </div>
                   <div className="mockup-content">
-                    <div className="mockup-calendar">
-                      <div className="mockup-day active">
-                        <span className="day-number">15</span>
-                        <div className="day-slots">
-                          <div className="slot sport">14h</div>
-                          <div className="slot social">16h</div>
-                        </div>
+                    <div className="mockup-availability-card">
+                      <div className="availability-header">
+                        <div className="availability-activity">🏓 Padel</div>
+                        <div className="availability-date">Aujourd'hui 14h30</div>
                       </div>
-                      <div className="mockup-day">
-                        <span className="day-number">16</span>
-                        <div className="day-slots">
-                          <div className="slot autre">20h</div>
-                        </div>
+                      <div className="availability-details">
+                        <div className="availability-location">📍 Club de tennis</div>
+                        <div className="availability-participants">👥 2/4 participants</div>
                       </div>
-                      <div className="mockup-day">
-                        <span className="day-number">17</span>
+                      <div className="availability-description">
+                        "Partie de padel entre amis, niveau intermédiaire. Venez nombreux !"
+                      </div>
+                      <div className="availability-actions">
+                        <button className="btn-join">Rejoindre</button>
+                        <button className="btn-discuss">💬 Discuter</button>
                       </div>
                     </div>
                     <div className="mockup-activity-tabs">
@@ -128,8 +127,8 @@ const LandingPage = ({ onLogin, onRegister }) => {
                   <line x1="3" y1="10" x2="21" y2="10" stroke="#d4af8c" strokeWidth="2"/>
                 </svg>
               </div>
-              <h3>Posez vos dispo</h3>
-              <p>Ajoutez vos créneaux libres en quelques secondes : Sport, Social, Autre...</p>
+              <h3>Pose ta dispo</h3>
+              <p>Un clic, aucun engagement.</p>
             </div>
             <div className="feature-card">
               <div className="feature-icon">
@@ -140,8 +139,8 @@ const LandingPage = ({ onLogin, onRegister }) => {
                   <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="#d4af8c" strokeWidth="2"/>
                 </svg>
               </div>
-              <h3>Visible par vos groupes</h3>
-              <p>Vos disponibilités apparaissent automatiquement pour les membres de vos groupes.</p>
+              <h3>Vois celles des autres</h3>
+              <p>Repère les opportunités.</p>
             </div>
             <div className="feature-card">
               <div className="feature-icon">
@@ -151,8 +150,8 @@ const LandingPage = ({ onLogin, onRegister }) => {
                   <path d="M8 13h6" stroke="#d4af8c" strokeWidth="2"/>
                 </svg>
               </div>
-              <h3>Chaque dispo a sa discussion</h3>
-              <p>Chaque dispo a sa discussion → plus besoin de groupes WhatsApp inutiles.</p>
+              <h3>Rejoins en un clic</h3>
+              <p>Une notif et c'est parti.</p>
             </div>
           </div>
         </div>
