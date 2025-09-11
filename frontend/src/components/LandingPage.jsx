@@ -165,7 +165,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
       {/* What Playzio is NOT Section */}
       <section className="what-not-section">
         <div className="what-not-content">
-          <h2 className="section-title">Playzio n'est PAS...</h2>
+          <h2 className="section-title">Playzio, ce n'est pas...</h2>
           <div className="what-not-grid">
             <div className="what-not-item negative">
               <div className="what-not-text">
