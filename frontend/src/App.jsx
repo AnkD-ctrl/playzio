@@ -13,6 +13,7 @@ import Groups from './components/Groups'
 import ContactModal from './components/ContactModal'
 import CookieBanner from './components/CookieBanner'
 import PWAInstaller from './components/PWAInstaller'
+import InstallGuide from './components/InstallGuide'
 import { trackPageView, trackLogin, trackLogout, trackActivitySelect, trackNavigation } from './utils/analytics'
 import { testAnalyticsExclusion } from './utils/testAnalytics'
 
@@ -28,7 +29,7 @@ function App() {
   const [searchFilter, setSearchFilter] = useState('')
 
 
-  // Vérifier si on est sur la page de réinitialisation de mot de passe
+  // Vérifier si on est sur la page de réinitialisation de mot de passe ou guide d'installation
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     if (urlParams.get('token')) {
@@ -38,6 +39,11 @@ function App() {
     // Vérifier aussi le pathname pour /reset-password
     if (window.location.pathname === '/reset-password') {
       setCurrentView('reset-password')
+    }
+    
+    // Vérifier le pathname pour /install-guide
+    if (window.location.pathname === '/install-guide') {
+      setCurrentView('install-guide')
     }
   }, [])
 
@@ -328,6 +334,11 @@ function App() {
       {/* Page de réinitialisation de mot de passe */}
       {currentView === 'reset-password' && (
         <ResetPassword />
+      )}
+
+      {/* Page de guide d'installation */}
+      {currentView === 'install-guide' && (
+        <InstallGuide />
       )}
 
       {/* Modal de Contact */}

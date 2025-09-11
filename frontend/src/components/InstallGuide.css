@@ -1,0 +1,151 @@
+.install-guide {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.install-guide-container {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.install-guide h1 {
+  text-align: center;
+  color: #1e293b;
+  margin-bottom: 30px;
+  font-size: 28px;
+}
+
+.install-steps {
+  margin-bottom: 30px;
+}
+
+.install-step {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 25px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border-left: 4px solid #6366f1;
+}
+
+.step-number {
+  background: #6366f1;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 16px;
+  flex-shrink: 0;
+}
+
+.step-content h3 {
+  color: #1e293b;
+  margin: 0 0 8px 0;
+  font-size: 18px;
+}
+
+.step-content p {
+  color: #64748b;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.install-benefits {
+  background: #f0f9ff;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+}
+
+.install-benefits h3 {
+  color: #1e293b;
+  margin: 0 0 15px 0;
+  font-size: 18px;
+}
+
+.install-benefits ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.install-benefits li {
+  color: #64748b;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.install-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.back-button,
+.try-again-button {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.back-button {
+  background: #e2e8f0;
+  color: #64748b;
+}
+
+.back-button:hover {
+  background: #cbd5e1;
+}
+
+.try-again-button {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+}
+
+.try-again-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .install-guide {
+    padding: 10px;
+  }
+  
+  .install-guide-container {
+    padding: 20px;
+  }
+  
+  .install-guide h1 {
+    font-size: 24px;
+  }
+  
+  .install-step {
+    padding: 15px;
+  }
+  
+  .install-actions {
+    flex-direction: column;
+  }
+  
+  .back-button,
+  .try-again-button {
+    width: 100%;
+  }
+}

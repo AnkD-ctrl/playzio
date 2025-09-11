@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import './LandingPage.css'
 import ContactModal from './ContactModal'
+import DownloadButton from './DownloadButton'
 
 const LandingPage = ({ onLogin, onRegister }) => {
   const [showContactModal, setShowContactModal] = useState(false)
@@ -61,6 +62,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
               <p className="cta-note">
                 Gratuit • Rejoignez les +500 utilisateurs
               </p>
+              <DownloadButton />
             </div>
           </div>
           <div className="hero-mockup">
