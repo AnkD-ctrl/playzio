@@ -223,12 +223,12 @@ const LandingPage = ({ onLogin, onRegister }) => {
       <section className="launch-offer-section">
         <div className="launch-offer-content">
           <div className="offer-badge">
-            <span className="crown-icon">👑</span>
             <span className="offer-text">Offre de lancement</span>
           </div>
           <div className="offer-main">
-            <h2>Récompenses exclusives pour les 1 000 premiers inscrits</h2>
-            <p>Toutes les fonctionnalités restent gratuites pour tous. Les membres premium reçoivent des récompenses exclusives et des avantages spéciaux.</p>
+            <h2>1 000 premiers inscrits</h2>
+            <p>Toutes les fonctionnalités restent gratuites pour tous. 
+              Les membres premium nous ont fait confiance les premiers et en seront récompensés.</p>
 
           </div>
         </div>
@@ -237,8 +237,8 @@ const LandingPage = ({ onLogin, onRegister }) => {
       {/* CTA Section */}
       <section className="final-cta-section">
         <div className="cta-content">
-          <h2>Prêt à organiser vos activités ?</h2>
-          <p>Rejoignez la communauté et profitez de toutes les fonctionnalités gratuitement</p>
+          <h2>Prêt à saisir tes dispo ?</h2>
+          <p>Rejoignez les utilisateurs et profitez de toutes les fonctionnalités gratuitement</p>
           <div className="cta-buttons">
             <button 
               className="cta-button large"
@@ -271,7 +271,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
       {/* Footer */}
       <footer className="landing-footer">
         <div className="footer-content">
-          <p>Organisez vos activités entre amis, simplement.</p>
+          <p>Fais savoir que tu es dispo, simplement.</p>
         </div>
       </footer>
 
