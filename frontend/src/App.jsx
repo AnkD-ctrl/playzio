@@ -39,6 +39,28 @@ function App() {
     }
   }, [])
 
+  // Restaurer la session au chargement
+  useEffect(() => {
+    const savedUser = localStorage.getItem('playzio_user')
+    const savedLoginState = localStorage.getItem('playzio_logged_in')
+    
+    if (savedUser && savedLoginState === 'true') {
+      try {
+        const user = JSON.parse(savedUser)
+        setCurrentUser(user)
+        setIsLoggedIn(true)
+        setCurrentView('activity')
+        setSelectedActivity('Tous')
+        console.log('Session restaurée:', user.prenom)
+      } catch (error) {
+        console.error('Erreur lors de la restauration de la session:', error)
+        // Nettoyer les données corrompues
+        localStorage.removeItem('playzio_user')
+        localStorage.removeItem('playzio_logged_in')
+      }
+    }
+  }, [])
+
   // Test d'exclusion d'IP au chargement
   useEffect(() => {
     console.log('App loaded, currentView:', currentView)
@@ -60,7 +82,13 @@ function App() {
     setSelectedActivity('Tous') // Aller directement à l'activité "Tous"
     setSelectedType('list') // Afficher la liste par défaut
     setCurrentView('activity')
+    
+    // Sauvegarder la session dans localStorage
+    localStorage.setItem('playzio_user', JSON.stringify(user))
+    localStorage.setItem('playzio_logged_in', 'true')
+    
     trackLogin(user.role || 'user')
+    console.log('Session sauvegardée:', user.prenom)
   }
 
   const handleLogout = () => {
@@ -70,7 +98,12 @@ function App() {
     setCurrentView('landing') // Retourner à la landing page après déconnexion
     setSelectedActivity(null)
     setSelectedType('list')
-
+    
+    // Nettoyer la session du localStorage
+    localStorage.removeItem('playzio_user')
+    localStorage.removeItem('playzio_logged_in')
+    
+    console.log('Session supprimée')
   }
 
   // Fonctions pour la navigation depuis la landing page
