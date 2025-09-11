@@ -59,10 +59,10 @@ const LandingPage = ({ onLogin, onRegister }) => {
               >
                 Commencer gratuitement
               </button>
+              <DownloadButton />
               <p className="cta-note">
                 Gratuit • Rejoignez les +500 utilisateurs
               </p>
-              <DownloadButton />
             </div>
           </div>
           <div className="hero-mockup">

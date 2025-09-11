@@ -1,9 +1,9 @@
 const CACHE_NAME = 'playzio-v1';
 const urlsToCache = [
   '/',
-  '/static/js/bundle.js',
-  '/static/css/main.css',
-  '/manifest.json'
+  '/index.html',
+  '/manifest.json',
+  '/sw.js'
 ];
 
 // Installation du service worker
