@@ -288,7 +288,6 @@ const LandingPage = ({ onLogin, onRegister }) => {
       {/* Footer */}
       <footer className="landing-footer">
         <div className="footer-content">
-          <p>Fais savoir que tu es dispo, simplement.</p>
           <div className="footer-contact">
             <span 
               className="contact-link"
