@@ -56,7 +56,7 @@ function LoginScreen({ onLogin, isLogin: initialIsLogin = true, onBack }) {
           setIsLogin(true)
           setFormData({ prenom: '', password: '', email: '' })
           if (data.isFounder) {
-            alert(`🎉 ${data.message}\n\nVous êtes le ${data.founderCount}ème membre premium de Playzio !`)
+            alert(`🎉 ${data.message}`)
           } else {
             alert('Compte créé avec succès !')
           }
