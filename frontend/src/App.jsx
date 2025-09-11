@@ -11,6 +11,7 @@ import Calendar from './components/Calendar'
 import UserProfile from './components/UserProfile'
 import Groups from './components/Groups'
 import ContactModal from './components/ContactModal'
+import CookieBanner from './components/CookieBanner'
 import { trackPageView, trackLogin, trackLogout, trackActivitySelect, trackNavigation } from './utils/analytics'
 import { testAnalyticsExclusion } from './utils/testAnalytics'
 
@@ -41,10 +42,12 @@ function App() {
 
   // Restaurer la session au chargement
   useEffect(() => {
+    const cookieConsent = localStorage.getItem('playzio_cookie_consent')
     const savedUser = localStorage.getItem('playzio_user')
     const savedLoginState = localStorage.getItem('playzio_logged_in')
     
-    if (savedUser && savedLoginState === 'true') {
+    // Ne restaurer la session que si les cookies sont acceptés
+    if (cookieConsent === 'accepted' && savedUser && savedLoginState === 'true') {
       try {
         const user = JSON.parse(savedUser)
         setCurrentUser(user)
@@ -58,6 +61,10 @@ function App() {
         localStorage.removeItem('playzio_user')
         localStorage.removeItem('playzio_logged_in')
       }
+    } else if (cookieConsent === 'rejected') {
+      // Nettoyer les données si les cookies sont refusés
+      localStorage.removeItem('playzio_user')
+      localStorage.removeItem('playzio_logged_in')
     }
   }, [])
 
@@ -83,12 +90,17 @@ function App() {
     setSelectedType('list') // Afficher la liste par défaut
     setCurrentView('activity')
     
-    // Sauvegarder la session dans localStorage
-    localStorage.setItem('playzio_user', JSON.stringify(user))
-    localStorage.setItem('playzio_logged_in', 'true')
+    // Sauvegarder la session dans localStorage seulement si les cookies sont acceptés
+    const cookieConsent = localStorage.getItem('playzio_cookie_consent')
+    if (cookieConsent === 'accepted') {
+      localStorage.setItem('playzio_user', JSON.stringify(user))
+      localStorage.setItem('playzio_logged_in', 'true')
+      console.log('Session sauvegardée:', user.prenom)
+    } else {
+      console.log('Session non sauvegardée - cookies non acceptés')
+    }
     
     trackLogin(user.role || 'user')
-    console.log('Session sauvegardée:', user.prenom)
   }
 
   const handleLogout = () => {
@@ -325,6 +337,9 @@ function App() {
           currentUser={currentUser}
         />
       )}
+
+      {/* Bannière de cookies */}
+      <CookieBanner />
     </div>
   )
 }

@@ -1,0 +1,134 @@
+/* Cookie Banner Styles */
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+  border-top: 1px solid #404040;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.cookie-banner-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.cookie-banner-text {
+  flex: 1;
+}
+
+.cookie-banner-text h4 {
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cookie-banner-text p {
+  color: #b0b0b0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.cookie-banner-actions {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.cookie-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 100px;
+}
+
+.reject-btn {
+  background: #404040;
+  color: #b0b0b0;
+  border: 1px solid #5a5a5a;
+}
+
+.reject-btn:hover {
+  background: #505050;
+  color: #ffffff;
+}
+
+.accept-btn {
+  background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(212, 175, 140, 0.3);
+}
+
+.accept-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 175, 140, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .cookie-banner-content {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+  }
+  
+  .cookie-banner-text {
+    text-align: center;
+  }
+  
+  .cookie-banner-actions {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .cookie-btn {
+    flex: 1;
+    max-width: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cookie-banner-content {
+    padding: 12px;
+  }
+  
+  .cookie-banner-text h4 {
+    font-size: 1rem;
+  }
+  
+  .cookie-banner-text p {
+    font-size: 0.85rem;
+  }
+  
+  .cookie-btn {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+}
