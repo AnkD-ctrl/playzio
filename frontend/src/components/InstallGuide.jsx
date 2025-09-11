@@ -11,7 +11,7 @@ const InstallGuide = () => {
           <div className="install-step">
             <div className="step-number">1</div>
             <div className="step-content">
-              <h3>Sur Android (Chrome/Edge)</h3>
+              <h3>Sur Android</h3>
               <p>Ouvrez Playzio dans votre navigateur, puis appuyez sur "Ajouter à l'écran d'accueil" qui apparaît en bas de l'écran.</p>
             </div>
           </div>
@@ -19,7 +19,7 @@ const InstallGuide = () => {
           <div className="install-step">
             <div className="step-number">2</div>
             <div className="step-content">
-              <h3>Sur iPhone (Safari)</h3>
+              <h3>Sur iPhone</h3>
               <p>Ouvrez Playzio dans Safari, appuyez sur le bouton "Partager" (carré avec flèche), puis sélectionnez "Sur l'écran d'accueil".</p>
             </div>
           </div>
@@ -27,7 +27,7 @@ const InstallGuide = () => {
           <div className="install-step">
             <div className="step-number">3</div>
             <div className="step-content">
-              <h3>Sur ordinateur (Chrome/Edge)</h3>
+              <h3>Sur ordinateur</h3>
               <p>Ouvrez Playzio dans votre navigateur, puis cliquez sur l'icône "Installer" dans la barre d'adresse.</p>
             </div>
           </div>
@@ -46,7 +46,7 @@ const InstallGuide = () => {
         <div className="install-actions">
           <button 
             className="back-button"
-            onClick={() => window.history.back()}
+            onClick={() => window.location.href = '/'}
           >
             ← Retour
           </button>
