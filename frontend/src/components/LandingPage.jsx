@@ -195,6 +195,61 @@ const LandingPage = ({ onLogin, onRegister }) => {
         </div>
       </section>
 
+      {/* Personnas Section */}
+      <section className="personnas-section">
+        <div className="personnas-content">
+          <h2 className="section-title">Ils utilisent déjà Playzio</h2>
+          <div className="personnas-grid">
+            <div className="personna-card">
+              <div className="personna-avatar">👩‍💼</div>
+              <div className="personna-info">
+                <h3>Julie, 27 ans</h3>
+                <p className="personna-title">Jeune active urbaine</p>
+                <p className="personna-description">Vie sociale remplie mais agenda fluctuant. Frustrée par les boucles WhatsApp interminables pour organiser un apéro.</p>
+                <div className="personna-benefit">
+                  <strong>Bénéfice clé :</strong> spontanéité et simplicité.
+                </div>
+              </div>
+            </div>
+            
+            <div className="personna-card">
+              <div className="personna-avatar">🏓</div>
+              <div className="personna-info">
+                <h3>Marc, 35 ans</h3>
+                <p className="personna-title">Sportif loisir</p>
+                <p className="personna-description">Joue au padel et au tennis avec différents groupes d'amis. Fatigué des Doodle et des SMS groupés.</p>
+                <div className="personna-benefit">
+                  <strong>Bénéfice clé :</strong> voir quand quelqu'un est dispo et rejoindre instantanément.
+                </div>
+              </div>
+            </div>
+            
+            <div className="personna-card">
+              <div className="personna-avatar">🎓</div>
+              <div className="personna-info">
+                <h3>Amina, 21 ans</h3>
+                <p className="personna-title">Étudiante introvertie</p>
+                <p className="personna-description">Aimerait voir plus souvent ses amis, mais n'ose pas proposer. Craint les refus directs.</p>
+                <div className="personna-benefit">
+                  <strong>Bénéfice clé :</strong> elle peut signaler une dispo sans pression.
+                </div>
+              </div>
+            </div>
+            
+            <div className="personna-card">
+              <div className="personna-avatar">👨‍👩‍👧‍👦</div>
+              <div className="personna-info">
+                <h3>Claire & David, 40 ans</h3>
+                <p className="personna-title">Parents occupés</p>
+                <p className="personna-description">Peu de temps libre, veulent optimiser les créneaux.</p>
+                <div className="personna-benefit">
+                  <strong>Bénéfice clé :</strong> identifier rapidement quand des amis ou de la famille sont disponibles.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Offre de lancement */}
       <section className="launch-offer-section">

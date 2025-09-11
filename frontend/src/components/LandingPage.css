@@ -480,6 +480,85 @@
   color: white;
 }
 
+/* Personnas Section */
+.personnas-section {
+  padding: 6rem 2rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.personnas-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.personnas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.personna-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.personna-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: #d4af8c;
+  box-shadow: 0 8px 25px rgba(212, 175, 140, 0.15);
+}
+
+.personna-avatar {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.personna-info h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #d4af8c;
+  margin-bottom: 0.5rem;
+}
+
+.personna-title {
+  color: #b0b0b0;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+
+.personna-description {
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.personna-benefit {
+  background: rgba(212, 175, 140, 0.1);
+  border: 1px solid rgba(212, 175, 140, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
+  color: #d4af8c;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.personna-benefit strong {
+  color: #ffffff;
+  font-weight: 600;
+}
+
 /* What NOT Section */
 .what-not-section {
   padding: 6rem 2rem;
