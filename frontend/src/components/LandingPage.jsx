@@ -195,6 +195,23 @@ const LandingPage = ({ onLogin, onRegister }) => {
         </div>
       </section>
 
+      {/* Offre de lancement */}
+      <section className="launch-offer-section">
+        <div className="launch-offer-content">
+          <div className="offer-main">
+            <h2>1 000 premiers inscrits</h2>
+            <p>Toutes les fonctionnalités restent gratuites pour tous. 
+              Les membres premium nous ont fait confiance les premiers et en seront récompensés.</p>
+            <button 
+              className="cta-button large"
+              onClick={handleGetStarted}
+            >
+              Commencer gratuitement
+            </button>
+          </div>
+        </div>
+      </section>
+
       {/* Personnas Section */}
       <section className="personnas-section">
         <div className="personnas-content">
@@ -247,23 +264,6 @@ const LandingPage = ({ onLogin, onRegister }) => {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Offre de lancement */}
-      <section className="launch-offer-section">
-        <div className="launch-offer-content">
-          <div className="offer-main">
-            <h2>1 000 premiers inscrits</h2>
-            <p>Toutes les fonctionnalités restent gratuites pour tous. 
-              Les membres premium nous ont fait confiance les premiers et en seront récompensés.</p>
-            <button 
-              className="cta-button large"
-              onClick={handleGetStarted}
-            >
-              Commencer gratuitement
-            </button>
           </div>
         </div>
       </section>
