@@ -195,62 +195,6 @@ const LandingPage = ({ onLogin, onRegister }) => {
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section className="benefits-section">
-        <div className="benefits-content">
-          <h2 className="section-title">Efficace</h2>
-          <div className="benefits-mockup">
-            <div className="mockup-comparison">
-              <div className="before-mockup">
-                <div className="mockup-title">Avant</div>
-                <div className="whatsapp-mockup">
-                  <div className="whatsapp-header">
-                    <div className="whatsapp-avatar">👥</div>
-                    <div className="whatsapp-info">
-                      <div className="whatsapp-name">Groupe Tennis</div>
-                      <div className="whatsapp-status">5 membres</div>
-                    </div>
-                    <div className="whatsapp-actions">⋮</div>
-                  </div>
-                  <div className="whatsapp-messages">
-                    <div className="message received">
-                      <div className="message-content">Qui est libre demain ?</div>
-                    </div>
-                    <div className="message sent">
-                      <div className="message-content">Moi mais pas avant 16h</div>
-                    </div>
-                    <div className="message received">
-                      <div className="message-content">Et moi qu'à 14h</div>
-                    </div>
-                    <div className="message received">
-                      <div className="message-content">Bon bah on reporte ? 😅</div>
-                    </div>
-                  </div>
-                  <div className="whatsapp-input">
-                    <div className="input-placeholder">Tapez un message...</div>
-                  </div>
-                </div>
-              </div>
-              <div className="arrow">→</div>
-              <div className="after-mockup">
-                <div className="mockup-title">Avec Playzio</div>
-                <div className="playzio-simple">
-                  <div className="slot-card-demo">
-                    <div className="slot-header">
-                      <div className="slot-activity">⚽ Sport</div>
-                      <div className="slot-time">15h00 - 17h00</div>
-                    </div>
-                    <div className="slot-date">Demain 15/01</div>
-                    <div className="slot-participants">👥 2 participants</div>
-                    <div className="arrow-to-button">↓</div>
-                    <button className="join-button">Rejoindre</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Offre de lancement */}
       <section className="launch-offer-section">
