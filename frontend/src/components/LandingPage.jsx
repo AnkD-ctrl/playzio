@@ -83,21 +83,35 @@ const LandingPage = ({ onLogin, onRegister }) => {
                     <div className="mockup-title">Playzio</div>
                   </div>
                   <div className="mockup-content">
-                    <div className="mockup-availability-card">
-                      <div className="availability-header">
-                        <div className="availability-activity">🏓 Padel</div>
-                        <div className="availability-date">Aujourd'hui 14h30</div>
-                      </div>
-                      <div className="availability-details">
-                        <div className="availability-location">📍 Club de tennis</div>
-                        <div className="availability-participants">👥 2/4 participants</div>
-                      </div>
-                      <div className="availability-description">
-                        "Partie de padel entre amis, niveau intermédiaire. Venez nombreux !"
-                      </div>
-                      <div className="availability-actions">
-                        <button className="btn-join">Rejoindre</button>
-                        <button className="btn-discuss">💬 Discuter</button>
+                    <div className="mockup-slots-list">
+                      <div className="mockup-slot-item">
+                        <div className="mockup-slot-item-header">
+                          <div className="mockup-slot-item-main">
+                            <div className="mockup-slot-item-date">
+                              <span className="date">15/01</span>
+                              <span className="time">14h30 - 16h30</span>
+                            </div>
+                            <div className="mockup-slot-item-activity">
+                              Padel
+                            </div>
+                            <div className="mockup-slot-item-participants">
+                              <span className="participant-count">2/4</span>
+                            </div>
+                          </div>
+                          <div className="mockup-slot-item-arrow">▼</div>
+                        </div>
+                        <div className="mockup-slot-item-content">
+                          <div className="mockup-slot-description">
+                            Partie de padel entre amis, niveau intermédiaire. Venez nombreux !
+                          </div>
+                          <div className="mockup-slot-location">
+                            📍 Club de tennis
+                          </div>
+                          <div className="mockup-slot-actions">
+                            <button className="mockup-join-btn">Rejoindre</button>
+                            <button className="mockup-discuss-btn">💬 Discuter</button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <div className="mockup-activity-tabs">
