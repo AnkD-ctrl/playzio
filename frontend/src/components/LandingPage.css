@@ -411,29 +411,32 @@
 }
 
 .mockup-join-btn {
-  background: #d4af8c;
-  color: #1a1a1a;
+  background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+  color: #ffffff;
   border: none;
   padding: 8px 16px;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 0.8rem;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .mockup-join-btn:hover {
-  background: #c9a96e;
+  background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 175, 140, 0.4);
+  filter: brightness(1.1);
 }
 
 .mockup-discuss-btn {
   background: #4a4a4a;
-  color: #d4af8c;
+  color: #b0b0b0;
   border: 1px solid #5a5a5a;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 0.8rem;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -441,6 +444,7 @@
 .mockup-discuss-btn:hover {
   background: #5a5a5a;
   border-color: #d4af8c;
+  color: #d4af8c;
 }
 
 .mockup-activity-tabs {
