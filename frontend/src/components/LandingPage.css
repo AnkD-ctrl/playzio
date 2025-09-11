@@ -1106,7 +1106,24 @@
 
 .footer-content p {
   color: #888;
+  margin: 0 0 1rem 0;
+}
+
+.footer-contact {
   margin-top: 1rem;
+}
+
+.contact-link {
+  color: #d4af8c;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.contact-link:hover {
+  color: #ffffff;
+  text-decoration-color: #ffffff;
 }
 
 

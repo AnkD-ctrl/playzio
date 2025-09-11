@@ -285,22 +285,18 @@ const LandingPage = ({ onLogin, onRegister }) => {
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section className="contact-section">
-        <div className="contact-content">
-          <button 
-            className="contact-btn"
-            onClick={() => setShowContactModal(true)}
-          >
-            💬 Nous contacter
-          </button>
-        </div>
-      </section>
-
       {/* Footer */}
       <footer className="landing-footer">
         <div className="footer-content">
           <p>Fais savoir que tu es dispo, simplement.</p>
+          <div className="footer-contact">
+            <span 
+              className="contact-link"
+              onClick={() => setShowContactModal(true)}
+            >
+              Nous contacter
+            </span>
+          </div>
         </div>
       </footer>
 
