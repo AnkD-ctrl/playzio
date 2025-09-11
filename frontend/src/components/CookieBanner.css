@@ -7,7 +7,7 @@
   background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
   border-top: 1px solid #404040;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
-  z-index: 1000;
+  z-index: 10000;
   animation: slideUp 0.3s ease-out;
 }
 

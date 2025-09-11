@@ -65,7 +65,6 @@ const DownloadButton = () => {
 
   const getButtonText = () => {
     if (isInstalling) return 'Installation...';
-    if (canInstall) return 'Transformer en app';
     return 'Transformer en app';
   };
 
