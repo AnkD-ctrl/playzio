@@ -303,7 +303,7 @@ app.post('/api/register', async (req, res) => {
       success: true, 
       isFounder,
       founderCount: founderCount + 1,
-      message: isFounder ? 'Félicitations ! Vous êtes membre premium de Playzio !' : 'Compte créé avec succès',
+      message: isFounder ? 'Félicitations ! Bienvenue sur Playzio !' : 'Compte créé avec succès',
       user: {
         prenom: newUser.prenom,
         role: newUser.role || 'user',
