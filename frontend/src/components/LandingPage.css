@@ -341,15 +341,17 @@
 .mockup-slot-item-main {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
   flex: 1;
+  min-width: 0;
 }
 
 .mockup-slot-item-date {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  min-width: 80px;
+  min-width: 60px;
+  flex-shrink: 0;
 }
 
 .mockup-slot-item-date .date {
@@ -366,17 +368,20 @@
 .mockup-slot-item-activity {
   background: linear-gradient(45deg, #22c55e, #16a34a);
   color: white;
-  padding: 4px 12px;
+  padding: 4px 8px;
   border-radius: 12px;
   font-weight: 600;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .mockup-slot-item-participants {
   color: #b0b0b0;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 500;
+  flex-shrink: 0;
+  margin-left: auto;
 }
 
 .mockup-slot-item-arrow {
