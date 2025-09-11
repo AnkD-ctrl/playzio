@@ -27,7 +27,7 @@ body {
 .app-header {
   background: #3a3a3a;
   border-bottom: 1px solid #4a4a4a;
-  padding: 16px 20px;
+  padding: 24px 20px;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -219,7 +219,7 @@ body {
   right: 0;
   background: #3a3a3a;
   border-top: 1px solid #4a4a4a;
-  padding: 16px 20px;
+  padding: 24px 20px;
   z-index: 9999;
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
   transform: translateZ(0);
@@ -357,7 +357,7 @@ body {
 /* Responsive */
 @media (max-width: 768px) {
   .app-header {
-    padding: 12px 16px;
+    padding: 18px 16px;
   }
   
   .header-content {
@@ -455,7 +455,7 @@ body {
   
   /* Mobile footer adjustments */
   .activity-switcher-footer {
-    padding: 12px 16px;
+    padding: 18px 16px;
   }
   
   .activity-switcher {
@@ -535,7 +535,7 @@ body {
   
   /* iPhone footer adjustments */
   .activity-switcher-footer {
-    padding: 10px 12px;
+    padding: 16px 12px;
   }
   
   .activity-switcher {
