@@ -94,25 +94,6 @@
   align-items: flex-start;
 }
 
-.profile-avatar {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  box-shadow: 0 8px 24px rgba(212, 175, 140, 0.3);
-  border: 3px solid rgba(255, 255, 255, 0.1);
-}
-
-.avatar-text {
-  color: #ffffff;
-  font-size: 2.5rem;
-  font-weight: 800;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
 
 .profile-details {
   flex: 1;
@@ -477,14 +458,6 @@
     gap: 20px;
   }
   
-  .profile-avatar {
-    width: 80px;
-    height: 80px;
-  }
-  
-  .avatar-text {
-    font-size: 2rem;
-  }
   
   .profile-details h4 {
     font-size: 1.5rem;
@@ -536,14 +509,6 @@
     padding: 16px;
   }
   
-  .profile-avatar {
-    width: 70px;
-    height: 70px;
-  }
-  
-  .avatar-text {
-    font-size: 1.75rem;
-  }
   
   .profile-details h4 {
     font-size: 1.25rem;

@@ -153,11 +153,6 @@ function UserProfile({ user, onClose, onUserUpdate }) {
         
         <div className="modal-content">
           <div className="profile-info">
-            <div className="profile-avatar">
-              <span className="avatar-text">
-                {user.prenom.charAt(0).toUpperCase()}
-              </span>
-            </div>
             
             <div className="profile-details">
               <h4>{user.prenom}</h4>
