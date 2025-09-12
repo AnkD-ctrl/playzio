@@ -183,16 +183,6 @@ function UserProfile({ user, onClose, onUserUpdate }) {
               <span className="stat-label">Membre depuis</span>
               <span className="stat-value">2024</span>
             </div>
-            <div className="stat-item groups-item">
-              <div className="groups-label">Groupes</div>
-              <div className="groups-spacer"></div>
-              <div className="groups-list">
-                {userGroups.length > 0 
-                  ? userGroups.map(group => group.name).join(', ')
-                  : 'Aucun groupe'
-                }
-              </div>
-            </div>
           </div>
           
           {/* Espace entre groupes et actions */}

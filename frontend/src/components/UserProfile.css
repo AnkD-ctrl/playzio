@@ -194,30 +194,6 @@
   border-bottom: none;
 }
 
-.groups-item {
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 16px 0;
-}
-
-.groups-label {
-  color: #b0b0b0;
-  font-size: 0.9rem;
-  font-weight: 500;
-  margin-bottom: 8px;
-}
-
-.groups-spacer {
-  height: 8px;
-}
-
-.groups-list {
-  color: #ffffff;
-  font-size: 0.9rem;
-  font-weight: 500;
-  line-height: 1.4;
-  word-wrap: break-word;
-}
 
 .stat-label {
   color: #b0b0b0;
@@ -527,11 +503,4 @@
     font-size: 0.85rem;
   }
   
-  .groups-item {
-    padding: 12px 0;
-  }
-  
-  .groups-label, .groups-list {
-    font-size: 0.85rem;
-  }
 }
