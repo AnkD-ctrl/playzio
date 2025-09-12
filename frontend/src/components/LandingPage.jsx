@@ -47,10 +47,11 @@ const LandingPage = ({ onLogin, onRegister }) => {
         <div className="hero-content">
           <div className="hero-text">
             <h1 className="hero-title">
-              <span className="highlight">Vivez les tous!</span>
+              <span className="highlight">Partage tes dispos et on voit si ça match !</span>
             </h1>
             <p className="hero-subtitle">
-              Combien de fois tu n'as pas vu tes amis alors que vous étiez dispo?
+            Le calendrier inversé pour passer à l’action : indiquez vos dispos, découvrez qui est libre, 
+            et lancez une séance de sport ou un moment ensemble en un clic.
             </p>
             <div className="hero-cta">
               <button 
