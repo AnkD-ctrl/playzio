@@ -18,18 +18,14 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   const [expandedSlots, setExpandedSlots] = useState(new Set())
   
   // Nouveaux filtres
-  const [dateFilter, setDateFilter] = useState('')
   const [lieuFilter, setLieuFilter] = useState('')
   const [organizerFilter, setOrganizerFilter] = useState('')
-  const [showDatePicker, setShowDatePicker] = useState(false)
   const [showActivityModal, setShowActivityModal] = useState(false)
   const [showLieuModal, setShowLieuModal] = useState(false)
   const [showOrganizerModal, setShowOrganizerModal] = useState(false)
   const [activityInput, setActivityInput] = useState('')
   const [lieuInput, setLieuInput] = useState('')
   const [organizerInput, setOrganizerInput] = useState('')
-  const [calendarMonth, setCalendarMonth] = useState(new Date())
-  const [selectedCalendarDate, setSelectedCalendarDate] = useState(null)
 
   const handleActivitySelect = (activityName) => {
     onSearchFilterChange(activityName)
@@ -52,61 +48,6 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
     setShowOrganizerModal(false)
   }
 
-  const handleDateSelect = (date) => {
-    setDateFilter(date)
-    setShowDatePicker(false)
-  }
-
-  // Fonctions pour le calendrier
-  const getDaysInMonth = (date) => {
-    const year = date.getFullYear()
-    const month = date.getMonth()
-    const firstDay = new Date(year, month, 1)
-    const lastDay = new Date(year, month + 1, 0)
-    const daysInMonth = lastDay.getDate()
-    const startingDayOfWeek = firstDay.getDay()
-    
-    const days = []
-    
-    // Ajouter les jours vides du début
-    for (let i = 0; i < startingDayOfWeek; i++) {
-      days.push(null)
-    }
-    
-    // Ajouter les jours du mois
-    for (let day = 1; day <= daysInMonth; day++) {
-      days.push(new Date(year, month, day))
-    }
-    
-    return days
-  }
-
-  const formatDateForFilter = (date) => {
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}`
-  }
-
-  const handleCalendarDateClick = (date) => {
-    console.log('Date clicked:', date)
-    if (date) {
-      setSelectedCalendarDate(date)
-      const dateString = formatDateForFilter(date)
-      console.log('Date string:', dateString)
-      setDateFilter(dateString)
-      setShowDatePicker(false)
-      console.log('Date filter set to:', dateString)
-    }
-  }
-
-  const navigateMonth = (direction) => {
-    setCalendarMonth(prev => {
-      const newDate = new Date(prev)
-      newDate.setMonth(prev.getMonth() + direction)
-      return newDate
-    })
-  }
 
   const toggleSlotExpansion = (slotId) => {
     setExpandedSlots(prev => {
@@ -136,9 +77,8 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   }
 
   useEffect(() => {
-    console.log('useEffect triggered, dateFilter:', dateFilter)
     fetchSlots()
-  }, [activity, selectedDate, searchFilter, dateFilter, lieuFilter, organizerFilter, filterType, userGroups])
+  }, [activity, selectedDate, searchFilter, lieuFilter, organizerFilter, filterType, userGroups])
 
   useEffect(() => {
     fetchUserGroups()
@@ -198,14 +138,6 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           )
         }
         
-        // Filtrer par date si un filtre de date est défini
-        if (dateFilter) {
-          console.log('Filtering by date:', dateFilter)
-          filteredData = filteredData.filter(slot => 
-            slot.date && slot.date.includes(dateFilter)
-          )
-          console.log('Filtered data length:', filteredData.length)
-        }
         
         // Filtrer par lieu si un filtre de lieu est défini
         if (lieuFilter) {
@@ -339,20 +271,6 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                 Activité {searchFilter && <span className="filter-indicator">•</span>}
               </button>
               
-              {/* Filtre Date */}
-              <button 
-                className={`filter-btn ${dateFilter ? 'active' : ''}`}
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  console.log('Date button clicked, setting showDatePicker to true')
-                  setShowDatePicker(true)
-                }}
-                title="Filtrer par date"
-              >
-                Date {dateFilter && <span className="filter-indicator">•</span>}
-              </button>
-              
               {/* Filtre Lieu */}
               <button 
                 className={`filter-btn ${lieuFilter ? 'active' : ''}`}
@@ -386,7 +304,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         </div>
         
         
-        {(searchFilter || dateFilter || lieuFilter || organizerFilter) && (
+        {(searchFilter || lieuFilter || organizerFilter) && (
           <div className="filters-info">
             {searchFilter && (
               <div className="search-filter-info">
@@ -398,18 +316,6 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                     onSearchFilterChange('')
                   }}
                   title="Supprimer le filtre"
-                >
-                  ✕
-                </button>
-              </div>
-            )}
-            {dateFilter && (
-              <div className="date-filter-info">
-                <p>📅 Date : "{dateFilter}"</p>
-                <button 
-                  className="clear-filter-btn"
-                  onClick={() => setDateFilter('')}
-                  title="Supprimer le filtre date"
                 >
                   ✕
                 </button>
@@ -469,34 +375,6 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           </div>
         )}
         
-        {/* Modal Date Simple */}
-        {showDatePicker && (
-          <div className="modal-overlay" onClick={() => setShowDatePicker(false)}>
-            <div className="filter-modal" onClick={(e) => e.stopPropagation()}>
-              <h3>Sélectionner une date</h3>
-              <input
-                type="date"
-                className="modal-input"
-                value={dateFilter}
-                onChange={(e) => {
-                  console.log('Date input changed:', e.target.value)
-                  setDateFilter(e.target.value)
-                }}
-              />
-              <div className="modal-actions">
-                <button className="modal-btn secondary" onClick={() => {
-                  setDateFilter('')
-                  setShowDatePicker(false)
-                }}>
-                  Effacer
-                </button>
-                <button className="modal-btn primary" onClick={() => setShowDatePicker(false)}>
-                  Appliquer
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
         
         {/* Modal Lieu */}
         {showLieuModal && (
