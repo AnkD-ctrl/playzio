@@ -469,61 +469,29 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           </div>
         )}
         
-        {/* Modal Date Ultra Simple */}
+        {/* Modal Date Simple */}
         {showDatePicker && (
           <div className="modal-overlay" onClick={() => setShowDatePicker(false)}>
-            <div className="simple-calendar-modal" onClick={(e) => e.stopPropagation()}>
-              {console.log('Calendar modal is rendering')}
-              <h3>Choisir une date</h3>
-              
-              {/* Liste simple de dates pour les 30 prochains jours */}
-              <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
-                {Array.from({ length: 30 }, (_, i) => {
-                  const date = new Date()
-                  date.setDate(date.getDate() + i)
-                  const dateString = formatDateForFilter(date)
-                  const isSelected = dateFilter === dateString
-                  
-                  return (
-                    <div
-                      key={i}
-                      onClick={() => {
-                        console.log('Date selected:', dateString)
-                        setDateFilter(dateString)
-                        setShowDatePicker(false)
-                      }}
-                      style={{
-                        padding: '10px',
-                        margin: '5px 0',
-                        background: isSelected ? 'linear-gradient(45deg, #d4af8c, #8a2be2)' : '#4a4a4a',
-                        border: '1px solid #5a5a5a',
-                        borderRadius: '5px',
-                        cursor: 'pointer',
-                        color: isSelected ? '#ffffff' : '#e0e0e0',
-                        transition: 'all 0.2s ease'
-                      }}
-                    >
-                      {date.toLocaleDateString('fr-FR', { 
-                        weekday: 'long', 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                      })}
-                    </div>
-                  )
-                })}
-              </div>
-              
-              <div className="simple-actions">
-                <button className="btn-clear" onClick={() => {
+            <div className="filter-modal" onClick={(e) => e.stopPropagation()}>
+              <h3>Sélectionner une date</h3>
+              <input
+                type="date"
+                className="modal-input"
+                value={dateFilter}
+                onChange={(e) => {
+                  console.log('Date input changed:', e.target.value)
+                  setDateFilter(e.target.value)
+                }}
+              />
+              <div className="modal-actions">
+                <button className="modal-btn secondary" onClick={() => {
                   setDateFilter('')
-                  setSelectedCalendarDate(null)
                   setShowDatePicker(false)
                 }}>
                   Effacer
                 </button>
-                <button className="btn-close" onClick={() => setShowDatePicker(false)}>
-                  Fermer
+                <button className="modal-btn primary" onClick={() => setShowDatePicker(false)}>
+                  Appliquer
                 </button>
               </div>
             </div>
