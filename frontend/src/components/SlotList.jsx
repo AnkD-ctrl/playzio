@@ -469,64 +469,49 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           </div>
         )}
         
-        {/* Modal Date avec Calendrier Simple */}
+        {/* Modal Date Ultra Simple */}
         {showDatePicker && (
           <div className="modal-overlay" onClick={() => setShowDatePicker(false)}>
             <div className="simple-calendar-modal" onClick={(e) => e.stopPropagation()}>
               {console.log('Calendar modal is rendering')}
               <h3>Choisir une date</h3>
               
-              <div className="calendar-nav">
-                <button className="nav-btn" onClick={() => navigateMonth(-1)}>‹</button>
-                <span className="month-year">
-                  {calendarMonth.toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' })}
-                </span>
-                <button className="nav-btn" onClick={() => navigateMonth(1)}>›</button>
-              </div>
-              
-              <div className="simple-calendar">
-                <div className="weekdays">
-                  <div>D</div><div>L</div><div>M</div><div>M</div><div>J</div><div>V</div><div>S</div>
-                </div>
-                <div className="days">
-                  {getDaysInMonth(calendarMonth).map((date, i) => {
-                    if (!date) {
-                      return <div key={i} className="empty-day"></div>
-                    }
-                    
-                    return (
-                      <div
-                        key={i}
-                        className="day-btn"
-                        onClick={() => {
-                          console.log('Day clicked:', date.getDate())
-                          console.log('Full date:', date)
-                          handleCalendarDateClick(date)
-                        }}
-                        style={{
-                          cursor: 'pointer',
-                          background: selectedCalendarDate && date.toDateString() === selectedCalendarDate.toDateString() 
-                            ? 'linear-gradient(45deg, #d4af8c, #8a2be2)' 
-                            : '#4a4a4a',
-                          color: selectedCalendarDate && date.toDateString() === selectedCalendarDate.toDateString() 
-                            ? '#ffffff' 
-                            : '#e0e0e0',
-                          border: '1px solid #5a5a5a',
-                          borderRadius: '3px',
-                          fontSize: '0.8rem',
-                          height: '28px',
-                          width: '100%',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          transition: 'all 0.2s ease'
-                        }}
-                      >
-                        {date.getDate()}
-                      </div>
-                    )
-                  })}
-                </div>
+              {/* Liste simple de dates pour les 30 prochains jours */}
+              <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                {Array.from({ length: 30 }, (_, i) => {
+                  const date = new Date()
+                  date.setDate(date.getDate() + i)
+                  const dateString = formatDateForFilter(date)
+                  const isSelected = dateFilter === dateString
+                  
+                  return (
+                    <div
+                      key={i}
+                      onClick={() => {
+                        console.log('Date selected:', dateString)
+                        setDateFilter(dateString)
+                        setShowDatePicker(false)
+                      }}
+                      style={{
+                        padding: '10px',
+                        margin: '5px 0',
+                        background: isSelected ? 'linear-gradient(45deg, #d4af8c, #8a2be2)' : '#4a4a4a',
+                        border: '1px solid #5a5a5a',
+                        borderRadius: '5px',
+                        cursor: 'pointer',
+                        color: isSelected ? '#ffffff' : '#e0e0e0',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      {date.toLocaleDateString('fr-FR', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                      })}
+                    </div>
+                  )
+                })}
               </div>
               
               <div className="simple-actions">
