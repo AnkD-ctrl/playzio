@@ -28,6 +28,8 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   const [activityInput, setActivityInput] = useState('')
   const [lieuInput, setLieuInput] = useState('')
   const [organizerInput, setOrganizerInput] = useState('')
+  const [calendarMonth, setCalendarMonth] = useState(new Date())
+  const [selectedCalendarDate, setSelectedCalendarDate] = useState(null)
 
   const handleActivitySelect = (activityName) => {
     onSearchFilterChange(activityName)
@@ -53,6 +55,54 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   const handleDateSelect = (date) => {
     setDateFilter(date)
     setShowDatePicker(false)
+  }
+
+  // Fonctions pour le calendrier
+  const getDaysInMonth = (date) => {
+    const year = date.getFullYear()
+    const month = date.getMonth()
+    const firstDay = new Date(year, month, 1)
+    const lastDay = new Date(year, month + 1, 0)
+    const daysInMonth = lastDay.getDate()
+    const startingDayOfWeek = firstDay.getDay()
+    
+    const days = []
+    
+    // Ajouter les jours vides du début
+    for (let i = 0; i < startingDayOfWeek; i++) {
+      days.push(null)
+    }
+    
+    // Ajouter les jours du mois
+    for (let day = 1; day <= daysInMonth; day++) {
+      days.push(new Date(year, month, day))
+    }
+    
+    return days
+  }
+
+  const formatDateForFilter = (date) => {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
+  const handleCalendarDateClick = (date) => {
+    if (date) {
+      setSelectedCalendarDate(date)
+      const dateString = formatDateForFilter(date)
+      setDateFilter(dateString)
+      setShowDatePicker(false)
+    }
+  }
+
+  const navigateMonth = (direction) => {
+    setCalendarMonth(prev => {
+      const newDate = new Date(prev)
+      newDate.setMonth(prev.getMonth() + direction)
+      return newDate
+    })
   }
 
   const toggleSlotExpansion = (slotId) => {
@@ -408,26 +458,61 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           </div>
         )}
         
-        {/* Modal Date */}
+        {/* Modal Date avec Calendrier */}
         {showDatePicker && (
           <div className="modal-overlay" onClick={() => setShowDatePicker(false)}>
-            <div className="filter-modal" onClick={(e) => e.stopPropagation()}>
-              <h3>Sélectionner une date</h3>
-              <input
-                type="date"
-                className="modal-input"
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-              />
-              <div className="modal-actions">
+            <div className="calendar-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="calendar-header">
+                <button 
+                  className="calendar-nav-btn"
+                  onClick={() => navigateMonth(-1)}
+                  title="Mois précédent"
+                >
+                  ‹
+                </button>
+                <h3 className="calendar-title">
+                  {calendarMonth.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
+                </h3>
+                <button 
+                  className="calendar-nav-btn"
+                  onClick={() => navigateMonth(1)}
+                  title="Mois suivant"
+                >
+                  ›
+                </button>
+              </div>
+              
+              <div className="calendar-grid">
+                <div className="calendar-weekdays">
+                  {['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'].map(day => (
+                    <div key={day} className="calendar-weekday">{day}</div>
+                  ))}
+                </div>
+                
+                <div className="calendar-days">
+                  {getDaysInMonth(calendarMonth).map((date, index) => (
+                    <button
+                      key={index}
+                      className={`calendar-day ${date ? '' : 'calendar-day-empty'} ${selectedCalendarDate && date && date.toDateString() === selectedCalendarDate.toDateString() ? 'calendar-day-selected' : ''}`}
+                      onClick={() => handleCalendarDateClick(date)}
+                      disabled={!date}
+                    >
+                      {date ? date.getDate() : ''}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="calendar-actions">
                 <button className="modal-btn secondary" onClick={() => {
                   setDateFilter('')
+                  setSelectedCalendarDate(null)
                   setShowDatePicker(false)
                 }}>
                   Effacer
                 </button>
                 <button className="modal-btn primary" onClick={() => setShowDatePicker(false)}>
-                  Appliquer
+                  Fermer
                 </button>
               </div>
             </div>

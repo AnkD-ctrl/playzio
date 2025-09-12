@@ -180,6 +180,125 @@
   box-shadow: 0 4px 12px rgba(212, 175, 140, 0.3);
 }
 
+/* Styles pour le calendrier */
+.calendar-modal {
+  background: #3a3a3a !important;
+  border: 1px solid #5a5a5a !important;
+  border-radius: 12px !important;
+  padding: 20px !important;
+  max-width: 350px !important;
+  width: 90% !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+  position: relative !important;
+  z-index: 10000 !important;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.calendar-title {
+  color: #e0e0e0 !important;
+  margin: 0 !important;
+  font-size: 1.2rem !important;
+  font-weight: 600 !important;
+  text-transform: capitalize;
+}
+
+.calendar-nav-btn {
+  background: #4a4a4a;
+  border: 1px solid #5a5a5a;
+  border-radius: 6px;
+  color: #e0e0e0;
+  font-size: 1.2rem;
+  font-weight: bold;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.calendar-nav-btn:hover {
+  background: #5a5a5a;
+  border-color: #d4af8c;
+  color: #ffffff;
+}
+
+.calendar-grid {
+  margin-bottom: 20px;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 8px;
+}
+
+.calendar-weekday {
+  color: #a0a0a0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 8px 4px;
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.calendar-day {
+  background: #4a4a4a;
+  border: 1px solid #5a5a5a;
+  border-radius: 4px;
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.calendar-day:hover {
+  background: #5a5a5a;
+  border-color: #d4af8c;
+  color: #ffffff;
+}
+
+.calendar-day-empty {
+  background: transparent;
+  border: none;
+  cursor: default;
+}
+
+.calendar-day-empty:hover {
+  background: transparent;
+  border: none;
+}
+
+.calendar-day-selected {
+  background: linear-gradient(45deg, #d4af8c, #8a2be2) !important;
+  border-color: #d4af8c !important;
+  color: #ffffff !important;
+}
+
+.calendar-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
 .slot-list-header h3 {
   color: #e0e0e0;
   font-size: 1.5rem;
