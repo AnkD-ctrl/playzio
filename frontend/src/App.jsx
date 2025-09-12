@@ -237,53 +237,59 @@ function App() {
         <div className="activity-container">
           <div className="main-tabs">
             <div 
-              className={`main-tab ${selectedType === 'mes-dispo' ? 'active' : ''}`}
+              className={`main-tab ${selectedType === 'mes-dispo' || selectedType === 'mes-dispo-calendar' ? 'active' : ''}`}
               onClick={() => setSelectedType('mes-dispo')}
             >
               Mes dispo
-              <button 
-                className="calendar-icon-btn"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setSelectedType('mes-dispo-calendar')
-                }}
-                title="Vue calendrier"
-              >
-                📅
-              </button>
             </div>
             <div 
-              className={`main-tab ${selectedType === 'communaute' ? 'active' : ''}`}
+              className={`main-tab ${selectedType === 'communaute' || selectedType === 'communaute-calendar' ? 'active' : ''}`}
               onClick={() => setSelectedType('communaute')}
             >
               Dispo de ma communauté
-              <button 
-                className="calendar-icon-btn"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setSelectedType('communaute-calendar')
-                }}
-                title="Vue calendrier"
-              >
-                📅
-              </button>
             </div>
             <div 
-              className={`main-tab ${selectedType === 'toutes-dispo' ? 'active' : ''}`}
+              className={`main-tab ${selectedType === 'toutes-dispo' || selectedType === 'toutes-dispo-calendar' ? 'active' : ''}`}
               onClick={() => setSelectedType('toutes-dispo')}
             >
               Toutes les dispo
-              <button 
-                className="calendar-icon-btn"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setSelectedType('toutes-dispo-calendar')
-                }}
-                title="Vue calendrier"
-              >
-                📅
-              </button>
             </div>
+          </div>
+
+          {/* Bouton de basculement vue liste/calendrier */}
+          <div className="view-toggle-container">
+            <button 
+              className="view-toggle-btn"
+              onClick={() => {
+                if (selectedType.includes('-calendar')) {
+                  // Passer de calendrier à liste
+                  const baseType = selectedType.replace('-calendar', '')
+                  setSelectedType(baseType)
+                } else {
+                  // Passer de liste à calendrier
+                  setSelectedType(`${selectedType}-calendar`)
+                }
+              }}
+              title={selectedType.includes('-calendar') ? 'Vue liste' : 'Vue calendrier'}
+            >
+              {selectedType.includes('-calendar') ? (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 6h13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M8 12h13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M8 18h13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M3 6h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M3 12h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M3 18h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              ) : (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor" strokeWidth="2"/>
+                  <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" strokeWidth="2"/>
+                  <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" strokeWidth="2"/>
+                </svg>
+              )}
+            </button>
           </div>
 
           <div className="activity-content">

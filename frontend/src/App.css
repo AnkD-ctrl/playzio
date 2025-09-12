@@ -101,6 +101,7 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px 20px 0 20px;
+  position: relative;
 }
 
 .activity-header {
@@ -151,22 +152,33 @@ body {
   gap: 6px;
 }
 
-.calendar-icon-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-  padding: 4px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  opacity: 0.7;
-  margin-left: 8px;
+.view-toggle-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
 }
 
-.calendar-icon-btn:hover {
-  opacity: 1;
-  background: rgba(255, 255, 255, 0.1);
-  transform: scale(1.1);
+.view-toggle-btn {
+  background: rgba(42, 42, 42, 0.9);
+  border: 1px solid #5a5a5a;
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  color: #d4af8c;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.view-toggle-btn:hover {
+  background: rgba(52, 52, 52, 0.95);
+  border-color: #d4af8c;
+  color: #ffffff;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(212, 175, 140, 0.2);
 }
 
 .main-tab:hover {
