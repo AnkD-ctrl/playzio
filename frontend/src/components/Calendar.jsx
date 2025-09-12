@@ -11,8 +11,6 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
   const [showSearchModal, setShowSearchModal] = useState(false)
   const [showOnlyMyGroups, setShowOnlyMyGroups] = useState(false)
   const [userGroups, setUserGroups] = useState([])
-  const [showFilterDropdown, setShowFilterDropdown] = useState(false)
-  const [groupFilterType, setGroupFilterType] = useState('tous') // 'tous', 'mes-groupes', 'hors-groupes'
   const [searchInput, setSearchInput] = useState('')
   const [searchTimeout, setSearchTimeout] = useState(null)
   
@@ -84,15 +82,6 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
     setShowOnlyMyGroups(!showOnlyMyGroups)
   }
 
-  const handleFilterSelect = (filterType) => {
-    setGroupFilterType(filterType)
-    if (filterType === 'mes-groupes') {
-      setShowOnlyMyGroups(true)
-    } else {
-      setShowOnlyMyGroups(false)
-    }
-    setShowFilterDropdown(false)
-  }
 
   const fetchUserGroups = async () => {
     try {
@@ -106,7 +95,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
 
   useEffect(() => {
     fetchSlots()
-  }, [activity, searchFilter, groupFilterType, dateFilter, lieuFilter])
+  }, [activity, searchFilter, dateFilter, lieuFilter])
 
   useEffect(() => {
     fetchUserGroups()
@@ -165,22 +154,6 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
           )
         }
         
-        // Filtrer par groupes selon le type de filtre sélectionné
-        if (groupFilterType === 'mes-groupes' && userGroups.length > 0) {
-          const userGroupIds = userGroups.map(group => group.id)
-          filteredData = filteredData.filter(slot => {
-            // Garder les slots visibles par tous OU qui ont des groupes visibles ET que l'utilisateur fait partie d'au moins un de ces groupes
-            return slot.visibleToAll || 
-                   (slot.visibleToGroups && slot.visibleToGroups.length > 0 && 
-                    slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId)))
-          })
-        } else if (groupFilterType === 'hors-groupes') {
-          // Garder seulement les slots visibles par tous OU qui n'ont pas de groupes visibles (disponibilités publiques)
-          filteredData = filteredData.filter(slot => {
-            return slot.visibleToAll || !slot.visibleToGroups || slot.visibleToGroups.length === 0
-          })
-        }
-        // Si groupFilterType === 'tous', on ne filtre pas par groupes
         
         setSlots(filteredData)
       } else {
@@ -287,37 +260,6 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
       <div className="calendar-title-header">
         <div className="header-title-container">
           <div className="header-buttons">
-            <div className="filter-dropdown">
-              <button 
-                className={`filter-btn ${groupFilterType !== 'tous' ? 'active' : ''}`}
-                onClick={() => setShowFilterDropdown(!showFilterDropdown)}
-                title="Filtrer par groupes"
-              >
-                Filtre groupe
-              </button>
-              {showFilterDropdown && (
-                <div className="filter-dropdown-menu">
-                  <button 
-                    className={`filter-option ${groupFilterType === 'tous' ? 'selected' : ''}`}
-                    onClick={() => handleFilterSelect('tous')}
-                  >
-                    Tous
-                  </button>
-                  <button 
-                    className={`filter-option ${groupFilterType === 'mes-groupes' ? 'selected' : ''}`}
-                    onClick={() => handleFilterSelect('mes-groupes')}
-                  >
-                    Mes groupes
-                  </button>
-                  <button 
-                    className={`filter-option ${groupFilterType === 'hors-groupes' ? 'selected' : ''}`}
-                    onClick={() => handleFilterSelect('hors-groupes')}
-                  >
-                    Hors groupes
-                  </button>
-                </div>
-              )}
-            </div>
             {(activity === 'Tous' || activity === 'Autre' || activity === 'Sport' || activity === 'Social') && (
               <div className="search-container">
                 <input
@@ -405,7 +347,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
           </div>
         </div>
         
-        {(searchFilter || groupFilterType !== 'tous' || dateFilter || lieuFilter) && (
+        {(searchFilter || dateFilter || lieuFilter) && (
           <div className="filters-info">
             {searchFilter && (
               <div className="search-filter-info">
@@ -417,30 +359,6 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
                     onSearchFilterChange('')
                   }}
                   title="Supprimer le filtre"
-                >
-                  ✕
-                </button>
-              </div>
-            )}
-            {groupFilterType === 'mes-groupes' && (
-              <div className="groups-filter-info">
-                <p>👥 Affichage : Mes Groupes uniquement</p>
-                <button 
-                  className="clear-filter-btn"
-                  onClick={() => handleFilterSelect('tous')}
-                  title="Afficher toutes les disponibilités"
-                >
-                  ✕
-                </button>
-              </div>
-            )}
-            {groupFilterType === 'hors-groupes' && (
-              <div className="groups-filter-info">
-                <p>🌐 Affichage : Hors groupes uniquement</p>
-                <button 
-                  className="clear-filter-btn"
-                  onClick={() => handleFilterSelect('tous')}
-                  title="Afficher toutes les disponibilités"
                 >
                   ✕
                 </button>

@@ -389,7 +389,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           </div>
         </div>
         
-        {(searchFilter || groupFilterType !== 'tous' || dateFilter || lieuFilter) && (
+        {(searchFilter || dateFilter || lieuFilter) && (
           <div className="filters-info">
             {searchFilter && (
               <div className="search-filter-info">
