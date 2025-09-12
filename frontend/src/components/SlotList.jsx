@@ -329,7 +329,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
       {slots.length === 0 ? (
         <div className="no-slots">
           <p>{activity === 'Tous' ? 'Aucune disponibilité pour le moment.' : `Aucune disponibilité pour ${activity} pour le moment.`}</p>
-          <p>Soyez le premier à en créer une !</p>
+          <p>Soyez le premier à en créer une en cliquant sur le bouton + !</p>
         </div>
       ) : (
         <div className="slots-list">
