@@ -199,6 +199,19 @@ body {
   color: #d4af8c;
 }
 
+/* Forcer le bouton filtre à être identique aux autres */
+.filter-btn {
+  width: 32px !important;
+  height: 32px !important;
+  padding: 0 !important;
+  color: #d4af8c !important;
+}
+
+.filter-btn svg {
+  color: #d4af8c !important;
+  stroke: #d4af8c !important;
+}
+
 /* Styles pour la modal de filtres */
 .modal-overlay {
   position: fixed !important;
