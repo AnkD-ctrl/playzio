@@ -273,12 +273,12 @@ app.post('/api/register', async (req, res) => {
   try {
     const { prenom, password, email } = req.body
     
-    if (!prenom || !password) {
-      return res.status(400).json({ error: 'Nom d\'utilisateur et mot de passe requis' })
+    if (!prenom || !password || !email) {
+      return res.status(400).json({ error: 'Nom d\'utilisateur, mot de passe et email requis' })
     }
 
-    // Validation email si fourni
-    if (email && !isValidEmail(email)) {
+    // Validation email obligatoire
+    if (!isValidEmail(email)) {
       return res.status(400).json({ error: 'Adresse email invalide' })
     }
     

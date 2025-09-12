@@ -31,10 +31,16 @@ function LoginScreen({ onLogin, isLogin: initialIsLogin = true, onBack }) {
     e.preventDefault()
     setError('')
 
-    // Validation email si fourni
-    if (!isLogin && formData.email && !validateEmail(formData.email)) {
-      setError('Veuillez entrer une adresse email valide')
-      return
+    // Validation email obligatoire pour l'inscription
+    if (!isLogin) {
+      if (!formData.email) {
+        setError('Veuillez entrer une adresse email')
+        return
+      }
+      if (!validateEmail(formData.email)) {
+        setError('Veuillez entrer une adresse email valide')
+        return
+      }
     }
 
     try {
@@ -115,17 +121,18 @@ function LoginScreen({ onLogin, isLogin: initialIsLogin = true, onBack }) {
 
           {!isLogin && (
             <div className="form-group">
-              <label htmlFor="email">Email (optionnel)</label>
+              <label htmlFor="email">Email</label>
               <input
                 type="email"
                 id="email"
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
+                required
                 placeholder="votre@email.com"
               />
               <div className="email-disclaimer">
-                <p>⚠️ <strong>Important :</strong> Sans email, vous ne pourrez pas récupérer votre compte si vous oubliez votre mot de passe.</p>
+                <p>📧 <strong>Important :</strong> L'email est requis pour récupérer votre compte si vous oubliez votre mot de passe.</p>
                 <p>💡 Vous pourrez ajouter votre email plus tard dans "Mon compte".</p>
               </div>
             </div>
