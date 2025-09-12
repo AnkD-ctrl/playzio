@@ -105,15 +105,17 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         // Filtrer selon le type d'onglet
         if (filterType === 'mes-dispo') {
           // Afficher seulement les créneaux créés par l'utilisateur
-          filteredData = filteredData.filter(slot => slot.creator === currentUser.prenom)
+          filteredData = filteredData.filter(slot => slot.createdBy === currentUser.prenom)
         } else if (filterType === 'communaute' && userGroups.length > 0) {
           // Afficher seulement les créneaux des groupes de l'utilisateur
           const userGroupNames = userGroups.map(group => group.name)
           filteredData = filteredData.filter(slot => 
-            slot.group && userGroupNames.includes(slot.group)
+            slot.visibleToGroups && slot.visibleToGroups.some(groupName => userGroupNames.includes(groupName))
           )
+        } else if (filterType === 'toutes-dispo') {
+          // Afficher seulement les créneaux visibles à tous (visible_to_all = true)
+          filteredData = filteredData.filter(slot => slot.visibleToAll === true)
         }
-        // 'toutes-dispo' affiche tout (pas de filtre supplémentaire)
         
         // Filtrer par date si une date est sélectionnée
         filteredData = selectedDate 
@@ -137,7 +139,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         // Filtrer par organisateur si un filtre d'organisateur est défini
         if (organizerFilter) {
           filteredData = filteredData.filter(slot => 
-            slot.creator && slot.creator.toLowerCase().includes(organizerFilter.toLowerCase())
+            slot.createdBy && slot.createdBy.toLowerCase().includes(organizerFilter.toLowerCase())
           )
         }
         

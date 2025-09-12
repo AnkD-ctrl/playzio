@@ -94,7 +94,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
 
   useEffect(() => {
     fetchSlots()
-  }, [activity, searchFilter, lieuFilter, organizerFilter])
+  }, [activity, searchFilter, lieuFilter, organizerFilter, filterType, userGroups])
 
   useEffect(() => {
     fetchUserGroups()
@@ -128,8 +128,24 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
       if (response.ok) {
         const data = await response.json()
         
-        // Filtrer par activité personnalisée si un filtre de recherche est défini
+        // Filtrer selon le type d'onglet
         let filteredData = data
+        
+        if (filterType === 'mes-dispo') {
+          // Afficher seulement les créneaux créés par l'utilisateur
+          filteredData = filteredData.filter(slot => slot.createdBy === currentUser.prenom)
+        } else if (filterType === 'communaute' && userGroups.length > 0) {
+          // Afficher seulement les créneaux des groupes de l'utilisateur
+          const userGroupNames = userGroups.map(group => group.name)
+          filteredData = filteredData.filter(slot => 
+            slot.visibleToGroups && slot.visibleToGroups.some(groupName => userGroupNames.includes(groupName))
+          )
+        } else if (filterType === 'toutes-dispo') {
+          // Afficher seulement les créneaux visibles à tous (visible_to_all = true)
+          filteredData = filteredData.filter(slot => slot.visibleToAll === true)
+        }
+        
+        // Filtrer par activité personnalisée si un filtre de recherche est défini
         if (searchFilter) {
           filteredData = filteredData.filter(slot => 
             slot.customActivity && slot.customActivity.toLowerCase().includes(searchFilter.toLowerCase())
@@ -146,7 +162,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
         // Filtrer par organisateur si un filtre d'organisateur est défini
         if (organizerFilter) {
           filteredData = filteredData.filter(slot => 
-            slot.creator && slot.creator.toLowerCase().includes(organizerFilter.toLowerCase())
+            slot.createdBy && slot.createdBy.toLowerCase().includes(organizerFilter.toLowerCase())
           )
         }
         
