@@ -18,6 +18,12 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   const [searchInput, setSearchInput] = useState('')
   const [searchTimeout, setSearchTimeout] = useState(null)
   const [expandedSlots, setExpandedSlots] = useState(new Set())
+  
+  // Nouveaux filtres
+  const [dateFilter, setDateFilter] = useState('')
+  const [lieuFilter, setLieuFilter] = useState('')
+  const [lieuSearchInput, setLieuSearchInput] = useState('')
+  const [lieuSearchTimeout, setLieuSearchTimeout] = useState(null)
 
   const handleActivitySelect = (activityName) => {
     onSearchFilterChange(activityName)
@@ -36,6 +42,34 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   const handleSearchKeyPress = (e) => {
     if (e.key === 'Enter') {
       handleSearchConfirm()
+    }
+  }
+
+  // Handlers pour les nouveaux filtres
+  const handleDateFilterChange = (e) => {
+    setDateFilter(e.target.value)
+  }
+
+  const handleLieuSearchInputChange = (e) => {
+    const value = e.target.value
+    setLieuSearchInput(value)
+    
+    // Clear existing timeout
+    if (lieuSearchTimeout) {
+      clearTimeout(lieuSearchTimeout)
+    }
+    
+    // Set new timeout for search
+    const newTimeout = setTimeout(() => {
+      setLieuFilter(value)
+    }, 300)
+    
+    setLieuSearchTimeout(newTimeout)
+  }
+
+  const handleLieuSearchKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      setLieuFilter(lieuSearchInput)
     }
   }
 
@@ -77,7 +111,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
 
   useEffect(() => {
     fetchSlots()
-  }, [activity, selectedDate, searchFilter, groupFilterType])
+  }, [activity, selectedDate, searchFilter, groupFilterType, dateFilter, lieuFilter])
 
   useEffect(() => {
     fetchUserGroups()
@@ -115,30 +149,25 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           ? data.filter(slot => slot.date === selectedDate)
           : data
         
-        // Filtrer par recherche globale (date, lieu, activité) si un filtre de recherche est défini
+        // Filtrer par activité personnalisée si un filtre de recherche est défini
         if (searchFilter) {
-          const searchTerm = searchFilter.toLowerCase()
-          filteredData = filteredData.filter(slot => {
-            // Rechercher dans l'activité personnalisée
-            const customActivityMatch = slot.customActivity && slot.customActivity.toLowerCase().includes(searchTerm)
-            
-            // Rechercher dans le type d'activité
-            const typeMatch = slot.type && (
-              (Array.isArray(slot.type) && slot.type.some(t => t.toLowerCase().includes(searchTerm))) ||
-              (!Array.isArray(slot.type) && slot.type.toLowerCase().includes(searchTerm))
-            )
-            
-            // Rechercher dans la description
-            const descriptionMatch = slot.description && slot.description.toLowerCase().includes(searchTerm)
-            
-            // Rechercher dans le lieu
-            const lieuMatch = slot.lieu && slot.lieu.toLowerCase().includes(searchTerm)
-            
-            // Rechercher dans la date (format DD/MM/YYYY)
-            const dateMatch = slot.date && slot.date.includes(searchTerm)
-            
-            return customActivityMatch || typeMatch || descriptionMatch || lieuMatch || dateMatch
-          })
+          filteredData = filteredData.filter(slot => 
+            slot.customActivity && slot.customActivity.toLowerCase().includes(searchFilter.toLowerCase())
+          )
+        }
+        
+        // Filtrer par date si un filtre de date est défini
+        if (dateFilter) {
+          filteredData = filteredData.filter(slot => 
+            slot.date && slot.date.includes(dateFilter)
+          )
+        }
+        
+        // Filtrer par lieu si un filtre de lieu est défini
+        if (lieuFilter) {
+          filteredData = filteredData.filter(slot => 
+            slot.lieu && slot.lieu.toLowerCase().includes(lieuFilter.toLowerCase())
+          )
         }
         
         // Filtrer par groupes selon le type de filtre sélectionné
@@ -301,7 +330,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                 <input
                   type="text"
                   className="search-input"
-                  placeholder="Rechercher par date, lieu, activité..."
+                  placeholder="Recherche activité..."
                   value={searchInput}
                   onChange={handleSearchInputChange}
                   onKeyPress={handleSearchKeyPress}
@@ -322,11 +351,44 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           </div>
         </div>
         
-        {(searchFilter || groupFilterType !== 'tous') && (
+        {/* Deuxième ligne de filtres */}
+        <div className="filters-row-2">
+          <div className="date-filter-container">
+            <input
+              type="date"
+              className="date-filter-input"
+              value={dateFilter}
+              onChange={handleDateFilterChange}
+              title="Filtrer par date"
+            />
+          </div>
+          <div className="lieu-search-container">
+            <input
+              type="text"
+              className="lieu-search-input"
+              placeholder="Recherche lieu..."
+              value={lieuSearchInput}
+              onChange={handleLieuSearchInputChange}
+              onKeyPress={handleLieuSearchKeyPress}
+              title="Rechercher par lieu"
+            />
+            <button
+              className="lieu-search-confirm-btn"
+              onClick={() => setLieuFilter(lieuSearchInput)}
+              title="Lancer la recherche lieu"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        {(searchFilter || groupFilterType !== 'tous' || dateFilter || lieuFilter) && (
           <div className="filters-info">
             {searchFilter && (
               <div className="search-filter-info">
-                <p>🔍 Recherche : "{searchFilter}" (date, lieu, activité)</p>
+                <p>🔍 Filtre : "{searchFilter}"</p>
                 <button 
                   className="clear-filter-btn"
                   onClick={() => {
@@ -358,6 +420,33 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                   className="clear-filter-btn"
                   onClick={() => handleFilterSelect('tous')}
                   title="Afficher toutes les disponibilités"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+            {dateFilter && (
+              <div className="date-filter-info">
+                <p>📅 Date : "{dateFilter}"</p>
+                <button 
+                  className="clear-filter-btn"
+                  onClick={() => setDateFilter('')}
+                  title="Supprimer le filtre date"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+            {lieuFilter && (
+              <div className="lieu-filter-info">
+                <p>📍 Lieu : "{lieuFilter}"</p>
+                <button 
+                  className="clear-filter-btn"
+                  onClick={() => {
+                    setLieuFilter('')
+                    setLieuSearchInput('')
+                  }}
+                  title="Supprimer le filtre lieu"
                 >
                   ✕
                 </button>

@@ -548,3 +548,154 @@
   }
 }
 
+/* Styles pour les nouveaux filtres */
+.filters-row-2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.date-filter-container {
+  display: flex;
+  align-items: center;
+}
+
+.date-filter-input {
+  background: #4a4a4a;
+  border: 1px solid #5a5a5a;
+  border-radius: 6px;
+  color: #e0e0e0;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  min-width: 150px;
+}
+
+.date-filter-input:hover {
+  background: #5a5a5a;
+  border-color: #6a6a6a;
+}
+
+.date-filter-input:focus {
+  outline: none;
+  background: #5a5a5a;
+  border-color: #d4af8c;
+  box-shadow: 0 0 0 2px rgba(212, 175, 140, 0.2);
+}
+
+.lieu-search-container {
+  display: flex;
+  align-items: center;
+  background: #4a4a4a;
+  border: 1px solid #5a5a5a;
+  border-radius: 6px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  min-width: 200px;
+}
+
+.lieu-search-container:hover {
+  background: #5a5a5a;
+  border-color: #6a6a6a;
+}
+
+.lieu-search-input {
+  background: transparent;
+  border: none;
+  color: #e0e0e0;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  flex: 1;
+  outline: none;
+}
+
+.lieu-search-input::placeholder {
+  color: #a0a0a0;
+}
+
+.lieu-search-confirm-btn {
+  background: #d4af8c;
+  border: none;
+  color: #2a2a2a;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lieu-search-confirm-btn:hover {
+  background: #c4a07c;
+}
+
+.lieu-search-confirm-btn:active {
+  background: #b4906c;
+}
+
+/* Styles pour les filtres actifs */
+.date-filter-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #4a4a4a;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #5a5a5a;
+}
+
+.date-filter-info p {
+  margin: 0;
+  color: #e0e0e0;
+  font-size: 0.9rem;
+}
+
+.lieu-filter-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #4a4a4a;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #5a5a5a;
+}
+
+.lieu-filter-info p {
+  margin: 0;
+  color: #e0e0e0;
+  font-size: 0.9rem;
+}
+
+/* Responsive pour les nouveaux filtres */
+@media (max-width: 768px) {
+  .filters-row-2 {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .date-filter-input,
+  .lieu-search-container {
+    min-width: 100%;
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 428px) {
+  .filters-row-2 {
+    gap: 6px;
+  }
+  
+  .date-filter-input,
+  .lieu-search-input {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+  }
+  
+  .lieu-search-confirm-btn {
+    padding: 6px 10px;
+  }
+}
+
