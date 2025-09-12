@@ -267,21 +267,32 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                   Activité {searchFilter && <span className="filter-indicator">•</span>}
                 </button>
                 
-                {/* Filtre Date - Input stylisé comme bouton */}
-                <div className="date-filter-container">
-                  <div className="date-input-wrapper">
-                    <input
-                      type="date"
-                      className={`date-filter-input ${dateFilter ? 'active' : ''}`}
-                      value={dateFilter}
-                      onChange={(e) => setDateFilter(e.target.value)}
-                      title="Filtrer par date"
-                    />
-                    <span className="date-input-text">
-                      Date {dateFilter && <span className="filter-indicator">•</span>}
-                    </span>
-                  </div>
-                </div>
+                {/* Filtre Date - Bouton comme les autres */}
+                <button 
+                  className={`filter-btn ${dateFilter ? 'active' : ''}`}
+                  onClick={() => {
+                    const input = document.createElement('input');
+                    input.type = 'date';
+                    input.value = dateFilter;
+                    input.style.position = 'absolute';
+                    input.style.opacity = '0';
+                    input.style.pointerEvents = 'none';
+                    document.body.appendChild(input);
+                    input.showPicker();
+                    input.onchange = (e) => {
+                      setDateFilter(e.target.value);
+                      document.body.removeChild(input);
+                    };
+                    input.onblur = () => {
+                      if (document.body.contains(input)) {
+                        document.body.removeChild(input);
+                      }
+                    };
+                  }}
+                  title="Filtrer par date"
+                >
+                  Date {dateFilter && <span className="filter-indicator">•</span>}
+                </button>
               </div>
               
               {/* Deuxième ligne : Lieu et Organisateur */}

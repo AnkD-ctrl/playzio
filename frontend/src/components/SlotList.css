@@ -101,103 +101,6 @@
   font-weight: bold;
 }
 
-/* Styles pour le filtre date */
-.date-filter-container {
-  display: flex;
-  align-items: center;
-}
-
-.date-input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.date-filter-input {
-  background: rgba(74, 74, 74, 0.8); /* Same as filter-btn */
-  border: 1px solid #5a5a5a; /* Same as filter-btn */
-  border-radius: 6px;
-  padding: 10px 16px; /* Same as filter-btn */
-  color: transparent; /* Make text transparent */
-  font-size: 0.9rem;
-  font-weight: 600; /* Same as filter-btn */
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: 120px; /* Same as filter-btn */
-  flex: 1; /* Same as filter-btn */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  position: relative;
-}
-
-.date-filter-input:hover {
-  background: rgba(94, 94, 94, 0.9); /* Same as filter-btn:hover */
-  border-color: #d4af8c; /* Same as filter-btn:hover */
-}
-
-.date-filter-input:focus {
-  outline: none;
-  border-color: #d4af8c;
-  background: rgba(94, 94, 94, 0.9); /* Same as filter-btn:hover */
-}
-
-.date-filter-input.active {
-  background: linear-gradient(45deg, #d4af8c, #8a2be2); /* Same as filter-btn.active */
-  border-color: #d4af8c; /* Same as filter-btn.active */
-}
-
-.date-input-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  color: #e0e0e0; /* Same as filter-btn */
-  font-size: 0.9rem; /* Same as filter-btn */
-  font-weight: 600; /* Same as filter-btn */
-  white-space: nowrap;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-}
-
-.date-filter-input:hover + .date-input-text {
-  color: #ffffff; /* Same as filter-btn:hover */
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
-}
-
-.date-filter-input.active + .date-input-text {
-  color: #ffffff; /* Same as filter-btn.active */
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
-}
-
-/* Masquer complètement le texte par défaut de l'input date */
-.date-filter-input::-webkit-datetime-edit-text {
-  display: none;
-}
-
-.date-filter-input::-webkit-datetime-edit-month-field {
-  display: none;
-}
-
-.date-filter-input::-webkit-datetime-edit-day-field {
-  display: none;
-}
-
-.date-filter-input::-webkit-datetime-edit-year-field {
-  display: none;
-}
-
-.date-filter-input::-webkit-calendar-picker-indicator {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  cursor: pointer;
-  opacity: 0;
-}
 
 /* Styles pour les modales */
 .modal-overlay {
@@ -1102,8 +1005,7 @@
     flex-wrap: wrap;
   }
 
-  .filter-btn,
-  .date-filter-input {
+  .filter-btn {
     min-width: auto;
     flex: 1;
     text-align: center;
@@ -1409,7 +1311,6 @@
     gap: 8px;
   }
   
-  .date-filter-input,
   .lieu-search-container {
     min-width: 100%;
     max-width: 300px;
@@ -1421,7 +1322,6 @@
     gap: 6px;
   }
   
-  .date-filter-input,
   .lieu-search-input {
     font-size: 0.8rem;
     padding: 6px 10px;
