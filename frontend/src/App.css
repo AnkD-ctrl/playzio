@@ -165,8 +165,8 @@ body {
 .view-toggle-btn {
   background: rgba(42, 42, 42, 0.9);
   border: 1px solid #5a5a5a;
-  border-radius: 8px;
-  padding: 8px;
+  border-radius: 6px;
+  padding: 6px;
   cursor: pointer;
   color: #d4af8c;
   transition: all 0.3s ease;
@@ -174,9 +174,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  font-size: 1.2rem;
+  width: 32px;
+  height: 32px;
+  font-size: 1rem;
   font-weight: 600;
 }
 
