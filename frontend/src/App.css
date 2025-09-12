@@ -166,7 +166,7 @@ body {
   background: rgba(42, 42, 42, 0.9);
   border: 1px solid #5a5a5a;
   border-radius: 6px;
-  padding: 6px;
+  padding: 0;
   cursor: pointer;
   color: #d4af8c;
   transition: all 0.3s ease;
@@ -187,6 +187,16 @@ body {
   color: #ffffff;
   transform: scale(1.05);
   box-shadow: 0 4px 12px rgba(212, 175, 140, 0.2);
+}
+
+/* Assurer que le bouton + hérite de la couleur */
+.view-toggle-btn svg {
+  color: inherit;
+}
+
+/* Assurer que le texte + hérite de la couleur */
+.view-toggle-btn {
+  color: #d4af8c;
 }
 
 /* Styles pour la modal de filtres */
