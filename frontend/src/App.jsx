@@ -261,7 +261,8 @@ function App() {
           </div>
 
           {/* Boutons de filtre, ajout et basculement vue liste/calendrier */}
-          <div className="view-toggle-container">
+          {selectedType !== 'add' && (
+            <div className="view-toggle-container">
             {/* Bouton filtre */}
             <button 
               className="view-toggle-btn filter-btn"
@@ -317,6 +318,7 @@ function App() {
               )}
             </button>
           </div>
+          )}
 
           <div className="activity-content">
             {/* Mes dispo - Vue liste */}
