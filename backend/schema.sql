@@ -93,6 +93,15 @@ BEGIN
     END IF;
 END $$;
 
+-- Migration: Add lieu column if it doesn't exist
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'slots' AND column_name = 'lieu') THEN
+        ALTER TABLE slots ADD COLUMN lieu VARCHAR(255) DEFAULT '';
+    END IF;
+END $$;
+
 -- Migration: Ensure email column allows NULL values
 DO $$ 
 BEGIN

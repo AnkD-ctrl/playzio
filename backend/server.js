@@ -444,7 +444,7 @@ app.get('/api/slots', async (req, res) => {
 // Ajouter un créneau
 app.post('/api/slots', async (req, res) => {
   try {
-    const { date, heureDebut, heureFin, type, customActivity, participants, createdBy, visibleToGroups, visibleToAll, description } = req.body
+    const { date, heureDebut, heureFin, type, customActivity, participants, createdBy, visibleToGroups, visibleToAll, description, lieu } = req.body
     
     const newSlot = await createSlot({
       id: nanoid(),
@@ -454,6 +454,7 @@ app.post('/api/slots', async (req, res) => {
       type,
       customActivity: customActivity || null,
       description: description || '',
+      lieu: lieu || '',
       createdBy: createdBy || null,
       visibleToGroups: visibleToGroups || [],
       visibleToAll: visibleToAll !== undefined ? visibleToAll : true,

@@ -448,6 +448,17 @@
   line-height: 1.4;
 }
 
+.slot-lieu {
+  margin-bottom: 12px;
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.slot-lieu strong {
+  color: #d4af8c;
+}
+
 .slot-participants-detail {
   margin-bottom: 16px;
   color: #e0e0e0;

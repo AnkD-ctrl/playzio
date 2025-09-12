@@ -9,7 +9,8 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
     date: '',
     heureDebut: '',
     heureFin: '',
-    description: ''
+    description: '',
+    lieu: ''
   })
   const [selectedActivities, setSelectedActivities] = useState([activity])
   const [selectedGroups, setSelectedGroups] = useState([])
@@ -105,7 +106,7 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
       if (response.ok) {
         trackSlotCreate(selectedActivities.join(', '), selectedGroups.length > 0)
         alert('Disponibilité ajoutée avec succès !')
-        setFormData({ date: '', heureDebut: '', heureFin: '', description: '' })
+        setFormData({ date: '', heureDebut: '', heureFin: '', description: '', lieu: '' })
         setSelectedActivities([activity])
         setSelectedGroups([])
         setCustomActivityName('')
@@ -219,6 +220,19 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
               onChange={handleInputChange}
               placeholder="Décrivez votre disponibilité..."
               rows="4"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="lieu">Lieu</label>
+            <input
+              type="text"
+              id="lieu"
+              name="lieu"
+              value={formData.lieu}
+              onChange={handleInputChange}
+              placeholder="Où se déroule l'activité ? (ex: Parc de la Tête d'Or, Lyon)"
+              maxLength="100"
             />
           </div>
 

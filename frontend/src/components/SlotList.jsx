@@ -441,6 +441,12 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                       <strong>Description:</strong> {slot.description || 'Aucune description'}
                     </div>
 
+                    {slot.lieu && (
+                      <div className="slot-lieu">
+                        <strong>Lieu:</strong> {slot.lieu}
+                      </div>
+                    )}
+
                     <div className="slot-participants-detail">
                       <strong>Participants ({slot.participants ? slot.participants.length : 0}):</strong>
                       {slot.participants && slot.participants.length > 0 ? (
