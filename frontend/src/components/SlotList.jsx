@@ -20,65 +20,39 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   // Nouveaux filtres
   const [dateFilter, setDateFilter] = useState('')
   const [lieuFilter, setLieuFilter] = useState('')
-  const [lieuSearchInput, setLieuSearchInput] = useState('')
-  const [lieuSearchTimeout, setLieuSearchTimeout] = useState(null)
+  const [organizerFilter, setOrganizerFilter] = useState('')
   const [showDatePicker, setShowDatePicker] = useState(false)
+  const [showActivityModal, setShowActivityModal] = useState(false)
+  const [showLieuModal, setShowLieuModal] = useState(false)
+  const [showOrganizerModal, setShowOrganizerModal] = useState(false)
+  const [activityInput, setActivityInput] = useState('')
+  const [lieuInput, setLieuInput] = useState('')
+  const [organizerInput, setOrganizerInput] = useState('')
 
   const handleActivitySelect = (activityName) => {
     onSearchFilterChange(activityName)
     setShowSearchModal(false)
   }
 
-  const handleSearchInputChange = (e) => {
-    const value = e.target.value
-    setSearchInput(value)
-  }
-
-  const handleSearchConfirm = () => {
-    onSearchFilterChange(searchInput)
-  }
-
-  const handleSearchKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleSearchConfirm()
-    }
-  }
-
   // Handlers pour les nouveaux filtres
-  const handleDateFilterChange = (e) => {
-    setDateFilter(e.target.value)
+  const handleActivityConfirm = () => {
+    onSearchFilterChange(activityInput)
+    setShowActivityModal(false)
+  }
+
+  const handleLieuConfirm = () => {
+    setLieuFilter(lieuInput)
+    setShowLieuModal(false)
+  }
+
+  const handleOrganizerConfirm = () => {
+    setOrganizerFilter(organizerInput)
+    setShowOrganizerModal(false)
   }
 
   const handleDateSelect = (date) => {
     setDateFilter(date)
     setShowDatePicker(false)
-  }
-
-  const handleDateFilterToggle = () => {
-    setShowDatePicker(!showDatePicker)
-  }
-
-  const handleLieuSearchInputChange = (e) => {
-    const value = e.target.value
-    setLieuSearchInput(value)
-    
-    // Clear existing timeout
-    if (lieuSearchTimeout) {
-      clearTimeout(lieuSearchTimeout)
-    }
-    
-    // Set new timeout for search
-    const newTimeout = setTimeout(() => {
-      setLieuFilter(value)
-    }, 300)
-    
-    setLieuSearchTimeout(newTimeout)
-  }
-
-  const handleLieuSearchKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      setLieuFilter(lieuSearchInput)
-    }
   }
 
   const toggleSlotExpansion = (slotId) => {
@@ -110,7 +84,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
 
   useEffect(() => {
     fetchSlots()
-  }, [activity, selectedDate, searchFilter, dateFilter, lieuFilter, filterType, userGroups])
+  }, [activity, selectedDate, searchFilter, dateFilter, lieuFilter, organizerFilter, filterType, userGroups])
 
   useEffect(() => {
     fetchUserGroups()
@@ -181,6 +155,13 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         if (lieuFilter) {
           filteredData = filteredData.filter(slot => 
             slot.lieu && slot.lieu.toLowerCase().includes(lieuFilter.toLowerCase())
+          )
+        }
+        
+        // Filtrer par organisateur si un filtre d'organisateur est défini
+        if (organizerFilter) {
+          filteredData = filteredData.filter(slot => 
+            slot.creator && slot.creator.toLowerCase().includes(organizerFilter.toLowerCase())
           )
         }
         
@@ -292,29 +273,44 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
       <div className="slot-list-header">
         <div className="header-title-container">
           <div className="header-buttons">
-            {(activity === 'Tous' || activity === 'Autre' || activity === 'Sport' || activity === 'Social') && (
-              <div className="search-container">
-                <input
-                  type="text"
-                  className="search-input"
-                  placeholder="Recherche activité..."
-                  value={searchInput}
-                  onChange={handleSearchInputChange}
-                  onKeyPress={handleSearchKeyPress}
-                  title="Rechercher une activité"
-                />
-                <button
-                  className="search-confirm-btn"
-                  onClick={handleSearchConfirm}
-                  title="Lancer la recherche"
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/>
-                    <path d="m21 21-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </button>
-              </div>
-            )}
+            <div className="filter-buttons">
+              {/* Filtre Activité */}
+              <button 
+                className={`filter-btn ${searchFilter ? 'active' : ''}`}
+                onClick={() => setShowActivityModal(true)}
+                title="Filtrer par activité"
+              >
+                Activité {searchFilter && <span className="filter-indicator">•</span>}
+              </button>
+              
+              {/* Filtre Date */}
+              <button 
+                className={`filter-btn ${dateFilter ? 'active' : ''}`}
+                onClick={() => setShowDatePicker(true)}
+                title="Filtrer par date"
+              >
+                Date {dateFilter && <span className="filter-indicator">•</span>}
+              </button>
+              
+              {/* Filtre Lieu */}
+              <button 
+                className={`filter-btn ${lieuFilter ? 'active' : ''}`}
+                onClick={() => setShowLieuModal(true)}
+                title="Filtrer par lieu"
+              >
+                Lieu {lieuFilter && <span className="filter-indicator">•</span>}
+              </button>
+              
+              {/* Filtre Organisateur */}
+              <button 
+                className={`filter-btn ${organizerFilter ? 'active' : ''}`}
+                onClick={() => setShowOrganizerModal(true)}
+                title="Filtrer par organisateur"
+              >
+                Organisateur {organizerFilter && <span className="filter-indicator">•</span>}
+              </button>
+            </div>
+            
             {/* Bouton + pour ajouter une dispo dans l'onglet "Mes dispo" */}
             {filterType === 'mes-dispo' && onAddSlot && (
               <button 
@@ -328,68 +324,8 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           </div>
         </div>
         
-        {/* Deuxième ligne de filtres */}
-        <div className="filters-row-2">
-          <div className="date-filter-dropdown">
-            <button 
-              className={`date-filter-btn ${dateFilter ? 'active' : ''}`}
-              onClick={handleDateFilterToggle}
-              title="Filtrer par date"
-            >
-              Filtre date
-            </button>
-            {showDatePicker && (
-              <div className="date-picker-dropdown">
-                <input
-                  type="date"
-                  className="date-picker-input"
-                  value={dateFilter}
-                  onChange={handleDateFilterChange}
-                  title="Sélectionner une date"
-                />
-                <div className="date-picker-actions">
-                  <button 
-                    className="date-picker-clear"
-                    onClick={() => {
-                      setDateFilter('')
-                      setShowDatePicker(false)
-                    }}
-                  >
-                    Effacer
-                  </button>
-                  <button 
-                    className="date-picker-apply"
-                    onClick={() => setShowDatePicker(false)}
-                  >
-                    Appliquer
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="lieu-search-container">
-            <input
-              type="text"
-              className="lieu-search-input"
-              placeholder="Recherche lieu..."
-              value={lieuSearchInput}
-              onChange={handleLieuSearchInputChange}
-              onKeyPress={handleLieuSearchKeyPress}
-              title="Rechercher par lieu"
-            />
-            <button
-              className="lieu-search-confirm-btn"
-              onClick={() => setLieuFilter(lieuSearchInput)}
-              title="Lancer la recherche lieu"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-          </div>
-        </div>
         
-        {(searchFilter || dateFilter || lieuFilter) && (
+        {(searchFilter || dateFilter || lieuFilter || organizerFilter) && (
           <div className="filters-info">
             {searchFilter && (
               <div className="search-filter-info">
@@ -423,16 +359,128 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                 <p>📍 Lieu : "{lieuFilter}"</p>
                 <button 
                   className="clear-filter-btn"
-                  onClick={() => {
-                    setLieuFilter('')
-                    setLieuSearchInput('')
-                  }}
+                  onClick={() => setLieuFilter('')}
                   title="Supprimer le filtre lieu"
                 >
                   ✕
                 </button>
               </div>
             )}
+            {organizerFilter && (
+              <div className="organizer-filter-info">
+                <p>👤 Organisateur : "{organizerFilter}"</p>
+                <button 
+                  className="clear-filter-btn"
+                  onClick={() => setOrganizerFilter('')}
+                  title="Supprimer le filtre organisateur"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+        
+        {/* Modales de filtres */}
+        
+        {/* Modal Activité */}
+        {showActivityModal && (
+          <div className="modal-overlay" onClick={() => setShowActivityModal(false)}>
+            <div className="filter-modal" onClick={(e) => e.stopPropagation()}>
+              <h3>Filtrer par activité</h3>
+              <input
+                type="text"
+                className="modal-input"
+                placeholder="Entrez le nom de l'activité..."
+                value={activityInput}
+                onChange={(e) => setActivityInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleActivityConfirm()}
+              />
+              <div className="modal-actions">
+                <button className="modal-btn secondary" onClick={() => setShowActivityModal(false)}>
+                  Annuler
+                </button>
+                <button className="modal-btn primary" onClick={handleActivityConfirm}>
+                  Appliquer
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Modal Date */}
+        {showDatePicker && (
+          <div className="modal-overlay" onClick={() => setShowDatePicker(false)}>
+            <div className="filter-modal" onClick={(e) => e.stopPropagation()}>
+              <h3>Sélectionner une date</h3>
+              <input
+                type="date"
+                className="modal-input"
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+              />
+              <div className="modal-actions">
+                <button className="modal-btn secondary" onClick={() => {
+                  setDateFilter('')
+                  setShowDatePicker(false)
+                }}>
+                  Effacer
+                </button>
+                <button className="modal-btn primary" onClick={() => setShowDatePicker(false)}>
+                  Appliquer
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Modal Lieu */}
+        {showLieuModal && (
+          <div className="modal-overlay" onClick={() => setShowLieuModal(false)}>
+            <div className="filter-modal" onClick={(e) => e.stopPropagation()}>
+              <h3>Filtrer par lieu</h3>
+              <input
+                type="text"
+                className="modal-input"
+                placeholder="Entrez le nom du lieu..."
+                value={lieuInput}
+                onChange={(e) => setLieuInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleLieuConfirm()}
+              />
+              <div className="modal-actions">
+                <button className="modal-btn secondary" onClick={() => setShowLieuModal(false)}>
+                  Annuler
+                </button>
+                <button className="modal-btn primary" onClick={handleLieuConfirm}>
+                  Appliquer
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Modal Organisateur */}
+        {showOrganizerModal && (
+          <div className="modal-overlay" onClick={() => setShowOrganizerModal(false)}>
+            <div className="filter-modal" onClick={(e) => e.stopPropagation()}>
+              <h3>Filtrer par organisateur</h3>
+              <input
+                type="text"
+                className="modal-input"
+                placeholder="Entrez le nom de l'organisateur..."
+                value={organizerInput}
+                onChange={(e) => setOrganizerInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleOrganizerConfirm()}
+              />
+              <div className="modal-actions">
+                <button className="modal-btn secondary" onClick={() => setShowOrganizerModal(false)}>
+                  Annuler
+                </button>
+                <button className="modal-btn primary" onClick={handleOrganizerConfirm}>
+                  Appliquer
+                </button>
+              </div>
+            </div>
           </div>
         )}
         
