@@ -373,11 +373,14 @@ function App() {
             {/* Dispo de ma communauté - Vue calendrier */}
             {selectedType === 'communaute-calendar' && (
               <Calendar 
+                key={`communaute-calendar-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}`}
                 activity={selectedActivity}
                 currentUser={currentUser}
                 onDateSelect={handleDateSelect}
                 searchFilter={searchFilter}
                 onSearchFilterChange={handleSearchFilterChange}
+                lieuFilter={lieuFilter}
+                organizerFilter={organizerFilter}
                 filterType="communaute"
                 onAddSlot={(date) => {
                   setSelectedDate(date)
@@ -389,13 +392,15 @@ function App() {
             {/* Toutes les dispo - Vue liste */}
             {selectedType === 'toutes-dispo' && (
               <SlotList 
-                key={`toutes-dispo-${selectedActivity}-${selectedDate || 'all'}`}
+                key={`toutes-dispo-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}`}
                 activity={selectedActivity}
                 currentUser={currentUser}
                 selectedDate={selectedDate}
                 onClearDate={() => setSelectedDate(null)}
                 searchFilter={searchFilter}
                 onSearchFilterChange={handleSearchFilterChange}
+                lieuFilter={lieuFilter}
+                organizerFilter={organizerFilter}
                 filterType="toutes-dispo"
               />
             )}
@@ -403,11 +408,14 @@ function App() {
             {/* Toutes les dispo - Vue calendrier */}
             {selectedType === 'toutes-dispo-calendar' && (
               <Calendar 
+                key={`toutes-dispo-calendar-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}`}
                 activity={selectedActivity}
                 currentUser={currentUser}
                 onDateSelect={handleDateSelect}
                 searchFilter={searchFilter}
                 onSearchFilterChange={handleSearchFilterChange}
+                lieuFilter={lieuFilter}
+                organizerFilter={organizerFilter}
                 filterType="toutes-dispo"
                 onAddSlot={(date) => {
                   setSelectedDate(date)
