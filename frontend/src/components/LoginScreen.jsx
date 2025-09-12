@@ -131,10 +131,6 @@ function LoginScreen({ onLogin, isLogin: initialIsLogin = true, onBack }) {
                 required
                 placeholder="votre@email.com"
               />
-              <div className="email-disclaimer">
-                <p>📧 <strong>Important :</strong> L'email est requis pour récupérer votre compte si vous oubliez votre mot de passe.</p>
-                <p>💡 Vous pourrez ajouter votre email plus tard dans "Mon compte".</p>
-              </div>
             </div>
           )}
 
