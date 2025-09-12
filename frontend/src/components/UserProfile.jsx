@@ -82,27 +82,50 @@ function UserProfile({ user, onClose, onUserUpdate }) {
     }
   }
 
-  const searchUsers = async (username) => {
-    if (!username.trim()) {
-      setSearchResults([])
+  const validateAndSendRequest = async () => {
+    if (!searchUsername.trim()) {
+      alert('Veuillez entrer un nom d\'utilisateur')
       return
     }
 
     setSearchLoading(true)
     try {
-      const response = await fetch(`${API_BASE_URL}/api/users/search?q=${encodeURIComponent(username)}`)
+      // Vérifier si l'utilisateur existe exactement
+      const response = await fetch(`${API_BASE_URL}/api/users/search?q=${encodeURIComponent(searchUsername.trim())}`)
       if (response.ok) {
         const users = await response.json()
-        // Filtrer l'utilisateur actuel et les amis existants
-        const filteredUsers = users.filter(u => 
-          u.prenom !== user.prenom && 
-          !userFriends.includes(u.prenom) &&
-          !friendRequests.includes(u.prenom)
-        )
-        setSearchResults(filteredUsers)
+        const exactUser = users.find(u => u.prenom.toLowerCase() === searchUsername.trim().toLowerCase())
+        
+        if (!exactUser) {
+          alert(`Aucun utilisateur trouvé avec le nom "${searchUsername.trim()}"`)
+          setSearchLoading(false)
+          return
+        }
+
+        if (exactUser.prenom === user.prenom) {
+          alert('Vous ne pouvez pas vous ajouter vous-même')
+          setSearchLoading(false)
+          return
+        }
+
+        if (userFriends.includes(exactUser.prenom)) {
+          alert(`${exactUser.prenom} est déjà votre ami`)
+          setSearchLoading(false)
+          return
+        }
+
+        if (friendRequests.includes(exactUser.prenom)) {
+          alert(`Vous avez déjà envoyé une demande à ${exactUser.prenom}`)
+          setSearchLoading(false)
+          return
+        }
+
+        // Envoyer la demande d'ami
+        await handleSendFriendRequest(exactUser)
       }
     } catch (error) {
-      console.error('Erreur lors de la recherche:', error)
+      console.error('Erreur lors de la validation:', error)
+      alert('Erreur de connexion au serveur')
     }
     setSearchLoading(false)
   }
@@ -435,48 +458,40 @@ function UserProfile({ user, onClose, onUserUpdate }) {
             <div className="sub-modal-content">
               <div className="search-users-form">
                 <div className="form-group">
-                  <label>Rechercher un utilisateur</label>
+                  <label>Nom d'utilisateur exact</label>
                   <input
                     type="text"
-                    placeholder="Nom d'utilisateur..."
+                    placeholder="Entrez le nom exact de l'utilisateur..."
                     value={searchUsername}
-                    onChange={(e) => {
-                      setSearchUsername(e.target.value)
-                      searchUsers(e.target.value)
+                    onChange={(e) => setSearchUsername(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        validateAndSendRequest()
+                      }
                     }}
                   />
                 </div>
                 
                 {searchLoading && (
-                  <div className="search-loading">Recherche en cours...</div>
+                  <div className="search-loading">Vérification en cours...</div>
                 )}
                 
-                {searchResults.length > 0 && (
-                  <div className="search-results">
-                    <h4>Résultats ({searchResults.length})</h4>
-                    {searchResults.map(user => (
-                      <div key={user.prenom} className="search-result-item">
-                        <div className="user-info">
-                          <span className="user-name">👤 {user.prenom}</span>
-                          {user.role === 'admin' && (
-                            <span className="admin-badge">Admin</span>
-                          )}
-                        </div>
-                        <button 
-                          className="send-request-btn"
-                          onClick={() => handleSendFriendRequest(user)}
-                          title="Envoyer une demande d'ami"
-                        >
-                          Ajouter
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                
-                {searchUsername && searchResults.length === 0 && !searchLoading && (
-                  <div className="no-results">Aucun utilisateur trouvé</div>
-                )}
+                <div className="form-actions">
+                  <button 
+                    type="button" 
+                    onClick={() => setShowAddFriendModal(false)}
+                    disabled={searchLoading}
+                  >
+                    Annuler
+                  </button>
+                  <button 
+                    className="validate-btn"
+                    onClick={validateAndSendRequest}
+                    disabled={searchLoading || !searchUsername.trim()}
+                  >
+                    {searchLoading ? 'Vérification...' : 'Ajouter'}
+                  </button>
+                </div>
               </div>
             </div>
           </div>

@@ -654,6 +654,30 @@
   gap: 16px;
 }
 
+/* Styles pour le bouton de validation */
+.validate-btn {
+  background: linear-gradient(45deg, #4a90e2, #357abd);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.validate-btn:hover:not(:disabled) {
+  background: linear-gradient(45deg, #357abd, #2c5aa0);
+  transform: translateY(-1px);
+}
+
+.validate-btn:disabled {
+  background: #666;
+  cursor: not-allowed;
+  transform: none;
+}
+
 @media (max-width: 480px) {
   .user-profile-overlay {
     padding: 8px;
