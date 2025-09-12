@@ -5,7 +5,7 @@ import { trackSlotJoin, trackSlotLeave } from '../utils/analytics'
 import SlotDiscussion from './SlotDiscussion'
 import ActivitySearchModal from './ActivitySearchModal'
 
-function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilter, onSearchFilterChange, filterType = 'toutes-dispo', onAddSlot }) {
+function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, filterType = 'toutes-dispo', onAddSlot }) {
   const [slots, setSlots] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -79,7 +79,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
 
   useEffect(() => {
     fetchSlots()
-  }, [activity, selectedDate, searchFilter, dateFilter, lieuFilter, organizerFilter, filterType, userGroups])
+  }, [activity, selectedDate, searchFilter, lieuFilter, organizerFilter, filterType, userGroups])
 
   useEffect(() => {
     fetchUserGroups()
@@ -123,13 +123,6 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         if (searchFilter) {
           filteredData = filteredData.filter(slot => 
             slot.customActivity && slot.customActivity.toLowerCase().includes(searchFilter.toLowerCase())
-          )
-        }
-        
-        // Filtrer par date si un filtre de date est défini
-        if (dateFilter) {
-          filteredData = filteredData.filter(slot => 
-            slot.date && slot.date.includes(dateFilter)
           )
         }
         

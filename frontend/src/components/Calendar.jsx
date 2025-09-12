@@ -3,7 +3,7 @@ import './Calendar.css'
 import { API_BASE_URL } from '../config'
 import ActivitySearchModal from './ActivitySearchModal'
 
-function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchFilterChange, filterType = 'toutes-dispo', onAddSlot }) {
+function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, filterType = 'toutes-dispo', onAddSlot }) {
   const [slots, setSlots] = useState([])
   const [currentDate, setCurrentDate] = useState(new Date())
   const [loading, setLoading] = useState(true)
@@ -95,7 +95,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
 
   useEffect(() => {
     fetchSlots()
-  }, [activity, searchFilter, dateFilter, lieuFilter])
+  }, [activity, searchFilter, lieuFilter, organizerFilter])
 
   useEffect(() => {
     fetchUserGroups()
@@ -137,17 +137,17 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
           )
         }
         
-        // Filtrer par date si un filtre de date est défini
-        if (dateFilter) {
-          filteredData = filteredData.filter(slot => 
-            slot.date && slot.date.includes(dateFilter)
-          )
-        }
-        
         // Filtrer par lieu si un filtre de lieu est défini
         if (lieuFilter) {
           filteredData = filteredData.filter(slot => 
             slot.lieu && slot.lieu.toLowerCase().includes(lieuFilter.toLowerCase())
+          )
+        }
+        
+        // Filtrer par organisateur si un filtre d'organisateur est défini
+        if (organizerFilter) {
+          filteredData = filteredData.filter(slot => 
+            slot.creator && slot.creator.toLowerCase().includes(organizerFilter.toLowerCase())
           )
         }
         

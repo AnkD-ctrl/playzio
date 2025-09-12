@@ -28,6 +28,8 @@ function App() {
   const [showContactModal, setShowContactModal] = useState(false)
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [searchFilter, setSearchFilter] = useState('')
+  const [lieuFilter, setLieuFilter] = useState('')
+  const [organizerFilter, setOrganizerFilter] = useState('')
 
 
   // Vérifier si on est sur la page de réinitialisation de mot de passe ou guide d'installation
@@ -319,13 +321,15 @@ function App() {
             {/* Mes dispo - Vue liste */}
             {selectedType === 'mes-dispo' && (
               <SlotList 
-                key={`mes-dispo-${selectedActivity}-${selectedDate || 'all'}`}
+                key={`mes-dispo-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}`}
                 activity={selectedActivity}
                 currentUser={currentUser}
                 selectedDate={selectedDate}
                 onClearDate={() => setSelectedDate(null)}
                 searchFilter={searchFilter}
                 onSearchFilterChange={handleSearchFilterChange}
+                lieuFilter={lieuFilter}
+                organizerFilter={organizerFilter}
                 filterType="mes-dispo"
                 onAddSlot={() => setSelectedType('add')}
               />
@@ -334,11 +338,14 @@ function App() {
             {/* Mes dispo - Vue calendrier */}
             {selectedType === 'mes-dispo-calendar' && (
               <Calendar 
+                key={`mes-dispo-calendar-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}`}
                 activity={selectedActivity}
                 currentUser={currentUser}
                 onDateSelect={handleDateSelect}
                 searchFilter={searchFilter}
                 onSearchFilterChange={handleSearchFilterChange}
+                lieuFilter={lieuFilter}
+                organizerFilter={organizerFilter}
                 filterType="mes-dispo"
                 onAddSlot={(date) => {
                   setSelectedDate(date)
@@ -350,13 +357,15 @@ function App() {
             {/* Dispo de ma communauté - Vue liste */}
             {selectedType === 'communaute' && (
               <SlotList 
-                key={`communaute-${selectedActivity}-${selectedDate || 'all'}`}
+                key={`communaute-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}`}
                 activity={selectedActivity}
                 currentUser={currentUser}
                 selectedDate={selectedDate}
                 onClearDate={() => setSelectedDate(null)}
                 searchFilter={searchFilter}
                 onSearchFilterChange={handleSearchFilterChange}
+                lieuFilter={lieuFilter}
+                organizerFilter={organizerFilter}
                 filterType="communaute"
               />
             )}
@@ -510,6 +519,8 @@ function App() {
                 <input 
                   type="text" 
                   placeholder="Rechercher un lieu..."
+                  value={lieuFilter}
+                  onChange={(e) => setLieuFilter(e.target.value)}
                 />
               </div>
               <div className="filter-group">
@@ -517,6 +528,8 @@ function App() {
                 <input 
                   type="text" 
                   placeholder="Rechercher un organisateur..."
+                  value={organizerFilter}
+                  onChange={(e) => setOrganizerFilter(e.target.value)}
                 />
               </div>
             </div>
@@ -526,6 +539,8 @@ function App() {
                 onClick={() => {
                   setSearchFilter('')
                   setSelectedDate(null)
+                  setLieuFilter('')
+                  setOrganizerFilter('')
                 }}
               >
                 Effacer
