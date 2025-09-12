@@ -40,7 +40,7 @@
   display: flex;
   gap: 4px;
   align-items: center;
-  flex: 1;
+  flex: 0.8;
   min-width: 0;
 }
 
@@ -995,7 +995,7 @@
   .filter-row {
     flex-direction: row;
     gap: 3px;
-    flex: 1;
+    flex: 0.8;
   }
   
   .filter-btn {
@@ -1318,7 +1318,7 @@
   .filter-row {
     flex-direction: row;
     gap: 2px;
-    flex: 1;
+    flex: 0.8;
   }
   
   .filter-btn {
