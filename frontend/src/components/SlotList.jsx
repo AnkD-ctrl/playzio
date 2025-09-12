@@ -256,48 +256,54 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         <div className="header-title-container">
           <div className="header-buttons">
             <div className="filter-buttons">
-              {/* Filtre Activité */}
-              <button 
-                className={`filter-btn ${searchFilter ? 'active' : ''}`}
-                onClick={() => setShowActivityModal(true)}
-                title="Filtrer par activité"
-              >
-                Activité {searchFilter && <span className="filter-indicator">•</span>}
-              </button>
-              
-              {/* Filtre Date - Input stylisé comme bouton */}
-              <div className="date-filter-container">
-                <div className="date-input-wrapper">
-                  <input
-                    type="date"
-                    className={`date-filter-input ${dateFilter ? 'active' : ''}`}
-                    value={dateFilter}
-                    onChange={(e) => setDateFilter(e.target.value)}
-                    title="Filtrer par date"
-                  />
-                  <span className="date-input-text">
-                    Date {dateFilter && <span className="filter-indicator">•</span>}
-                  </span>
+              {/* Première ligne : Activité et Date */}
+              <div className="filter-row">
+                {/* Filtre Activité */}
+                <button 
+                  className={`filter-btn ${searchFilter ? 'active' : ''}`}
+                  onClick={() => setShowActivityModal(true)}
+                  title="Filtrer par activité"
+                >
+                  Activité {searchFilter && <span className="filter-indicator">•</span>}
+                </button>
+                
+                {/* Filtre Date - Input stylisé comme bouton */}
+                <div className="date-filter-container">
+                  <div className="date-input-wrapper">
+                    <input
+                      type="date"
+                      className={`date-filter-input ${dateFilter ? 'active' : ''}`}
+                      value={dateFilter}
+                      onChange={(e) => setDateFilter(e.target.value)}
+                      title="Filtrer par date"
+                    />
+                    <span className="date-input-text">
+                      Date {dateFilter && <span className="filter-indicator">•</span>}
+                    </span>
+                  </div>
                 </div>
               </div>
               
-              {/* Filtre Lieu */}
-              <button 
-                className={`filter-btn ${lieuFilter ? 'active' : ''}`}
-                onClick={() => setShowLieuModal(true)}
-                title="Filtrer par lieu"
-              >
-                Lieu {lieuFilter && <span className="filter-indicator">•</span>}
-              </button>
-              
-              {/* Filtre Organisateur */}
-              <button 
-                className={`filter-btn ${organizerFilter ? 'active' : ''}`}
-                onClick={() => setShowOrganizerModal(true)}
-                title="Filtrer par organisateur"
-              >
-                Organisateur {organizerFilter && <span className="filter-indicator">•</span>}
-              </button>
+              {/* Deuxième ligne : Lieu et Organisateur */}
+              <div className="filter-row">
+                {/* Filtre Lieu */}
+                <button 
+                  className={`filter-btn ${lieuFilter ? 'active' : ''}`}
+                  onClick={() => setShowLieuModal(true)}
+                  title="Filtrer par lieu"
+                >
+                  Lieu {lieuFilter && <span className="filter-indicator">•</span>}
+                </button>
+                
+                {/* Filtre Organisateur */}
+                <button 
+                  className={`filter-btn ${organizerFilter ? 'active' : ''}`}
+                  onClick={() => setShowOrganizerModal(true)}
+                  title="Filtrer par organisateur"
+                >
+                  Organisateur {organizerFilter && <span className="filter-indicator">•</span>}
+                </button>
+              </div>
             </div>
             
             {/* Bouton + pour ajouter une dispo dans l'onglet "Mes dispo" */}
