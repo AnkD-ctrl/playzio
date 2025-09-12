@@ -30,6 +30,7 @@ function App() {
   const [searchFilter, setSearchFilter] = useState('')
   const [lieuFilter, setLieuFilter] = useState('')
   const [organizerFilter, setOrganizerFilter] = useState('')
+  const [filterVersion, setFilterVersion] = useState(0)
 
 
   // Vérifier si on est sur la page de réinitialisation de mot de passe ou guide d'installation
@@ -321,7 +322,7 @@ function App() {
             {/* Mes dispo - Vue liste */}
             {selectedType === 'mes-dispo' && (
               <SlotList 
-                key={`mes-dispo-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}`}
+                key={`mes-dispo-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
                 activity={selectedActivity}
                 currentUser={currentUser}
                 selectedDate={selectedDate}
@@ -338,7 +339,7 @@ function App() {
             {/* Mes dispo - Vue calendrier */}
             {selectedType === 'mes-dispo-calendar' && (
               <Calendar 
-                key={`mes-dispo-calendar-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}`}
+                key={`mes-dispo-calendar-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
                 activity={selectedActivity}
                 currentUser={currentUser}
                 onDateSelect={handleDateSelect}
@@ -357,7 +358,7 @@ function App() {
             {/* Dispo de ma communauté - Vue liste */}
             {selectedType === 'communaute' && (
               <SlotList 
-                key={`communaute-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}`}
+                key={`communaute-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
                 activity={selectedActivity}
                 currentUser={currentUser}
                 selectedDate={selectedDate}
@@ -373,7 +374,7 @@ function App() {
             {/* Dispo de ma communauté - Vue calendrier */}
             {selectedType === 'communaute-calendar' && (
               <Calendar 
-                key={`communaute-calendar-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}`}
+                key={`communaute-calendar-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
                 activity={selectedActivity}
                 currentUser={currentUser}
                 onDateSelect={handleDateSelect}
@@ -392,7 +393,7 @@ function App() {
             {/* Toutes les dispo - Vue liste */}
             {selectedType === 'toutes-dispo' && (
               <SlotList 
-                key={`toutes-dispo-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}`}
+                key={`toutes-dispo-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
                 activity={selectedActivity}
                 currentUser={currentUser}
                 selectedDate={selectedDate}
@@ -408,7 +409,7 @@ function App() {
             {/* Toutes les dispo - Vue calendrier */}
             {selectedType === 'toutes-dispo-calendar' && (
               <Calendar 
-                key={`toutes-dispo-calendar-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}`}
+                key={`toutes-dispo-calendar-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
                 activity={selectedActivity}
                 currentUser={currentUser}
                 onDateSelect={handleDateSelect}
@@ -549,13 +550,17 @@ function App() {
                   setSelectedDate(null)
                   setLieuFilter('')
                   setOrganizerFilter('')
+                  setFilterVersion(prev => prev + 1)
                 }}
               >
                 Effacer
               </button>
               <button 
                 className="modal-btn btn-apply"
-                onClick={() => setShowFilterModal(false)}
+                onClick={() => {
+                  setFilterVersion(prev => prev + 1)
+                  setShowFilterModal(false)
+                }}
               >
                 Appliquer
               </button>
