@@ -180,13 +180,13 @@ function UserProfile({ user, onClose, onUserUpdate }) {
           
           <div className="profile-actions">
             <button 
-              className="action-btn primary"
+              className="action-btn secondary"
               onClick={() => setShowEmailModal(true)}
             >
               {user.email ? 'Modifier l\'email' : 'Ajouter un email'}
             </button>
             <button 
-              className="action-btn primary"
+              className="action-btn secondary"
               onClick={() => setShowPasswordModal(true)}
             >
               Modifier le mot de passe
