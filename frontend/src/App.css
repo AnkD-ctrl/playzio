@@ -178,6 +178,7 @@ body {
   height: 32px;
   font-size: 1rem;
   font-weight: 600;
+  box-sizing: border-box;
 }
 
 .view-toggle-btn:hover {
@@ -259,8 +260,9 @@ body {
 
 .modal-actions {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .modal-btn {
@@ -282,13 +284,22 @@ body {
   background: #6a6a6a;
 }
 
-.btn-close {
+.btn-apply {
   background: linear-gradient(45deg, #d4af8c, #8a2be2);
   color: #ffffff;
 }
 
-.btn-close:hover {
+.btn-apply:hover {
   background: linear-gradient(45deg, #e0c499, #9d4edd);
+}
+
+.btn-close {
+  background: #5a5a5a;
+  color: #e0e0e0;
+}
+
+.btn-close:hover {
+  background: #6a6a6a;
 }
 
 .main-tab:hover {

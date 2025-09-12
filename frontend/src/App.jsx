@@ -526,10 +526,15 @@ function App() {
                 onClick={() => {
                   setSearchFilter('')
                   setSelectedDate(null)
-                  setShowFilterModal(false)
                 }}
               >
                 Effacer
+              </button>
+              <button 
+                className="modal-btn btn-apply"
+                onClick={() => setShowFilterModal(false)}
+              >
+                Appliquer
               </button>
               <button 
                 className="modal-btn btn-close"
