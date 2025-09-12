@@ -278,7 +278,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
           {/* Section Amis */}
           <div className="profile-friends-section">
             <div className="friends-header" onClick={() => setShowFriendsSection(!showFriendsSection)}>
-              <h3>👥 Amis ({userFriends.length})</h3>
+              <h3>Amis ({userFriends.length})</h3>
               <div className="friends-header-actions">
                 <button 
                   className="add-friend-btn"
