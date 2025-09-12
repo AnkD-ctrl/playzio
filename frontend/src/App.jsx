@@ -246,13 +246,13 @@ function App() {
               className={`main-tab ${selectedType === 'communaute' || selectedType === 'communaute-calendar' ? 'active' : ''}`}
               onClick={() => setSelectedType('communaute')}
             >
-              Dispo de ma communauté
+              Dispo des groupes
             </div>
             <div 
               className={`main-tab ${selectedType === 'toutes-dispo' || selectedType === 'toutes-dispo-calendar' ? 'active' : ''}`}
               onClick={() => setSelectedType('toutes-dispo')}
             >
-              Toutes les dispo
+              Toutes
             </div>
           </div>
 
