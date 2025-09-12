@@ -342,7 +342,12 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
               {/* Filtre Date */}
               <button 
                 className={`filter-btn ${dateFilter ? 'active' : ''}`}
-                onClick={() => setShowDatePicker(true)}
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  console.log('Date button clicked, setting showDatePicker to true')
+                  setShowDatePicker(true)
+                }}
                 title="Filtrer par date"
               >
                 Date {dateFilter && <span className="filter-indicator">•</span>}
@@ -468,6 +473,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         {showDatePicker && (
           <div className="modal-overlay" onClick={() => setShowDatePicker(false)}>
             <div className="simple-calendar-modal" onClick={(e) => e.stopPropagation()}>
+              {console.log('Calendar modal is rendering')}
               <h3>Choisir une date</h3>
               
               <div className="calendar-nav">
