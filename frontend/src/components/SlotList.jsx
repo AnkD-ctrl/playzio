@@ -24,6 +24,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   const [lieuFilter, setLieuFilter] = useState('')
   const [lieuSearchInput, setLieuSearchInput] = useState('')
   const [lieuSearchTimeout, setLieuSearchTimeout] = useState(null)
+  const [showDatePicker, setShowDatePicker] = useState(false)
 
   const handleActivitySelect = (activityName) => {
     onSearchFilterChange(activityName)
@@ -48,6 +49,15 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   // Handlers pour les nouveaux filtres
   const handleDateFilterChange = (e) => {
     setDateFilter(e.target.value)
+  }
+
+  const handleDateSelect = (date) => {
+    setDateFilter(date)
+    setShowDatePicker(false)
+  }
+
+  const handleDateFilterToggle = () => {
+    setShowDatePicker(!showDatePicker)
   }
 
   const handleLieuSearchInputChange = (e) => {
@@ -123,13 +133,16 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
       if (showFilterDropdown && !event.target.closest('.filter-dropdown')) {
         setShowFilterDropdown(false)
       }
+      if (showDatePicker && !event.target.closest('.date-filter-dropdown')) {
+        setShowDatePicker(false)
+      }
     }
 
     document.addEventListener('mousedown', handleClickOutside)
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [showFilterDropdown])
+  }, [showFilterDropdown, showDatePicker])
 
   const fetchSlots = async () => {
     try {
@@ -353,28 +366,42 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         
         {/* Deuxième ligne de filtres */}
         <div className="filters-row-2">
-          <div className="date-filter-container">
+          <div className="date-filter-dropdown">
             <button 
               className={`date-filter-btn ${dateFilter ? 'active' : ''}`}
-              onClick={() => {
-                if (dateFilter) {
-                  setDateFilter('')
-                } else {
-                  // Focus sur le champ date
-                  document.querySelector('.date-filter-input')?.focus()
-                }
-              }}
+              onClick={handleDateFilterToggle}
               title="Filtrer par date"
             >
               Filtre date
             </button>
-            <input
-              type="date"
-              className="date-filter-input"
-              value={dateFilter}
-              onChange={handleDateFilterChange}
-              title="Filtrer par date"
-            />
+            {showDatePicker && (
+              <div className="date-picker-dropdown">
+                <input
+                  type="date"
+                  className="date-picker-input"
+                  value={dateFilter}
+                  onChange={handleDateFilterChange}
+                  title="Sélectionner une date"
+                />
+                <div className="date-picker-actions">
+                  <button 
+                    className="date-picker-clear"
+                    onClick={() => {
+                      setDateFilter('')
+                      setShowDatePicker(false)
+                    }}
+                  >
+                    Effacer
+                  </button>
+                  <button 
+                    className="date-picker-apply"
+                    onClick={() => setShowDatePicker(false)}
+                  >
+                    Appliquer
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
           <div className="lieu-search-container">
             <input

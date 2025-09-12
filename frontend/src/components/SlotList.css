@@ -839,10 +839,10 @@
   flex-wrap: wrap;
 }
 
-.date-filter-container {
+.date-filter-dropdown {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
 }
 
 .date-filter-btn {
@@ -867,6 +867,68 @@
   background: #d4af8c;
   border-color: #d4af8c;
   color: #2a2a2a;
+}
+
+.date-picker-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #4a4a4a;
+  border: 1px solid #5a5a5a;
+  border-radius: 6px;
+  padding: 12px;
+  z-index: 1000;
+  min-width: 250px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.date-picker-input {
+  background: #5a5a5a;
+  border: 1px solid #6a6a6a;
+  border-radius: 4px;
+  color: #e0e0e0;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.date-picker-input:focus {
+  outline: none;
+  border-color: #d4af8c;
+  box-shadow: 0 0 0 2px rgba(212, 175, 140, 0.2);
+}
+
+.date-picker-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.date-picker-clear,
+.date-picker-apply {
+  background: #6a6a6a;
+  border: 1px solid #7a7a7a;
+  border-radius: 4px;
+  color: #e0e0e0;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.date-picker-clear:hover {
+  background: #7a7a7a;
+}
+
+.date-picker-apply {
+  background: #d4af8c;
+  border-color: #d4af8c;
+  color: #2a2a2a;
+}
+
+.date-picker-apply:hover {
+  background: #c4a07c;
 }
 
 .date-filter-input {
