@@ -4,9 +4,9 @@ import { API_BASE_URL } from '../config'
 import { trackSlotCreate } from '../utils/analytics'
 import CustomActivityModal from './CustomActivityModal'
 
-function AddSlot({ activity, currentUser, onSlotAdded }) {
+function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate }) {
   const [formData, setFormData] = useState({
-    date: '',
+    date: preSelectedDate || '',
     heureDebut: '',
     heureFin: '',
     description: '',
@@ -26,6 +26,12 @@ function AddSlot({ activity, currentUser, onSlotAdded }) {
   useEffect(() => {
     fetchUserGroups()
   }, [])
+
+  useEffect(() => {
+    if (preSelectedDate) {
+      setFormData(prev => ({ ...prev, date: preSelectedDate }))
+    }
+  }, [preSelectedDate])
 
   const fetchUserGroups = async () => {
     try {

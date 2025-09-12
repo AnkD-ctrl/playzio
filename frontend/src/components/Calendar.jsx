@@ -3,7 +3,7 @@ import './Calendar.css'
 import { API_BASE_URL } from '../config'
 import ActivitySearchModal from './ActivitySearchModal'
 
-function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchFilterChange }) {
+function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchFilterChange, filterType = 'toutes-dispo', onAddSlot }) {
   const [slots, setSlots] = useState([])
   const [currentDate, setCurrentDate] = useState(new Date())
   const [loading, setLoading] = useState(true)
@@ -226,12 +226,26 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
   }
 
   const handleDateClick = (date) => {
-    if (date && onDateSelect) {
+    if (date) {
       const year = date.getFullYear()
       const month = String(date.getMonth() + 1).padStart(2, '0')
       const day = String(date.getDate()).padStart(2, '0')
       const dateStr = `${year}-${month}-${day}`
-      onDateSelect(dateStr)
+      
+      // Vérifier s'il y a des créneaux pour cette date
+      const daySlots = getSlotsForDate(date)
+      
+      if (daySlots.length > 0) {
+        // S'il y a des créneaux, utiliser onDateSelect (comportement existant)
+        if (onDateSelect) {
+          onDateSelect(dateStr)
+        }
+      } else {
+        // S'il n'y a pas de créneaux, utiliser onAddSlot pour créer une nouvelle dispo
+        if (onAddSlot) {
+          onAddSlot(dateStr)
+        }
+      }
     }
   }
 

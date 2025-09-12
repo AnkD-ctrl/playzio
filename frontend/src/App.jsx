@@ -22,7 +22,7 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null)
   const [currentView, setCurrentView] = useState('landing') // Commencer par la landing page
   const [selectedActivity, setSelectedActivity] = useState(null)
-  const [selectedType, setSelectedType] = useState('list')
+  const [selectedType, setSelectedType] = useState('mes-dispo')
   const [selectedDate, setSelectedDate] = useState(null)
   const [showUserProfile, setShowUserProfile] = useState(false)
   const [showContactModal, setShowContactModal] = useState(false)
@@ -237,51 +237,154 @@ function App() {
         <div className="activity-container">
           <div className="main-tabs">
             <div 
-              className={`main-tab ${selectedType === 'list' ? 'active' : ''}`}
-              onClick={() => setSelectedType('list')}
+              className={`main-tab ${selectedType === 'mes-dispo' ? 'active' : ''}`}
+              onClick={() => setSelectedType('mes-dispo')}
             >
-              Disponibilités
+              Mes dispo
+              <button 
+                className="calendar-icon-btn"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setSelectedType('mes-dispo-calendar')
+                }}
+                title="Vue calendrier"
+              >
+                📅
+              </button>
             </div>
             <div 
-              className={`main-tab ${selectedType === 'calendar' ? 'active' : ''}`}
-              onClick={() => setSelectedType('calendar')}
+              className={`main-tab ${selectedType === 'communaute' ? 'active' : ''}`}
+              onClick={() => setSelectedType('communaute')}
             >
-              Calendrier
+              Dispo de ma communauté
+              <button 
+                className="calendar-icon-btn"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setSelectedType('communaute-calendar')
+                }}
+                title="Vue calendrier"
+              >
+                📅
+              </button>
             </div>
             <div 
-              className={`main-tab add-tab ${selectedType === 'add' ? 'active' : ''}`}
-              onClick={() => setSelectedType('add')}
+              className={`main-tab ${selectedType === 'toutes-dispo' ? 'active' : ''}`}
+              onClick={() => setSelectedType('toutes-dispo')}
             >
-              Ajouter ma dispo
+              Toutes les dispo
+              <button 
+                className="calendar-icon-btn"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setSelectedType('toutes-dispo-calendar')
+                }}
+                title="Vue calendrier"
+              >
+                📅
+              </button>
             </div>
           </div>
 
           <div className="activity-content">
-            {selectedType === 'list' && (
+            {/* Mes dispo - Vue liste */}
+            {selectedType === 'mes-dispo' && (
               <SlotList 
-                key={`${selectedActivity}-${selectedDate || 'all'}`}
+                key={`mes-dispo-${selectedActivity}-${selectedDate || 'all'}`}
                 activity={selectedActivity}
                 currentUser={currentUser}
                 selectedDate={selectedDate}
                 onClearDate={() => setSelectedDate(null)}
                 searchFilter={searchFilter}
                 onSearchFilterChange={handleSearchFilterChange}
+                filterType="mes-dispo"
+                onAddSlot={() => setSelectedType('add')}
               />
             )}
-            {selectedType === 'calendar' && (
+            
+            {/* Mes dispo - Vue calendrier */}
+            {selectedType === 'mes-dispo-calendar' && (
               <Calendar 
                 activity={selectedActivity}
                 currentUser={currentUser}
                 onDateSelect={handleDateSelect}
                 searchFilter={searchFilter}
                 onSearchFilterChange={handleSearchFilterChange}
+                filterType="mes-dispo"
+                onAddSlot={(date) => {
+                  setSelectedDate(date)
+                  setSelectedType('add')
+                }}
               />
             )}
+            
+            {/* Dispo de ma communauté - Vue liste */}
+            {selectedType === 'communaute' && (
+              <SlotList 
+                key={`communaute-${selectedActivity}-${selectedDate || 'all'}`}
+                activity={selectedActivity}
+                currentUser={currentUser}
+                selectedDate={selectedDate}
+                onClearDate={() => setSelectedDate(null)}
+                searchFilter={searchFilter}
+                onSearchFilterChange={handleSearchFilterChange}
+                filterType="communaute"
+              />
+            )}
+            
+            {/* Dispo de ma communauté - Vue calendrier */}
+            {selectedType === 'communaute-calendar' && (
+              <Calendar 
+                activity={selectedActivity}
+                currentUser={currentUser}
+                onDateSelect={handleDateSelect}
+                searchFilter={searchFilter}
+                onSearchFilterChange={handleSearchFilterChange}
+                filterType="communaute"
+                onAddSlot={(date) => {
+                  setSelectedDate(date)
+                  setSelectedType('add')
+                }}
+              />
+            )}
+            
+            {/* Toutes les dispo - Vue liste */}
+            {selectedType === 'toutes-dispo' && (
+              <SlotList 
+                key={`toutes-dispo-${selectedActivity}-${selectedDate || 'all'}`}
+                activity={selectedActivity}
+                currentUser={currentUser}
+                selectedDate={selectedDate}
+                onClearDate={() => setSelectedDate(null)}
+                searchFilter={searchFilter}
+                onSearchFilterChange={handleSearchFilterChange}
+                filterType="toutes-dispo"
+              />
+            )}
+            
+            {/* Toutes les dispo - Vue calendrier */}
+            {selectedType === 'toutes-dispo-calendar' && (
+              <Calendar 
+                activity={selectedActivity}
+                currentUser={currentUser}
+                onDateSelect={handleDateSelect}
+                searchFilter={searchFilter}
+                onSearchFilterChange={handleSearchFilterChange}
+                filterType="toutes-dispo"
+                onAddSlot={(date) => {
+                  setSelectedDate(date)
+                  setSelectedType('add')
+                }}
+              />
+            )}
+            
+            {/* Ajouter une dispo */}
             {selectedType === 'add' && (
               <AddSlot 
                 activity={selectedActivity}
                 currentUser={currentUser}
-                onSlotAdded={() => setSelectedType('list')}
+                onSlotAdded={() => setSelectedType('mes-dispo')}
+                preSelectedDate={selectedDate}
               />
             )}
           </div>

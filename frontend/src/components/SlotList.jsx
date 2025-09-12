@@ -5,7 +5,7 @@ import { trackSlotJoin, trackSlotLeave } from '../utils/analytics'
 import SlotDiscussion from './SlotDiscussion'
 import ActivitySearchModal from './ActivitySearchModal'
 
-function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilter, onSearchFilterChange }) {
+function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilter, onSearchFilterChange, filterType = 'toutes-dispo', onAddSlot }) {
   const [slots, setSlots] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -157,10 +157,25 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
       
       if (response.ok) {
         const data = await response.json()
+        let filteredData = data
+        
+        // Filtrer selon le type d'onglet
+        if (filterType === 'mes-dispo') {
+          // Afficher seulement les créneaux créés par l'utilisateur
+          filteredData = filteredData.filter(slot => slot.creator === currentUser.prenom)
+        } else if (filterType === 'communaute') {
+          // Afficher seulement les créneaux des groupes de l'utilisateur
+          const userGroupNames = userGroups.map(group => group.name)
+          filteredData = filteredData.filter(slot => 
+            slot.group && userGroupNames.includes(slot.group)
+          )
+        }
+        // 'toutes-dispo' affiche tout (pas de filtre supplémentaire)
+        
         // Filtrer par date si une date est sélectionnée
-        let filteredData = selectedDate 
-          ? data.filter(slot => slot.date === selectedDate)
-          : data
+        filteredData = selectedDate 
+          ? filteredData.filter(slot => slot.date === selectedDate)
+          : filteredData
         
         // Filtrer par activité personnalisée si un filtre de recherche est défini
         if (searchFilter) {
@@ -360,6 +375,16 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                   </svg>
                 </button>
               </div>
+            )}
+            {/* Bouton + pour ajouter une dispo dans l'onglet "Mes dispo" */}
+            {filterType === 'mes-dispo' && onAddSlot && (
+              <button 
+                className="add-slot-btn"
+                onClick={onAddSlot}
+                title="Ajouter une disponibilité"
+              >
+                +
+              </button>
             )}
           </div>
         </div>
