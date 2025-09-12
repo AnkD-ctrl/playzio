@@ -52,15 +52,18 @@
 /* Nouveaux styles pour les boutons de filtres */
 .filter-buttons {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 8px;
-  align-items: stretch;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .filter-row {
   display: flex;
   gap: 8px;
   align-items: center;
+  flex: 1;
+  min-width: 0;
 }
 
 .filter-btn {
@@ -1005,15 +1008,23 @@
     flex-wrap: wrap;
   }
 
+  .filter-buttons {
+    flex-direction: column;
+    gap: 6px;
+  }
+  
+  .filter-row {
+    flex-direction: row;
+    gap: 6px;
+    width: 100%;
+  }
+  
   .filter-btn {
     min-width: auto;
     flex: 1;
     text-align: center;
-  }
-  
-  .filter-row {
-    flex-direction: column;
-    gap: 6px;
+    font-size: 0.8rem;
+    padding: 8px 12px;
   }
 
   .search-container {
@@ -1318,6 +1329,23 @@
 }
 
 @media (max-width: 428px) {
+  .filter-buttons {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .filter-row {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .filter-btn {
+    width: 100%;
+    min-width: auto;
+    font-size: 0.8rem;
+    padding: 8px 12px;
+  }
+  
   .filters-row-2 {
     gap: 6px;
   }
