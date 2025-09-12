@@ -115,11 +115,30 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           ? data.filter(slot => slot.date === selectedDate)
           : data
         
-        // Filtrer par activité personnalisée si un filtre de recherche est défini
+        // Filtrer par recherche globale (date, lieu, activité) si un filtre de recherche est défini
         if (searchFilter) {
-          filteredData = filteredData.filter(slot => 
-            slot.customActivity && slot.customActivity.toLowerCase().includes(searchFilter.toLowerCase())
-          )
+          const searchTerm = searchFilter.toLowerCase()
+          filteredData = filteredData.filter(slot => {
+            // Rechercher dans l'activité personnalisée
+            const customActivityMatch = slot.customActivity && slot.customActivity.toLowerCase().includes(searchTerm)
+            
+            // Rechercher dans le type d'activité
+            const typeMatch = slot.type && (
+              (Array.isArray(slot.type) && slot.type.some(t => t.toLowerCase().includes(searchTerm))) ||
+              (!Array.isArray(slot.type) && slot.type.toLowerCase().includes(searchTerm))
+            )
+            
+            // Rechercher dans la description
+            const descriptionMatch = slot.description && slot.description.toLowerCase().includes(searchTerm)
+            
+            // Rechercher dans le lieu
+            const lieuMatch = slot.lieu && slot.lieu.toLowerCase().includes(searchTerm)
+            
+            // Rechercher dans la date (format DD/MM/YYYY)
+            const dateMatch = slot.date && slot.date.includes(searchTerm)
+            
+            return customActivityMatch || typeMatch || descriptionMatch || lieuMatch || dateMatch
+          })
         }
         
         // Filtrer par groupes selon le type de filtre sélectionné
@@ -282,7 +301,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                 <input
                   type="text"
                   className="search-input"
-                  placeholder="Recherche activité..."
+                  placeholder="Rechercher par date, lieu, activité..."
                   value={searchInput}
                   onChange={handleSearchInputChange}
                   onKeyPress={handleSearchKeyPress}
@@ -307,7 +326,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           <div className="filters-info">
             {searchFilter && (
               <div className="search-filter-info">
-                <p>🔍 Filtre : "{searchFilter}"</p>
+                <p>🔍 Recherche : "{searchFilter}" (date, lieu, activité)</p>
                 <button 
                   className="clear-filter-btn"
                   onClick={() => {
