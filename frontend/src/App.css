@@ -155,7 +155,8 @@ body {
 .view-toggle-container {
   position: absolute;
   top: 60px;
-  right: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 10;
   display: flex;
   gap: 8px;
