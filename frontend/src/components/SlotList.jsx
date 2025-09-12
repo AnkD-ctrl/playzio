@@ -320,6 +320,56 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           
         </div>
         
+        {/* Boutons de basculement vue liste/calendrier et ajout */}
+        <div className="view-toggle-container">
+          {/* Bouton + pour ajouter une dispo dans l'onglet "Mes dispo" */}
+          {filterType === 'mes-dispo' && (
+            <button 
+              className="view-toggle-btn add-btn"
+              onClick={() => {
+                // Naviguer vers l'écran d'ajout
+                window.location.hash = '#add';
+                window.location.reload();
+              }}
+              title="Ajouter une disponibilité"
+            >
+              +
+            </button>
+          )}
+          
+          <button 
+            className="view-toggle-btn"
+            onClick={() => {
+              // Basculer entre vue liste et calendrier
+              const currentPath = window.location.hash;
+              if (currentPath.includes('-calendar')) {
+                window.location.hash = currentPath.replace('-calendar', '');
+              } else {
+                window.location.hash = currentPath + '-calendar';
+              }
+              window.location.reload();
+            }}
+            title={filterType.includes('-calendar') ? 'Vue liste' : 'Vue calendrier'}
+          >
+            {filterType.includes('-calendar') ? (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 6h13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M8 12h13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M8 18h13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M3 6h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M3 12h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M3 18h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
+                <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor" strokeWidth="2"/>
+                <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" strokeWidth="2"/>
+                <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" strokeWidth="2"/>
+              </svg>
+            )}
+          </button>
+        </div>
         
         {(searchFilter || dateFilter || lieuFilter || organizerFilter) && (
           <div className="filters-info">
