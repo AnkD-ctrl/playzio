@@ -1297,38 +1297,3 @@
     padding: 6px 10px;
   }
 }
-
-/* Styles pour les boutons et statuts d'amis */
-.friend-btn {
-  background: linear-gradient(45deg, #4a90e2, #357abd);
-  color: white;
-  border: 1px solid #357abd;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.friend-btn:hover {
-  background: linear-gradient(45deg, #357abd, #2c5aa0);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
-}
-
-.friend-status {
-  color: #d4af8c;
-  font-weight: 600;
-  font-size: 0.9rem;
-  padding: 6px 12px;
-  background: rgba(212, 175, 140, 0.1);
-  border-radius: 4px;
-  border: 1px solid rgba(212, 175, 140, 0.3);
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}

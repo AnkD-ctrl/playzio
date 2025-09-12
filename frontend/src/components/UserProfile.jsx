@@ -9,6 +9,10 @@ function UserProfile({ user, onClose, onUserUpdate }) {
   const [userFriends, setUserFriends] = useState([])
   const [friendRequests, setFriendRequests] = useState([])
   const [showFriendsSection, setShowFriendsSection] = useState(false)
+  const [showAddFriendModal, setShowAddFriendModal] = useState(false)
+  const [searchUsername, setSearchUsername] = useState('')
+  const [searchResults, setSearchResults] = useState([])
+  const [searchLoading, setSearchLoading] = useState(false)
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: '',
     newPassword: '',
@@ -74,6 +78,60 @@ function UserProfile({ user, onClose, onUserUpdate }) {
       }
     } catch (error) {
       console.error('Erreur lors de l\'acceptation d\'ami:', error)
+      alert('Erreur de connexion au serveur')
+    }
+  }
+
+  const searchUsers = async (username) => {
+    if (!username.trim()) {
+      setSearchResults([])
+      return
+    }
+
+    setSearchLoading(true)
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/users/search?q=${encodeURIComponent(username)}`)
+      if (response.ok) {
+        const users = await response.json()
+        // Filtrer l'utilisateur actuel et les amis existants
+        const filteredUsers = users.filter(u => 
+          u.prenom !== user.prenom && 
+          !userFriends.includes(u.prenom) &&
+          !friendRequests.includes(u.prenom)
+        )
+        setSearchResults(filteredUsers)
+      }
+    } catch (error) {
+      console.error('Erreur lors de la recherche:', error)
+    }
+    setSearchLoading(false)
+  }
+
+  const handleSendFriendRequest = async (targetUser) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/friends/request`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: user.prenom,
+          to: targetUser.prenom
+        })
+      })
+
+      if (response.ok) {
+        alert(`Demande d'ami envoyée à ${targetUser.prenom}`)
+        setShowAddFriendModal(false)
+        setSearchUsername('')
+        setSearchResults([])
+        fetchUserFriends() // Recharger pour mettre à jour les demandes envoyées
+      } else {
+        const data = await response.json()
+        alert(data.error || 'Erreur lors de l\'envoi de la demande')
+      }
+    } catch (error) {
+      console.error('Erreur lors de l\'envoi de la demande:', error)
       alert('Erreur de connexion au serveur')
     }
   }
@@ -221,7 +279,19 @@ function UserProfile({ user, onClose, onUserUpdate }) {
           <div className="profile-friends-section">
             <div className="friends-header" onClick={() => setShowFriendsSection(!showFriendsSection)}>
               <h3>👥 Amis ({userFriends.length})</h3>
-              <span className="expand-icon">{showFriendsSection ? '▼' : '▶'}</span>
+              <div className="friends-header-actions">
+                <button 
+                  className="add-friend-btn"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setShowAddFriendModal(true)
+                  }}
+                  title="Ajouter un ami"
+                >
+                  +
+                </button>
+                <span className="expand-icon">{showFriendsSection ? '▼' : '▶'}</span>
+              </div>
             </div>
             
             {showFriendsSection && (
@@ -378,6 +448,71 @@ function UserProfile({ user, onClose, onUserUpdate }) {
 
         </div>
       </div>
+
+      {/* Modal de recherche d'utilisateurs */}
+      {showAddFriendModal && (
+        <div className="sub-modal-overlay" onClick={() => setShowAddFriendModal(false)}>
+          <div className="sub-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="sub-modal-header">
+              <h3>Ajouter un ami</h3>
+              <button 
+                className="sub-modal-close" 
+                onClick={() => setShowAddFriendModal(false)}
+                disabled={loading}
+              >
+                ×
+              </button>
+            </div>
+            <div className="sub-modal-content">
+              <div className="search-users-form">
+                <div className="form-group">
+                  <label>Rechercher un utilisateur</label>
+                  <input
+                    type="text"
+                    placeholder="Nom d'utilisateur..."
+                    value={searchUsername}
+                    onChange={(e) => {
+                      setSearchUsername(e.target.value)
+                      searchUsers(e.target.value)
+                    }}
+                  />
+                </div>
+                
+                {searchLoading && (
+                  <div className="search-loading">Recherche en cours...</div>
+                )}
+                
+                {searchResults.length > 0 && (
+                  <div className="search-results">
+                    <h4>Résultats ({searchResults.length})</h4>
+                    {searchResults.map(user => (
+                      <div key={user.prenom} className="search-result-item">
+                        <div className="user-info">
+                          <span className="user-name">👤 {user.prenom}</span>
+                          {user.role === 'admin' && (
+                            <span className="admin-badge">Admin</span>
+                          )}
+                        </div>
+                        <button 
+                          className="send-request-btn"
+                          onClick={() => handleSendFriendRequest(user)}
+                          title="Envoyer une demande d'ami"
+                        >
+                          Ajouter
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                {searchUsername && searchResults.length === 0 && !searchLoading && (
+                  <div className="no-results">Aucun utilisateur trouvé</div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
