@@ -16,7 +16,6 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
   
   // Nouveaux filtres
   const [dateFilter, setDateFilter] = useState('')
-  const [lieuFilter, setLieuFilter] = useState('')
   const [lieuSearchInput, setLieuSearchInput] = useState('')
   const [lieuSearchTimeout, setLieuSearchTimeout] = useState(null)
   const [showDatePicker, setShowDatePicker] = useState(false)
