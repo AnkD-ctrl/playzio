@@ -84,19 +84,6 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
     fetchUserGroups()
   }, [currentUser])
 
-  // Fermer le menu déroulant quand on clique ailleurs
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (showDatePicker && !event.target.closest('.date-filter-dropdown')) {
-        setShowDatePicker(false)
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [showDatePicker])
 
   const fetchSlots = async () => {
     try {
