@@ -83,23 +83,23 @@ const LandingPage = ({ onLogin, onRegister }) => {
                           <div className="mockup-slot-item-main">
                             <div className="mockup-slot-item-date">
                               <span className="date">15/01</span>
-                              <span className="time">14h30 - 16h30</span>
+                              <span className="time">18h00 - 23h00</span>
                             </div>
                             <div className="mockup-slot-item-activity">
-                              Padel
+                              Apéro
                             </div>
                           </div>
                           <div className="mockup-slot-item-arrow">▼</div>
                         </div>
                         <div className="mockup-slot-item-content">
                           <div className="mockup-slot-description">
-                            Partie de padel entre amis, niveau intermédiaire.
+                            Apéro time !! Ramenez des boissons !
                           </div>
                           <div className="mockup-slot-participants">
-                            👥 2 participants
+                            👥 7 participants
                           </div>
                           <div className="mockup-slot-location">
-                            📍 Club de tennis
+                            📍 A la maison
                           </div>
                           <div className="mockup-slot-actions">
                             <button className="mockup-join-btn">Rejoindre</button>
@@ -109,8 +109,8 @@ const LandingPage = ({ onLogin, onRegister }) => {
                       </div>
                     </div>
                     <div className="mockup-activity-tabs">
-                      <div className="tab active">Sport</div>
-                      <div className="tab">Social</div>
+                      <div className="tab">Sport</div>
+                      <div className="tab active">Social</div>
                       <div className="tab">Autre</div>
                     </div>
                   </div>
