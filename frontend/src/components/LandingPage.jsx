@@ -1,10 +1,8 @@
 import React, { useState } from 'react'
 import './LandingPage.css'
-import ContactModal from './ContactModal'
 import DownloadButton from './DownloadButton'
 
 const LandingPage = ({ onLogin, onRegister }) => {
-  const [showContactModal, setShowContactModal] = useState(false)
 
   const handleGetStarted = () => {
     onRegister()
@@ -299,25 +297,9 @@ const LandingPage = ({ onLogin, onRegister }) => {
       {/* Footer */}
       <footer className="landing-footer">
         <div className="footer-content">
-          <div className="footer-contact">
-            <span 
-              className="contact-link"
-              onClick={() => setShowContactModal(true)}
-            >
-              Nous contacter
-            </span>
-          </div>
         </div>
       </footer>
 
-      {/* Modal de Contact */}
-      {showContactModal && (
-        <ContactModal 
-          isOpen={showContactModal}
-          onClose={() => setShowContactModal(false)}
-          currentUser={null}
-        />
-      )}
 
 
     </div>

@@ -10,7 +10,6 @@ import SlotList from './components/SlotList'
 import Calendar from './components/Calendar'
 import UserProfile from './components/UserProfile'
 import Groups from './components/Groups'
-import ContactModal from './components/ContactModal'
 import CookieBanner from './components/CookieBanner'
 import PWAInstaller from './components/PWAInstaller'
 import InstallGuide from './components/InstallGuide'
@@ -25,7 +24,6 @@ function App() {
   const [selectedType, setSelectedType] = useState('mes-dispo')
   const [selectedDate, setSelectedDate] = useState(null)
   const [showUserProfile, setShowUserProfile] = useState(false)
-  const [showContactModal, setShowContactModal] = useState(false)
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [searchFilter, setSearchFilter] = useState('')
   const [lieuFilter, setLieuFilter] = useState('')
@@ -493,14 +491,6 @@ function App() {
         <InstallGuide />
       )}
 
-      {/* Modal de Contact */}
-      {showContactModal && (
-        <ContactModal 
-          isOpen={showContactModal}
-          onClose={() => setShowContactModal(false)}
-          currentUser={currentUser}
-        />
-      )}
 
       {/* Modal de filtres */}
       {showFilterModal && (
