@@ -125,27 +125,27 @@
   transition: all 0.3s ease;
   min-width: 120px; /* Same as filter-btn */
   flex: 1; /* Same as filter-btn */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   position: relative;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .date-filter-input:hover {
   background: rgba(94, 94, 94, 0.9); /* Same as filter-btn:hover */
   border-color: #d4af8c; /* Same as filter-btn:hover */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 .date-filter-input:focus {
   outline: none;
   border-color: #d4af8c;
   background: rgba(94, 94, 94, 0.9); /* Same as filter-btn:hover */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 .date-filter-input.active {
   background: linear-gradient(45deg, #d4af8c, #8a2be2); /* Same as filter-btn.active */
   border-color: #d4af8c; /* Same as filter-btn.active */
-  box-shadow: 0 2px 8px rgba(212, 175, 140, 0.3);
 }
 
 .date-input-text {
@@ -503,32 +503,6 @@
   display: inline-block;
 }
 
-.filter-btn {
-  background: #4a4a4a;
-  color: #e0e0e0;
-  border: 1px solid #5a5a5a;
-  border-radius: 6px;
-  padding: 8px 16px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 0.9rem;
-  font-weight: 500;
-  min-width: 100px;
-  white-space: nowrap;
-}
-
-.filter-btn:hover {
-  background: #5a5a5a;
-  border-color: #6a6a6a;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-.filter-btn.active {
-  background: #d4af8c;
-  color: #2a2a2a;
-  border-color: #c9a96e;
-}
 
 .filter-dropdown-menu {
   position: absolute;
@@ -1343,28 +1317,6 @@
   background: #c4a07c;
 }
 
-.date-filter-input {
-  background: #4a4a4a;
-  border: 1px solid #5a5a5a;
-  border-radius: 6px;
-  color: #e0e0e0;
-  padding: 8px 12px;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
-  min-width: 150px;
-}
-
-.date-filter-input:hover {
-  background: #5a5a5a;
-  border-color: #6a6a6a;
-}
-
-.date-filter-input:focus {
-  outline: none;
-  background: #5a5a5a;
-  border-color: #d4af8c;
-  box-shadow: 0 0 0 2px rgba(212, 175, 140, 0.2);
-}
 
 .lieu-search-container {
   display: flex;
