@@ -19,8 +19,6 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   
   // Nouveaux filtres
   const [dateFilter, setDateFilter] = useState('')
-  const [lieuFilter, setLieuFilter] = useState('')
-  const [organizerFilter, setOrganizerFilter] = useState('')
   const [showActivityModal, setShowActivityModal] = useState(false)
   const [showLieuModal, setShowLieuModal] = useState(false)
   const [showOrganizerModal, setShowOrganizerModal] = useState(false)
