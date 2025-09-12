@@ -160,6 +160,23 @@
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 }
 
+/* Masquer complètement le texte par défaut de l'input date */
+.date-filter-input::-webkit-datetime-edit-text {
+  display: none;
+}
+
+.date-filter-input::-webkit-datetime-edit-month-field {
+  display: none;
+}
+
+.date-filter-input::-webkit-datetime-edit-day-field {
+  display: none;
+}
+
+.date-filter-input::-webkit-datetime-edit-year-field {
+  display: none;
+}
+
 .date-filter-input::-webkit-calendar-picker-indicator {
   position: absolute;
   top: 0;
