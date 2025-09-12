@@ -257,6 +257,7 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 1px;
+  pointer-events: auto;
 }
 
 .day-btn {
@@ -266,11 +267,14 @@
   color: #e0e0e0;
   font-size: 0.8rem;
   height: 28px;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
+  pointer-events: auto;
+  user-select: none;
 }
 
 .day-btn:hover {

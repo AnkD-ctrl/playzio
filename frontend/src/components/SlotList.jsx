@@ -483,19 +483,30 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                   <div>D</div><div>L</div><div>M</div><div>M</div><div>J</div><div>V</div><div>S</div>
                 </div>
                 <div className="days">
-                  {getDaysInMonth(calendarMonth).map((date, i) => (
-                    <button
-                      key={i}
-                      className={date ? 'day-btn' : 'empty-day'}
-                      onClick={() => date && handleCalendarDateClick(date)}
-                      style={selectedCalendarDate && date && date.toDateString() === selectedCalendarDate.toDateString() ? {
-                        background: 'linear-gradient(45deg, #d4af8c, #8a2be2)',
-                        color: '#ffffff'
-                      } : {}}
-                    >
-                      {date ? date.getDate() : ''}
-                    </button>
-                  ))}
+                  {getDaysInMonth(calendarMonth).map((date, i) => {
+                    if (!date) {
+                      return <div key={i} className="empty-day"></div>
+                    }
+                    
+                    return (
+                      <button
+                        key={i}
+                        className="day-btn"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          console.log('Button clicked for date:', date)
+                          handleCalendarDateClick(date)
+                        }}
+                        style={selectedCalendarDate && date.toDateString() === selectedCalendarDate.toDateString() ? {
+                          background: 'linear-gradient(45deg, #d4af8c, #8a2be2)',
+                          color: '#ffffff'
+                        } : {}}
+                      >
+                        {date.getDate()}
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
               
