@@ -265,37 +265,20 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                 Activité {searchFilter && <span className="filter-indicator">•</span>}
               </button>
               
-              {/* Filtre Date - Bouton avec input caché */}
+              {/* Filtre Date - Input stylisé comme bouton */}
               <div className="date-filter-container">
-                <button 
-                  className={`filter-btn ${dateFilter ? 'active' : ''}`}
-                  onClick={() => {
-                    // Créer un input date temporaire pour déclencher le sélecteur natif
-                    const input = document.createElement('input')
-                    input.type = 'date'
-                    input.value = dateFilter
-                    input.style.position = 'absolute'
-                    input.style.left = '-9999px'
-                    document.body.appendChild(input)
-                    input.focus()
-                    input.click()
-                    
-                    input.addEventListener('change', (e) => {
-                      setDateFilter(e.target.value)
-                      document.body.removeChild(input)
-                    })
-                    
-                    // Si l'utilisateur annule, nettoyer
-                    input.addEventListener('blur', () => {
-                      if (document.body.contains(input)) {
-                        document.body.removeChild(input)
-                      }
-                    })
-                  }}
-                  title="Filtrer par date"
-                >
-                  Date {dateFilter && <span className="filter-indicator">•</span>}
-                </button>
+                <div className="date-input-wrapper">
+                  <input
+                    type="date"
+                    className={`date-filter-input ${dateFilter ? 'active' : ''}`}
+                    value={dateFilter}
+                    onChange={(e) => setDateFilter(e.target.value)}
+                    title="Filtrer par date"
+                  />
+                  <span className="date-input-text">
+                    Date {dateFilter && <span className="filter-indicator">•</span>}
+                  </span>
+                </div>
               </div>
               
               {/* Filtre Lieu */}
