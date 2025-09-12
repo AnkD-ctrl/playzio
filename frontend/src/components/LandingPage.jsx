@@ -64,6 +64,15 @@ const LandingPage = ({ onLogin, onRegister }) => {
               <p className="cta-note">
                 Gratuit • Rejoignez les +500 utilisateurs
               </p>
+              <div className="social-proof">
+                <div className="user-avatars">
+                  <div className="avatar">👤</div>
+                  <div className="avatar">👩</div>
+                  <div className="avatar">👨</div>
+                  <div className="avatar">👩‍💼</div>
+                </div>
+                <p className="social-text">Rejoignez +500 utilisateurs qui affichent déjà leurs dispo</p>
+              </div>
             </div>
           </div>
           <div className="hero-mockup">
