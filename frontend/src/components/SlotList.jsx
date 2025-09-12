@@ -495,22 +495,35 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                     }
                     
                     return (
-                      <button
+                      <div
                         key={i}
                         className="day-btn"
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          console.log('Button clicked for date:', date)
+                        onClick={() => {
+                          console.log('Day clicked:', date.getDate())
+                          console.log('Full date:', date)
                           handleCalendarDateClick(date)
                         }}
-                        style={selectedCalendarDate && date.toDateString() === selectedCalendarDate.toDateString() ? {
-                          background: 'linear-gradient(45deg, #d4af8c, #8a2be2)',
-                          color: '#ffffff'
-                        } : {}}
+                        style={{
+                          cursor: 'pointer',
+                          background: selectedCalendarDate && date.toDateString() === selectedCalendarDate.toDateString() 
+                            ? 'linear-gradient(45deg, #d4af8c, #8a2be2)' 
+                            : '#4a4a4a',
+                          color: selectedCalendarDate && date.toDateString() === selectedCalendarDate.toDateString() 
+                            ? '#ffffff' 
+                            : '#e0e0e0',
+                          border: '1px solid #5a5a5a',
+                          borderRadius: '3px',
+                          fontSize: '0.8rem',
+                          height: '28px',
+                          width: '100%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          transition: 'all 0.2s ease'
+                        }}
                       >
                         {date.getDate()}
-                      </button>
+                      </div>
                     )
                   })}
                 </div>
