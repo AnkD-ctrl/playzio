@@ -330,27 +330,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           </div>
         )}
         
-        {selectedDate ? (
-          <div className="selected-date-info">
-            <p>📅 Disponibilités du {selectedDate.split('-').reverse().join('/')}</p>
-            <button 
-              className="clear-date-btn"
-              onClick={() => {
-                // Effacer la sélection de date
-                if (onClearDate) {
-                  onClearDate()
-                }
-                // Recharger les données
-                fetchSlots()
-              }}
-              title="Afficher toutes les disponibilités"
-            >
-              ✕ Voir toutes les disponibilités
-            </button>
-          </div>
-        ) : (
-          <p>{slots.length} disponibilité{slots.length !== 1 ? 's' : ''} trouvée{slots.length !== 1 ? 's' : ''}</p>
-        )}
+        <p>{slots.length} disponibilité{slots.length !== 1 ? 's' : ''} trouvée{slots.length !== 1 ? 's' : ''}</p>
       </div>
 
       {slots.length === 0 ? (
