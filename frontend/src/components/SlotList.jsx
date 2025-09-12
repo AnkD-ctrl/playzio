@@ -25,6 +25,10 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   const [activityInput, setActivityInput] = useState('')
   const [lieuInput, setLieuInput] = useState('')
   const [organizerInput, setOrganizerInput] = useState('')
+  
+  // États pour les amis
+  const [userFriends, setUserFriends] = useState([])
+  const [friendRequestsSent, setFriendRequestsSent] = useState([])
 
   const handleActivitySelect = (activityName) => {
     onSearchFilterChange(activityName)
@@ -45,6 +49,32 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   const handleOrganizerConfirm = () => {
     setOrganizerFilter(organizerInput)
     setShowOrganizerModal(false)
+  }
+
+  const handleAddFriend = async (friendName) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/friends/request`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: currentUser.prenom,
+          to: friendName
+        })
+      })
+
+      if (response.ok) {
+        alert(`Demande d'ami envoyée à ${friendName}`)
+        fetchUserFriends() // Recharger pour mettre à jour les demandes envoyées
+      } else {
+        const data = await response.json()
+        alert(data.error || 'Erreur lors de l\'envoi de la demande')
+      }
+    } catch (error) {
+      console.error('Erreur lors de l\'ajout d\'ami:', error)
+      alert('Erreur de connexion au serveur')
+    }
   }
 
 
@@ -75,12 +105,26 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
     }
   }
 
+  const fetchUserFriends = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/users/${encodeURIComponent(currentUser.prenom)}`)
+      if (response.ok) {
+        const userData = await response.json()
+        setUserFriends(userData.friends || [])
+        setFriendRequestsSent(userData.friend_requests || [])
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des amis:', error)
+    }
+  }
+
   useEffect(() => {
     fetchSlots()
   }, [activity, selectedDate, searchFilter, lieuFilter, organizerFilter, filterType, userGroups])
 
   useEffect(() => {
     fetchUserGroups()
+    fetchUserFriends()
   }, [currentUser])
 
 
@@ -423,6 +467,27 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                         Discussion
                       </button>
                       
+                      {/* Bouton ajouter en ami - seulement si ce n'est pas le créneau de l'utilisateur actuel */}
+                      {!isOwner && slot.creator && slot.creator !== currentUser.prenom && (
+                        <>
+                          {!userFriends.includes(slot.creator) && !friendRequestsSent.includes(slot.creator) && (
+                            <button 
+                              className="action-btn friend-btn"
+                              onClick={() => handleAddFriend(slot.creator)}
+                              title={`Ajouter ${slot.creator} en ami`}
+                            >
+                              👤 Ajouter en ami
+                            </button>
+                          )}
+                          {friendRequestsSent.includes(slot.creator) && (
+                            <span className="friend-status">Demande envoyée</span>
+                          )}
+                          {userFriends.includes(slot.creator) && (
+                            <span className="friend-status">👤 Ami</span>
+                          )}
+                        </>
+                      )}
+
                       {(isAdmin || isOwner) && (
                         <button 
                           className="action-btn delete-btn"

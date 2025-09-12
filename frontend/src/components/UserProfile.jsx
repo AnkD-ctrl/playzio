@@ -6,6 +6,9 @@ function UserProfile({ user, onClose, onUserUpdate }) {
   const [showPasswordModal, setShowPasswordModal] = useState(false)
   const [showEmailModal, setShowEmailModal] = useState(false)
   const [userGroups, setUserGroups] = useState([])
+  const [userFriends, setUserFriends] = useState([])
+  const [friendRequests, setFriendRequests] = useState([])
+  const [showFriendsSection, setShowFriendsSection] = useState(false)
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: '',
     newPassword: '',
@@ -18,9 +21,10 @@ function UserProfile({ user, onClose, onUserUpdate }) {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
 
-  // Charger les groupes de l'utilisateur
+  // Charger les groupes et amis de l'utilisateur
   useEffect(() => {
     fetchUserGroups()
+    fetchUserFriends()
   }, [user.prenom])
 
   const fetchUserGroups = async () => {
@@ -32,6 +36,45 @@ function UserProfile({ user, onClose, onUserUpdate }) {
       }
     } catch (error) {
       console.error('Erreur lors du chargement des groupes:', error)
+    }
+  }
+
+  const fetchUserFriends = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/users/${encodeURIComponent(user.prenom)}`)
+      if (response.ok) {
+        const userData = await response.json()
+        setUserFriends(userData.friends || [])
+        setFriendRequests(userData.friend_requests || [])
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des amis:', error)
+    }
+  }
+
+  const handleAcceptFriend = async (friendName) => {
+    try {
+      // Pour accepter une demande d'ami, on doit trouver l'ID de la demande
+      // Pour simplifier, on va créer une nouvelle demande acceptée
+      const response = await fetch(`${API_BASE_URL}/api/friends/accept`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          requestId: `${friendName}_${user.prenom}` // ID simplifié
+        })
+      })
+
+      if (response.ok) {
+        alert(`Vous êtes maintenant ami avec ${friendName}`)
+        fetchUserFriends() // Recharger les amis
+      } else {
+        alert('Erreur lors de l\'acceptation de la demande')
+      }
+    } catch (error) {
+      console.error('Erreur lors de l\'acceptation d\'ami:', error)
+      alert('Erreur de connexion au serveur')
     }
   }
 
@@ -173,7 +216,48 @@ function UserProfile({ user, onClose, onUserUpdate }) {
               </div>
             </div>
           </div>
-          
+
+          {/* Section Amis */}
+          <div className="profile-friends-section">
+            <div className="friends-header" onClick={() => setShowFriendsSection(!showFriendsSection)}>
+              <h3>👥 Amis ({userFriends.length})</h3>
+              <span className="expand-icon">{showFriendsSection ? '▼' : '▶'}</span>
+            </div>
+            
+            {showFriendsSection && (
+              <div className="friends-content">
+                {userFriends.length > 0 ? (
+                  <div className="friends-list">
+                    {userFriends.map(friend => (
+                      <div key={friend} className="friend-item">
+                        <span className="friend-name">👤 {friend}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="no-friends">Vous n'avez pas encore d'amis</p>
+                )}
+                
+                {friendRequests.length > 0 && (
+                  <div className="friend-requests">
+                    <h4>Demandes d'amis ({friendRequests.length})</h4>
+                    {friendRequests.map(request => (
+                      <div key={request} className="friend-request-item">
+                        <span>👤 {request}</span>
+                        <button 
+                          className="accept-btn"
+                          onClick={() => handleAcceptFriend(request)}
+                          title="Accepter"
+                        >
+                          ✓
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
           
           {/* Espace entre groupes et actions */}
           <div className="profile-spacer"></div>

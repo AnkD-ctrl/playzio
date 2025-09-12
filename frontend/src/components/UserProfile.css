@@ -430,6 +430,120 @@
   }
 }
 
+/* Styles pour la section amis */
+.profile-friends-section {
+  margin: 20px 0;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.friends-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.friends-header:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.friends-header h3 {
+  margin: 0;
+  color: #e0e0e0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.expand-icon {
+  color: #d4af8c;
+  font-size: 0.9rem;
+  transition: transform 0.3s ease;
+}
+
+.friends-content {
+  padding: 0 20px 20px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.friends-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.friend-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.friend-name {
+  color: #e0e0e0;
+  font-weight: 500;
+}
+
+.no-friends {
+  color: #888;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+}
+
+.friend-requests {
+  margin-top: 16px;
+}
+
+.friend-requests h4 {
+  color: #d4af8c;
+  font-size: 1rem;
+  margin-bottom: 12px;
+}
+
+.friend-request-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(212, 175, 140, 0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(212, 175, 140, 0.2);
+  margin-bottom: 8px;
+}
+
+.friend-request-item span {
+  color: #e0e0e0;
+  font-weight: 500;
+}
+
+.accept-btn {
+  background: linear-gradient(45deg, #4CAF50, #45a049);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.accept-btn:hover {
+  background: linear-gradient(45deg, #45a049, #3d8b40);
+  transform: scale(1.1);
+}
+
 @media (max-width: 480px) {
   .user-profile-overlay {
     padding: 8px;
