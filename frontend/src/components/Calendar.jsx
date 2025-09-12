@@ -104,9 +104,6 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
   // Fermer le menu déroulant quand on clique ailleurs
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (showFilterDropdown && !event.target.closest('.filter-dropdown')) {
-        setShowFilterDropdown(false)
-      }
       if (showDatePicker && !event.target.closest('.date-filter-dropdown')) {
         setShowDatePicker(false)
       }
@@ -116,7 +113,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [showFilterDropdown, showDatePicker])
+  }, [showDatePicker])
 
   const fetchSlots = async () => {
     try {
