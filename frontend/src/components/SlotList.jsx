@@ -89,11 +89,14 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   }
 
   const handleCalendarDateClick = (date) => {
+    console.log('Date clicked:', date)
     if (date) {
       setSelectedCalendarDate(date)
       const dateString = formatDateForFilter(date)
+      console.log('Date string:', dateString)
       setDateFilter(dateString)
       setShowDatePicker(false)
+      console.log('Date filter set to:', dateString)
     }
   }
 
@@ -133,6 +136,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   }
 
   useEffect(() => {
+    console.log('useEffect triggered, dateFilter:', dateFilter)
     fetchSlots()
   }, [activity, selectedDate, searchFilter, dateFilter, lieuFilter, organizerFilter, filterType, userGroups])
 
@@ -196,9 +200,11 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         
         // Filtrer par date si un filtre de date est défini
         if (dateFilter) {
+          console.log('Filtering by date:', dateFilter)
           filteredData = filteredData.filter(slot => 
             slot.date && slot.date.includes(dateFilter)
           )
+          console.log('Filtered data length:', filteredData.length)
         }
         
         // Filtrer par lieu si un filtre de lieu est défini
