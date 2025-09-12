@@ -256,8 +256,19 @@ function App() {
             </div>
           </div>
 
-          {/* Bouton de basculement vue liste/calendrier */}
+          {/* Boutons de basculement vue liste/calendrier et ajout */}
           <div className="view-toggle-container">
+            {/* Bouton + pour ajouter une dispo dans l'onglet "Mes dispo" */}
+            {selectedType === 'mes-dispo' && (
+              <button 
+                className="view-toggle-btn add-btn"
+                onClick={() => setSelectedType('add')}
+                title="Ajouter une disponibilité"
+              >
+                +
+              </button>
+            )}
+            
             <button 
               className="view-toggle-btn"
               onClick={() => {
