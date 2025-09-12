@@ -96,7 +96,7 @@ function App() {
     setCurrentUser(user)
     setIsLoggedIn(true)
     setSelectedActivity('Tous') // Aller directement à l'activité "Tous"
-    setSelectedType('list') // Afficher la liste par défaut
+    setSelectedType('mes-dispo') // Aller directement sur "Mes dispo"
     setCurrentView('activity')
     
     // Sauvegarder la session dans localStorage seulement si les cookies sont acceptés
