@@ -21,6 +21,7 @@ body {
   min-height: 100vh;
   background: #2c2c2c;
   color: #e0e0e0;
+  padding-bottom: 80px; /* Espace pour la barre fixe en bas */
 }
 
 /* Header */
@@ -403,7 +404,7 @@ body {
   background: #3a3a3a;
   border-top: 1px solid #4a4a4a;
   padding: 24px 20px;
-  z-index: 9999;
+  z-index: 100;
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
