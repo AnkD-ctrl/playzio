@@ -62,7 +62,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
               </button>
               <DownloadButton />
               <p className="cta-note">
-                Gratuit • Rejoignez les +500 utilisateurs
+                ⭐⭐⭐⭐⭐ Rajoute tes dispo facilement
               </p>
               <div className="social-proof">
                 <div className="user-avatars">
