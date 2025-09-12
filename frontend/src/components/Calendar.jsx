@@ -320,6 +320,20 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
         {/* Deuxième ligne de filtres */}
         <div className="filters-row-2">
           <div className="date-filter-container">
+            <button 
+              className={`date-filter-btn ${dateFilter ? 'active' : ''}`}
+              onClick={() => {
+                if (dateFilter) {
+                  setDateFilter('')
+                } else {
+                  // Focus sur le champ date
+                  document.querySelector('.date-filter-input')?.focus()
+                }
+              }}
+              title="Filtrer par date"
+            >
+              Filtre date
+            </button>
             <input
               type="date"
               className="date-filter-input"
