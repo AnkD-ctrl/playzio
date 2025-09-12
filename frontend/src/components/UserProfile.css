@@ -433,40 +433,36 @@
 /* Styles pour la section amis */
 .profile-friends-section {
   margin: 20px 0;
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.friends-header {
+.friends-button {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
-.friends-header:hover {
+.friends-button:hover {
   background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
-.friends-header h3 {
-  margin: 0 0 0 0;
+.friends-text {
   color: #e0e0e0;
   font-size: 1.1rem;
   font-weight: 600;
 }
 
-.expand-icon {
-  color: #d4af8c;
-  font-size: 0.9rem;
-  transition: transform 0.3s ease;
-}
-
-.friends-content {
-  padding: 0 20px 20px 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+.friends-button-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .friends-list {
@@ -649,6 +645,13 @@
   text-align: center;
   padding: 20px;
   font-style: italic;
+}
+
+/* Styles pour la modal des amis */
+.friends-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 @media (max-width: 480px) {

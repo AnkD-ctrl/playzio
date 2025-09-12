@@ -8,7 +8,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
   const [userGroups, setUserGroups] = useState([])
   const [userFriends, setUserFriends] = useState([])
   const [friendRequests, setFriendRequests] = useState([])
-  const [showFriendsSection, setShowFriendsSection] = useState(false)
+  const [showFriendsModal, setShowFriendsModal] = useState(false)
   const [showAddFriendModal, setShowAddFriendModal] = useState(false)
   const [searchUsername, setSearchUsername] = useState('')
   const [searchResults, setSearchResults] = useState([])
@@ -277,9 +277,13 @@ function UserProfile({ user, onClose, onUserUpdate }) {
 
           {/* Section Amis */}
           <div className="profile-friends-section">
-            <div className="friends-header" onClick={() => setShowFriendsSection(!showFriendsSection)}>
-              <h3>Amis ({userFriends.length})</h3>
-              <div className="friends-header-actions">
+            <button 
+              className="friends-button"
+              onClick={() => setShowFriendsModal(true)}
+              title="Voir mes amis"
+            >
+              <span className="friends-text">Amis ({userFriends.length})</span>
+              <div className="friends-button-actions">
                 <button 
                   className="add-friend-btn"
                   onClick={(e) => {
@@ -290,43 +294,8 @@ function UserProfile({ user, onClose, onUserUpdate }) {
                 >
                   +
                 </button>
-                <span className="expand-icon">{showFriendsSection ? '▼' : '▶'}</span>
               </div>
-            </div>
-            
-            {showFriendsSection && (
-              <div className="friends-content">
-                {userFriends.length > 0 ? (
-                  <div className="friends-list">
-                    {userFriends.map(friend => (
-                      <div key={friend} className="friend-item">
-                        <span className="friend-name">👤 {friend}</span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="no-friends">Vous n'avez pas encore d'amis</p>
-                )}
-                
-                {friendRequests.length > 0 && (
-                  <div className="friend-requests">
-                    <h4>Demandes d'amis ({friendRequests.length})</h4>
-                    {friendRequests.map(request => (
-                      <div key={request} className="friend-request-item">
-                        <span>👤 {request}</span>
-                        <button 
-                          className="accept-btn"
-                          onClick={() => handleAcceptFriend(request)}
-                          title="Accepter"
-                        >
-                          ✓
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
+            </button>
           </div>
           
           {/* Espace entre groupes et actions */}
@@ -507,6 +476,57 @@ function UserProfile({ user, onClose, onUserUpdate }) {
                 
                 {searchUsername && searchResults.length === 0 && !searchLoading && (
                   <div className="no-results">Aucun utilisateur trouvé</div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de liste des amis */}
+      {showFriendsModal && (
+        <div className="sub-modal-overlay" onClick={() => setShowFriendsModal(false)}>
+          <div className="sub-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="sub-modal-header">
+              <h3>Mes amis</h3>
+              <button 
+                className="sub-modal-close" 
+                onClick={() => setShowFriendsModal(false)}
+                disabled={loading}
+              >
+                ×
+              </button>
+            </div>
+            <div className="sub-modal-content">
+              <div className="friends-modal-content">
+                {userFriends.length > 0 ? (
+                  <div className="friends-list">
+                    {userFriends.map(friend => (
+                      <div key={friend} className="friend-item">
+                        <span className="friend-name">👤 {friend}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="no-friends">Vous n'avez pas encore d'amis</p>
+                )}
+                
+                {friendRequests.length > 0 && (
+                  <div className="friend-requests">
+                    <h4>Demandes d'amis ({friendRequests.length})</h4>
+                    {friendRequests.map(request => (
+                      <div key={request} className="friend-request-item">
+                        <span>👤 {request}</span>
+                        <button 
+                          className="accept-btn"
+                          onClick={() => handleAcceptFriend(request)}
+                          title="Accepter"
+                        >
+                          ✓
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
             </div>
