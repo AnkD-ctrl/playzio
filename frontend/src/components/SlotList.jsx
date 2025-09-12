@@ -458,44 +458,34 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           </div>
         )}
         
-        {/* Modal Date avec Calendrier */}
+        {/* Modal Date avec Calendrier Simple */}
         {showDatePicker && (
           <div className="modal-overlay" onClick={() => setShowDatePicker(false)}>
-            <div className="calendar-modal" onClick={(e) => e.stopPropagation()}>
-              <div className="calendar-header">
-                <button 
-                  className="calendar-nav-btn"
-                  onClick={() => navigateMonth(-1)}
-                  title="Mois précédent"
-                >
-                  ‹
-                </button>
-                <h3 className="calendar-title">
-                  {calendarMonth.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
-                </h3>
-                <button 
-                  className="calendar-nav-btn"
-                  onClick={() => navigateMonth(1)}
-                  title="Mois suivant"
-                >
-                  ›
-                </button>
+            <div className="simple-calendar-modal" onClick={(e) => e.stopPropagation()}>
+              <h3>Choisir une date</h3>
+              
+              <div className="calendar-nav">
+                <button className="nav-btn" onClick={() => navigateMonth(-1)}>‹</button>
+                <span className="month-year">
+                  {calendarMonth.toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' })}
+                </span>
+                <button className="nav-btn" onClick={() => navigateMonth(1)}>›</button>
               </div>
               
-              <div className="calendar-grid">
-                <div className="calendar-weekdays">
-                  {['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'].map(day => (
-                    <div key={day} className="calendar-weekday">{day}</div>
-                  ))}
+              <div className="simple-calendar">
+                <div className="weekdays">
+                  <div>D</div><div>L</div><div>M</div><div>M</div><div>J</div><div>V</div><div>S</div>
                 </div>
-                
-                <div className="calendar-days">
-                  {getDaysInMonth(calendarMonth).map((date, index) => (
+                <div className="days">
+                  {getDaysInMonth(calendarMonth).map((date, i) => (
                     <button
-                      key={index}
-                      className={`calendar-day ${date ? '' : 'calendar-day-empty'} ${selectedCalendarDate && date && date.toDateString() === selectedCalendarDate.toDateString() ? 'calendar-day-selected' : ''}`}
-                      onClick={() => handleCalendarDateClick(date)}
-                      disabled={!date}
+                      key={i}
+                      className={date ? 'day-btn' : 'empty-day'}
+                      onClick={() => date && handleCalendarDateClick(date)}
+                      style={selectedCalendarDate && date && date.toDateString() === selectedCalendarDate.toDateString() ? {
+                        background: 'linear-gradient(45deg, #d4af8c, #8a2be2)',
+                        color: '#ffffff'
+                      } : {}}
                     >
                       {date ? date.getDate() : ''}
                     </button>
@@ -503,15 +493,15 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                 </div>
               </div>
               
-              <div className="calendar-actions">
-                <button className="modal-btn secondary" onClick={() => {
+              <div className="simple-actions">
+                <button className="btn-clear" onClick={() => {
                   setDateFilter('')
                   setSelectedCalendarDate(null)
                   setShowDatePicker(false)
                 }}>
                   Effacer
                 </button>
-                <button className="modal-btn primary" onClick={() => setShowDatePicker(false)}>
+                <button className="btn-close" onClick={() => setShowDatePicker(false)}>
                   Fermer
                 </button>
               </div>
