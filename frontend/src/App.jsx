@@ -26,6 +26,7 @@ function App() {
   const [selectedDate, setSelectedDate] = useState(null)
   const [showUserProfile, setShowUserProfile] = useState(false)
   const [showContactModal, setShowContactModal] = useState(false)
+  const [showFilterModal, setShowFilterModal] = useState(false)
   const [searchFilter, setSearchFilter] = useState('')
 
 
@@ -256,8 +257,19 @@ function App() {
             </div>
           </div>
 
-          {/* Boutons de basculement vue liste/calendrier et ajout */}
+          {/* Boutons de filtre, ajout et basculement vue liste/calendrier */}
           <div className="view-toggle-container">
+            {/* Bouton filtre */}
+            <button 
+              className="view-toggle-btn filter-btn"
+              onClick={() => setShowFilterModal(true)}
+              title="Filtres"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            
             {/* Bouton + pour ajouter une dispo dans l'onglet "Mes dispo" */}
             {selectedType === 'mes-dispo' && (
               <button 
@@ -468,6 +480,66 @@ function App() {
           onClose={() => setShowContactModal(false)}
           currentUser={currentUser}
         />
+      )}
+
+      {/* Modal de filtres */}
+      {showFilterModal && (
+        <div className="modal-overlay" onClick={() => setShowFilterModal(false)}>
+          <div className="filter-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Filtres</h3>
+            <div className="filter-options">
+              <div className="filter-group">
+                <label>Activité</label>
+                <input 
+                  type="text" 
+                  placeholder="Rechercher une activité..."
+                  value={searchFilter}
+                  onChange={(e) => setSearchFilter(e.target.value)}
+                />
+              </div>
+              <div className="filter-group">
+                <label>Date</label>
+                <input 
+                  type="date" 
+                  value={selectedDate || ''}
+                  onChange={(e) => setSelectedDate(e.target.value || null)}
+                />
+              </div>
+              <div className="filter-group">
+                <label>Lieu</label>
+                <input 
+                  type="text" 
+                  placeholder="Rechercher un lieu..."
+                />
+              </div>
+              <div className="filter-group">
+                <label>Organisateur</label>
+                <input 
+                  type="text" 
+                  placeholder="Rechercher un organisateur..."
+                />
+              </div>
+            </div>
+            <div className="modal-actions">
+              <button 
+                className="modal-btn btn-clear"
+                onClick={() => {
+                  setSearchFilter('')
+                  setSelectedDate(null)
+                  setShowFilterModal(false)
+                }}
+              >
+                Effacer
+              </button>
+              <button 
+                className="modal-btn btn-close"
+                onClick={() => setShowFilterModal(false)}
+              >
+                Fermer
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Bannière de cookies */}
