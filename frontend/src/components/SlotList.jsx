@@ -316,9 +316,11 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                 </button>
               </div>
             </div>
-            
-            {/* Bouton + pour ajouter une dispo dans l'onglet "Mes dispo" */}
-            {filterType === 'mes-dispo' && onAddSlot && (
+          </div>
+          
+          {/* Bouton + dans une div séparée */}
+          {filterType === 'mes-dispo' && onAddSlot && (
+            <div className="add-slot-container">
               <button 
                 className="add-slot-btn"
                 onClick={onAddSlot}
@@ -326,8 +328,8 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
               >
                 +
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
         
         

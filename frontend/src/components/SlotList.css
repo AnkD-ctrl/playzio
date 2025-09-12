@@ -25,28 +25,32 @@
   justify-content: center;
 }
 
+.add-slot-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
 .add-slot-btn {
-  background: linear-gradient(45deg, #d4af8c, #8a2be2);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  width: 40px;
-  height: 40px;
-  font-size: 1.5rem;
-  font-weight: bold;
+  background: rgba(74, 74, 74, 0.8);
+  color: #e0e0e0;
+  border: 1px solid #5a5a5a;
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  font-size: 1.2rem;
+  font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .add-slot-btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(212, 175, 140, 0.4);
-  background: linear-gradient(45deg, #e0c499, #9d4edd);
+  background: rgba(94, 94, 94, 0.9);
+  border-color: #d4af8c;
+  color: #ffffff;
 }
 
 /* Nouveaux styles pour les boutons de filtres */
@@ -1009,22 +1013,24 @@
   }
 
   .filter-buttons {
-    flex-direction: column;
-    gap: 6px;
+    flex-direction: row;
+    gap: 4px;
+    flex-wrap: nowrap;
   }
   
   .filter-row {
     flex-direction: row;
-    gap: 6px;
-    width: 100%;
+    gap: 4px;
+    flex: 1;
   }
   
   .filter-btn {
     min-width: auto;
     flex: 1;
     text-align: center;
-    font-size: 0.8rem;
-    padding: 8px 12px;
+    font-size: 0.75rem;
+    padding: 6px 8px;
+    white-space: nowrap;
   }
 
   .search-container {
@@ -1330,20 +1336,23 @@
 
 @media (max-width: 428px) {
   .filter-buttons {
-    flex-direction: column;
-    gap: 4px;
+    flex-direction: row;
+    gap: 3px;
+    flex-wrap: nowrap;
   }
   
   .filter-row {
-    flex-direction: column;
-    gap: 4px;
+    flex-direction: row;
+    gap: 3px;
+    flex: 1;
   }
   
   .filter-btn {
-    width: 100%;
     min-width: auto;
-    font-size: 0.8rem;
-    padding: 8px 12px;
+    flex: 1;
+    font-size: 0.7rem;
+    padding: 5px 6px;
+    white-space: nowrap;
   }
   
   .filters-row-2 {
