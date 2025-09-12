@@ -244,13 +244,6 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   return (
     <div className="slot-list">
       <div className="slot-list-header">
-        <div className="header-title-container">
-          <h3>
-            {filterType === 'mes-dispo' && 'Mes disponibilités'}
-            {filterType === 'communaute' && 'Disponibilités des groupes'}
-            {filterType === 'toutes-dispo' && 'Toutes les disponibilités'}
-          </h3>
-        </div>
         
         {/* Modales de filtres */}
         
