@@ -575,6 +575,29 @@ app.get('/api/users', async (req, res) => {
   }
 })
 
+// Rechercher des utilisateurs
+app.get('/api/users/search', async (req, res) => {
+  try {
+    const { q } = req.query
+    if (!q || q.trim().length < 2) {
+      return res.json([])
+    }
+    
+    const users = await getAllUsers()
+    const searchTerm = q.toLowerCase().trim()
+    
+    // Filtrer les utilisateurs par nom (prenom)
+    const filteredUsers = users.filter(user => 
+      user.prenom && user.prenom.toLowerCase().includes(searchTerm)
+    )
+    
+    res.json(filteredUsers)
+  } catch (error) {
+    console.error('Search users error:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
 // Gestion des amis
 app.post('/api/friends/request', async (req, res) => {
   try {
