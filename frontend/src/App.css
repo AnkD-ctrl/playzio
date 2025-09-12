@@ -153,11 +153,13 @@ body {
 }
 
 .view-toggle-container {
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  z-index: 10;
   display: flex;
   gap: 8px;
   align-items: center;
-  justify-content: center;
-  margin: 16px 0;
 }
 
 .view-toggle-btn {
