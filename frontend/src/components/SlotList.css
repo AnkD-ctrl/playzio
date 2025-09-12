@@ -91,6 +91,50 @@
   font-weight: bold;
 }
 
+/* Styles pour le filtre date */
+.date-filter-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.date-filter-input {
+  background: rgba(74, 74, 74, 0.8);
+  border: 1px solid #5a5a5a;
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 140px;
+}
+
+.date-filter-input:focus {
+  outline: none;
+  border-color: #d4af8c;
+  background: rgba(94, 94, 94, 0.9);
+}
+
+.clear-date-btn {
+  position: absolute;
+  right: 8px;
+  background: transparent;
+  border: none;
+  color: #a0a0a0;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+}
+
+.clear-date-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
 /* Styles pour les modales */
 .modal-overlay {
   position: fixed !important;

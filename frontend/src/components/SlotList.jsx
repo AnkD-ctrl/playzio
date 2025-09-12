@@ -18,6 +18,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   const [expandedSlots, setExpandedSlots] = useState(new Set())
   
   // Nouveaux filtres
+  const [dateFilter, setDateFilter] = useState('')
   const [lieuFilter, setLieuFilter] = useState('')
   const [organizerFilter, setOrganizerFilter] = useState('')
   const [showActivityModal, setShowActivityModal] = useState(false)
@@ -78,7 +79,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
 
   useEffect(() => {
     fetchSlots()
-  }, [activity, selectedDate, searchFilter, lieuFilter, organizerFilter, filterType, userGroups])
+  }, [activity, selectedDate, searchFilter, dateFilter, lieuFilter, organizerFilter, filterType, userGroups])
 
   useEffect(() => {
     fetchUserGroups()
@@ -125,6 +126,12 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           )
         }
         
+        // Filtrer par date si un filtre de date est défini
+        if (dateFilter) {
+          filteredData = filteredData.filter(slot => 
+            slot.date && slot.date.includes(dateFilter)
+          )
+        }
         
         // Filtrer par lieu si un filtre de lieu est défini
         if (lieuFilter) {
@@ -258,6 +265,26 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                 Activité {searchFilter && <span className="filter-indicator">•</span>}
               </button>
               
+              {/* Filtre Date - Input direct */}
+              <div className="date-filter-container">
+                <input
+                  type="date"
+                  className="date-filter-input"
+                  value={dateFilter}
+                  onChange={(e) => setDateFilter(e.target.value)}
+                  title="Filtrer par date"
+                />
+                {dateFilter && (
+                  <button 
+                    className="clear-date-btn"
+                    onClick={() => setDateFilter('')}
+                    title="Effacer le filtre date"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+              
               {/* Filtre Lieu */}
               <button 
                 className={`filter-btn ${lieuFilter ? 'active' : ''}`}
@@ -291,7 +318,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         </div>
         
         
-        {(searchFilter || lieuFilter || organizerFilter) && (
+        {(searchFilter || dateFilter || lieuFilter || organizerFilter) && (
           <div className="filters-info">
             {searchFilter && (
               <div className="search-filter-info">
@@ -303,6 +330,18 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                     onSearchFilterChange('')
                   }}
                   title="Supprimer le filtre"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+            {dateFilter && (
+              <div className="date-filter-info">
+                <p>📅 Date : "{dateFilter}"</p>
+                <button 
+                  className="clear-filter-btn"
+                  onClick={() => setDateFilter('')}
+                  title="Supprimer le filtre date"
                 >
                   ✕
                 </button>
