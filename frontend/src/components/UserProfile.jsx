@@ -178,12 +178,6 @@ function UserProfile({ user, onClose, onUserUpdate }) {
             </div>
           </div>
           
-          <div className="profile-stats">
-            <div className="stat-item">
-              <span className="stat-label">Membre depuis</span>
-              <span className="stat-value">2024</span>
-            </div>
-          </div>
           
           {/* Espace entre groupes et actions */}
           <div className="profile-spacer"></div>
