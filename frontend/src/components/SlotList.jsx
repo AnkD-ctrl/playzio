@@ -110,7 +110,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
 
   useEffect(() => {
     fetchSlots()
-  }, [activity, selectedDate, searchFilter, dateFilter, lieuFilter])
+  }, [activity, selectedDate, searchFilter, dateFilter, lieuFilter, filterType, userGroups])
 
   useEffect(() => {
     fetchUserGroups()
@@ -149,7 +149,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         if (filterType === 'mes-dispo') {
           // Afficher seulement les créneaux créés par l'utilisateur
           filteredData = filteredData.filter(slot => slot.creator === currentUser.prenom)
-        } else if (filterType === 'communaute') {
+        } else if (filterType === 'communaute' && userGroups.length > 0) {
           // Afficher seulement les créneaux des groupes de l'utilisateur
           const userGroupNames = userGroups.map(group => group.name)
           filteredData = filteredData.filter(slot => 
