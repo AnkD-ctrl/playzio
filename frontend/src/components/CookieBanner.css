@@ -52,6 +52,7 @@
   font-size: 0.9rem;
   line-height: 1.5;
   margin: 0;
+  text-align: center;
 }
 
 .cookie-banner-actions {
@@ -68,10 +69,11 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  min-width: 120px;
+  width: 120px;
   text-align: center;
   position: relative;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .reject-btn {
@@ -122,8 +124,7 @@
   }
   
   .cookie-btn {
-    flex: 1;
-    max-width: 160px;
+    width: 140px;
     padding: 10px 20px;
   }
 }
@@ -142,8 +143,8 @@
   }
   
   .cookie-btn {
+    width: 120px;
     padding: 8px 16px;
     font-size: 0.85rem;
-    min-width: 100px;
   }
 }
