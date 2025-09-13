@@ -56,7 +56,7 @@
 .form-group textarea {
   resize: vertical;
   min-height: 100px;
-  font-family: 'Calibri', 'Candara', 'Segoe', 'Segoe UI', 'Optima', Arial, sans-serif;
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 .field-help {
