@@ -3,7 +3,7 @@ import './Calendar.css'
 import { API_BASE_URL } from '../config'
 import ActivitySearchModal from './ActivitySearchModal'
 
-function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, filterType = 'toutes-dispo', onAddSlot }) {
+function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, filterType = 'toutes-dispo', onAddSlot, onJoinSlot }) {
   const [slots, setSlots] = useState([])
   const [currentDate, setCurrentDate] = useState(new Date())
   const [loading, setLoading] = useState(true)
@@ -118,10 +118,16 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
     try {
       setLoading(true)
       
-      // Si "Tous" est sélectionné, ne pas filtrer par type d'activité
-      const url = activity === 'Tous' 
-        ? `${API_BASE_URL}/api/slots?user=${encodeURIComponent(currentUser.prenom)}`
-        : `${API_BASE_URL}/api/slots?type=${encodeURIComponent(activity.toLowerCase())}&user=${encodeURIComponent(currentUser.prenom)}`
+      let url
+      if (onJoinSlot) {
+        // Mode partage public - utiliser l'endpoint public
+        url = `${API_BASE_URL}/api/slots/user/${encodeURIComponent(currentUser.prenom)}`
+      } else {
+        // Mode normal - utiliser l'endpoint avec authentification
+        url = activity === 'Tous' 
+          ? `${API_BASE_URL}/api/slots?user=${encodeURIComponent(currentUser.prenom)}`
+          : `${API_BASE_URL}/api/slots?type=${encodeURIComponent(activity.toLowerCase())}&user=${encodeURIComponent(currentUser.prenom)}`
+      }
       
       const response = await fetch(url)
       
@@ -131,7 +137,10 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
         // Filtrer selon le type d'onglet
         let filteredData = data
         
-        if (filterType === 'mes-dispo') {
+        if (onJoinSlot) {
+          // Mode partage public - ne pas filtrer, les données viennent déjà filtrées de l'API
+          // Les données sont déjà filtrées par utilisateur côté serveur
+        } else if (filterType === 'mes-dispo') {
           // Afficher seulement les créneaux créés par l'utilisateur
           filteredData = filteredData.filter(slot => slot.createdBy === currentUser.prenom)
         } else if (filterType === 'communaute' && userGroups.length > 0) {
