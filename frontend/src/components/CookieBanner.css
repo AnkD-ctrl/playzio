@@ -41,7 +41,8 @@
   font-weight: 600;
   margin: 0 0 8px 0;
   display: flex;
-  align-items: baseline;
+  align-items: center;
+  justify-content: center;
   gap: 8px;
   line-height: 1.2;
 }
@@ -60,38 +61,46 @@
 }
 
 .cookie-btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
+  padding: 12px 24px;
+  border: 2px solid transparent;
+  border-radius: 12px;
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
-  min-width: 100px;
+  transition: all 0.3s ease;
+  min-width: 120px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
 }
 
 .reject-btn {
-  background: #404040;
-  color: #b0b0b0;
-  border: 1px solid #5a5a5a;
+  background: linear-gradient(135deg, #4a4a4a 0%, #3a3a3a 100%);
+  color: #e0e0e0;
+  border-color: #6a6a6a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .reject-btn:hover {
-  background: #505050;
+  background: linear-gradient(135deg, #5a5a5a 0%, #4a4a4a 100%);
   color: #ffffff;
+  border-color: #7a7a7a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 .accept-btn {
   background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
   color: #ffffff;
-  border: 1px solid rgba(212, 175, 140, 0.4);
-  box-shadow: 0 2px 8px rgba(212, 175, 140, 0.3);
+  border-color: rgba(212, 175, 140, 0.5);
+  box-shadow: 0 4px 16px rgba(212, 175, 140, 0.3);
 }
 
 .accept-btn:hover {
-  transform: translateY(-1px);
-  border: 1px solid rgba(212, 175, 140, 0.6);
-  box-shadow: 0 4px 12px rgba(212, 175, 140, 0.4);
+  background: linear-gradient(135deg, #e6c199 0%, #d9b37e 25%, #c99a1b 50%, #a366eb 75%, #9a42f2 100%);
+  border-color: rgba(212, 175, 140, 0.8);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 140, 0.4);
 }
 
 /* Responsive Design */
@@ -113,7 +122,8 @@
   
   .cookie-btn {
     flex: 1;
-    max-width: 150px;
+    max-width: 160px;
+    padding: 10px 20px;
   }
 }
 
@@ -133,5 +143,6 @@
   .cookie-btn {
     padding: 8px 16px;
     font-size: 0.85rem;
+    min-width: 100px;
   }
 }
