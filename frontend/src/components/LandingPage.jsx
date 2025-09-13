@@ -249,7 +249,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
       {/* Comparison Section */}
       <section className="comparison-section">
         <div className="comparison-container">
-          <h2>Pourquoi Playzio fait la différence</h2>
+          <h2>Pourquoi Playzio</h2>
           <div className="comparison-table-wrapper">
             <table className="comparison-table">
               <thead>
