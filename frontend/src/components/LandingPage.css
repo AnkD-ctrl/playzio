@@ -1188,5 +1188,151 @@
   }
 }
 
+/* Comparison Section */
+.comparison-section {
+  padding: 80px 20px;
+  background: #ffffff;
+}
+
+.comparison-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.comparison-container h2 {
+  text-align: center;
+  color: #333333;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+}
+
+.comparison-table-wrapper {
+  overflow-x: auto;
+  margin-bottom: 2rem;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.comparison-th {
+  padding: 20px 16px;
+  border-bottom: 2px solid #e0e0e0;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.feature-header {
+  background: rgba(212, 175, 140, 0.1);
+  color: #d4af8c;
+  text-align: left;
+}
+
+.playzio-header {
+  background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.competitor-header {
+  background: #f8f9fa;
+  color: #333333;
+}
+
+.comparison-td {
+  padding: 20px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 1rem;
+}
+
+.feature-cell {
+  text-align: left;
+  color: #333333;
+  background: #ffffff;
+}
+
+.success-cell {
+  color: #4ade80;
+  font-weight: 700;
+}
+
+.error-cell {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+.warning-cell {
+  color: #f59e0b;
+  font-weight: 700;
+}
+
+.comparison-cta {
+  text-align: center;
+}
+
+.comparison-button {
+  background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+  color: #ffffff;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(212, 175, 140, 0.3);
+}
+
+.comparison-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 140, 0.4);
+}
+
+/* Responsive Design for Comparison */
+@media (max-width: 768px) {
+  .comparison-container h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .comparison-th,
+  .comparison-td {
+    padding: 12px 8px;
+    font-size: 0.9rem;
+  }
+  
+  .comparison-button {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .comparison-section {
+    padding: 60px 16px;
+  }
+  
+  .comparison-container h2 {
+    font-size: 1.8rem;
+  }
+  
+  .comparison-th,
+  .comparison-td {
+    padding: 10px 6px;
+    font-size: 0.8rem;
+  }
+  
+  .comparison-button {
+    padding: 8px 16px;
+    font-size: 0.8rem;
+  }
+}
+
 
 

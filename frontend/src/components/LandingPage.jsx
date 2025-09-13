@@ -246,6 +246,71 @@ const LandingPage = ({ onLogin, onRegister }) => {
         </div>
       </section>
 
+      {/* Comparison Section */}
+      <section className="comparison-section">
+        <div className="comparison-container">
+          <h2>Pourquoi Playzio fait la différence</h2>
+          <div className="comparison-table-wrapper">
+            <table className="comparison-table">
+              <thead>
+                <tr>
+                  <th className="comparison-th feature-header">Fonctionnalité</th>
+                  <th className="comparison-th playzio-header">Playzio</th>
+                  <th className="comparison-th competitor-header">WhatsApp</th>
+                  <th className="comparison-th competitor-header">Agenda partagé</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="comparison-td feature-cell">Partager une dispo sans message</td>
+                  <td className="comparison-td success-cell">✅ Oui</td>
+                  <td className="comparison-td error-cell">❌ Non</td>
+                  <td className="comparison-td error-cell">❌ Non</td>
+                </tr>
+                <tr>
+                  <td className="comparison-td feature-cell">Voir les dispos de mes amis</td>
+                  <td className="comparison-td success-cell">✅ Oui</td>
+                  <td className="comparison-td error-cell">❌ Non</td>
+                  <td className="comparison-td error-cell">❌ Non</td>
+                </tr>
+                <tr>
+                  <td className="comparison-td feature-cell">Rejoindre une sortie en un clic</td>
+                  <td className="comparison-td success-cell">✅ Oui</td>
+                  <td className="comparison-td error-cell">❌ Non</td>
+                  <td className="comparison-td error-cell">❌ Non</td>
+                </tr>
+                <tr>
+                  <td className="comparison-td feature-cell">Pas besoin de groupe dédié</td>
+                  <td className="comparison-td success-cell">✅ Oui</td>
+                  <td className="comparison-td error-cell">❌ Non</td>
+                  <td className="comparison-td error-cell">❌ Non</td>
+                </tr>
+                <tr>
+                  <td className="comparison-td feature-cell">Pas d'engagement figé</td>
+                  <td className="comparison-td success-cell">✅ Oui</td>
+                  <td className="comparison-td warning-cell">⚠️ Partiel</td>
+                  <td className="comparison-td error-cell">❌ Non</td>
+                </tr>
+                <tr>
+                  <td className="comparison-td feature-cell">Accessible web + mobile facilement</td>
+                  <td className="comparison-td success-cell">✅ Oui</td>
+                  <td className="comparison-td warning-cell">⚠️ Partiel</td>
+                  <td className="comparison-td warning-cell">⚠️ Partiel</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="comparison-cta">
+            <button 
+              className="comparison-button"
+              onClick={handleGetStarted}
+            >
+              Essayez Playzio – Gratuit et sans engagement
+            </button>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="final-cta-section">
         <div className="cta-content">
