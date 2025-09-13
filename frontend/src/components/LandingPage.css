@@ -1258,76 +1258,45 @@
   background: #3a3a3a;
 }
 
-.success-cell {
+.status-cell {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  color: #ffffff;
+  gap: 8px;
 }
 
-.success-cell::before {
-  content: "✓";
+.status-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 24px;
   height: 24px;
   border-radius: 50%;
+  font-size: 14px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.status-icon.success {
   background: #f59e0b;
   color: #ffffff;
-  font-size: 14px;
-  font-weight: bold;
-  margin-right: 8px;
-  flex-shrink: 0;
 }
 
-.error-cell {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  color: #ffffff;
-}
-
-.error-cell::before {
-  content: "✕";
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
+.status-icon.error {
   background: #6b7280;
   color: #ffffff;
-  font-size: 14px;
-  font-weight: bold;
-  margin-right: 8px;
-  flex-shrink: 0;
 }
 
-.warning-cell {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  color: #ffffff;
-}
-
-.warning-cell::before {
-  content: "⚠";
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
+.status-icon.warning {
   background: #f59e0b;
   color: #ffffff;
   font-size: 12px;
-  font-weight: bold;
-  margin-right: 8px;
-  flex-shrink: 0;
+}
+
+.status-text {
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1rem;
 }
 
 .comparison-cta {
