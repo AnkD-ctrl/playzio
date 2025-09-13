@@ -1191,7 +1191,7 @@
 /* Comparison Section */
 .comparison-section {
   padding: 80px 20px;
-  background: #ffffff;
+  background: #2a2a2a;
 }
 
 .comparison-container {
@@ -1201,7 +1201,7 @@
 
 .comparison-container h2 {
   text-align: center;
-  color: #333333;
+  color: #ffffff;
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 2rem;
@@ -1223,7 +1223,7 @@
 
 .comparison-th {
   padding: 20px 16px;
-  border-bottom: 2px solid #e0e0e0;
+  border-bottom: 2px solid #4a4a4a;
   font-weight: 600;
   font-size: 1rem;
 }
@@ -1241,20 +1241,21 @@
 }
 
 .competitor-header {
-  background: #f8f9fa;
-  color: #333333;
+  background: #4a4a4a;
+  color: #e0e0e0;
 }
 
 .comparison-td {
   padding: 20px 16px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid #4a4a4a;
   font-size: 1rem;
+  background: #3a3a3a;
 }
 
 .feature-cell {
   text-align: left;
-  color: #333333;
-  background: #ffffff;
+  color: #e0e0e0;
+  background: #3a3a3a;
 }
 
 .success-cell {
