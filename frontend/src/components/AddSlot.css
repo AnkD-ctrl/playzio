@@ -56,7 +56,7 @@
 .form-group textarea {
   resize: vertical;
   min-height: 100px;
-  font-family: inherit;
+  font-family: 'Calibri', 'Candara', 'Segoe', 'Segoe UI', 'Optima', Arial, sans-serif;
 }
 
 .field-help {
