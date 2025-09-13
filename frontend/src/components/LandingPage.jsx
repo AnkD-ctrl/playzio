@@ -44,7 +44,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
         <div className="hero-content">
           <div className="hero-text">
             <h1 className="hero-title">
-              <span className="highlight">Transformer ses dispo perdues en moments gagnés.</span>
+              <span className="highlight">Transformer ses dispo perdues en moments vécus.</span>
             </h1>
             <p className="hero-subtitle">
               Tu étais dispo et tes amis aussi, et pourtant vous ne vous êtes pas vu? Playzio est un outil gratuit et simple qui donne enfin une chance à ces moments d'être vécus. Partage tes dispo, découvre qui est libre, et rejoignez-vous simplement!
