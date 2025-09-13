@@ -263,39 +263,39 @@ const LandingPage = ({ onLogin, onRegister }) => {
               <tbody>
                 <tr>
                   <td className="comparison-td feature-cell">Partager une dispo sans message</td>
-                  <td className="comparison-td success-cell">✅ Oui</td>
-                  <td className="comparison-td error-cell">❌ Non</td>
-                  <td className="comparison-td error-cell">❌ Non</td>
+                  <td className="comparison-td success-cell">Oui</td>
+                  <td className="comparison-td error-cell">Non</td>
+                  <td className="comparison-td error-cell">Non</td>
                 </tr>
                 <tr>
                   <td className="comparison-td feature-cell">Voir les dispos de mes amis</td>
-                  <td className="comparison-td success-cell">✅ Oui</td>
-                  <td className="comparison-td error-cell">❌ Non</td>
-                  <td className="comparison-td error-cell">❌ Non</td>
+                  <td className="comparison-td success-cell">Oui</td>
+                  <td className="comparison-td error-cell">Non</td>
+                  <td className="comparison-td error-cell">Non</td>
                 </tr>
                 <tr>
                   <td className="comparison-td feature-cell">Rejoindre une sortie en un clic</td>
-                  <td className="comparison-td success-cell">✅ Oui</td>
-                  <td className="comparison-td error-cell">❌ Non</td>
-                  <td className="comparison-td error-cell">❌ Non</td>
+                  <td className="comparison-td success-cell">Oui</td>
+                  <td className="comparison-td error-cell">Non</td>
+                  <td className="comparison-td error-cell">Non</td>
                 </tr>
                 <tr>
                   <td className="comparison-td feature-cell">Pas besoin de groupe dédié</td>
-                  <td className="comparison-td success-cell">✅ Oui</td>
-                  <td className="comparison-td error-cell">❌ Non</td>
-                  <td className="comparison-td error-cell">❌ Non</td>
+                  <td className="comparison-td success-cell">Oui</td>
+                  <td className="comparison-td error-cell">Non</td>
+                  <td className="comparison-td error-cell">Non</td>
                 </tr>
                 <tr>
                   <td className="comparison-td feature-cell">Pas d'engagement figé</td>
-                  <td className="comparison-td success-cell">✅ Oui</td>
-                  <td className="comparison-td warning-cell">⚠️ Partiel</td>
-                  <td className="comparison-td error-cell">❌ Non</td>
+                  <td className="comparison-td success-cell">Oui</td>
+                  <td className="comparison-td warning-cell">Partiel</td>
+                  <td className="comparison-td error-cell">Non</td>
                 </tr>
                 <tr>
                   <td className="comparison-td feature-cell">Accessible web + mobile facilement</td>
-                  <td className="comparison-td success-cell">✅ Oui</td>
-                  <td className="comparison-td warning-cell">⚠️ Partiel</td>
-                  <td className="comparison-td warning-cell">⚠️ Partiel</td>
+                  <td className="comparison-td success-cell">Oui</td>
+                  <td className="comparison-td warning-cell">Partiel</td>
+                  <td className="comparison-td warning-cell">Partiel</td>
                 </tr>
               </tbody>
             </table>
