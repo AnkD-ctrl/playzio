@@ -129,10 +129,32 @@
   grid-template-columns: 1fr 1fr;
   gap: 4rem;
   align-items: center;
+  position: relative;
+  background: rgba(44, 44, 44, 0.8);
+  border-radius: 12px;
+  padding: 2rem;
+}
+
+.hero-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwMCIgaGVpZ2h0PSI2MDAiIHZpZXdCb3g9IjAgMCAxMDAwIDYwMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEwMDAiIGhlaWdodD0iNjAwIiBmaWxsPSIjZjBmOGZmIi8+CjxyZWN0IHg9IjAiIHk9IjQwMCIgd2lkdGg9IjEwMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZTNmN2YzIi8+CjxyZWN0IHg9IjAiIHk9IjUwMCIgd2lkdGg9IjEwMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjZDBlNmRkIi8+CjxyZWN0IHg9IjIwMCIgeT0iMjAwIiB3aWR0aD0iNjAiIGhlaWdodD0iODAiIHJ4PSI0MCIgZmlsbD0iI2ZmNjY4YyIvPgo8cmVjdCB4PSIzMDAiIHk9IjE4MCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjgwIiByeD0iNDAiIGZpbGw9IiM2NmZmY2MiLz4KPHJlY3QgeD0iNDAwIiB5PSIyMDAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI4MCIgcng9IjQwIiBmaWxsPSIjZmZmZjY2Ii8+CjxyZWN0IHg9IjUwMCIgeT0iMTgwIiB3aWR0aD0iNjAiIGhlaWdodD0iODAiIHJ4PSI0MCIgZmlsbD0iI2ZmNjZmZiIvPgo8cmVjdCB4PSI2MDAiIHk9IjIwMCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjgwIiByeD0iNDAiIGZpbGw9IiM2NmZmNjYiLz4KPHJlY3QgeD0iNzAwIiB5PSIxODAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI4MCIgcng9IjQwIiBmaWxsPSIjZmY4NmZmIi8+CjxyZWN0IHg9IjgwIiB5PSI0MDAiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcng9IjIwIiBmaWxsPSIjZmZmZmZmIiBmaWxsLW9wYWNpdHk9IjAuOCIvPgo8cmVjdCB4PSIxNDAiIHk9IjM4MCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iMjAiIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC44Ii8+CjxyZWN0IHg9IjI4MCIgeT0iNDIwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHJ4PSIyMCIgZmlsbD0iI2ZmZmZmZiIgZmlsbC1vcGFjaXR5PSIwLjgiLz4KPHJlY3QgeD0iNDIwIiB5PSIzODAiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcng9IjIwIiBmaWxsPSIjZmZmZmZmIiBmaWxsLW9wYWNpdHk9IjAuOCIvPgo8cmVjdCB4PSI1NjAiIHk9IjQwMCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iMjAiIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC44Ii8+CjxyZWN0IHg9IjcwMCIgeT0iMzgwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHJ4PSIyMCIgZmlsbD0iI2ZmZmZmZiIgZmlsbC1vcGFjaXR5PSIwLjgiLz4KPHJlY3QgeD0iODQwIiB5PSI0MDAiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcng9IjIwIiBmaWxsPSIjZmZmZmZmIiBmaWxsLW9wYWNpdHk9IjAuOCIvPgo8L3N2Zz4K');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.3;
+  z-index: -1;
+  border-radius: 12px;
 }
 
 .hero-text {
   max-width: 600px;
+  position: relative;
+  z-index: 1;
 }
 
 .hero-title {
@@ -246,6 +268,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+  z-index: 1;
 }
 
 .mockup-container {
