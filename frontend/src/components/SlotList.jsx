@@ -258,7 +258,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   return (
     <div className="slot-list">
       {viewToggleContainer}
-      <div className="slot-list-header">
+      <div className="slot-list-header" style={{ marginTop: '0' }}>
         
         {/* Modales de filtres */}
         

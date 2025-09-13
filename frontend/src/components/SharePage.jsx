@@ -81,12 +81,18 @@ const SharePage = ({ username }) => {
         onJoinSlot={handleJoinSlot}
         viewToggleContainer={
           <div className="view-toggle-container" style={{ 
+            position: 'relative',
+            top: 'auto',
+            left: 'auto',
+            transform: 'none',
+            zIndex: 'auto',
             display: 'flex', 
             justifyContent: 'center', 
             alignItems: 'center', 
             gap: '8px', 
             padding: '1rem',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
+            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+            marginBottom: '1rem'
           }}>
             {/* Bouton filtre */}
             <button 
