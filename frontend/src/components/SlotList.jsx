@@ -5,7 +5,7 @@ import { trackSlotJoin, trackSlotLeave } from '../utils/analytics'
 import SlotDiscussion from './SlotDiscussion'
 import ActivitySearchModal from './ActivitySearchModal'
 
-function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, filterType = 'toutes-dispo', onAddSlot }) {
+function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, filterType = 'toutes-dispo', onAddSlot, onJoinSlot }) {
   const [slots, setSlots] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -91,10 +91,16 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
     try {
       setLoading(true)
       
-      // Si "Tous" est sélectionné, ne pas filtrer par type d'activité
-      const url = activity === 'Tous' 
-        ? `${API_BASE_URL}/api/slots?user=${encodeURIComponent(currentUser.prenom)}`
-        : `${API_BASE_URL}/api/slots?type=${encodeURIComponent(activity.toLowerCase())}&user=${encodeURIComponent(currentUser.prenom)}`
+      let url
+      if (onJoinSlot) {
+        // Mode partage public - utiliser l'endpoint public
+        url = `${API_BASE_URL}/api/slots/user/${encodeURIComponent(currentUser.prenom)}`
+      } else {
+        // Mode normal - utiliser l'endpoint avec authentification
+        url = activity === 'Tous' 
+          ? `${API_BASE_URL}/api/slots?user=${encodeURIComponent(currentUser.prenom)}`
+          : `${API_BASE_URL}/api/slots?type=${encodeURIComponent(activity.toLowerCase())}&user=${encodeURIComponent(currentUser.prenom)}`
+      }
       
       const response = await fetch(url)
       
@@ -103,7 +109,10 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         let filteredData = data
         
         // Filtrer selon le type d'onglet
-        if (filterType === 'mes-dispo') {
+        if (onJoinSlot) {
+          // Mode partage public - ne pas filtrer, les données viennent déjà filtrées de l'API
+          // Les données sont déjà filtrées par utilisateur côté serveur
+        } else if (filterType === 'mes-dispo') {
           // Afficher seulement les créneaux créés par l'utilisateur
           filteredData = filteredData.filter(slot => slot.createdBy === currentUser.prenom)
         } else if (filterType === 'communaute' && userGroups.length > 0) {
@@ -379,7 +388,11 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                         className="quick-action-btn join-btn"
                         onClick={(e) => {
                           e.stopPropagation()
-                          handleJoinSlot(slot.id)
+                          if (onJoinSlot) {
+                            onJoinSlot()
+                          } else {
+                            handleJoinSlot(slot.id)
+                          }
                         }}
                         title="Rejoindre"
                       >
