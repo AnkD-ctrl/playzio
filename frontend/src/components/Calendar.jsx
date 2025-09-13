@@ -159,7 +159,9 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
           )
         } else if (filterType === 'toutes-dispo') {
           // Afficher seulement les créneaux visibles à tous (visible_to_all = true)
+          console.log('🔍 Filtrage "Toutes" - Slots avant filtrage:', filteredData.map(s => ({id: s.id, activity: s.customActivity, visibleToAll: s.visibleToAll})))
           filteredData = filteredData.filter(slot => slot.visibleToAll === true)
+          console.log('🔍 Filtrage "Toutes" - Slots après filtrage:', filteredData.length)
         }
         
         // Filtrer par activité personnalisée si un filtre de recherche est défini
