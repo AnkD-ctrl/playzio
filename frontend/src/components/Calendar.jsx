@@ -248,13 +248,21 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
   }
 
   const handleSlotClick = (slot) => {
+    console.log('🔍 handleSlotClick appelé avec:', slot)
+    console.log('🔍 onJoinSlot:', onJoinSlot)
+    console.log('🔍 onDateSelect:', onDateSelect)
+    
     // Si onJoinSlot est fourni (mode partage), rediriger vers l'inscription
     if (onJoinSlot) {
+      console.log('🔄 Mode partage - redirection vers inscription')
       onJoinSlot()
     } else {
       // Mode normal - utiliser onDateSelect pour filtrer par date
       if (onDateSelect) {
+        console.log('📅 Mode normal - filtrage par date:', slot.date)
         onDateSelect(slot.date)
+      } else {
+        console.log('❌ onDateSelect non défini')
       }
     }
   }
@@ -335,6 +343,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
                             key={slot.id} 
                             className="slot-indicator clickable-slot"
                             onClick={(e) => {
+                              console.log('🎯 CLIC DÉTECTÉ sur slot-indicator!', slot.id)
                               e.stopPropagation()
                               handleSlotClick(slot)
                             }}
