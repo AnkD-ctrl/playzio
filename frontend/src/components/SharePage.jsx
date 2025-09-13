@@ -13,12 +13,10 @@ const SharePage = ({ username }) => {
   const fetchUserSlots = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`${API_BASE_URL}/api/slots`)
+      const response = await fetch(`${API_BASE_URL}/api/slots/user/${encodeURIComponent(username)}`)
       if (response.ok) {
         const data = await response.json()
-        // Filtrer les slots de l'utilisateur spécifique
-        const userSlots = data.filter(slot => slot.createdBy === username)
-        setSlots(userSlots)
+        setSlots(data)
       } else {
         setError('Erreur lors du chargement des disponibilités')
       }

@@ -598,6 +598,32 @@ app.get('/api/users/search', async (req, res) => {
   }
 })
 
+// Récupérer les disponibilités publiques d'un utilisateur
+app.get('/api/slots/user/:username', async (req, res) => {
+  try {
+    const { username } = req.params
+    if (!username) {
+      return res.status(400).json({ error: 'Nom d\'utilisateur requis' })
+    }
+    
+    // Récupérer tous les slots
+    let slots = await getAllSlots()
+    
+    // Filtrer les disponibilités passées
+    slots = slots.filter(slot => isSlotStillValid(slot))
+    
+    // Filtrer par créateur (nom d'utilisateur)
+    const userSlots = slots.filter(slot => 
+      slot.createdBy && slot.createdBy.toLowerCase() === username.toLowerCase()
+    )
+    
+    res.json(userSlots)
+  } catch (error) {
+    console.error('Get user slots error:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
 // Gestion des amis
 app.post('/api/friends/request', async (req, res) => {
   try {
