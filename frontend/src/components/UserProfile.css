@@ -553,8 +553,8 @@
 }
 
 .add-friend-btn {
-  background: linear-gradient(45deg, #4a90e2, #357abd);
-  color: white;
+  background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+  color: #ffffff;
   border: none;
   border-radius: 50%;
   width: 28px;
@@ -566,11 +566,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 8px rgba(212, 175, 140, 0.3);
 }
 
 .add-friend-btn:hover {
-  background: linear-gradient(45deg, #357abd, #2c5aa0);
+  background: linear-gradient(135deg, #c9a96e 0%, #b8860b 25%, #9370db 50%, #8a2be2 75%, #7b68ee 100%);
   transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(212, 175, 140, 0.5);
 }
 
 /* Styles pour la modal de recherche d'utilisateurs */
