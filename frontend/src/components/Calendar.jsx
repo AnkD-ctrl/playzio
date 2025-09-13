@@ -20,249 +20,6 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
   const [expandedSlots, setExpandedSlots] = useState(new Set())
   const [selectedSlot, setSelectedSlot] = useState(null)
 
-  // Données de test - 20 slots variés
-  const testSlots = [
-    {
-      id: 'test-1',
-      date: '2025-01-15',
-      heureDebut: '09:00',
-      heureFin: '11:00',
-      customActivity: 'Tennis',
-      description: 'Match de tennis en simple, niveau intermédiaire',
-      lieu: 'Court central, Complexe sportif',
-      createdBy: 'Alice',
-      participants: ['Alice', 'Bob'],
-      type: ['Sport']
-    },
-    {
-      id: 'test-2',
-      date: '2025-01-15',
-      heureDebut: '14:00',
-      heureFin: '16:00',
-      customActivity: 'Padel',
-      description: 'Partie de padel en double, débutants bienvenus',
-      lieu: 'Court 2, Club de padel',
-      createdBy: 'Charlie',
-      participants: ['Charlie'],
-      type: ['Sport']
-    },
-    {
-      id: 'test-3',
-      date: '2025-01-15',
-      heureDebut: '18:00',
-      heureFin: '20:00',
-      customActivity: 'Football',
-      description: 'Match amical 5v5, terrain synthétique',
-      lieu: 'Stade municipal',
-      createdBy: 'David',
-      participants: ['David', 'Eve', 'Frank', 'Grace', 'Henry'],
-      type: ['Sport']
-    },
-    {
-      id: 'test-4',
-      date: '2025-01-16',
-      heureDebut: '10:00',
-      heureFin: '12:00',
-      customActivity: 'Randonnée',
-      description: 'Randonnée en montagne, niveau moyen, 8km',
-      lieu: 'Sentier des Crêtes',
-      createdBy: 'Iris',
-      participants: ['Iris', 'Jack'],
-      type: ['Nature', 'Sport']
-    },
-    {
-      id: 'test-5',
-      date: '2025-01-16',
-      heureDebut: '15:00',
-      heureFin: '17:00',
-      customActivity: 'Cuisine',
-      description: 'Atelier cuisine italienne, pâtes fraîches',
-      lieu: 'Cuisine pédagogique, Centre culturel',
-      createdBy: 'Kate',
-      participants: ['Kate', 'Leo', 'Mia'],
-      type: ['Cuisine', 'Culture']
-    },
-    {
-      id: 'test-6',
-      date: '2025-01-16',
-      heureDebut: '19:00',
-      heureFin: '21:00',
-      customActivity: 'Cinéma',
-      description: 'Séance cinéma, film d\'aventure',
-      lieu: 'Cinéma Le Palace',
-      createdBy: 'Noah',
-      participants: ['Noah', 'Olivia'],
-      type: ['Culture', 'Divertissement']
-    },
-    {
-      id: 'test-7',
-      date: '2025-01-17',
-      heureDebut: '08:00',
-      heureFin: '10:00',
-      customActivity: 'Natation',
-      description: 'Séance natation, longueurs libres',
-      lieu: 'Piscine municipale',
-      createdBy: 'Paul',
-      participants: ['Paul'],
-      type: ['Sport']
-    },
-    {
-      id: 'test-8',
-      date: '2025-01-17',
-      heureDebut: '13:00',
-      heureFin: '15:00',
-      customActivity: 'Musée',
-      description: 'Visite exposition temporaire "Art moderne"',
-      lieu: 'Musée des Beaux-Arts',
-      createdBy: 'Quinn',
-      participants: ['Quinn', 'Rosa', 'Sam'],
-      type: ['Culture']
-    },
-    {
-      id: 'test-9',
-      date: '2025-01-17',
-      heureDebut: '16:30',
-      heureFin: '18:30',
-      customActivity: 'Basketball',
-      description: 'Match 3v3, niveau avancé',
-      lieu: 'Gymnase du lycée',
-      createdBy: 'Tom',
-      participants: ['Tom', 'Uma', 'Victor', 'Wendy', 'Xavier', 'Yara'],
-      type: ['Sport']
-    },
-    {
-      id: 'test-10',
-      date: '2025-01-18',
-      heureDebut: '11:00',
-      heureFin: '13:00',
-      customActivity: 'Photographie',
-      description: 'Sortie photo urbaine, architecture',
-      lieu: 'Centre-ville historique',
-      createdBy: 'Zoe',
-      participants: ['Zoe', 'Alex'],
-      type: ['Art', 'Culture']
-    },
-    {
-      id: 'test-11',
-      date: '2025-01-18',
-      heureDebut: '14:30',
-      heureFin: '16:30',
-      customActivity: 'Yoga',
-      description: 'Séance yoga vinyasa, tous niveaux',
-      lieu: 'Studio Zen',
-      createdBy: 'Ben',
-      participants: ['Ben', 'Clara', 'Dylan'],
-      type: ['Sport', 'Bien-être']
-    },
-    {
-      id: 'test-12',
-      date: '2025-01-18',
-      heureDebut: '20:00',
-      heureFin: '22:00',
-      customActivity: 'Jeux de société',
-      description: 'Soirée jeux, jeux de stratégie',
-      lieu: 'Café Ludique',
-      createdBy: 'Emma',
-      participants: ['Emma', 'Felix', 'Gina', 'Hugo'],
-      type: ['Divertissement', 'Social']
-    },
-    {
-      id: 'test-13',
-      date: '2025-01-19',
-      heureDebut: '09:30',
-      heureFin: '11:30',
-      customActivity: 'Vélo',
-      description: 'Balade vélo, parcours campagne, 15km',
-      lieu: 'Départ parking du lac',
-      createdBy: 'Ivy',
-      participants: ['Ivy', 'Jake'],
-      type: ['Sport', 'Nature']
-    },
-    {
-      id: 'test-14',
-      date: '2025-01-19',
-      heureDebut: '12:00',
-      heureFin: '14:00',
-      customActivity: 'Pique-nique',
-      description: 'Pique-nique au parc, chacun apporte quelque chose',
-      lieu: 'Parc de la Roseraie',
-      createdBy: 'Kira',
-      participants: ['Kira', 'Liam', 'Maya', 'Nico'],
-      type: ['Social', 'Nature']
-    },
-    {
-      id: 'test-15',
-      date: '2025-01-19',
-      heureDebut: '17:00',
-      heureFin: '19:00',
-      customActivity: 'Escalade',
-      description: 'Escalade en salle, voies 6a-7a',
-      lieu: 'Salle d\'escalade Vertigo',
-      createdBy: 'Oscar',
-      participants: ['Oscar'],
-      type: ['Sport']
-    },
-    {
-      id: 'test-16',
-      date: '2025-01-20',
-      heureDebut: '10:00',
-      heureFin: '12:00',
-      customActivity: 'Cours de danse',
-      description: 'Cours salsa débutant, couple ou solo',
-      lieu: 'Studio de danse Latino',
-      createdBy: 'Paula',
-      participants: ['Paula', 'Quinn'],
-      type: ['Art', 'Sport']
-    },
-    {
-      id: 'test-17',
-      date: '2025-01-20',
-      heureDebut: '15:00',
-      heureFin: '17:00',
-      customActivity: 'Lecture',
-      description: 'Club de lecture, discussion sur le livre du mois',
-      lieu: 'Bibliothèque municipale',
-      createdBy: 'Rita',
-      participants: ['Rita', 'Steve', 'Tina'],
-      type: ['Culture', 'Social']
-    },
-    {
-      id: 'test-18',
-      date: '2025-01-20',
-      heureDebut: '19:30',
-      heureFin: '21:30',
-      customActivity: 'Théâtre',
-      description: 'Pièce de théâtre contemporain',
-      lieu: 'Théâtre municipal',
-      createdBy: 'Ugo',
-      participants: ['Ugo', 'Vera'],
-      type: ['Culture']
-    },
-    {
-      id: 'test-19',
-      date: '2025-01-21',
-      heureDebut: '08:30',
-      heureFin: '10:30',
-      customActivity: 'Course à pied',
-      description: 'Course matinale, parcours 5km, tous niveaux',
-      lieu: 'Parc des sports',
-      createdBy: 'Will',
-      participants: ['Will', 'Xara', 'Yves'],
-      type: ['Sport']
-    },
-    {
-      id: 'test-20',
-      date: '2025-01-21',
-      heureDebut: '16:00',
-      heureFin: '18:00',
-      customActivity: 'Atelier peinture',
-      description: 'Atelier aquarelle, paysage urbain',
-      lieu: 'Atelier d\'art La Palette',
-      createdBy: 'Zara',
-      participants: ['Zara'],
-      type: ['Art', 'Culture']
-    }
-  ]
   
   // Nouveaux filtres
   const [dateFilter, setDateFilter] = useState('')
@@ -503,8 +260,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
       onJoinSlot()
     } else {
       // Mode normal - ouvrir popup avec les disponibilités du jour
-      // Utiliser les données de test pour les tests
-      const daySlots = testSlots.filter(s => s.date === slot.date)
+      const daySlots = slots.filter(s => s.date === slot.date)
       setSelectedDaySlots(daySlots)
       setSelectedDay(slot.date)
       setShowDayPopup(true)
@@ -537,8 +293,8 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
 
       if (response.ok) {
         alert('Vous avez rejoint cette disponibilité')
-        // Recharger les slots (données de test)
-        const daySlots = testSlots.filter(s => s.date === selectedDay)
+        // Recharger les slots
+        const daySlots = slots.filter(s => s.date === selectedDay)
         setSelectedDaySlots(daySlots)
       } else {
         const data = await response.json()
@@ -567,8 +323,8 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
 
       if (response.ok) {
         alert('Vous avez quitté cette disponibilité')
-        // Recharger les slots (données de test)
-        const daySlots = testSlots.filter(s => s.date === selectedDay)
+        // Recharger les slots
+        const daySlots = slots.filter(s => s.date === selectedDay)
         setSelectedDaySlots(daySlots)
       } else {
         const data = await response.json()
