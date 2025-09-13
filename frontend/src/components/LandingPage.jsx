@@ -62,10 +62,18 @@ const LandingPage = ({ onLogin, onRegister }) => {
               </p>
               <div className="social-proof">
                 <div className="user-avatars">
-                  <div className="avatar">👤</div>
-                  <div className="avatar">👩</div>
-                  <div className="avatar">👨</div>
-                  <div className="avatar">👩‍💼</div>
+                  <div className="avatar">
+                    <img src="/images/ai-generated-7699880_1280.png" alt="Utilisateur 1" />
+                  </div>
+                  <div className="avatar">
+                    <img src="/images/ai-generated-7699915_1280.png" alt="Utilisateur 2" />
+                  </div>
+                  <div className="avatar">
+                    <img src="/images/ai-generated-7699968_1280.png" alt="Utilisateur 3" />
+                  </div>
+                  <div className="avatar">
+                    <img src="/images/ai-generated-7700069_1280.png" alt="Utilisateur 4" />
+                  </div>
                 </div>
                 <p className="social-text">Rejoignez +500 utilisateurs qui affichent déjà leurs dispo</p>
               </div>
