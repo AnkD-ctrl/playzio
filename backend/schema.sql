@@ -102,6 +102,15 @@ BEGIN
     END IF;
 END $$;
 
+-- Migration: Add max_participants column if it doesn't exist
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'slots' AND column_name = 'max_participants') THEN
+        ALTER TABLE slots ADD COLUMN max_participants INTEGER DEFAULT NULL;
+    END IF;
+END $$;
+
 -- Migration: Ensure email column allows NULL values
 DO $$ 
 BEGIN

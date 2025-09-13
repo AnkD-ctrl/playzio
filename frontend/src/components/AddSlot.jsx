@@ -10,7 +10,8 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate }) {
     heureDebut: '',
     heureFin: '',
     description: '',
-    lieu: ''
+    lieu: '',
+    maxParticipants: ''
   })
   const [selectedActivities, setSelectedActivities] = useState([activity])
   const [selectedGroups, setSelectedGroups] = useState([])
@@ -112,7 +113,7 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate }) {
       if (response.ok) {
         trackSlotCreate(selectedActivities.join(', '), selectedGroups.length > 0)
         alert('Disponibilité ajoutée avec succès !')
-        setFormData({ date: '', heureDebut: '', heureFin: '', description: '', lieu: '' })
+        setFormData({ date: '', heureDebut: '', heureFin: '', description: '', lieu: '', maxParticipants: '' })
         setSelectedActivities([activity])
         setSelectedGroups([])
         setCustomActivityName('')
@@ -240,6 +241,21 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate }) {
               placeholder="Où se déroule l'activité ? (ex: Parc de la Tête d'Or, Lyon)"
               maxLength="100"
             />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="maxParticipants">Nombre maximum de participants</label>
+            <input
+              type="number"
+              id="maxParticipants"
+              name="maxParticipants"
+              value={formData.maxParticipants}
+              onChange={handleInputChange}
+              placeholder="Nombre maximum de personnes (optionnel)"
+              min="1"
+              max="100"
+            />
+            <small className="field-help">Laissez vide pour un nombre illimité</small>
           </div>
 
           <div className="form-group">

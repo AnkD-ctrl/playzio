@@ -59,6 +59,13 @@
   font-family: inherit;
 }
 
+.field-help {
+  color: #888;
+  font-size: 0.75rem;
+  margin-top: 4px;
+  font-style: italic;
+}
+
 .error-message {
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.3);
