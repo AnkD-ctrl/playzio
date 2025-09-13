@@ -331,12 +331,12 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         <p>{slots.length} disponibilité{slots.length !== 1 ? 's' : ''} trouvée{slots.length !== 1 ? 's' : ''}</p>
       </div>
 
-      {slots.length === 0 ? (
-        <div className="no-slots">
-          <p>{activity === 'Tous' ? 'Aucune disponibilité pour le moment.' : `Aucune disponibilité pour ${activity} pour le moment.`}</p>
-          <p>Soyez le premier à en créer une en cliquant sur le bouton + !</p>
-        </div>
-      ) : (
+        {slots.length === 0 ? (
+          <div className="no-slots">
+            <p>{activity === 'Tous' ? 'Aucune disponibilité pour le moment.' : `Aucune disponibilité pour ${activity} pour le moment.`}</p>
+            <p>Crée ta première dispo en cliquant sur le bouton +</p>
+          </div>
+        ) : (
         <div className="slots-list">
           {slots.map(slot => {
             const isParticipant = slot.participants && slot.participants.includes(currentUser.prenom)
