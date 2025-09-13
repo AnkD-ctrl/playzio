@@ -91,16 +91,17 @@
 
 .accept-btn {
   background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
-  color: #ffffff;
-  border-color: rgba(212, 175, 140, 0.5);
-  box-shadow: 0 4px 16px rgba(212, 175, 140, 0.3);
+  color: #e0e0e0;
+  border-color: #6a6a6a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .accept-btn:hover {
   background: linear-gradient(135deg, #e6c199 0%, #d9b37e 25%, #c99a1b 50%, #a366eb 75%, #9a42f2 100%);
-  border-color: rgba(212, 175, 140, 0.8);
+  color: #ffffff;
+  border-color: #7a7a7a;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(212, 175, 140, 0.4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 /* Responsive Design */
