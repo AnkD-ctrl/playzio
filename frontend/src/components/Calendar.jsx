@@ -247,6 +247,21 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
     }
   }
 
+  const handleSlotClick = (slot) => {
+    // Si onJoinSlot est fourni (mode partage), rediriger vers l'inscription
+    if (onJoinSlot) {
+      onJoinSlot()
+    } else {
+      // Mode normal - afficher les détails du slot ou gérer le clic
+      console.log('Slot cliqué:', slot)
+      // Ici on pourrait ouvrir un modal avec les détails du slot
+      // ou utiliser onDateSelect pour afficher les slots de cette date
+      if (onDateSelect) {
+        onDateSelect(slot.date)
+      }
+    }
+  }
+
   const navigateMonth = (direction) => {
     setCurrentDate(prev => {
       const newDate = new Date(prev)
@@ -319,12 +334,27 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
                     {daySlots.length > 0 && (
                       <div className="day-slots">
                         {daySlots.slice(0, 2).map(slot => (
-                          <div key={slot.id} className="slot-indicator">
+                          <div 
+                            key={slot.id} 
+                            className="slot-indicator clickable-slot"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleSlotClick(slot)
+                            }}
+                            title={`${slot.activity || slot.customActivity} - ${slot.heureDebut || slot.time}`}
+                          >
                             {slot.heureDebut || slot.time}
                           </div>
                         ))}
                         {daySlots.length > 2 && (
-                          <div className="more-slots">
+                          <div 
+                            className="more-slots clickable-slot"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleSlotClick(daySlots[2]) // Cliquer sur le premier slot non affiché
+                            }}
+                            title="Voir plus de créneaux"
+                          >
                             +{daySlots.length - 2}
                           </div>
                         )}

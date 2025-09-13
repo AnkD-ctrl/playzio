@@ -333,6 +333,16 @@
   white-space: nowrap;
 }
 
+.clickable-slot {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clickable-slot:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(212, 175, 140, 0.4);
+}
+
 
 
 .more-slots {
