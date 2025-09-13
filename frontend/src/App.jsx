@@ -295,10 +295,10 @@ function App() {
               Dispo des groupes
             </div>
             <div 
-              className={`main-tab ${selectedType === 'toutes-dispo' || selectedType === 'toutes-dispo-calendar' ? 'active' : ''}`}
-              onClick={() => setSelectedType('toutes-dispo')}
+              className={`main-tab ${selectedType === 'publiques' || selectedType === 'publiques-calendar' ? 'active' : ''}`}
+              onClick={() => setSelectedType('publiques')}
             >
-              Toutes
+              Publiques
             </div>
           </div>
 
@@ -461,10 +461,10 @@ function App() {
               />
             )}
             
-            {/* Toutes les dispo - Vue liste */}
-            {selectedType === 'toutes-dispo' && (
+            {/* Publiques - Vue liste */}
+            {selectedType === 'publiques' && (
               <SlotList 
-                key={`toutes-dispo-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
+                key={`publiques-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
                 activity={selectedActivity}
                 currentUser={currentUser}
                 selectedDate={selectedDate}
@@ -473,14 +473,14 @@ function App() {
                 onSearchFilterChange={handleSearchFilterChange}
                 lieuFilter={lieuFilter}
                 organizerFilter={organizerFilter}
-                filterType="toutes-dispo"
+                filterType="publiques"
               />
             )}
             
-            {/* Toutes les dispo - Vue calendrier */}
-            {selectedType === 'toutes-dispo-calendar' && (
+            {/* Publiques - Vue calendrier */}
+            {selectedType === 'publiques-calendar' && (
               <Calendar 
-                key={`toutes-dispo-calendar-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
+                key={`publiques-calendar-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
                 activity={selectedActivity}
                 currentUser={currentUser}
                 onDateSelect={handleDateSelect}
@@ -488,7 +488,7 @@ function App() {
                 onSearchFilterChange={handleSearchFilterChange}
                 lieuFilter={lieuFilter}
                 organizerFilter={organizerFilter}
-                filterType="toutes-dispo"
+                filterType="publiques"
                 onAddSlot={(date) => {
                   setSelectedDate(date)
                   setSelectedType('add')

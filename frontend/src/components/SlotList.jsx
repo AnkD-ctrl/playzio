@@ -5,7 +5,7 @@ import { trackSlotJoin, trackSlotLeave } from '../utils/analytics'
 import SlotDiscussion from './SlotDiscussion'
 import ActivitySearchModal from './ActivitySearchModal'
 
-function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, filterType = 'toutes-dispo', onAddSlot, onJoinSlot, viewToggleContainer }) {
+function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, filterType = 'publiques', onAddSlot, onJoinSlot, viewToggleContainer }) {
   const [slots, setSlots] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -121,7 +121,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           filteredData = filteredData.filter(slot => 
             slot.visibleToGroups && slot.visibleToGroups.some(groupName => userGroupNames.includes(groupName))
           )
-        } else if (filterType === 'toutes-dispo') {
+        } else if (filterType === 'publiques') {
           // Afficher seulement les créneaux visibles à tous (visible_to_all = true)
           filteredData = filteredData.filter(slot => slot.visibleToAll === true)
         }

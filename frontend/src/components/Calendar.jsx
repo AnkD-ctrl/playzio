@@ -4,7 +4,7 @@ import './SlotList.css'
 import { API_BASE_URL } from '../config'
 import ActivitySearchModal from './ActivitySearchModal'
 
-function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, filterType = 'toutes-dispo', onAddSlot, onJoinSlot, selectedDate, onClearDate }) {
+function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, filterType = 'publiques', onAddSlot, onJoinSlot, selectedDate, onClearDate }) {
   const [slots, setSlots] = useState([])
   const [currentDate, setCurrentDate] = useState(new Date())
   const [loading, setLoading] = useState(true)
@@ -156,7 +156,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
           filteredData = filteredData.filter(slot => 
             slot.visibleToGroups && slot.visibleToGroups.some(groupName => userGroupNames.includes(groupName))
           )
-        } else if (filterType === 'toutes-dispo') {
+        } else if (filterType === 'publiques') {
           // Afficher seulement les créneaux visibles à tous (visible_to_all = true)
           filteredData = filteredData.filter(slot => slot.visibleToAll === true)
         }
