@@ -272,16 +272,14 @@ function App() {
               </svg>
             </button>
             
-            {/* Bouton + pour ajouter une dispo dans l'onglet "Mes dispo" */}
-            {selectedType === 'mes-dispo' && (
-              <button 
-                className="view-toggle-btn add-btn"
-                onClick={() => setSelectedType('add')}
-                title="Ajouter une disponibilité"
-              >
-                +
-              </button>
-            )}
+            {/* Bouton + pour ajouter une dispo */}
+            <button 
+              className="view-toggle-btn add-btn"
+              onClick={() => setSelectedType('add')}
+              title="Ajouter une disponibilité"
+            >
+              +
+            </button>
             
             <button 
               className="view-toggle-btn"
