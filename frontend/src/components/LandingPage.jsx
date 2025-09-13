@@ -246,6 +246,63 @@ const LandingPage = ({ onLogin, onRegister }) => {
         </div>
       </section>
 
+      {/* Comparison Section */}
+      <section className="comparison-section">
+        <div className="comparison-container">
+          <h2>Playzio vs les autres solutions</h2>
+          <div className="comparison-table">
+            <div className="comparison-header">
+              <div className="feature-column"></div>
+              <div className="platform-column playzio">Playzio</div>
+              <div className="platform-column">WhatsApp</div>
+              <div className="platform-column">Agenda partagé</div>
+            </div>
+            
+            <div className="comparison-row">
+              <div className="feature-cell">Partager une dispo sans envoyer de message</div>
+              <div className="platform-cell success">✓</div>
+              <div className="platform-cell error">✗</div>
+              <div className="platform-cell error">✗</div>
+            </div>
+            
+            <div className="comparison-row">
+              <div className="feature-cell">Voir facilement les dispos de mes amis</div>
+              <div className="platform-cell success">✓</div>
+              <div className="platform-cell error">✗</div>
+              <div className="platform-cell error">✗</div>
+            </div>
+            
+            <div className="comparison-row highlight">
+              <div className="feature-cell">Rejoindre une sortie en un clic</div>
+              <div className="platform-cell success">✓</div>
+              <div className="platform-cell error">✗</div>
+              <div className="platform-cell error">✗</div>
+            </div>
+            
+            <div className="comparison-row">
+              <div className="feature-cell">Pas besoin de créer un groupe</div>
+              <div className="platform-cell success">✓</div>
+              <div className="platform-cell error">✗</div>
+              <div className="platform-cell error">✗</div>
+            </div>
+            
+            <div className="comparison-row">
+              <div className="feature-cell">Pas d'engagement formel</div>
+              <div className="platform-cell success">✓</div>
+              <div className="platform-cell warning">⚠</div>
+              <div className="platform-cell error">✗</div>
+            </div>
+            
+            <div className="comparison-row">
+              <div className="feature-cell">Gratuit et sans limite</div>
+              <div className="platform-cell success">✓</div>
+              <div className="platform-cell success">✓</div>
+              <div className="platform-cell error">✗</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="final-cta-section">
         <div className="cta-content">
