@@ -13,6 +13,9 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
   const [userGroups, setUserGroups] = useState([])
   const [searchInput, setSearchInput] = useState('')
   const [searchTimeout, setSearchTimeout] = useState(null)
+  const [showDayPopup, setShowDayPopup] = useState(false)
+  const [selectedDaySlots, setSelectedDaySlots] = useState([])
+  const [selectedDay, setSelectedDay] = useState(null)
   
   // Nouveaux filtres
   const [dateFilter, setDateFilter] = useState('')
@@ -252,10 +255,11 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
     if (onJoinSlot) {
       onJoinSlot()
     } else {
-      // Mode normal - utiliser onDateSelect pour filtrer par date
-      if (onDateSelect) {
-        onDateSelect(slot.date)
-      }
+      // Mode normal - ouvrir popup avec les disponibilités du jour
+      const daySlots = slots.filter(s => s.date === slot.date)
+      setSelectedDaySlots(daySlots)
+      setSelectedDay(slot.date)
+      setShowDayPopup(true)
     }
   }
 
@@ -379,6 +383,55 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
           onClose={() => setShowSearchModal(false)}
           onSelectActivity={handleActivitySelect}
         />
+      )}
+
+      {/* Popup des disponibilités du jour */}
+      {showDayPopup && (
+        <div className="modal-overlay" onClick={() => setShowDayPopup(false)}>
+          <div className="day-popup" onClick={(e) => e.stopPropagation()}>
+            <div className="popup-header">
+              <h3>Disponibilités du {new Date(selectedDay).toLocaleDateString('fr-FR')}</h3>
+              <button 
+                className="popup-close"
+                onClick={() => setShowDayPopup(false)}
+                title="Fermer"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="popup-content">
+              {selectedDaySlots.length > 0 ? (
+                <div className="day-slots-list">
+                  {selectedDaySlots.map(slot => (
+                    <div key={slot.id} className="day-slot-item">
+                      <div className="slot-time">
+                        {slot.heureDebut || slot.time} - {slot.heureFin || slot.endTime}
+                      </div>
+                      <div className="slot-activity">
+                        {slot.activity || slot.customActivity}
+                      </div>
+                      {slot.lieu && (
+                        <div className="slot-location">
+                          📍 {slot.lieu}
+                        </div>
+                      )}
+                      <div className="slot-organizer">
+                        Organisé par: {slot.createdBy || slot.creator}
+                      </div>
+                      <div className="slot-participants">
+                        {slot.participants ? slot.participants.length : 0} participant(s)
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="no-slots-message">
+                  Aucune disponibilité pour ce jour
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
