@@ -1201,7 +1201,10 @@
 
 .comparison-container h2 {
   text-align: center;
-  color: #ffffff;
+  background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 2rem;
@@ -1224,7 +1227,7 @@
 .comparison-th {
   padding: 20px 16px;
   border-bottom: 2px solid #4a4a4a;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 1rem;
 }
 
@@ -1249,6 +1252,7 @@
   padding: 20px 16px;
   border-bottom: 1px solid #4a4a4a;
   font-size: 1rem;
+  font-weight: 700;
   background: #3a3a3a;
 }
 
