@@ -163,7 +163,6 @@ const LandingPage = ({ onLogin, onRegister }) => {
                 </svg>
               </div>
               <h3>Rejoins en un clic</h3>
-              <p>Une notif et c'est parti.</p>
             </div>
           </div>
         </div>
