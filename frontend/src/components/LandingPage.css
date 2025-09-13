@@ -1263,6 +1263,7 @@
   align-items: center;
   justify-content: center;
   font-weight: 700;
+  color: #ffffff;
 }
 
 .success-cell::before {
@@ -1278,6 +1279,7 @@
   font-size: 14px;
   font-weight: bold;
   margin-right: 8px;
+  flex-shrink: 0;
 }
 
 .error-cell {
@@ -1285,6 +1287,7 @@
   align-items: center;
   justify-content: center;
   font-weight: 700;
+  color: #ffffff;
 }
 
 .error-cell::before {
@@ -1300,6 +1303,7 @@
   font-size: 14px;
   font-weight: bold;
   margin-right: 8px;
+  flex-shrink: 0;
 }
 
 .warning-cell {
@@ -1307,6 +1311,7 @@
   align-items: center;
   justify-content: center;
   font-weight: 700;
+  color: #ffffff;
 }
 
 .warning-cell::before {
@@ -1322,6 +1327,7 @@
   font-size: 12px;
   font-weight: bold;
   margin-right: 8px;
+  flex-shrink: 0;
 }
 
 .comparison-cta {
