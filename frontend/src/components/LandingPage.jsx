@@ -44,7 +44,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
         <div className="hero-content">
           <div className="hero-text">
             <h1 className="hero-title">
-              <span className="highlight">Partage tes dispos et on voit si ça match !</span>
+              <span className="highlight">Le calendrier inversé</span>
             </h1>
             <p className="hero-subtitle">
               Le calendrier inversé : indique tes dispo, découvre qui est libre, créé un moment ensemble en un clic.
