@@ -1240,23 +1240,57 @@
   }
   
   .personnas-carousel {
-    gap: 0.5rem;
+    gap: 0.3rem;
     margin-top: 2rem;
+    padding: 0 1rem;
   }
   
   .carousel-btn {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.4);
   }
   
   .carousel-btn svg {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
   }
   
   .personnas-container {
-    margin: 0 0.5rem;
+    margin: 0 0.3rem;
+    border-radius: 12px;
+  }
+  
+  .personna-card {
+    padding: 1.5rem 1rem;
+    margin: 0.5rem;
+  }
+  
+  .personna-avatar {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .personna-info h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .personna-title {
+    font-size: 0.9rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .personna-description {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+  }
+  
+  .personna-benefit {
+    font-size: 0.8rem;
   }
   
   .arrow {
@@ -1438,21 +1472,60 @@
   }
   
   .personnas-carousel {
-    gap: 0.5rem;
+    gap: 0.2rem;
+    padding: 0 0.5rem;
   }
   
   .carousel-btn {
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.25);
+    border: 2px solid rgba(255, 255, 255, 0.5);
   }
   
   .carousel-btn svg {
-    width: 18px;
-    height: 18px;
+    width: 14px;
+    height: 14px;
+  }
+  
+  .personnas-container {
+    margin: 0 0.2rem;
+  }
+  
+  .personna-card {
+    padding: 1.2rem 0.8rem;
+    margin: 0.3rem;
+    border-radius: 12px;
+  }
+  
+  .personna-avatar {
+    font-size: 1.8rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .personna-info h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.4rem;
+  }
+  
+  .personna-title {
+    font-size: 0.85rem;
+    margin-bottom: 0.6rem;
+  }
+  
+  .personna-description {
+    font-size: 0.8rem;
+    line-height: 1.3;
+    margin-bottom: 0.8rem;
+  }
+  
+  .personna-benefit {
+    font-size: 0.75rem;
   }
   
   .carousel-dots {
     gap: 0.3rem;
+    margin-top: 1.5rem;
   }
   
   .carousel-dot {
