@@ -3,7 +3,7 @@ import './Calendar.css'
 import { API_BASE_URL } from '../config'
 import ActivitySearchModal from './ActivitySearchModal'
 
-function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, filterType = 'toutes-dispo', onAddSlot, onJoinSlot, selectedDate }) {
+function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, filterType = 'toutes-dispo', onAddSlot, onJoinSlot, selectedDate, onClearDate }) {
   const [slots, setSlots] = useState([])
   const [currentDate, setCurrentDate] = useState(new Date())
   const [loading, setLoading] = useState(true)
@@ -252,10 +252,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
     if (onJoinSlot) {
       onJoinSlot()
     } else {
-      // Mode normal - afficher les détails du slot ou gérer le clic
-      console.log('Slot cliqué:', slot)
-      // Ici on pourrait ouvrir un modal avec les détails du slot
-      // ou utiliser onDateSelect pour afficher les slots de cette date
+      // Mode normal - utiliser onDateSelect pour filtrer par date
       if (onDateSelect) {
         onDateSelect(slot.date)
       }

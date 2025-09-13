@@ -25,6 +25,10 @@ const SharePage = ({ username }) => {
     window.location.href = `${window.location.origin}/#login`
   }
 
+  const handleClearDate = () => {
+    setSelectedDate('')
+  }
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -135,6 +139,35 @@ const SharePage = ({ username }) => {
         </button>
       </div>
 
+      {/* Indicateur de filtre date actif */}
+      {selectedDate && (
+        <div style={{
+          textAlign: 'center',
+          padding: '0.5rem 1rem',
+          backgroundColor: 'rgba(212, 175, 140, 0.1)',
+          border: '1px solid rgba(212, 175, 140, 0.3)',
+          borderRadius: '6px',
+          margin: '0 1rem 1rem 1rem',
+          color: '#d4af8c'
+        }}>
+          <span>📅 Filtre par date : {new Date(selectedDate).toLocaleDateString('fr-FR')}</span>
+          <button 
+            onClick={handleClearDate}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#d4af8c',
+              cursor: 'pointer',
+              marginLeft: '0.5rem',
+              fontSize: '1rem'
+            }}
+            title="Effacer le filtre date"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       {/* Afficher SlotList ou Calendar selon currentView */}
       {currentView === 'list' ? (
         <SlotList
@@ -148,6 +181,7 @@ const SharePage = ({ username }) => {
           userGroups={[]}
           onJoinSlot={handleJoinSlot}
           selectedDate={selectedDate}
+          onClearDate={handleClearDate}
         />
       ) : (
         <Calendar
@@ -161,6 +195,7 @@ const SharePage = ({ username }) => {
           userGroups={[]}
           onJoinSlot={handleJoinSlot}
           selectedDate={selectedDate}
+          onClearDate={handleClearDate}
         />
       )}
 
