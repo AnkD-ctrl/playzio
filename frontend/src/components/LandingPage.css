@@ -1258,45 +1258,19 @@
   background: #3a3a3a;
 }
 
-.status-cell {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.status-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  font-size: 14px;
-  font-weight: bold;
-  flex-shrink: 0;
-}
-
-.status-icon.success {
-  background: #f59e0b;
-  color: #ffffff;
-}
-
-.status-icon.error {
-  background: #6b7280;
-  color: #ffffff;
-}
-
-.status-icon.warning {
-  background: #f59e0b;
-  color: #ffffff;
-  font-size: 12px;
-}
-
-.status-text {
-  color: #ffffff;
+.success-cell {
+  color: #4ade80;
   font-weight: 700;
-  font-size: 1rem;
+}
+
+.error-cell {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+.warning-cell {
+  color: #f59e0b;
+  font-weight: 700;
 }
 
 .comparison-cta {

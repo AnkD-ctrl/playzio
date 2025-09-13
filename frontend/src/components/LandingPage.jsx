@@ -263,129 +263,39 @@ const LandingPage = ({ onLogin, onRegister }) => {
               <tbody>
                 <tr>
                   <td className="comparison-td feature-cell">Partager une dispo sans message</td>
-                  <td className="comparison-td">
-                    <div className="status-cell success">
-                      <span className="status-icon success">✓</span>
-                      <span className="status-text">Oui</span>
-                    </div>
-                  </td>
-                  <td className="comparison-td">
-                    <div className="status-cell error">
-                      <span className="status-icon error">✕</span>
-                      <span className="status-text">Non</span>
-                    </div>
-                  </td>
-                  <td className="comparison-td">
-                    <div className="status-cell error">
-                      <span className="status-icon error">✕</span>
-                      <span className="status-text">Non</span>
-                    </div>
-                  </td>
+                  <td className="comparison-td success-cell">✅ Oui</td>
+                  <td className="comparison-td error-cell">❌ Non</td>
+                  <td className="comparison-td error-cell">❌ Non</td>
                 </tr>
                 <tr>
                   <td className="comparison-td feature-cell">Voir les dispos de mes amis</td>
-                  <td className="comparison-td">
-                    <div className="status-cell success">
-                      <span className="status-icon success">✓</span>
-                      <span className="status-text">Oui</span>
-                    </div>
-                  </td>
-                  <td className="comparison-td">
-                    <div className="status-cell error">
-                      <span className="status-icon error">✕</span>
-                      <span className="status-text">Non</span>
-                    </div>
-                  </td>
-                  <td className="comparison-td">
-                    <div className="status-cell error">
-                      <span className="status-icon error">✕</span>
-                      <span className="status-text">Non</span>
-                    </div>
-                  </td>
+                  <td className="comparison-td success-cell">✅ Oui</td>
+                  <td className="comparison-td error-cell">❌ Non</td>
+                  <td className="comparison-td error-cell">❌ Non</td>
                 </tr>
                 <tr>
                   <td className="comparison-td feature-cell">Rejoindre une sortie en un clic</td>
-                  <td className="comparison-td">
-                    <div className="status-cell success">
-                      <span className="status-icon success">✓</span>
-                      <span className="status-text">Oui</span>
-                    </div>
-                  </td>
-                  <td className="comparison-td">
-                    <div className="status-cell error">
-                      <span className="status-icon error">✕</span>
-                      <span className="status-text">Non</span>
-                    </div>
-                  </td>
-                  <td className="comparison-td">
-                    <div className="status-cell error">
-                      <span className="status-icon error">✕</span>
-                      <span className="status-text">Non</span>
-                    </div>
-                  </td>
+                  <td className="comparison-td success-cell">✅ Oui</td>
+                  <td className="comparison-td error-cell">❌ Non</td>
+                  <td className="comparison-td error-cell">❌ Non</td>
                 </tr>
                 <tr>
                   <td className="comparison-td feature-cell">Pas besoin de groupe dédié</td>
-                  <td className="comparison-td">
-                    <div className="status-cell success">
-                      <span className="status-icon success">✓</span>
-                      <span className="status-text">Oui</span>
-                    </div>
-                  </td>
-                  <td className="comparison-td">
-                    <div className="status-cell error">
-                      <span className="status-icon error">✕</span>
-                      <span className="status-text">Non</span>
-                    </div>
-                  </td>
-                  <td className="comparison-td">
-                    <div className="status-cell error">
-                      <span className="status-icon error">✕</span>
-                      <span className="status-text">Non</span>
-                    </div>
-                  </td>
+                  <td className="comparison-td success-cell">✅ Oui</td>
+                  <td className="comparison-td error-cell">❌ Non</td>
+                  <td className="comparison-td error-cell">❌ Non</td>
                 </tr>
                 <tr>
                   <td className="comparison-td feature-cell">Pas d'engagement figé</td>
-                  <td className="comparison-td">
-                    <div className="status-cell success">
-                      <span className="status-icon success">✓</span>
-                      <span className="status-text">Oui</span>
-                    </div>
-                  </td>
-                  <td className="comparison-td">
-                    <div className="status-cell warning">
-                      <span className="status-icon warning">⚠</span>
-                      <span className="status-text">Partiel</span>
-                    </div>
-                  </td>
-                  <td className="comparison-td">
-                    <div className="status-cell error">
-                      <span className="status-icon error">✕</span>
-                      <span className="status-text">Non</span>
-                    </div>
-                  </td>
+                  <td className="comparison-td success-cell">✅ Oui</td>
+                  <td className="comparison-td warning-cell">⚠️ Partiel</td>
+                  <td className="comparison-td error-cell">❌ Non</td>
                 </tr>
                 <tr>
                   <td className="comparison-td feature-cell">Accessible web + mobile facilement</td>
-                  <td className="comparison-td">
-                    <div className="status-cell success">
-                      <span className="status-icon success">✓</span>
-                      <span className="status-text">Oui</span>
-                    </div>
-                  </td>
-                  <td className="comparison-td">
-                    <div className="status-cell warning">
-                      <span className="status-icon warning">⚠</span>
-                      <span className="status-text">Partiel</span>
-                    </div>
-                  </td>
-                  <td className="comparison-td">
-                    <div className="status-cell warning">
-                      <span className="status-icon warning">⚠</span>
-                      <span className="status-text">Partiel</span>
-                    </div>
-                  </td>
+                  <td className="comparison-td success-cell">✅ Oui</td>
+                  <td className="comparison-td warning-cell">⚠️ Partiel</td>
+                  <td className="comparison-td warning-cell">⚠️ Partiel</td>
                 </tr>
               </tbody>
             </table>
