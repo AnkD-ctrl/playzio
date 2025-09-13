@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="beigeVioletGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d4af8c" />
+      <stop offset="25%" stop-color="#c9a96e" />
+      <stop offset="50%" stop-color="#b8860b" />
+      <stop offset="75%" stop-color="#9370db" />
+      <stop offset="100%" stop-color="#8a2be2" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#beigeVioletGradient)"/>
+  
+  <!-- Calendar icon - large and centered -->
+  <rect x="450" y="150" width="300" height="250" rx="20" ry="20" fill="white" stroke="white" stroke-width="8"/>
+  <line x1="600" y1="80" x2="600" y2="150" stroke="white" stroke-width="20" stroke-linecap="round"/>
+  <line x1="500" y1="80" x2="500" y2="150" stroke="white" stroke-width="20" stroke-linecap="round"/>
+  <line x1="450" y1="220" x2="750" y2="220" stroke="white" stroke-width="20" stroke-linecap="round"/>
+  
+  <!-- Calendar dots -->
+  <circle cx="500" cy="280" r="15" fill="url(#beigeVioletGradient)"/>
+  <circle cx="550" cy="280" r="15" fill="url(#beigeVioletGradient)"/>
+  <circle cx="600" cy="280" r="15" fill="url(#beigeVioletGradient)"/>
+  <circle cx="650" cy="280" r="15" fill="url(#beigeVioletGradient)"/>
+  <circle cx="700" cy="280" r="15" fill="url(#beigeVioletGradient)"/>
+  <circle cx="500" cy="330" r="15" fill="url(#beigeVioletGradient)"/>
+  <circle cx="550" cy="330" r="15" fill="url(#beigeVioletGradient)"/>
+  <circle cx="600" cy="330" r="15" fill="url(#beigeVioletGradient)"/>
+  <circle cx="650" cy="330" r="15" fill="url(#beigeVioletGradient)"/>
+  <circle cx="700" cy="330" r="15" fill="url(#beigeVioletGradient)"/>
+  
+  <!-- Text -->
+  <text x="600" y="500" font-family="Arial, sans-serif" font-size="48" font-weight="bold" text-anchor="middle" fill="white">Playzio</text>
+  <text x="600" y="540" font-family="Arial, sans-serif" font-size="24" text-anchor="middle" fill="white" opacity="0.9">partage tes dispo</text>
+</svg>
