@@ -140,6 +140,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
       
       if (response.ok) {
         const data = await response.json()
+        console.log('📅 Calendar fetchSlots - Données reçues:', data.length, 'slots')
         
         // Filtrer selon le type d'onglet
         let filteredData = data
@@ -186,6 +187,10 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
         if (selectedDate) {
           filteredData = filteredData.filter(slot => slot.date === selectedDate)
         }
+        
+        console.log('📅 Calendar fetchSlots - Après filtrage:', filteredData.length, 'slots')
+        console.log('📅 Calendar fetchSlots - filterType:', filterType)
+        console.log('📅 Calendar fetchSlots - currentUser:', currentUser.prenom)
         
         setSlots(filteredData)
       } else {
