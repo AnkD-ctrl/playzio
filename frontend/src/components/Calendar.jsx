@@ -140,8 +140,6 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
       
       if (response.ok) {
         const data = await response.json()
-        console.log('🔴 CALENDAR DEBUG - Données reçues:', data.length, 'slots')
-        console.log('🔴 CALENDAR DEBUG - URL appelée:', url)
         
         // Filtrer selon le type d'onglet
         let filteredData = data
@@ -160,9 +158,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
           )
         } else if (filterType === 'toutes-dispo') {
           // Afficher seulement les créneaux visibles à tous (visible_to_all = true)
-          console.log('🔴 CALENDAR DEBUG - Filtrage "Toutes" - Slots avant filtrage:', filteredData.map(s => ({id: s.id, activity: s.customActivity, visibleToAll: s.visibleToAll})))
           filteredData = filteredData.filter(slot => slot.visibleToAll === true)
-          console.log('🔴 CALENDAR DEBUG - Filtrage "Toutes" - Slots après filtrage:', filteredData.length)
         }
         
         // Filtrer par activité personnalisée si un filtre de recherche est défini
@@ -191,9 +187,6 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
           filteredData = filteredData.filter(slot => slot.date === selectedDate)
         }
         
-        console.log('🔴 CALENDAR DEBUG - Après filtrage:', filteredData.length, 'slots')
-        console.log('🔴 CALENDAR DEBUG - filterType:', filterType)
-        console.log('🔴 CALENDAR DEBUG - currentUser:', currentUser.prenom)
         
         setSlots(filteredData)
       } else {
