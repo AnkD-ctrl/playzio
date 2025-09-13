@@ -246,56 +246,6 @@ const LandingPage = ({ onLogin, onRegister }) => {
         </div>
       </section>
 
-      {/* Comparison Section */}
-      <section className="comparison-section">
-        <div className="comparison-container">
-          <h2>Pourquoi Playzio plutôt que les autres solutions ?</h2>
-          <div className="comparison-table">
-            <div className="comparison-header">
-              <div className="feature-column">Fonctionnalité</div>
-              <div className="platform-column">Playzio</div>
-              <div className="platform-column">WhatsApp</div>
-              <div className="platform-column">Agenda partagé</div>
-            </div>
-            
-            <div className="comparison-row">
-              <div className="feature-cell">Partager une dispo sans envoyer de message</div>
-              <div className="platform-cell success" data-platform="Playzio">✅ Oui</div>
-              <div className="platform-cell error" data-platform="WhatsApp">❌ Non</div>
-              <div className="platform-cell error" data-platform="Agenda partagé">❌ Non</div>
-            </div>
-            
-            <div className="comparison-row">
-              <div className="feature-cell">Voir facilement les dispos de mes amis</div>
-              <div className="platform-cell success" data-platform="Playzio">✅ Oui</div>
-              <div className="platform-cell error" data-platform="WhatsApp">❌ Non</div>
-              <div className="platform-cell error" data-platform="Agenda partagé">❌ Non</div>
-            </div>
-            
-            <div className="comparison-row">
-              <div className="feature-cell">Rejoindre une sortie en un clic (notif envoyée)</div>
-              <div className="platform-cell success" data-platform="Playzio">✅ Oui</div>
-              <div className="platform-cell error" data-platform="WhatsApp">❌ Non (message manuel)</div>
-              <div className="platform-cell error" data-platform="Agenda partagé">❌ Non (nécessite invitation)</div>
-            </div>
-            
-            <div className="comparison-row">
-              <div className="feature-cell">Pas besoin de créer un groupe dédié</div>
-              <div className="platform-cell success" data-platform="Playzio">✅ Oui</div>
-              <div className="platform-cell error" data-platform="WhatsApp">❌ Non (groupe obligatoire)</div>
-              <div className="platform-cell error" data-platform="Agenda partagé">❌ Non</div>
-            </div>
-            
-            <div className="comparison-row">
-              <div className="feature-cell">Pas d'engagement formel ou d'événement figé</div>
-              <div className="platform-cell success" data-platform="Playzio">✅ Oui</div>
-              <div className="platform-cell warning" data-platform="WhatsApp">⚠️ Partiel</div>
-              <div className="platform-cell error" data-platform="Agenda partagé">❌ Non</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* CTA Section */}
       <section className="final-cta-section">
         <div className="cta-content">
