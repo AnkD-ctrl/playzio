@@ -5,7 +5,7 @@ import { trackSlotJoin, trackSlotLeave } from '../utils/analytics'
 import SlotDiscussion from './SlotDiscussion'
 import ActivitySearchModal from './ActivitySearchModal'
 
-function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, filterType = 'toutes-dispo', onAddSlot, onJoinSlot }) {
+function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, filterType = 'toutes-dispo', onAddSlot, onJoinSlot, viewToggleContainer }) {
   const [slots, setSlots] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -257,6 +257,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
 
   return (
     <div className="slot-list">
+      {viewToggleContainer}
       <div className="slot-list-header">
         
         {/* Modales de filtres */}
