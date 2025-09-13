@@ -10,6 +10,7 @@ const SharePage = ({ username }) => {
   const [searchFilter, setSearchFilter] = useState('')
   const [lieuFilter, setLieuFilter] = useState('')
   const [organizerFilter, setOrganizerFilter] = useState('')
+  const [selectedDate, setSelectedDate] = useState('')
   const [filterVersion, setFilterVersion] = useState(0)
   const [currentView, setCurrentView] = useState('list') // 'list' ou 'calendar'
   
@@ -146,6 +147,7 @@ const SharePage = ({ username }) => {
           filterVersion={filterVersion}
           userGroups={[]}
           onJoinSlot={handleJoinSlot}
+          selectedDate={selectedDate}
         />
       ) : (
         <Calendar
@@ -158,6 +160,7 @@ const SharePage = ({ username }) => {
           filterVersion={filterVersion}
           userGroups={[]}
           onJoinSlot={handleJoinSlot}
+          selectedDate={selectedDate}
         />
       )}
 
@@ -174,6 +177,14 @@ const SharePage = ({ username }) => {
                   placeholder="Rechercher une activité..."
                   value={searchFilter}
                   onChange={(e) => setSearchFilter(e.target.value)}
+                />
+              </div>
+              <div className="filter-group">
+                <label>Date</label>
+                <input 
+                  type="date" 
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
                 />
               </div>
               <div className="filter-group">
@@ -200,6 +211,7 @@ const SharePage = ({ username }) => {
                 className="modal-btn btn-clear"
                 onClick={() => {
                   setSearchFilter('')
+                  setSelectedDate('')
                   setLieuFilter('')
                   setOrganizerFilter('')
                   setFilterVersion(prev => prev + 1)

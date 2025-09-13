@@ -3,7 +3,7 @@ import './Calendar.css'
 import { API_BASE_URL } from '../config'
 import ActivitySearchModal from './ActivitySearchModal'
 
-function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, filterType = 'toutes-dispo', onAddSlot, onJoinSlot }) {
+function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, filterType = 'toutes-dispo', onAddSlot, onJoinSlot, selectedDate }) {
   const [slots, setSlots] = useState([])
   const [currentDate, setCurrentDate] = useState(new Date())
   const [loading, setLoading] = useState(true)
@@ -94,7 +94,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
 
   useEffect(() => {
     fetchSlots()
-  }, [activity, searchFilter, lieuFilter, organizerFilter, filterType, userGroups])
+  }, [activity, searchFilter, lieuFilter, organizerFilter, filterType, userGroups, selectedDate])
 
   useEffect(() => {
     fetchUserGroups()
@@ -175,6 +175,10 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
           )
         }
         
+        // Filtrer par date si une date est sélectionnée
+        if (selectedDate) {
+          filteredData = filteredData.filter(slot => slot.date === selectedDate)
+        }
         
         setSlots(filteredData)
       } else {
