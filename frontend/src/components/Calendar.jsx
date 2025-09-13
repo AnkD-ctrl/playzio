@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import './Calendar.css'
+import './SlotList.css'
 import { API_BASE_URL } from '../config'
 import ActivitySearchModal from './ActivitySearchModal'
 
@@ -403,23 +404,47 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
               {selectedDaySlots.length > 0 ? (
                 <div className="day-slots-list">
                   {selectedDaySlots.map(slot => (
-                    <div key={slot.id} className="day-slot-item">
-                      <div className="slot-time">
-                        {slot.heureDebut || slot.time} - {slot.heureFin || slot.endTime}
-                      </div>
-                      <div className="slot-activity">
-                        {slot.activity || slot.customActivity}
-                      </div>
-                      {slot.lieu && (
-                        <div className="slot-location">
-                          📍 {slot.lieu}
+                    <div key={slot.id} className="slot-item">
+                      <div className="slot-item-header">
+                        <div className="slot-item-main">
+                          <div className="slot-item-date">
+                            <div className="date">{new Date(slot.date).toLocaleDateString('fr-FR')}</div>
+                            <div className="time">{slot.heureDebut || slot.time}</div>
+                          </div>
+                          <div className="slot-item-activity">
+                            {slot.activity || slot.customActivity}
+                          </div>
+                          <div className="slot-item-participants">
+                            {slot.participants ? slot.participants.length : 0}
+                          </div>
                         </div>
-                      )}
-                      <div className="slot-organizer">
-                        Organisé par: {slot.createdBy || slot.creator}
+                        <div className="slot-item-actions">
+                          <button className="quick-action-btn join-btn">
+                            Rejoindre
+                          </button>
+                        </div>
                       </div>
-                      <div className="slot-participants">
-                        {slot.participants ? slot.participants.length : 0} participant(s)
+                      <div className="slot-item-details">
+                        <div className="slot-activity-detail">
+                          <div className="detail-row">
+                            <span className="detail-label">Heure:</span>
+                            <span className="detail-value">{slot.heureDebut || slot.time} - {slot.heureFin || slot.endTime}</span>
+                          </div>
+                          {slot.lieu && (
+                            <div className="detail-row">
+                              <span className="detail-label">Lieu:</span>
+                              <span className="detail-value">{slot.lieu}</span>
+                            </div>
+                          )}
+                          <div className="detail-row">
+                            <span className="detail-label">Organisateur:</span>
+                            <span className="detail-value">{slot.createdBy || slot.creator}</span>
+                          </div>
+                          <div className="detail-row">
+                            <span className="detail-label">Participants:</span>
+                            <span className="detail-value">{slot.participants ? slot.participants.length : 0}</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   ))}
