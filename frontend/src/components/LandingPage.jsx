@@ -187,7 +187,6 @@ const LandingPage = ({ onLogin, onRegister }) => {
                 </svg>
               </div>
               <h3>Pose ta dispo</h3>
-              <p>Un clic, aucun engagement.</p>
             </div>
             <div className="feature-card">
               <div className="feature-icon">
@@ -199,7 +198,6 @@ const LandingPage = ({ onLogin, onRegister }) => {
                 </svg>
               </div>
               <h3>Vois celles des autres</h3>
-              <p>Repère les opportunités.</p>
             </div>
             <div className="feature-card">
               <div className="feature-icon">
