@@ -408,42 +408,61 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
                       <div className="slot-item-header">
                         <div className="slot-item-main">
                           <div className="slot-item-date">
-                            <div className="date">{new Date(slot.date).toLocaleDateString('fr-FR')}</div>
-                            <div className="time">{slot.heureDebut || slot.time}</div>
+                            <span className="date">{slot.date.split('-').reverse().join('/')}</span>
+                            <span className="time">{slot.heureDebut || slot.time} - {slot.heureFin || slot.endTime}</span>
                           </div>
                           <div className="slot-item-activity">
-                            {slot.activity || slot.customActivity}
+                            {slot.customActivity 
+                              ? (slot.customActivity.length > 6 ? slot.customActivity.substring(0, 6) + '...' : slot.customActivity)
+                              : (Array.isArray(slot.type) ? slot.type.join(', ') : slot.type)
+                            }
                           </div>
                           <div className="slot-item-participants">
-                            {slot.participants ? slot.participants.length : 0}
+                            👥 {slot.participants ? slot.participants.length : 0}
                           </div>
                         </div>
                         <div className="slot-item-actions">
-                          <button className="quick-action-btn join-btn">
+                          <button 
+                            className="quick-action-btn join-btn"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              if (onJoinSlot) {
+                                onJoinSlot()
+                              }
+                            }}
+                          >
                             Rejoindre
                           </button>
                         </div>
                       </div>
                       <div className="slot-item-details">
                         <div className="slot-activity-detail">
-                          <div className="detail-row">
-                            <span className="detail-label">Heure:</span>
-                            <span className="detail-value">{slot.heureDebut || slot.time} - {slot.heureFin || slot.endTime}</span>
+                          <strong>Activité:</strong> {slot.customActivity || (Array.isArray(slot.type) ? slot.type.join(', ') : slot.type)}
+                        </div>
+
+                        <div className="slot-description">
+                          <strong>Description:</strong> {slot.description || 'Aucune description'}
+                        </div>
+
+                        {slot.lieu && (
+                          <div className="slot-lieu">
+                            <strong>Lieu:</strong> {slot.lieu}
                           </div>
-                          {slot.lieu && (
-                            <div className="detail-row">
-                              <span className="detail-label">Lieu:</span>
-                              <span className="detail-value">{slot.lieu}</span>
+                        )}
+
+                        <div className="slot-participants-detail">
+                          <strong>Participants ({slot.participants ? slot.participants.length : 0}):</strong>
+                          {slot.participants && slot.participants.length > 0 ? (
+                            <div className="participants-list">
+                              {slot.participants.join(', ')}
                             </div>
+                          ) : (
+                            <div className="participants-list">Aucun participant</div>
                           )}
-                          <div className="detail-row">
-                            <span className="detail-label">Organisateur:</span>
-                            <span className="detail-value">{slot.createdBy || slot.creator}</span>
-                          </div>
-                          <div className="detail-row">
-                            <span className="detail-label">Participants:</span>
-                            <span className="detail-value">{slot.participants ? slot.participants.length : 0}</span>
-                          </div>
+                        </div>
+
+                        <div className="slot-organizer-detail">
+                          <strong>Organisateur:</strong> {slot.createdBy || slot.creator}
                         </div>
                       </div>
                     </div>
