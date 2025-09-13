@@ -47,7 +47,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
               <span className="highlight">Le calendrier inversé</span>
             </h1>
             <p className="hero-subtitle">
-              Le calendrier inversé : indique tes dispo, découvre qui est libre, créé un moment ensemble en un clic.
+              Partage plutôt tes dispo, découvre qui est libre, et rejoignez-vous simplement!
             </p>
             <div className="hero-cta">
               <button 
