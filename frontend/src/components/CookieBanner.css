@@ -70,10 +70,14 @@
   cursor: pointer;
   transition: all 0.3s ease;
   width: 120px;
+  height: 48px;
   text-align: center;
   position: relative;
   overflow: hidden;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .reject-btn {
@@ -125,6 +129,7 @@
   
   .cookie-btn {
     width: 140px;
+    height: 44px;
     padding: 10px 20px;
   }
 }
@@ -144,6 +149,7 @@
   
   .cookie-btn {
     width: 120px;
+    height: 40px;
     padding: 8px 16px;
     font-size: 0.85rem;
   }
