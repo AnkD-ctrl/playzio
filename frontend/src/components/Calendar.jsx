@@ -329,24 +329,14 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
                   <>
                     <div className="day-number">{day.getDate()}</div>
                     {daySlots.length > 0 && (
-                      <div 
-                        className="day-slots"
-                        onClick={(e) => {
-                          console.log('CLIC SUR day-slots', e.target)
-                          e.stopPropagation()
-                        }}
-                      >
+                      <div className="day-slots">
                         {daySlots.slice(0, 2).map(slot => (
                           <div 
                             key={slot.id} 
                             className="slot-indicator clickable-slot"
                             onClick={(e) => {
-                              console.log('CLIC SUR SLOT DÉTECTÉ!', slot)
                               e.stopPropagation()
                               handleSlotClick(slot)
-                            }}
-                            onMouseDown={(e) => {
-                              console.log('MOUSE DOWN sur slot', slot.id)
                             }}
                             title={`${slot.activity || slot.customActivity} - ${slot.heureDebut || slot.time}`}
                           >
