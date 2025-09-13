@@ -70,7 +70,7 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate }) {
   const handleVisibleToAllToggle = () => {
     setVisibleToAll(prev => !prev)
     if (!visibleToAll) {
-      // Si on active "Tous", on désactive tous les groupes
+      // Si on active "Publique", on désactive tous les groupes
       setSelectedGroups([])
     }
   }
@@ -251,7 +251,7 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate }) {
                   checked={visibleToAll}
                   onChange={handleVisibleToAllToggle}
                 />
-                <span className="visibility-label">Tous (visible par tout le monde)</span>
+                <span className="visibility-label">Publique (visible par tout le monde)</span>
               </label>
             </div>
             
