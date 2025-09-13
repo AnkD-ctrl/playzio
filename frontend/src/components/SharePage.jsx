@@ -29,6 +29,11 @@ const SharePage = ({ username }) => {
     setSelectedDate('')
   }
 
+  const handleDateSelect = (date) => {
+    setSelectedDate(date)
+    setCurrentView('list') // Passer en vue liste quand on sélectionne une date
+  }
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -196,6 +201,7 @@ const SharePage = ({ username }) => {
           onJoinSlot={handleJoinSlot}
           selectedDate={selectedDate}
           onClearDate={handleClearDate}
+          onDateSelect={handleDateSelect}
         />
       )}
 
