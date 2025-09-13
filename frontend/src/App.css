@@ -154,7 +154,7 @@ body {
 }
 
 .view-toggle-container {
-  position: absolute;
+  position: fixed;
   top: 60px;
   left: 50%;
   transform: translateX(-50%);
@@ -162,6 +162,12 @@ body {
   display: flex;
   gap: 8px;
   align-items: center;
+  background: rgba(42, 42, 42, 0.95);
+  backdrop-filter: blur(8px);
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(74, 74, 74, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .view-toggle-btn {
