@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirection vers Playzio</title>
+    <script>
+        // Rediriger vers la page principale avec le hash approprié
+        const path = window.location.pathname;
+        const username = path.split('/share/')[1];
+        if (username) {
+            window.location.href = `${window.location.origin}/#share/${username}`;
+        } else {
+            window.location.href = window.location.origin;
+        }
+    </script>
+</head>
+<body>
+    <div style="text-align: center; padding: 2rem; font-family: Arial, sans-serif;">
+        <h2>Redirection vers Playzio...</h2>
+        <p>Si vous n'êtes pas redirigé automatiquement, <a href="/">cliquez ici</a>.</p>
+    </div>
+</body>
+</html>

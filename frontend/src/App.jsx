@@ -9,6 +9,7 @@ import AddSlot from './components/AddSlot'
 import SlotList from './components/SlotList'
 import Calendar from './components/Calendar'
 import UserProfile from './components/UserProfile'
+import SharePage from './components/SharePage'
 import Groups from './components/Groups'
 import CookieBanner from './components/CookieBanner'
 import PWAInstaller from './components/PWAInstaller'
@@ -29,6 +30,7 @@ function App() {
   const [lieuFilter, setLieuFilter] = useState('')
   const [organizerFilter, setOrganizerFilter] = useState('')
   const [filterVersion, setFilterVersion] = useState(0)
+  const [shareUsername, setShareUsername] = useState(null)
 
 
   // Vérifier si on est sur la page de réinitialisation de mot de passe ou guide d'installation
@@ -46,6 +48,15 @@ function App() {
     // Vérifier le pathname pour /install-guide
     if (window.location.pathname === '/install-guide') {
       setCurrentView('install-guide')
+    }
+    
+    // Vérifier le hash pour #share/
+    if (window.location.hash.startsWith('#share/')) {
+      const username = window.location.hash.split('#share/')[1]
+      if (username) {
+        setShareUsername(username)
+        setCurrentView('share')
+      }
     }
   }, [])
 
@@ -125,6 +136,35 @@ function App() {
     localStorage.removeItem('playzio_logged_in')
     
     console.log('Session supprimée')
+  }
+
+  const handleShareUserDispo = () => {
+    if (currentUser && currentUser.prenom) {
+      const shareUrl = `${window.location.origin}/#share/${currentUser.prenom}`
+      
+      if (navigator.share) {
+        // Utiliser l'API Web Share si disponible
+        navigator.share({
+          title: `Disponibilités de ${currentUser.prenom}`,
+          text: `Découvrez les disponibilités de ${currentUser.prenom} sur Playzio`,
+          url: shareUrl
+        }).catch(console.error)
+      } else {
+        // Fallback: copier dans le presse-papiers
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          alert('Lien copié dans le presse-papiers !')
+        }).catch(() => {
+          // Fallback si clipboard API n'est pas disponible
+          const textArea = document.createElement('textarea')
+          textArea.value = shareUrl
+          document.body.appendChild(textArea)
+          textArea.select()
+          document.execCommand('copy')
+          document.body.removeChild(textArea)
+          alert('Lien copié dans le presse-papiers !')
+        })
+      }
+    }
   }
 
   // Fonctions pour la navigation depuis la landing page
@@ -220,6 +260,10 @@ function App() {
         />
       )}
 
+      {currentView === 'share' && shareUsername && (
+        <SharePage username={shareUsername} />
+      )}
+
       {currentView === 'register' && (
         <LoginScreen 
           onLogin={handleLogin}
@@ -285,6 +329,21 @@ function App() {
                 <path d="M3 21v-5h5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
+            
+            {/* Bouton partager */}
+            {selectedType === 'mes-dispo' && currentUser && (
+              <button 
+                className="view-toggle-btn share-btn"
+                onClick={() => handleShareUserDispo()}
+                title="Partager mes disponibilités"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <polyline points="16,6 12,2 8,6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <line x1="12" y1="2" x2="12" y2="15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            )}
             
             {/* Bouton + pour ajouter une dispo */}
             <button 

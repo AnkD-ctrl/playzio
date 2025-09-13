@@ -243,6 +243,27 @@ body {
   flex-shrink: 0 !important;
 }
 
+/* Forcer le bouton partager à être identique aux autres */
+.share-btn {
+  width: 32px !important;
+  height: 32px !important;
+  padding: 0 !important;
+  color: #d4af8c !important;
+  min-width: 32px !important;
+  max-width: 32px !important;
+  min-height: 32px !important;
+  max-height: 32px !important;
+  overflow: hidden !important;
+}
+
+.share-btn svg {
+  color: #d4af8c !important;
+  stroke: #d4af8c !important;
+  width: 16px !important;
+  height: 16px !important;
+  flex-shrink: 0 !important;
+}
+
 /* Styles pour la modal de filtres */
 .modal-overlay {
   position: fixed !important;
