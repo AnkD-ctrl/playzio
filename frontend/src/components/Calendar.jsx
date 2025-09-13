@@ -17,6 +17,8 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
   const [showDayPopup, setShowDayPopup] = useState(false)
   const [selectedDaySlots, setSelectedDaySlots] = useState([])
   const [selectedDay, setSelectedDay] = useState(null)
+  const [expandedSlots, setExpandedSlots] = useState(new Set())
+  const [selectedSlot, setSelectedSlot] = useState(null)
   
   // Nouveaux filtres
   const [dateFilter, setDateFilter] = useState('')
@@ -264,6 +266,74 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
     }
   }
 
+  const toggleSlotExpansion = (slotId) => {
+    setExpandedSlots(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(slotId)) {
+        newSet.delete(slotId)
+      } else {
+        newSet.add(slotId)
+      }
+      return newSet
+    })
+  }
+
+  const handleJoinSlot = async (slotId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/slots/${slotId}/join`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          userPrenom: currentUser.prenom 
+        }),
+      })
+
+      if (response.ok) {
+        alert('Vous avez rejoint cette disponibilité')
+        // Recharger les slots
+        const daySlots = slots.filter(s => s.date === selectedDay)
+        setSelectedDaySlots(daySlots)
+      } else {
+        const data = await response.json()
+        alert(data.error || 'Erreur lors de la participation')
+      }
+    } catch (error) {
+      alert('Erreur de connexion au serveur')
+    }
+  }
+
+  const handleLeaveSlot = async (slotId) => {
+    if (!confirm('Êtes-vous sûr de vouloir quitter cette disponibilité ?')) {
+      return
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/slots/${slotId}/leave`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          userPrenom: currentUser.prenom 
+        }),
+      })
+
+      if (response.ok) {
+        alert('Vous avez quitté cette disponibilité')
+        // Recharger les slots
+        const daySlots = slots.filter(s => s.date === selectedDay)
+        setSelectedDaySlots(daySlots)
+      } else {
+        const data = await response.json()
+        alert(data.error || 'Erreur lors de la sortie')
+      }
+    } catch (error) {
+      alert('Erreur de connexion au serveur')
+    }
+  }
+
   const navigateMonth = (direction) => {
     setCurrentDate(prev => {
       const newDate = new Date(prev)
@@ -403,70 +473,124 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
             <div className="popup-content">
               {selectedDaySlots.length > 0 ? (
                 <div className="day-slots-list">
-                  {selectedDaySlots.map(slot => (
-                    <div key={slot.id} className="slot-item">
-                      <div className="slot-item-header">
-                        <div className="slot-item-main">
-                          <div className="slot-item-date">
-                            <span className="date">{slot.date.split('-').reverse().join('/')}</span>
-                            <span className="time">{slot.heureDebut || slot.time} - {slot.heureFin || slot.endTime}</span>
-                          </div>
-                          <div className="slot-item-activity">
-                            {slot.customActivity 
-                              ? (slot.customActivity.length > 6 ? slot.customActivity.substring(0, 6) + '...' : slot.customActivity)
-                              : (Array.isArray(slot.type) ? slot.type.join(', ') : slot.type)
-                            }
-                          </div>
-                          <div className="slot-item-participants">
-                            👥 {slot.participants ? slot.participants.length : 0}
-                          </div>
-                        </div>
-                        <div className="slot-item-actions">
-                          <button 
-                            className="quick-action-btn join-btn"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              if (onJoinSlot) {
-                                onJoinSlot()
+                  {selectedDaySlots.map(slot => {
+                    const isExpanded = expandedSlots.has(slot.id)
+                    const isParticipant = slot.participants && slot.participants.includes(currentUser.prenom)
+                    const isOwner = slot.createdBy === currentUser.prenom
+                    const isAdmin = currentUser.role === 'admin'
+
+                    return (
+                      <div key={slot.id} className={`slot-item ${isExpanded ? 'expanded' : ''}`}>
+                        <div className="slot-item-header" onClick={() => toggleSlotExpansion(slot.id)}>
+                          <div className="slot-item-main">
+                            <div className="slot-item-date">
+                              <span className="date">{slot.date.split('-').reverse().join('/')}</span>
+                              <span className="time">{slot.heureDebut} - {slot.heureFin}</span>
+                            </div>
+                            <div className="slot-item-activity">
+                              {slot.customActivity 
+                                ? (slot.customActivity.length > 6 ? slot.customActivity.substring(0, 6) + '...' : slot.customActivity)
+                                : (Array.isArray(slot.type) ? slot.type.join(', ') : slot.type)
                               }
-                            }}
-                          >
-                            Rejoindre
-                          </button>
+                            </div>
+                            <div className="slot-item-participants">
+                              👥 {slot.participants ? slot.participants.length : 0}
+                            </div>
+                          </div>
+                          <div className="slot-item-actions">
+                            {isParticipant ? (
+                              <button 
+                                className="quick-action-btn leave-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleLeaveSlot(slot.id)
+                                }}
+                                title="Quitter"
+                              >
+                                Quitter
+                              </button>
+                            ) : (
+                              <button 
+                                className="quick-action-btn join-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  if (onJoinSlot) {
+                                    onJoinSlot()
+                                  } else {
+                                    handleJoinSlot(slot.id)
+                                  }
+                                }}
+                                title="Rejoindre"
+                              >
+                                Rejoindre
+                              </button>
+                            )}
+                          </div>
+                          <div className="expand-icon">
+                            <span>{isExpanded ? '▼' : '▶'}</span>
+                          </div>
                         </div>
-                      </div>
-                      <div className="slot-item-details">
-                        <div className="slot-activity-detail">
-                          <strong>Activité:</strong> {slot.customActivity || (Array.isArray(slot.type) ? slot.type.join(', ') : slot.type)}
-                        </div>
+                        
+                        {isExpanded && (
+                          <div className="slot-item-details">
+                            <div className="slot-activity-detail">
+                              <strong>Activité:</strong> {slot.customActivity || (Array.isArray(slot.type) ? slot.type.join(', ') : slot.type)}
+                            </div>
 
-                        <div className="slot-description">
-                          <strong>Description:</strong> {slot.description || 'Aucune description'}
-                        </div>
+                            <div className="slot-description">
+                              <strong>Description:</strong> {slot.description || 'Aucune description'}
+                            </div>
 
-                        {slot.lieu && (
-                          <div className="slot-lieu">
-                            <strong>Lieu:</strong> {slot.lieu}
+                            {slot.lieu && (
+                              <div className="slot-lieu">
+                                <strong>Lieu:</strong> {slot.lieu}
+                              </div>
+                            )}
+
+                            <div className="slot-participants-detail">
+                              <strong>Participants ({slot.participants ? slot.participants.length : 0}):</strong>
+                              {slot.participants && slot.participants.length > 0 ? (
+                                <div className="participants-list">
+                                  {slot.participants.join(', ')}
+                                </div>
+                              ) : (
+                                <div className="participants-list">Aucun participant</div>
+                              )}
+                            </div>
+
+                            <div className="slot-organizer-detail">
+                              <strong>Organisateur:</strong> {slot.createdBy || slot.creator}
+                            </div>
+
+                            <div className="slot-item-actions-detail">
+                              <button 
+                                className="action-btn discuss-btn"
+                                onClick={() => setSelectedSlot(slot)}
+                                title="Voir la discussion"
+                              >
+                                Discussion
+                              </button>
+                              
+                              {(isAdmin || isOwner) && (
+                                <button 
+                                  className="action-btn delete-btn"
+                                  onClick={() => {
+                                    if (confirm('Êtes-vous sûr de vouloir supprimer cette disponibilité ?')) {
+                                      // TODO: Implémenter la suppression
+                                      alert('Fonction de suppression à implémenter')
+                                    }
+                                  }}
+                                  title="Supprimer"
+                                >
+                                  Supprimer
+                                </button>
+                              )}
+                            </div>
                           </div>
                         )}
-
-                        <div className="slot-participants-detail">
-                          <strong>Participants ({slot.participants ? slot.participants.length : 0}):</strong>
-                          {slot.participants && slot.participants.length > 0 ? (
-                            <div className="participants-list">
-                              {slot.participants.join(', ')}
-                            </div>
-                          ) : (
-                            <div className="participants-list">Aucun participant</div>
-                          )}
-                        </div>
-
-                        <div className="slot-organizer-detail">
-                          <strong>Organisateur:</strong> {slot.createdBy || slot.creator}
-                        </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               ) : (
                 <div className="no-slots-message">
