@@ -1254,6 +1254,8 @@
   font-size: 1rem;
   font-weight: 700;
   background: #3a3a3a;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .feature-cell {
