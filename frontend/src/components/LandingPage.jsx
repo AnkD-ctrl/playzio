@@ -1,55 +1,10 @@
-import React, { useState } from 'react'
+import React from 'react'
 import './LandingPage.css'
 import DownloadButton from './DownloadButton'
 
 const LandingPage = ({ onLogin, onRegister }) => {
-  const [currentPersona, setCurrentPersona] = useState(0)
-
-  const personas = [
-    {
-      id: 1,
-      avatar: "👩‍💼",
-      name: "Julie, 27 ans",
-      title: "Jeune active urbaine",
-      description: "Vie sociale remplie mais agenda fluctuant. Frustrée par les boucles WhatsApp interminables pour organiser un apéro.",
-      benefit: "spontanéité et simplicité."
-    },
-    {
-      id: 2,
-      avatar: "🏓",
-      name: "Marc, 35 ans",
-      title: "Sportif loisir",
-      description: "Joue au padel et au tennis avec différents groupes d'amis. Fatigué des Doodle et des SMS groupés.",
-      benefit: "voir quand quelqu'un est dispo et rejoindre instantanément."
-    },
-    {
-      id: 3,
-      avatar: "🎓",
-      name: "Amina, 21 ans",
-      title: "Étudiante introvertie",
-      description: "Aimerait voir plus souvent ses amis, mais n'ose pas proposer. Craint les refus directs.",
-      benefit: "elle peut signaler une dispo sans pression."
-    },
-    {
-      id: 4,
-      avatar: "👨‍👩‍👧‍👦",
-      name: "Claire & David, 40 ans",
-      title: "Parents occupés",
-      description: "Peu de temps libre, veulent optimiser les créneaux.",
-      benefit: "identifier rapidement quand des amis ou de la famille sont disponibles."
-    }
-  ]
-
   const handleGetStarted = () => {
     onRegister()
-  }
-
-  const nextPersona = () => {
-    setCurrentPersona((prev) => (prev + 1) % personas.length)
-  }
-
-  const prevPersona = () => {
-    setCurrentPersona((prev) => (prev - 1 + personas.length) % personas.length)
   }
 
   const handleAlreadyMember = () => {
@@ -232,56 +187,6 @@ const LandingPage = ({ onLogin, onRegister }) => {
         </div>
       </section>
 
-      {/* Personnas Section */}
-      <section className="personnas-section">
-        <div className="personnas-content">
-          <h2 className="section-title">Ils utilisent déjà Playzio</h2>
-          <div className="personnas-carousel">
-            <button className="carousel-btn prev-btn" onClick={prevPersona}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-            
-            <div className="personnas-container">
-              <div 
-                className="personnas-slider" 
-                style={{ transform: `translateX(-${currentPersona * 100}%)` }}
-              >
-                {personas.map((persona) => (
-                  <div key={persona.id} className="personna-card">
-                    <div className="personna-avatar">{persona.avatar}</div>
-                    <div className="personna-info">
-                      <h3>{persona.name}</h3>
-                      <p className="personna-title">{persona.title}</p>
-                      <p className="personna-description">{persona.description}</p>
-                      <div className="personna-benefit">
-                        <strong>Bénéfice clé :</strong> {persona.benefit}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            <button className="carousel-btn next-btn" onClick={nextPersona}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-          </div>
-          
-          <div className="carousel-dots">
-            {personas.map((_, index) => (
-              <button
-                key={index}
-                className={`carousel-dot ${index === currentPersona ? 'active' : ''}`}
-                onClick={() => setCurrentPersona(index)}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Comparison Section */}
       <section className="comparison-section">
