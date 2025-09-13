@@ -334,8 +334,12 @@
 }
 
 .clickable-slot {
-  cursor: pointer;
+  cursor: pointer !important;
   transition: all 0.2s ease;
+  pointer-events: auto !important;
+  user-select: none;
+  position: relative;
+  z-index: 10;
 }
 
 .clickable-slot:hover {
