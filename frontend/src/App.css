@@ -154,20 +154,18 @@ body {
 }
 
 .view-toggle-container {
-  position: fixed;
-  top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 100;
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
+  z-index: auto;
   display: flex;
   gap: 8px;
   align-items: center;
-  background: rgba(42, 42, 42, 0.95);
-  backdrop-filter: blur(8px);
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: 1px solid rgba(74, 74, 74, 0.3);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  justify-content: center;
+  padding: 16px 20px;
+  background: #3a3a3a;
+  border-bottom: 1px solid #4a4a4a;
 }
 
 .view-toggle-btn {
@@ -424,7 +422,7 @@ body {
 
 .activity-content {
   margin-bottom: 24px;
-  margin-top: 60px; /* Espace pour la view-toggle-container */
+  margin-top: 0; /* Plus besoin d'espace car view-toggle-container est en position relative */
   position: relative;
   overflow: hidden;
 }
