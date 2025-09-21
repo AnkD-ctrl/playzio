@@ -111,9 +111,14 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         url = `${API_BASE_URL}/api/slots/user/${encodeURIComponent(currentUser.prenom)}`
       } else {
         // Mode normal - utiliser l'endpoint avec authentification
-        url = activity === 'Tous' 
-          ? `${API_BASE_URL}/api/slots?user=${encodeURIComponent(currentUser.prenom)}`
-          : `${API_BASE_URL}/api/slots?type=${encodeURIComponent(activity.toLowerCase())}&user=${encodeURIComponent(currentUser.prenom)}`
+        // Pour les slots publics, toujours récupérer tous les slots (pas de filtrage par type)
+        if (filterType === 'publiques') {
+          url = `${API_BASE_URL}/api/slots?user=${encodeURIComponent(currentUser.prenom)}`
+        } else {
+          url = activity === 'Tous' 
+            ? `${API_BASE_URL}/api/slots?user=${encodeURIComponent(currentUser.prenom)}`
+            : `${API_BASE_URL}/api/slots?type=${encodeURIComponent(activity.toLowerCase())}&user=${encodeURIComponent(currentUser.prenom)}`
+        }
       }
       
       const response = await fetch(url)
