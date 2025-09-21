@@ -357,23 +357,30 @@ body {
   background: transparent;
   border-bottom: none;
   padding: 0;
-  gap: 12px;
+  gap: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
 }
 
-/* Boutons view toggle dans le footer */
+/* Wrapper pour chaque bouton avec son label */
+.footer-btn-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Boutons view toggle dans le footer - sans contour */
 .activity-switcher-footer .view-toggle-btn {
-  background: rgba(42, 42, 42, 0.9);
-  border: 1px solid #5a5a5a;
+  background: transparent;
+  border: none;
   border-radius: 8px;
   padding: 0;
   cursor: pointer;
   color: #d4af8c;
   transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -385,16 +392,26 @@ body {
 }
 
 .activity-switcher-footer .view-toggle-btn:hover {
-  background: rgba(52, 52, 52, 0.95);
-  border-color: #d4af8c;
   color: #ffffff;
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(212, 175, 140, 0.2);
+  transform: scale(1.1);
 }
 
 .activity-switcher-footer .view-toggle-btn svg {
   color: inherit;
   transition: all 0.2s ease;
+}
+
+/* Labels sous les boutons */
+.btn-label {
+  color: #b0b0b0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.footer-btn-wrapper:hover .btn-label {
+  color: #e0e0e0;
 }
 
 
@@ -585,7 +602,7 @@ body {
   }
   
   .activity-switcher-footer .view-toggle-container {
-    gap: 8px;
+    gap: 16px;
     width: 100%;
     justify-content: center;
     flex-wrap: wrap;
@@ -595,6 +612,10 @@ body {
     width: 36px;
     height: 36px;
     font-size: 1rem;
+  }
+  
+  .btn-label {
+    font-size: 0.7rem;
   }
 }
 
@@ -664,7 +685,7 @@ body {
   }
   
   .activity-switcher-footer .view-toggle-container {
-    gap: 6px;
+    gap: 12px;
     width: 100%;
     justify-content: center;
     flex-wrap: wrap;
@@ -674,6 +695,10 @@ body {
     width: 32px;
     height: 32px;
     font-size: 0.9rem;
+  }
+  
+  .btn-label {
+    font-size: 0.65rem;
   }
   
 }
