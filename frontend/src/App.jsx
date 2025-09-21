@@ -14,6 +14,7 @@ import Groups from './components/Groups'
 import CookieBanner from './components/CookieBanner'
 import PWAInstaller from './components/PWAInstaller'
 import InstallGuide from './components/InstallGuide'
+import LegalHub from './components/LegalHub'
 import { trackPageView, trackLogin, trackLogout, trackActivitySelect, trackNavigation } from './utils/analytics'
 import { testAnalyticsExclusion } from './utils/testAnalytics'
 
@@ -49,6 +50,11 @@ function App() {
     // Vérifier le pathname pour /install-guide
     if (window.location.pathname === '/install-guide') {
       setCurrentView('install-guide')
+    }
+    
+    // Vérifier le pathname pour /legal
+    if (window.location.pathname === '/legal') {
+      setCurrentView('legal')
     }
     
     // Vérifier le hash pour #share/
@@ -677,6 +683,11 @@ function App() {
       {/* Page de guide d'installation */}
       {currentView === 'install-guide' && (
         <InstallGuide />
+      )}
+
+      {/* Pages légales */}
+      {currentView === 'legal' && (
+        <LegalHub onBack={() => setCurrentView('landing')} />
       )}
 
 

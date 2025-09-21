@@ -36,6 +36,10 @@ function CookieBanner() {
           <p>
             Nous utilisons des cookies pour améliorer votre expérience et sauvegarder votre session de connexion. 
             Aucune donnée n'est partagée avec des tiers.
+            <br/>
+            <a href="/legal" style={{ color: '#d4af8c', textDecoration: 'underline' }}>
+              En savoir plus sur notre politique de confidentialité
+            </a>
           </p>
         </div>
         <div className="cookie-banner-actions">

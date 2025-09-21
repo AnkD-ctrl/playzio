@@ -306,6 +306,35 @@ const LandingPage = ({ onLogin, onRegister }) => {
       {/* Footer */}
       <footer className="landing-footer">
         <div className="footer-content">
+          <div className="footer-links">
+            <button 
+              className="footer-link"
+              onClick={() => window.location.href = '/legal'}
+            >
+              Mentions légales
+            </button>
+            <button 
+              className="footer-link"
+              onClick={() => window.location.href = '/legal'}
+            >
+              Politique de confidentialité
+            </button>
+            <button 
+              className="footer-link"
+              onClick={() => window.location.href = '/legal'}
+            >
+              Conditions d'utilisation
+            </button>
+            <button 
+              className="footer-link"
+              onClick={() => window.location.href = '/legal'}
+            >
+              Contact
+            </button>
+          </div>
+          <div className="footer-copyright">
+            <p>&copy; 2024 Playzio. Tous droits réservés.</p>
+          </div>
         </div>
       </footer>
 
