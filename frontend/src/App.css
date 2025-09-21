@@ -357,11 +357,12 @@ body {
   background: transparent;
   border-bottom: none;
   padding: 0;
-  gap: 20px;
+  gap: 12px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  width: 100%;
 }
 
 /* Wrapper pour chaque bouton avec son label */
@@ -370,6 +371,8 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 4px;
+  flex: 1;
+  min-width: 0;
 }
 
 /* Boutons view toggle dans le footer - sans contour */
@@ -602,10 +605,10 @@ body {
   }
   
   .activity-switcher-footer .view-toggle-container {
-    gap: 16px;
+    gap: 8px;
     width: 100%;
-    justify-content: center;
-    flex-wrap: wrap;
+    justify-content: space-between;
+    flex-wrap: nowrap;
   }
   
   .activity-switcher-footer .view-toggle-btn {
@@ -685,10 +688,10 @@ body {
   }
   
   .activity-switcher-footer .view-toggle-container {
-    gap: 12px;
+    gap: 6px;
     width: 100%;
-    justify-content: center;
-    flex-wrap: wrap;
+    justify-content: space-between;
+    flex-wrap: nowrap;
   }
   
   .activity-switcher-footer .view-toggle-btn {
