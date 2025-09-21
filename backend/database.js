@@ -155,16 +155,9 @@ export async function getSlotById(id) {
 
 export async function createSlot(slotData) {
   try {
-    console.log('🔄 createSlot appelée avec:', JSON.stringify(slotData, null, 2))
-    
     const { id, date, heureDebut, heureFin, type, customActivity = null, description = '', lieu = '', maxParticipants = null, createdBy = null, visibleToGroups = [], visibleToAll = true, visibleToFriends = false, participants = [] } = slotData
     
     const typeValue = Array.isArray(type) ? JSON.stringify(type) : type
-    
-    console.log('📝 Paramètres SQL:', {
-      id, date, heureDebut, heureFin, typeValue, customActivity, description, lieu, 
-      maxParticipants, createdBy, visibleToGroups, visibleToAll, visibleToFriends, participants
-    })
     
     const result = await pool.query(
       'INSERT INTO slots (id, date, heure_debut, heure_fin, type, custom_activity, description, lieu, max_participants, created_by, visible_to_groups, visible_to_all, visible_to_friends, participants) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *',
@@ -380,28 +373,22 @@ export async function createFriendRequest(fromUser, toUser) {
 // Accepter une demande d'ami
 export async function acceptFriendRequest(fromUser, toUser) {
   try {
-    console.log(`🔄 AcceptFriendRequest: ${fromUser} -> ${toUser}`)
-    
     // Supprimer la demande
-    const deleteResult = await pool.query(
+    await pool.query(
       'DELETE FROM friend_requests WHERE from_user = $1 AND to_user = $2 AND status = $3',
       [fromUser, toUser, 'pending']
     )
-    console.log(`🗑️ Demandes supprimées: ${deleteResult.rowCount}`)
     
     // Ajouter l'amitié (s'assurer que user1 < user2 pour la contrainte UNIQUE)
     const user1 = fromUser < toUser ? fromUser : toUser
     const user2 = fromUser < toUser ? toUser : fromUser
     const id = nanoid()
     
-    console.log(`👥 Ajout amitié: ${user1} <-> ${user2} (ID: ${id})`)
-    
     const result = await pool.query(
       'INSERT INTO friends (id, user1, user2) VALUES ($1, $2, $3) RETURNING *',
       [id, user1, user2]
     )
     
-    console.log(`✅ Amitié créée:`, result.rows[0])
     return result.rows[0]
   } catch (error) {
     console.error('❌ Erreur acceptFriendRequest:', error)
