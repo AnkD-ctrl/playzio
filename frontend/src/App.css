@@ -45,7 +45,9 @@ body {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  justify-content: flex-end;
+  width: 100%;
 }
 
 .groups-btn,
@@ -517,19 +519,18 @@ body {
   }
   
   .header-actions {
-    width: 100%;
+    width: auto;
     justify-content: flex-end;
-    gap: 8px;
+    gap: 6px;
     flex-wrap: nowrap;
   }
   
   .groups-btn,
-  .profile-btn {
-    white-space: nowrap;
-    font-size: 0.8rem;
-    padding: 10px 12px;
-    min-width: 90px;
-    flex: 1;
+  .profile-btn,
+  .logout-btn {
+    width: 36px;
+    height: 36px;
+    padding: 6px;
   }
   
   .logout-btn {
