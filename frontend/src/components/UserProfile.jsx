@@ -45,19 +45,22 @@ function UserProfile({ user, onClose, onUserUpdate }) {
 
   const fetchUserFriends = async () => {
     try {
+      console.log('🔴 DEBUG: fetchUserFriends pour:', user.prenom)
       const response = await fetch(`${API_BASE_URL}/api/users/${encodeURIComponent(user.prenom)}`)
+      console.log('🔴 DEBUG: fetchUserFriends response:', response.status, response.statusText)
       if (response.ok) {
         const userData = await response.json()
+        console.log('🔴 DEBUG: fetchUserFriends userData:', userData)
         setUserFriends(userData.friends || [])
         setFriendRequests(userData.friend_requests || [])
       } else {
         // Si l'utilisateur n'existe pas dans la base, initialiser avec des tableaux vides
-        console.log('Utilisateur non trouvé dans la base, initialisation avec des listes vides')
+        console.log('🔴 DEBUG: Utilisateur non trouvé dans la base, initialisation avec des listes vides')
         setUserFriends([])
         setFriendRequests([])
       }
     } catch (error) {
-      console.error('Erreur lors du chargement des amis:', error)
+      console.error('🔴 DEBUG: Erreur lors du chargement des amis:', error)
       // En cas d'erreur, initialiser avec des tableaux vides
       setUserFriends([])
       setFriendRequests([])
@@ -140,6 +143,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
 
   const handleSendFriendRequest = async (targetUser) => {
     try {
+      console.log('🔴 DEBUG: Envoi demande d\'ami vers:', targetUser.prenom, 'depuis:', user.prenom)
       const response = await fetch(`${API_BASE_URL}/api/friends/request`, {
         method: 'POST',
         headers: {
@@ -151,7 +155,10 @@ function UserProfile({ user, onClose, onUserUpdate }) {
         })
       })
 
+      console.log('🔴 DEBUG: Réponse envoi demande:', response.status, response.statusText)
       if (response.ok) {
+        const result = await response.json()
+        console.log('🔴 DEBUG: Résultat envoi demande:', result)
         alert(`Demande d'ami envoyée à ${targetUser.prenom}`)
         setShowAddFriendModal(false)
         setSearchUsername('')
@@ -159,10 +166,11 @@ function UserProfile({ user, onClose, onUserUpdate }) {
         fetchUserFriends() // Recharger pour mettre à jour les demandes envoyées
       } else {
         const data = await response.json()
+        console.log('🔴 DEBUG: Erreur envoi demande:', data)
         alert(data.error || 'Erreur lors de l\'envoi de la demande')
       }
     } catch (error) {
-      console.error('Erreur lors de l\'envoi de la demande:', error)
+      console.error('🔴 DEBUG: Erreur lors de l\'envoi de la demande:', error)
       alert('Erreur de connexion au serveur')
     }
   }
