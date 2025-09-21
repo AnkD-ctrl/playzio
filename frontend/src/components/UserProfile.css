@@ -340,8 +340,10 @@
 
 /* Style spécifique pour le bouton "Ajouter un ami" */
 .friends-tab-content .action-btn.primary {
-  display: block;
-  margin: 0 auto 20px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px auto;
   max-width: 200px;
 }
 
