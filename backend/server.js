@@ -1191,18 +1191,31 @@ app.post('/api/forgot-password', async (req, res) => {
     
     console.log('✅ Token de réinitialisation créé pour utilisateur existant:', user.prenom)
     
-    // Sauvegarder le token en base (avec gestion d'erreur)
-    try {
-      // Invalider tous les tokens précédents pour cet utilisateur (sécurité)
-      await pool.query('UPDATE password_reset_tokens SET used = true WHERE user_email = $1', [email])
-      console.log('🔒 Tokens précédents invalidés pour:', email)
-      
-      await createPasswordResetToken(email, resetToken, expiresAt)
-      console.log('✅ Nouveau token sauvegardé en base de données')
-    } catch (dbError) {
-      console.error('⚠️  Erreur base de données (token non sauvegardé):', dbError.message)
-      console.log('📝 Le token sera affiché dans les logs pour utilisation immédiate')
-    }
+             // Sauvegarder le token en base (avec gestion d'erreur)
+             try {
+               // Créer la table si elle n'existe pas
+               await pool.query(`
+                 CREATE TABLE IF NOT EXISTS password_reset_tokens (
+                     id VARCHAR(50) PRIMARY KEY,
+                     user_email VARCHAR(255) NOT NULL,
+                     token VARCHAR(255) NOT NULL UNIQUE,
+                     expires_at TIMESTAMP NOT NULL,
+                     used BOOLEAN DEFAULT FALSE,
+                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                 );
+               `)
+               console.log('✅ Table password_reset_tokens créée/vérifiée')
+
+               // Invalider tous les tokens précédents pour cet utilisateur (sécurité)
+               await pool.query('UPDATE password_reset_tokens SET used = true WHERE user_email = $1', [email])
+               console.log('🔒 Tokens précédents invalidés pour:', email)
+
+               await createPasswordResetToken(email, resetToken, expiresAt)
+               console.log('✅ Nouveau token sauvegardé en base de données')
+             } catch (dbError) {
+               console.error('⚠️  Erreur base de données (token non sauvegardé):', dbError.message)
+               console.log('📝 Le token sera affiché dans les logs pour utilisation immédiate')
+             }
     
     // Envoyer l'email
     const frontendUrl = process.env.FRONTEND_URL || 'https://playzio.fr'
