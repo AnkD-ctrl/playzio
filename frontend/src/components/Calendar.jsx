@@ -146,7 +146,10 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
       } else {
         // Mode normal - utiliser l'endpoint avec authentification
         // Pour les onglets avec filtrage côté frontend, toujours récupérer tous les slots
-        if (filterType === 'publiques' || filterType === 'mes-dispos' || filterType === 'amis' || filterType === 'communaute') {
+        if (filterType === 'publiques') {
+          // Pour l'onglet "Dispos publiques", utiliser le paramètre public_only
+          url = `${API_BASE_URL}/api/slots?public_only=true`
+        } else if (filterType === 'mes-dispos' || filterType === 'amis' || filterType === 'communaute') {
           url = `${API_BASE_URL}/api/slots?user=${encodeURIComponent(currentUser.prenom)}`
         } else {
           url = activity === 'Tous' 
@@ -176,8 +179,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
             slot.visibleToGroups && slot.visibleToGroups.some(groupName => userGroupNames.includes(groupName))
           )
         } else if (filterType === 'publiques') {
-          // Afficher seulement les créneaux publics (visibleToAll = true)
-          filteredData = filteredData.filter(slot => slot.visibleToAll === true)
+          // Les slots publics sont déjà filtrés côté serveur avec public_only=true
         } else if (filterType === 'amis') {
           // Afficher les créneaux des amis (visible_to_friends = true ET créés par un ami)
           filteredData = filteredData.filter(slot => 

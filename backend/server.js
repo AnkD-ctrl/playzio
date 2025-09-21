@@ -408,7 +408,7 @@ app.delete('/api/messages/:messageId', async (req, res) => {
 // Récupérer les créneaux
 app.get('/api/slots', async (req, res) => {
   try {
-    const { type, user } = req.query
+    const { type, user, public_only } = req.query
     
     // Récupérer tous les slots
     let filteredSlots = await getAllSlots()
@@ -433,8 +433,11 @@ app.get('/api/slots', async (req, res) => {
       })
     }
     
-    // Filtrer par visibilité si un utilisateur est spécifié
-    if (user) {
+    // Filtrer par visibilité
+    if (public_only === 'true') {
+      // Pour l'onglet "Dispos publiques", afficher seulement les slots publics
+      filteredSlots = filteredSlots.filter(slot => slot.visibleToAll === true)
+    } else if (user) {
       // Récupérer les groupes de l'utilisateur
       const userGroups = await getGroupsByUser(user)
       const userGroupIds = userGroups.map(group => group.id)
