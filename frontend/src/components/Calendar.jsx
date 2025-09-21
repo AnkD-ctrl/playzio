@@ -12,6 +12,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
   const [showSearchModal, setShowSearchModal] = useState(false)
   const [showOnlyMyGroups, setShowOnlyMyGroups] = useState(false)
   const [userGroups, setUserGroups] = useState([])
+  const [userFriends, setUserFriends] = useState([])
   const [searchInput, setSearchInput] = useState('')
   const [searchTimeout, setSearchTimeout] = useState(null)
   const [showDayPopup, setShowDayPopup] = useState(false)
@@ -99,12 +100,25 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
     }
   }
 
+  const fetchUserFriends = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/friends/${encodeURIComponent(currentUser.prenom)}`)
+      if (response.ok) {
+        const data = await response.json()
+        setUserFriends(data.friends || [])
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des amis:', error)
+    }
+  }
+
   useEffect(() => {
     fetchSlots()
-  }, [activity, searchFilter, lieuFilter, organizerFilter, filterType, userGroups, selectedDate])
+  }, [activity, searchFilter, lieuFilter, organizerFilter, filterType, userGroups, userFriends, selectedDate])
 
   useEffect(() => {
     fetchUserGroups()
+    fetchUserFriends()
   }, [currentUser])
 
   // Fermer le menu déroulant quand on clique ailleurs
@@ -159,6 +173,12 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
         } else if (filterType === 'publiques') {
           // Afficher seulement les créneaux visibles à tous (visible_to_all = true)
           filteredData = filteredData.filter(slot => slot.visibleToAll === true)
+        } else if (filterType === 'amis') {
+          // Afficher les créneaux des amis (visible_to_friends = true ET créés par un ami)
+          filteredData = filteredData.filter(slot => 
+            slot.visibleToFriends === true && 
+            userFriends.includes(slot.createdBy)
+          )
         }
         
         // Filtrer par activité personnalisée si un filtre de recherche est défini

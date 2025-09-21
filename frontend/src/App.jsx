@@ -291,6 +291,16 @@ function App() {
                 <span>Mes dispos</span>
               </div>
               <div 
+                className={`sidebar-item ${selectedType === 'amis' || selectedType === 'amis-calendar' ? 'active' : ''}`}
+                onClick={() => {
+                  setSelectedType('amis')
+                  setSidebarOpen(false)
+                }}
+              >
+                <span className="sidebar-icon">👫</span>
+                <span>Dispos des amis</span>
+              </div>
+              <div 
                 className={`sidebar-item ${selectedType === 'communaute' || selectedType === 'communaute-calendar' ? 'active' : ''}`}
                 onClick={() => {
                   setSelectedType('communaute')
@@ -386,6 +396,41 @@ function App() {
                 lieuFilter={lieuFilter}
                 organizerFilter={organizerFilter}
                 filterType="mes-dispos"
+                onAddSlot={(date) => {
+                  setSelectedDate(date)
+                  setSelectedType('add')
+                }}
+              />
+            )}
+
+            {/* Dispos des amis - Vue liste */}
+            {selectedType === 'amis' && (
+              <SlotList 
+                key={`amis-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
+                activity={selectedActivity}
+                currentUser={currentUser}
+                selectedDate={selectedDate}
+                onClearDate={() => setSelectedDate(null)}
+                searchFilter={searchFilter}
+                onSearchFilterChange={handleSearchFilterChange}
+                lieuFilter={lieuFilter}
+                organizerFilter={organizerFilter}
+                filterType="amis"
+              />
+            )}
+            
+            {/* Dispos des amis - Vue calendrier */}
+            {selectedType === 'amis-calendar' && (
+              <Calendar 
+                key={`amis-calendar-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
+                activity={selectedActivity}
+                currentUser={currentUser}
+                onDateSelect={handleDateSelect}
+                searchFilter={searchFilter}
+                onSearchFilterChange={handleSearchFilterChange}
+                lieuFilter={lieuFilter}
+                organizerFilter={organizerFilter}
+                filterType="amis"
                 onAddSlot={(date) => {
                   setSelectedDate(date)
                   setSelectedType('add')
