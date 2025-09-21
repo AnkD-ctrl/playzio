@@ -358,6 +358,10 @@ body {
   border-bottom: none;
   padding: 0;
   gap: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 /* Boutons view toggle dans le footer */
@@ -584,6 +588,7 @@ body {
     gap: 8px;
     width: 100%;
     justify-content: center;
+    flex-wrap: wrap;
   }
   
   .activity-switcher-footer .view-toggle-btn {
@@ -662,6 +667,7 @@ body {
     gap: 6px;
     width: 100%;
     justify-content: center;
+    flex-wrap: wrap;
   }
   
   .activity-switcher-footer .view-toggle-btn {
