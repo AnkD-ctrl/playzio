@@ -66,6 +66,102 @@
   font-style: italic;
 }
 
+/* Styles pour la sélection multiple de dates */
+.date-selector {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.date-selector input {
+  flex: 1;
+}
+
+.add-date-btn {
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.add-date-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 175, 140, 0.3);
+}
+
+.add-date-btn:disabled {
+  background: #666;
+  color: #999;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.selected-dates {
+  margin-top: 16px;
+  padding: 16px;
+  background: rgba(212, 175, 140, 0.1);
+  border: 1px solid rgba(212, 175, 140, 0.2);
+  border-radius: 8px;
+}
+
+.selected-dates-label {
+  color: #d4af8c;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin: 0 0 12px 0;
+}
+
+.dates-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.date-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #4a4a4a;
+  border: 1px solid #5a5a5a;
+  border-radius: 6px;
+  color: #e0e0e0;
+  font-size: 0.875rem;
+}
+
+.date-tag span {
+  font-weight: 500;
+}
+
+.remove-date-btn {
+  background: #666;
+  color: #e0e0e0;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  transition: all 0.2s ease;
+}
+
+.remove-date-btn:hover {
+  background: #ff4444;
+  color: #ffffff;
+  transform: scale(1.1);
+}
+
 .error-message {
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.3);
