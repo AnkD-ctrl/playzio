@@ -379,6 +379,10 @@
 }
 
 /* Form Styles */
+.form {
+  margin: 20px;
+}
+
 .form-group {
   margin-bottom: 24px;
 }

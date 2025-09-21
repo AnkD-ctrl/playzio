@@ -206,7 +206,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
                     ✕
                   </button>
                 </div>
-                <form onSubmit={handlePasswordChange}>
+                <form className="form" onSubmit={handlePasswordChange}>
                   <div className="form-group">
                     <label>Mot de passe actuel</label>
                     <input
@@ -258,7 +258,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
                     ✕
                   </button>
                 </div>
-                <form onSubmit={handleEmailAdd}>
+                <form className="form" onSubmit={handleEmailAdd}>
                   <div className="form-group">
                     <label htmlFor="email">Adresse email</label>
                     <input
