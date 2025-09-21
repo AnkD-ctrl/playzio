@@ -219,9 +219,10 @@ body {
   position: relative;
 }
 
-.activity-container::before {
+/* Background pour toutes les pages après connexion */
+.app::after {
   content: '';
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
