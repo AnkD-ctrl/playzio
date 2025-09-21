@@ -555,7 +555,6 @@
   transition: all 0.2s ease;
   position: relative;
   z-index: 1;
-  background: rgba(58, 58, 58, 0.8);
 }
 
 .slot-item-header:hover {
