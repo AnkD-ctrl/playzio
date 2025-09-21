@@ -513,9 +513,8 @@ body {
   }
   
   .header-content {
-    flex-direction: column;
-    gap: 12px;
-    align-items: flex-end;
+    justify-content: flex-end;
+    align-items: center;
   }
   
   .header-actions {
