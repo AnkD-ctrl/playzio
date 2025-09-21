@@ -140,16 +140,17 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
       setLoading(true)
       
       let url
-      if (onJoinSlot) {
+      
+      // Pour l'onglet "Dispos publiques", toujours utiliser public_only
+      if (filterType === 'publiques') {
+        url = `${API_BASE_URL}/api/slots?public_only=true`
+      } else if (onJoinSlot) {
         // Mode partage public - utiliser l'endpoint public
         url = `${API_BASE_URL}/api/slots/user/${encodeURIComponent(currentUser.prenom)}`
       } else {
         // Mode normal - utiliser l'endpoint avec authentification
         // Pour les onglets avec filtrage côté frontend, toujours récupérer tous les slots
-        if (filterType === 'publiques') {
-          // Pour l'onglet "Dispos publiques", utiliser le paramètre public_only
-          url = `${API_BASE_URL}/api/slots?public_only=true`
-        } else if (filterType === 'mes-dispos' || filterType === 'amis' || filterType === 'communaute') {
+        if (filterType === 'mes-dispos' || filterType === 'amis' || filterType === 'communaute') {
           url = `${API_BASE_URL}/api/slots?user=${encodeURIComponent(currentUser.prenom)}`
         } else {
           url = activity === 'Tous' 
