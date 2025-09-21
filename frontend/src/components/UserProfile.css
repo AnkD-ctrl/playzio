@@ -147,6 +147,7 @@
   margin: max(20px, env(safe-area-inset-top, 20px)) auto;
   display: flex;
   flex-direction: column;
+  padding: 28px;
 }
 
 @keyframes modalSlideIn {
@@ -200,15 +201,6 @@
   transform: scale(1.05);
 }
 
-.modal-content {
-  padding: 28px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  flex: 1;
-}
 
 /* Profile Info Section */
 .profile-info {
@@ -513,9 +505,6 @@
     font-size: 1.25rem;
   }
   
-  .modal-content {
-    padding: 20px;
-  }
   
   .profile-info {
     flex-direction: column;
@@ -874,9 +863,6 @@
     padding: 16px;
   }
   
-  .modal-content {
-    padding: 16px;
-  }
   
   
   .profile-details h4 {

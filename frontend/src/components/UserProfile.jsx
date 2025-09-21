@@ -151,8 +151,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
           </button>
         </div>
         
-        <div className="modal-content">
-          <div className="profile-info">
+        <div className="profile-info">
             
             <div className="profile-details">
               <h4>{user.prenom}</h4>
@@ -297,8 +296,6 @@ function UserProfile({ user, onClose, onUserUpdate }) {
 
         </div>
       </div>
-
-
     </div>
   )
 }
