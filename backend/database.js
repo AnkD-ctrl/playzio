@@ -2,6 +2,7 @@ import pkg from 'pg'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { nanoid } from 'nanoid'
 
 const { Pool } = pkg
 const __filename = fileURLToPath(import.meta.url)
