@@ -1523,6 +1523,34 @@ app.post('/api/test-reset-dev', async (req, res) => {
   }
 })
 
+// Lister les utilisateurs (pour diagnostic)
+app.get('/api/users-list', async (req, res) => {
+  try {
+    const users = await getAllUsers()
+    const userList = users.map(user => ({
+      prenom: user.prenom,
+      email: user.email,
+      role: user.role,
+      is_founder: user.is_founder
+    }))
+    
+    console.log('📋 Liste des utilisateurs:', userList.length, 'utilisateurs trouvés')
+    
+    res.json({
+      success: true,
+      count: userList.length,
+      users: userList
+    })
+  } catch (error) {
+    console.error('Erreur liste utilisateurs:', error)
+    res.status(500).json({ 
+      success: false,
+      error: 'Erreur serveur',
+      details: error.message
+    })
+  }
+})
+
 app.listen(port, () => {
   console.log(`🚀 Playzio Backend listening on port ${port}`)
 })
