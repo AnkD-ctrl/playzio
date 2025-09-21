@@ -298,7 +298,7 @@ function App() {
                 }}
               >
                 <span className="sidebar-icon">👥</span>
-                <span>Dispo des groupes</span>
+                <span>Dispos des groupes</span>
               </div>
               <div 
                 className={`sidebar-item ${selectedType === 'publiques' || selectedType === 'publiques-calendar' ? 'active' : ''}`}
