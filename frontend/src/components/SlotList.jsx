@@ -400,10 +400,11 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                         Rejoindre
                       </button>
                     )}
-                    <div className="expand-icon">
-                      {isExpanded ? '▼' : '▶'}
-                    </div>
                   </div>
+                </div>
+                
+                <div className="expand-icon-bottom" onClick={() => toggleSlotExpansion(slot.id)}>
+                  {isExpanded ? '▼' : '▶'}
                 </div>
 
                 {isExpanded && (
