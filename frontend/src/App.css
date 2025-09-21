@@ -656,25 +656,6 @@ body {
     transform-origin: left center;
   }
   
-  .groups-btn,
-  .profile-btn {
-    font-size: 0.75rem;
-    padding: 8px 10px;
-    min-width: 70px;
-    flex: 1;
-  }
-  
-  .logout-btn {
-    font-size: 1rem;
-    padding: 8px 10px;
-    min-width: 44px;
-    flex: 0;
-  }
-  
-  .logout-btn svg {
-    width: 14px;
-    height: 14px;
-  }
   
   /* iPhone footer adjustments */
   .activity-switcher-footer {
