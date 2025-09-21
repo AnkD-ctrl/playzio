@@ -368,25 +368,31 @@ export async function createFriendRequest(fromUser, toUser) {
 // Accepter une demande d'ami
 export async function acceptFriendRequest(fromUser, toUser) {
   try {
+    console.log(`🔄 AcceptFriendRequest: ${fromUser} -> ${toUser}`)
+    
     // Supprimer la demande
-    await pool.query(
+    const deleteResult = await pool.query(
       'DELETE FROM friend_requests WHERE from_user = $1 AND to_user = $2 AND status = $3',
       [fromUser, toUser, 'pending']
     )
+    console.log(`🗑️ Demandes supprimées: ${deleteResult.rowCount}`)
     
     // Ajouter l'amitié (s'assurer que user1 < user2 pour la contrainte UNIQUE)
     const user1 = fromUser < toUser ? fromUser : toUser
     const user2 = fromUser < toUser ? toUser : fromUser
     const id = nanoid()
     
+    console.log(`👥 Ajout amitié: ${user1} <-> ${user2} (ID: ${id})`)
+    
     const result = await pool.query(
       'INSERT INTO friends (id, user1, user2) VALUES ($1, $2, $3) RETURNING *',
       [id, user1, user2]
     )
     
+    console.log(`✅ Amitié créée:`, result.rows[0])
     return result.rows[0]
   } catch (error) {
-    console.error('Erreur acceptFriendRequest:', error)
+    console.error('❌ Erreur acceptFriendRequest:', error)
     throw error
   }
 }
