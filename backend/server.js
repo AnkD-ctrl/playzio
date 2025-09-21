@@ -50,7 +50,8 @@ import {
   getPasswordResetToken,
   markTokenAsUsed,
   cleanupExpiredTokens,
-  closeDatabase
+  closeDatabase,
+  pool
 } from './database.js'
 import { sendPasswordResetEmail, testEmailConnection } from './emailService.js'
 

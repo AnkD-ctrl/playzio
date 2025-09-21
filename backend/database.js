@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 // Configuration de la base de données
-const pool = new Pool({
+export const pool = new Pool({
   connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
   ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false
 })
