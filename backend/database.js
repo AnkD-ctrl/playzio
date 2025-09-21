@@ -307,16 +307,7 @@ export async function deleteGroup(id) {
 }
 
 // Friend Requests
-export async function createFriendRequest(requestData) {
-  const { id, from, to } = requestData
-  
-  const result = await pool.query(
-    'INSERT INTO friend_requests (id, from_user, to_user) VALUES ($1, $2, $3) RETURNING *',
-    [id, from, to]
-  )
-  
-  return result.rows[0]
-}
+// Ancienne fonction createFriendRequest supprimée - remplacée par la nouvelle version ci-dessous
 
 export async function getFriendRequestById(id) {
   const result = await pool.query('SELECT * FROM friend_requests WHERE id = $1', [id])
