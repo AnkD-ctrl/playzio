@@ -531,7 +531,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
                         </div>
                         
                         <div className="expand-icon-bottom" onClick={() => toggleSlotExpansion(slot.id)}>
-                          {isExpanded ? '▼' : '▶'}
+                          {isExpanded ? '▲' : '▼'}
                         </div>
                         
                         {isExpanded && (
