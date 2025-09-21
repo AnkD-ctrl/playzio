@@ -405,6 +405,30 @@ app.delete('/api/messages/:messageId', async (req, res) => {
   }
 })
 
+// Endpoint temporaire pour activer les notifications email d'un slot
+app.post('/api/slots/:id/enable-email-notifications', async (req, res) => {
+  try {
+    const { id } = req.params
+    
+    // Mettre à jour le slot pour activer les notifications email
+    const result = await pool.query(`
+      UPDATE slots 
+      SET email_notifications = true 
+      WHERE id = $1
+    `, [id])
+    
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Slot non trouvé' })
+    }
+    
+    console.log(`✅ Notifications email activées pour le slot ${id}`)
+    res.json({ success: true, message: 'Notifications email activées' })
+  } catch (error) {
+    console.error('Erreur lors de l\'activation des notifications email:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
 // Récupérer les créneaux
 app.get('/api/slots', async (req, res) => {
   try {
@@ -535,7 +559,7 @@ app.post('/api/slots/:id/join', async (req, res) => {
         createdBy: slot.createdBy
       })
       
-      if (slot.emailNotifications === true && slot.createdBy) {
+      if ((slot.emailNotifications === true || slot.emailNotifications === 'true') && slot.createdBy) {
         console.log('📧 Envoi de la notification email...')
         try {
           const organizer = await getUserByPrenom(slot.createdBy)
