@@ -145,8 +145,8 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
         url = `${API_BASE_URL}/api/slots/user/${encodeURIComponent(currentUser.prenom)}`
       } else {
         // Mode normal - utiliser l'endpoint avec authentification
-        // Pour les slots publics, toujours récupérer tous les slots (pas de filtrage par type)
-        if (filterType === 'publiques') {
+        // Pour les onglets avec filtrage côté frontend, toujours récupérer tous les slots
+        if (filterType === 'publiques' || filterType === 'mes-dispos' || filterType === 'amis' || filterType === 'communaute') {
           url = `${API_BASE_URL}/api/slots?user=${encodeURIComponent(currentUser.prenom)}`
         } else {
           url = activity === 'Tous' 
