@@ -171,6 +171,11 @@
   border-radius: 16px 16px 0 0;
 }
 
+.modal-content {
+  width: 100%;
+  max-width: 100%;
+}
+
 .modal-header h3 {
   color: #ffffff;
   font-size: 1.5rem;
