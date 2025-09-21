@@ -81,14 +81,13 @@ function UserProfile({ user, onClose, onUserUpdate }) {
 
   const handleAcceptFriend = async (requestId, senderPrenom) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/friends/accept-by-name`, {
+      const response = await fetch(`${API_BASE_URL}/api/friends/accept`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          user1: user.prenom,
-          user2: senderPrenom
+          requestId: requestId
         }),
       })
 
@@ -96,7 +95,8 @@ function UserProfile({ user, onClose, onUserUpdate }) {
         setMessage('Demande d\'ami acceptée !')
         fetchUserFriends() // Recharger la liste
       } else {
-        setMessage('Erreur lors de l\'acceptation')
+        const errorData = await response.json()
+        setMessage(`Erreur lors de l'acceptation: ${errorData.error || 'Erreur inconnue'}`)
       }
     } catch (error) {
       console.error('Erreur lors de l\'acceptation:', error)
