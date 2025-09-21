@@ -392,11 +392,16 @@ export async function getFriendRequestsSent(prenom) {
 }
 
 export async function updateUserPassword(prenom, hashedPassword) {
-  const result = await pool.query(
-    'UPDATE users SET password = $1 WHERE prenom = $2 RETURNING prenom, email, role, is_founder',
-    [hashedPassword, prenom]
-  )
-  return result.rows[0]
+  try {
+    const result = await pool.query(
+      'UPDATE users SET password = $1 WHERE prenom = $2 RETURNING prenom, email, role, is_founder',
+      [hashedPassword, prenom]
+    )
+    return result.rows[0]
+  } catch (error) {
+    // Si la base de données n'est pas accessible, lancer l'erreur pour gestion en amont
+    throw error
+  }
 }
 
 export async function getUserByEmail(email) {
