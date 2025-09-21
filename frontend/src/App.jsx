@@ -17,6 +17,7 @@ import InstallGuide from './components/InstallGuide'
 import LegalHub from './components/LegalHub'
 import { trackPageView, trackLogin, trackLogout, trackActivitySelect, trackNavigation } from './utils/analytics'
 import { testAnalyticsExclusion } from './utils/testAnalytics'
+import { API_BASE_URL } from './config'
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -199,6 +200,32 @@ function App() {
   const handleDateSelect = (date) => {
     setSelectedDate(date)
     setSelectedType('list')
+  }
+
+  const handleJoinSlot = async (slotId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/slots/${slotId}/join`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          participant: currentUser.prenom
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        // Rafraîchir la liste des slots
+        setFilterVersion(prev => prev + 1)
+        console.log('Slot rejoint avec succès')
+      } else {
+        console.error('Erreur lors de la jointure du slot:', data.error)
+      }
+    } catch (error) {
+      console.error('Erreur lors de la jointure du slot:', error)
+    }
   }
 
   const handleViewChange = (view) => {
@@ -416,6 +443,7 @@ function App() {
                 organizerFilter={organizerFilter}
                 filterType="mes-dispos"
                 onAddSlot={() => setSelectedType('add')}
+                onJoinSlot={handleJoinSlot}
               />
             )}
             
@@ -435,6 +463,7 @@ function App() {
                   setSelectedDate(date)
                   setSelectedType('add')
                 }}
+                onJoinSlot={handleJoinSlot}
               />
             )}
 
@@ -451,6 +480,7 @@ function App() {
                 lieuFilter={lieuFilter}
                 organizerFilter={organizerFilter}
                 filterType="amis"
+                onJoinSlot={handleJoinSlot}
               />
             )}
             
@@ -470,6 +500,7 @@ function App() {
                   setSelectedDate(date)
                   setSelectedType('add')
                 }}
+                onJoinSlot={handleJoinSlot}
               />
             )}
             
@@ -486,6 +517,7 @@ function App() {
                 lieuFilter={lieuFilter}
                 organizerFilter={organizerFilter}
                 filterType="communaute"
+                onJoinSlot={handleJoinSlot}
               />
             )}
             
@@ -505,6 +537,7 @@ function App() {
                   setSelectedDate(date)
                   setSelectedType('add')
                 }}
+                onJoinSlot={handleJoinSlot}
               />
             )}
             
@@ -521,6 +554,7 @@ function App() {
                 lieuFilter={lieuFilter}
                 organizerFilter={organizerFilter}
                 filterType="publiques"
+                onJoinSlot={handleJoinSlot}
               />
             )}
             
@@ -540,6 +574,7 @@ function App() {
                   setSelectedDate(date)
                   setSelectedType('add')
                 }}
+                onJoinSlot={handleJoinSlot}
               />
             )}
             
