@@ -136,8 +136,8 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
             slot.visibleToGroups && slot.visibleToGroups.some(groupName => userGroupNames.includes(groupName))
           )
         } else if (filterType === 'publiques') {
-          // Afficher seulement les créneaux visibles à tous (visible_to_all = true)
-          filteredData = filteredData.filter(slot => slot.visibleToAll === true)
+          // Les slots publics sont déjà filtrés côté serveur, pas besoin de filtrer à nouveau
+          // Le serveur retourne déjà uniquement les slots publics pour cet utilisateur
         } else if (filterType === 'amis') {
           // Afficher les créneaux des amis (visible_to_friends = true ET créés par un ami)
           filteredData = filteredData.filter(slot => 

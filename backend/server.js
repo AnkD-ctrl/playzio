@@ -57,6 +57,7 @@ import {
 } from './database.js'
 import { sendPasswordResetEmail, testEmailConnection, sendSlotJoinNotification } from './emailService.js'
 import { ensureEmailNotificationsColumn } from './auto_migrate_email_notifications.js'
+import { ensureVisibilityColumns } from './auto_migrate_visibility.js'
 
 const app = express()
 const port = process.env.PORT || 8080
@@ -64,6 +65,7 @@ const port = process.env.PORT || 8080
 // Initialize database on startup
 initDatabase().then(async () => {
   // Exécuter la migration automatique pour les notifications email
+  await ensureVisibilityColumns()
   await ensureEmailNotificationsColumn()
 }).catch(err => {
   console.error('PostgreSQL initialization failed, falling back to JSON:', err)
