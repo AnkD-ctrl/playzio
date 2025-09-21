@@ -84,6 +84,15 @@ BEGIN
     END IF;
 END $$;
 
+-- Migration: Add visible_to_friends column if it doesn't exist
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'slots' AND column_name = 'visible_to_friends') THEN
+        ALTER TABLE slots ADD COLUMN visible_to_friends BOOLEAN DEFAULT FALSE;
+    END IF;
+END $$;
+
 -- Migration: Add email column if it doesn't exist
 DO $$ 
 BEGIN

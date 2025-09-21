@@ -125,6 +125,7 @@ export async function getAllSlots(filters = {}) {
     createdBy: row.created_by,
     visibleToGroups: row.visible_to_groups,
     visibleToAll: row.visible_to_all,
+    visibleToFriends: row.visible_to_friends,
     participants: row.participants
   }))
 }
@@ -147,18 +148,19 @@ export async function getSlotById(id) {
     createdBy: row.created_by,
     visibleToGroups: row.visible_to_groups,
     visibleToAll: row.visible_to_all,
+    visibleToFriends: row.visible_to_friends,
     participants: row.participants
   }
 }
 
 export async function createSlot(slotData) {
-  const { id, date, heureDebut, heureFin, type, customActivity = null, description = '', lieu = '', maxParticipants = null, createdBy = null, visibleToGroups = [], visibleToAll = true, participants = [] } = slotData
+  const { id, date, heureDebut, heureFin, type, customActivity = null, description = '', lieu = '', maxParticipants = null, createdBy = null, visibleToGroups = [], visibleToAll = true, visibleToFriends = false, participants = [] } = slotData
   
   const typeValue = Array.isArray(type) ? JSON.stringify(type) : type
   
   const result = await pool.query(
-    'INSERT INTO slots (id, date, heure_debut, heure_fin, type, custom_activity, description, lieu, max_participants, created_by, visible_to_groups, visible_to_all, participants) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *',
-    [id, date, heureDebut, heureFin, typeValue, customActivity, description, lieu, maxParticipants, createdBy, visibleToGroups, visibleToAll, participants]
+    'INSERT INTO slots (id, date, heure_debut, heure_fin, type, custom_activity, description, lieu, max_participants, created_by, visible_to_groups, visible_to_all, visible_to_friends, participants) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *',
+    [id, date, heureDebut, heureFin, typeValue, customActivity, description, lieu, maxParticipants, createdBy, visibleToGroups, visibleToAll, visibleToFriends, participants]
   )
   
   const row = result.rows[0]
@@ -175,6 +177,7 @@ export async function createSlot(slotData) {
     createdBy: row.created_by,
     visibleToGroups: row.visible_to_groups,
     visibleToAll: row.visible_to_all,
+    visibleToFriends: row.visible_to_friends,
     participants: row.participants
   }
 }

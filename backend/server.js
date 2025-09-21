@@ -1777,6 +1777,50 @@ app.post('/api/test-create-token', async (req, res) => {
   }
 })
 
+// Migration pour ajouter la colonne visible_to_friends
+app.post('/api/migrate-visible-to-friends', async (req, res) => {
+  try {
+    console.log('🔄 Début de la migration visible_to_friends...')
+    
+    // Ajouter la colonne visible_to_friends si elle n'existe pas
+    await pool.query(`
+      DO $$ 
+      BEGIN
+          IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                         WHERE table_name = 'slots' AND column_name = 'visible_to_friends') THEN
+              ALTER TABLE slots ADD COLUMN visible_to_friends BOOLEAN DEFAULT FALSE;
+              RAISE NOTICE 'Colonne visible_to_friends ajoutée à la table slots.';
+          ELSE
+              RAISE NOTICE 'La colonne visible_to_friends existe déjà dans la table slots.';
+          END IF;
+      END $$;
+    `)
+    
+    console.log('✅ Migration réussie : colonne visible_to_friends ajoutée')
+    
+    // Vérifier que la colonne existe
+    const result = await pool.query(`
+      SELECT column_name, data_type, is_nullable, column_default
+      FROM information_schema.columns 
+      WHERE table_name = 'slots' AND column_name = 'visible_to_friends';
+    `)
+    
+    res.json({
+      success: true,
+      message: 'Colonne visible_to_friends créée avec succès',
+      columnInfo: result.rows[0] || null
+    })
+    
+  } catch (error) {
+    console.error('❌ Erreur migration visible_to_friends:', error)
+    res.status(500).json({ 
+      success: false,
+      error: 'Erreur lors de la migration',
+      details: error.message
+    })
+  }
+})
+
 app.listen(port, () => {
   console.log(`🚀 Playzio Backend listening on port ${port}`)
 })
