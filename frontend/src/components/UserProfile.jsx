@@ -6,11 +6,6 @@ function UserProfile({ user, onClose, onUserUpdate }) {
   const [showPasswordModal, setShowPasswordModal] = useState(false)
   const [showEmailModal, setShowEmailModal] = useState(false)
   const [userGroups, setUserGroups] = useState([])
-  const [userFriends, setUserFriends] = useState([])
-  const [friendRequests, setFriendRequests] = useState([])
-  const [sentFriendRequests, setSentFriendRequests] = useState([])
-  const [showFriendsModal, setShowFriendsModal] = useState(false)
-  const [friendsTab, setFriendsTab] = useState('friends') // 'friends', 'received', 'sent'
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: '',
     newPassword: '',
@@ -23,25 +18,9 @@ function UserProfile({ user, onClose, onUserUpdate }) {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
 
-  // Charger les groupes et amis de l'utilisateur
+  // Charger les groupes de l'utilisateur
   useEffect(() => {
     fetchUserGroups()
-    fetchUserFriends()
-    
-    // Charger les amis depuis localStorage au démarrage
-    const savedFriends = localStorage.getItem(`playzio_friends_${user.prenom}`)
-    const savedRequests = localStorage.getItem(`playzio_friend_requests_${user.prenom}`)
-    const savedSentRequests = localStorage.getItem(`playzio_sent_friend_requests_${user.prenom}`)
-    
-    if (savedFriends) {
-      setUserFriends(JSON.parse(savedFriends))
-    }
-    if (savedRequests) {
-      setFriendRequests(JSON.parse(savedRequests))
-    }
-    if (savedSentRequests) {
-      setSentFriendRequests(JSON.parse(savedSentRequests))
-    }
   }, [user.prenom])
 
   const fetchUserGroups = async () => {
@@ -56,124 +35,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
     }
   }
 
-  const fetchUserFriends = async () => {
-    try {
-      // Récupérer les amis
-      const friendsResponse = await fetch(`${API_BASE_URL}/api/friends/${encodeURIComponent(user.prenom)}`)
-      if (friendsResponse.ok) {
-        const friendsData = await friendsResponse.json()
-        setUserFriends(friendsData.friends || [])
-      } else {
-        // Si l'utilisateur n'existe pas dans la base, utiliser localStorage
-        const savedFriends = localStorage.getItem(`playzio_friends_${user.prenom}`)
-        setUserFriends(savedFriends ? JSON.parse(savedFriends) : [])
-      }
 
-      // Récupérer les demandes reçues
-      const receivedResponse = await fetch(`${API_BASE_URL}/api/friends/requests/received/${encodeURIComponent(user.prenom)}`)
-      if (receivedResponse.ok) {
-        const receivedData = await receivedResponse.json()
-        setFriendRequests(receivedData.requests || [])
-      } else {
-        const savedRequests = localStorage.getItem(`playzio_friend_requests_${user.prenom}`)
-        setFriendRequests(savedRequests ? JSON.parse(savedRequests) : [])
-      }
-
-      // Récupérer les demandes envoyées
-      const sentResponse = await fetch(`${API_BASE_URL}/api/friends/requests/sent/${encodeURIComponent(user.prenom)}`)
-      if (sentResponse.ok) {
-        const sentData = await sentResponse.json()
-        setSentFriendRequests(sentData.requests || [])
-      } else {
-        const savedSentRequests = localStorage.getItem(`playzio_sent_friend_requests_${user.prenom}`)
-        setSentFriendRequests(savedSentRequests ? JSON.parse(savedSentRequests) : [])
-      }
-    } catch (error) {
-      console.error('Erreur lors du chargement des amis:', error)
-      // En cas d'erreur, utiliser localStorage
-      const savedFriends = localStorage.getItem(`playzio_friends_${user.prenom}`)
-      const savedRequests = localStorage.getItem(`playzio_friend_requests_${user.prenom}`)
-      const savedSentRequests = localStorage.getItem(`playzio_sent_friend_requests_${user.prenom}`)
-      
-      setUserFriends(savedFriends ? JSON.parse(savedFriends) : [])
-      setFriendRequests(savedRequests ? JSON.parse(savedRequests) : [])
-      setSentFriendRequests(savedSentRequests ? JSON.parse(savedSentRequests) : [])
-    }
-  }
-
-  const handleAcceptFriend = async (friendName) => {
-    try {
-      // Essayer d'accepter via l'API serveur
-      const response = await fetch(`${API_BASE_URL}/api/friends/accept-by-name`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          from: friendName,
-          to: user.prenom
-        })
-      })
-
-      if (response.ok) {
-        alert(`Vous êtes maintenant ami avec ${friendName}`)
-        // Recharger les données depuis le serveur
-        await fetchUserFriends()
-      } else {
-        // Si le serveur échoue, utiliser localStorage comme fallback
-        const currentFriends = JSON.parse(localStorage.getItem(`playzio_friends_${user.prenom}`) || '[]')
-        if (!currentFriends.includes(friendName)) {
-          currentFriends.push(friendName)
-          localStorage.setItem(`playzio_friends_${user.prenom}`, JSON.stringify(currentFriends))
-        }
-
-        const otherFriends = JSON.parse(localStorage.getItem(`playzio_friends_${friendName}`) || '[]')
-        if (!otherFriends.includes(user.prenom)) {
-          otherFriends.push(user.prenom)
-          localStorage.setItem(`playzio_friends_${friendName}`, JSON.stringify(otherFriends))
-        }
-
-        const currentRequests = JSON.parse(localStorage.getItem(`playzio_friend_requests_${user.prenom}`) || '[]')
-        const updatedRequests = currentRequests.filter(req => req !== friendName)
-        localStorage.setItem(`playzio_friend_requests_${user.prenom}`, JSON.stringify(updatedRequests))
-
-        const otherSentRequests = JSON.parse(localStorage.getItem(`playzio_sent_friend_requests_${friendName}`) || '[]')
-        const updatedOtherSentRequests = otherSentRequests.filter(req => req !== user.prenom)
-        localStorage.setItem(`playzio_sent_friend_requests_${friendName}`, JSON.stringify(updatedOtherSentRequests))
-
-        // Mettre à jour l'état local
-        setUserFriends(currentFriends)
-        setFriendRequests(updatedRequests)
-
-        alert(`Vous êtes maintenant ami avec ${friendName}`)
-      }
-    } catch (error) {
-      console.error('Erreur lors de l\'acceptation d\'ami:', error)
-      alert('Erreur lors de l\'acceptation de la demande')
-    }
-  }
-
-  const handleCancelSentRequest = async (friendName) => {
-    try {
-      // Retirer de la liste des demandes envoyées
-      const sentRequests = JSON.parse(localStorage.getItem(`playzio_sent_friend_requests_${user.prenom}`) || '[]')
-      const updatedSentRequests = sentRequests.filter(req => req !== friendName)
-      localStorage.setItem(`playzio_sent_friend_requests_${user.prenom}`, JSON.stringify(updatedSentRequests))
-
-      // Retirer de la liste des demandes reçues de l'autre utilisateur
-      const otherRequests = JSON.parse(localStorage.getItem(`playzio_friend_requests_${friendName}`) || '[]')
-      const updatedOtherRequests = otherRequests.filter(req => req !== user.prenom)
-      localStorage.setItem(`playzio_friend_requests_${friendName}`, JSON.stringify(updatedOtherRequests))
-
-      // Mettre à jour l'état local
-      setSentFriendRequests(updatedSentRequests)
-
-      alert(`Demande d'ami annulée pour ${friendName}`)
-    } catch (error) {
-      console.error('Erreur lors de l\'annulation de la demande:', error)
-      alert('Erreur lors de l\'annulation de la demande')
-    }
-  }
 
 
 
@@ -316,17 +178,6 @@ function UserProfile({ user, onClose, onUserUpdate }) {
             </div>
           </div>
 
-          {/* Section Amis */}
-          <div className="profile-friends-section">
-            <button 
-              className="friends-button"
-              onClick={() => setShowFriendsModal(true)}
-              title="Voir mes amis"
-            >
-              <span className="friends-text">Amis ({userFriends.length})</span>
-            </button>
-          </div>
-          
           {/* Espace entre groupes et actions */}
           <div className="profile-spacer"></div>
           
@@ -448,120 +299,6 @@ function UserProfile({ user, onClose, onUserUpdate }) {
       </div>
 
 
-      {/* Modal de liste des amis avec onglets */}
-      {showFriendsModal && (
-        <div className="sub-modal-overlay" onClick={() => setShowFriendsModal(false)}>
-          <div className="sub-modal friends-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="sub-modal-header">
-              <h3>Mes amis</h3>
-              <button 
-                className="sub-modal-close" 
-                onClick={() => setShowFriendsModal(false)}
-                disabled={loading}
-              >
-                ×
-              </button>
-            </div>
-            
-            {/* Onglets */}
-            <div className="friends-tabs">
-              <button 
-                className={`friends-tab ${friendsTab === 'friends' ? 'active' : ''}`}
-                onClick={() => setFriendsTab('friends')}
-              >
-                Amis ({userFriends.length})
-              </button>
-              <button 
-                className={`friends-tab ${friendsTab === 'received' ? 'active' : ''}`}
-                onClick={() => setFriendsTab('received')}
-              >
-                Demandes reçues ({friendRequests.length})
-              </button>
-              <button 
-                className={`friends-tab ${friendsTab === 'sent' ? 'active' : ''}`}
-                onClick={() => setFriendsTab('sent')}
-              >
-                Demandes envoyées ({sentFriendRequests.length})
-              </button>
-            </div>
-
-            <div className="sub-modal-content">
-              <div className="friends-modal-content">
-                {/* Onglet Amis */}
-                {friendsTab === 'friends' && (
-                  <div className="friends-tab-content">
-                    {userFriends.length > 0 ? (
-                      <div className="friends-list">
-                        {userFriends.map(friend => (
-                          <div key={friend} className="friend-item">
-                            <span className="friend-name">👤 {friend}</span>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="no-friends">Vous n'avez pas encore d'amis</p>
-                    )}
-                  </div>
-                )}
-
-                {/* Onglet Demandes reçues */}
-                {friendsTab === 'received' && (
-                  <div className="friends-tab-content">
-                    {friendRequests.length > 0 ? (
-                      <div className="friend-requests">
-                        {friendRequests.map(request => (
-                          <div key={request} className="friend-request-item">
-                            <span>👤 {request}</span>
-                            <div className="request-actions">
-                              <button 
-                                className="accept-btn"
-                                onClick={() => handleAcceptFriend(request)}
-                              >
-                                Accepter
-                              </button>
-                              <button 
-                                className="reject-btn"
-                                onClick={() => handleCancelSentRequest(request)}
-                              >
-                                Refuser
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="no-friends">Aucune demande d'ami reçue</p>
-                    )}
-                  </div>
-                )}
-
-                {/* Onglet Demandes envoyées */}
-                {friendsTab === 'sent' && (
-                  <div className="friends-tab-content">
-                    {sentFriendRequests.length > 0 ? (
-                      <div className="friend-requests">
-                        {sentFriendRequests.map(request => (
-                          <div key={request} className="friend-request-item">
-                            <span>👤 {request}</span>
-                            <button 
-                              className="cancel-btn"
-                              onClick={() => handleCancelSentRequest(request)}
-                            >
-                              Annuler
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="no-friends">Aucune demande d'ami envoyée</p>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
