@@ -383,6 +383,160 @@
   margin: 20px;
 }
 
+/* Friends management styles */
+.friends-modal {
+  max-width: 600px;
+  width: 90%;
+}
+
+.friends-tabs {
+  display: flex;
+  border-bottom: 1px solid #444;
+  margin-bottom: 20px;
+}
+
+.friends-tab {
+  flex: 1;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.friends-tab:hover {
+  color: #d4af8c;
+  background: rgba(212, 175, 140, 0.1);
+}
+
+.friends-tab.active {
+  color: #d4af8c;
+  border-bottom-color: #d4af8c;
+  background: rgba(212, 175, 140, 0.1);
+}
+
+.friends-content {
+  min-height: 200px;
+}
+
+.friends-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.friend-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  transition: all 0.3s ease;
+}
+
+.friend-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(212, 175, 140, 0.3);
+}
+
+.friend-item span {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.request-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.accept-btn {
+  background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+  color: #ffffff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.accept-btn:hover {
+  background: linear-gradient(135deg, #e6c199 0%, #d9b37e 25%, #c99a1b 50%, #a366eb 75%, #9a42f2 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 175, 140, 0.3);
+}
+
+.cancel-btn {
+  background: linear-gradient(135deg, #666666 0%, #555555 100%);
+  color: #e0e0e0;
+  border: 1px solid #777777;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.cancel-btn:hover {
+  background: linear-gradient(135deg, #777777 0%, #666666 100%);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.add-friend-content {
+  padding: 20px;
+}
+
+.search-results {
+  margin-top: 20px;
+}
+
+.search-results h5 {
+  color: #ffffff;
+  margin-bottom: 12px;
+  font-size: 1rem;
+}
+
+.search-results .friend-item button {
+  font-size: 0.8rem;
+  padding: 6px 12px;
+}
+
+/* Responsive design for friends modal */
+@media (max-width: 768px) {
+  .friends-modal {
+    width: 95%;
+    max-width: none;
+  }
+  
+  .friends-tabs {
+    flex-direction: column;
+  }
+  
+  .friends-tab {
+    text-align: center;
+  }
+  
+  .friend-item {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+  
+  .request-actions {
+    justify-content: center;
+  }
+}
+
 .form-group {
   margin-bottom: 24px;
 }

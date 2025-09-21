@@ -17,6 +17,7 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
   const [selectedActivities, setSelectedActivities] = useState([activity])
   const [selectedGroups, setSelectedGroups] = useState([])
   const [visibleToAll, setVisibleToAll] = useState(true)
+  const [visibleToFriends, setVisibleToFriends] = useState(false)
   const [userGroups, setUserGroups] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -122,7 +123,8 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
         customActivity: customActivityName || null,
         createdBy: currentUser.prenom,
         visibleToGroups: visibleToAll ? [] : selectedGroups,
-        visibleToAll: visibleToAll
+        visibleToAll: visibleToAll,
+        visibleToFriends: visibleToFriends
       }
 
       // Créer un slot pour chaque date sélectionnée
@@ -151,6 +153,8 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
         setSelectedDates([])
         setSelectedActivities([activity])
         setSelectedGroups([])
+        setVisibleToAll(true)
+        setVisibleToFriends(false)
         setCustomActivityName('')
         // Effacer le filtre de date si onClearDate est disponible
         if (onClearDate) {
@@ -341,6 +345,14 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
                 />
                 <span className="visibility-label">Publique (visible par tout le monde)</span>
               </label>
+              <label className="visibility-option">
+                <input
+                  type="checkbox"
+                  checked={visibleToFriends}
+                  onChange={(e) => setVisibleToFriends(e.target.checked)}
+                />
+                <span className="visibility-label">Visible par mes amis</span>
+              </label>
             </div>
             
             {userGroups.length > 0 && (
@@ -366,14 +378,20 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
                 ✅ Cette disponibilité sera visible par tout le monde
               </p>
             )}
-            {!visibleToAll && selectedGroups.length === 0 && (
+            {visibleToFriends && !visibleToAll && (
               <p className="visibility-info">
-                ⚠️ Aucun groupe sélectionné : cette disponibilité sera visible par tous les utilisateurs
+                👥 Cette disponibilité sera visible par vos amis seulement
+              </p>
+            )}
+            {!visibleToAll && selectedGroups.length === 0 && !visibleToFriends && (
+              <p className="visibility-info">
+                ⚠️ Aucun groupe ou ami sélectionné : cette disponibilité sera visible par tous les utilisateurs
               </p>
             )}
             {!visibleToAll && selectedGroups.length > 0 && (
               <p className="visibility-info">
                 ✅ Cette disponibilité sera visible par {selectedGroups.length} groupe(s) sélectionné(s)
+                {visibleToFriends && " et vos amis"}
               </p>
             )}
           </div>

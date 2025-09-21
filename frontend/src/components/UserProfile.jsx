@@ -15,12 +15,24 @@ function UserProfile({ user, onClose, onUserUpdate }) {
     email: ''
   })
 
+  // États pour la gestion des amis
+  const [userFriends, setUserFriends] = useState([])
+  const [friendRequests, setFriendRequests] = useState([])
+  const [showFriendsModal, setShowFriendsModal] = useState(false)
+  const [showAddFriendModal, setShowAddFriendModal] = useState(false)
+  const [searchUsername, setSearchUsername] = useState('')
+  const [searchResults, setSearchResults] = useState([])
+  const [searchLoading, setSearchLoading] = useState(false)
+  const [sentFriendRequests, setSentFriendRequests] = useState([])
+  const [friendsTab, setFriendsTab] = useState('friends') // 'friends', 'received', 'sent'
+
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
 
-  // Charger les groupes de l'utilisateur
+  // Charger les groupes de l'utilisateur et les amis
   useEffect(() => {
     fetchUserGroups()
+    fetchUserFriends()
   }, [user.prenom])
 
   const fetchUserGroups = async () => {
@@ -32,6 +44,133 @@ function UserProfile({ user, onClose, onUserUpdate }) {
       }
     } catch (error) {
       console.error('Erreur lors du chargement des groupes:', error)
+    }
+  }
+
+  const fetchUserFriends = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/friends/${encodeURIComponent(user.prenom)}`)
+      if (response.ok) {
+        const data = await response.json()
+        setUserFriends(data.friends || [])
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des amis:', error)
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/friends/requests/received/${encodeURIComponent(user.prenom)}`)
+      if (response.ok) {
+        const data = await response.json()
+        setFriendRequests(data.requests || [])
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des demandes reçues:', error)
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/friends/requests/sent/${encodeURIComponent(user.prenom)}`)
+      if (response.ok) {
+        const data = await response.json()
+        setSentFriendRequests(data.requests || [])
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des demandes envoyées:', error)
+    }
+  }
+
+  const handleAcceptFriend = async (requestId, senderPrenom) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/friends/accept-by-name`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user1: user.prenom,
+          user2: senderPrenom
+        }),
+      })
+
+      if (response.ok) {
+        setMessage('Demande d\'ami acceptée !')
+        fetchUserFriends() // Recharger la liste
+      } else {
+        setMessage('Erreur lors de l\'acceptation')
+      }
+    } catch (error) {
+      console.error('Erreur lors de l\'acceptation:', error)
+      setMessage('Erreur lors de l\'acceptation')
+    }
+  }
+
+  const handleCancelSentRequest = async (requestId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/friends/requests/${requestId}`, {
+        method: 'DELETE',
+      })
+
+      if (response.ok) {
+        setMessage('Demande d\'ami annulée')
+        fetchUserFriends() // Recharger la liste
+      } else {
+        setMessage('Erreur lors de l\'annulation')
+      }
+    } catch (error) {
+      console.error('Erreur lors de l\'annulation:', error)
+      setMessage('Erreur lors de l\'annulation')
+    }
+  }
+
+  const validateAndSendRequest = async () => {
+    if (!searchUsername.trim()) {
+      setMessage('Veuillez entrer un nom d\'utilisateur')
+      return
+    }
+
+    setSearchLoading(true)
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/users/search?q=${encodeURIComponent(searchUsername)}`)
+      if (response.ok) {
+        const users = await response.json()
+        setSearchResults(users)
+      } else {
+        setSearchResults([])
+      }
+    } catch (error) {
+      console.error('Erreur lors de la recherche:', error)
+      setSearchResults([])
+    } finally {
+      setSearchLoading(false)
+    }
+  }
+
+  const handleSendFriendRequest = async (targetPrenom) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/friends/request`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sender: user.prenom,
+          receiver: targetPrenom
+        }),
+      })
+
+      if (response.ok) {
+        setMessage('Demande d\'ami envoyée !')
+        setShowAddFriendModal(false)
+        setSearchUsername('')
+        setSearchResults([])
+        fetchUserFriends() // Recharger la liste
+      } else {
+        const errorData = await response.json()
+        setMessage(errorData.error || 'Erreur lors de l\'envoi')
+      }
+    } catch (error) {
+      console.error('Erreur lors de l\'envoi:', error)
+      setMessage('Erreur lors de l\'envoi')
     }
   }
 
@@ -194,6 +333,12 @@ function UserProfile({ user, onClose, onUserUpdate }) {
             >
               Modifier le mot de passe
             </button>
+            <button 
+              className="action-btn secondary"
+              onClick={() => setShowFriendsModal(true)}
+            >
+              Amis ({userFriends.length})
+            </button>
           </div>
           
           {/* Modal de changement de mot de passe */}
@@ -293,11 +438,170 @@ function UserProfile({ user, onClose, onUserUpdate }) {
               </div>
             </div>
           )}
-          
+
+          {/* Modal de gestion des amis */}
+          {showFriendsModal && (
+            <div className="sub-modal-overlay" onClick={() => setShowFriendsModal(false)}>
+              <div className="sub-modal friends-modal" onClick={(e) => e.stopPropagation()}>
+                <div className="modal-header">
+                  <h4>Mes amis</h4>
+                  <button className="close-btn" onClick={() => setShowFriendsModal(false)}>
+                    ✕
+                  </button>
+                </div>
+                
+                <div className="friends-tabs">
+                  <button 
+                    className={`friends-tab ${friendsTab === 'friends' ? 'active' : ''}`}
+                    onClick={() => setFriendsTab('friends')}
+                  >
+                    Amis ({userFriends.length})
+                  </button>
+                  <button 
+                    className={`friends-tab ${friendsTab === 'received' ? 'active' : ''}`}
+                    onClick={() => setFriendsTab('received')}
+                  >
+                    Demandes reçues ({friendRequests.length})
+                  </button>
+                  <button 
+                    className={`friends-tab ${friendsTab === 'sent' ? 'active' : ''}`}
+                    onClick={() => setFriendsTab('sent')}
+                  >
+                    Demandes envoyées ({sentFriendRequests.length})
+                  </button>
+                </div>
+
+                <div className="friends-content">
+                  {friendsTab === 'friends' && (
+                    <div>
+                      <button 
+                        className="action-btn primary"
+                        onClick={() => setShowAddFriendModal(true)}
+                      >
+                        Ajouter un ami
+                      </button>
+                      {userFriends.length === 0 ? (
+                        <p>Aucun ami pour le moment</p>
+                      ) : (
+                        <ul className="friends-list">
+                          {userFriends.map((friend, index) => (
+                            <li key={index} className="friend-item">
+                              <span>{friend}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  )}
+
+                  {friendsTab === 'received' && (
+                    <div>
+                      {friendRequests.length === 0 ? (
+                        <p>Aucune demande reçue</p>
+                      ) : (
+                        <ul className="friends-list">
+                          {friendRequests.map((request) => (
+                            <li key={request.id} className="friend-item">
+                              <span>{request.sender}</span>
+                              <div className="request-actions">
+                                <button 
+                                  className="accept-btn"
+                                  onClick={() => handleAcceptFriend(request.id, request.sender)}
+                                >
+                                  Accepter
+                                </button>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  )}
+
+                  {friendsTab === 'sent' && (
+                    <div>
+                      {sentFriendRequests.length === 0 ? (
+                        <p>Aucune demande envoyée</p>
+                      ) : (
+                        <ul className="friends-list">
+                          {sentFriendRequests.map((request) => (
+                            <li key={request.id} className="friend-item">
+                              <span>{request.receiver}</span>
+                              <div className="request-actions">
+                                <button 
+                                  className="cancel-btn"
+                                  onClick={() => handleCancelSentRequest(request.id)}
+                                >
+                                  Annuler
+                                </button>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Modal d'ajout d'ami */}
+          {showAddFriendModal && (
+            <div className="sub-modal-overlay" onClick={() => setShowAddFriendModal(false)}>
+              <div className="sub-modal" onClick={(e) => e.stopPropagation()}>
+                <div className="modal-header">
+                  <h4>Ajouter un ami</h4>
+                  <button className="close-btn" onClick={() => setShowAddFriendModal(false)}>
+                    ✕
+                  </button>
+                </div>
+                
+                <div className="add-friend-content">
+                  <div className="form-group">
+                    <label>Nom d'utilisateur</label>
+                    <input
+                      type="text"
+                      value={searchUsername}
+                      onChange={(e) => setSearchUsername(e.target.value)}
+                      placeholder="Entrez le nom d'utilisateur"
+                    />
+                    <button 
+                      className="action-btn primary"
+                      onClick={validateAndSendRequest}
+                      disabled={searchLoading}
+                    >
+                      {searchLoading ? 'Recherche...' : 'Rechercher'}
+                    </button>
+                  </div>
+
+                  {searchResults.length > 0 && (
+                    <div className="search-results">
+                      <h5>Résultats de recherche :</h5>
+                      <ul className="friends-list">
+                        {searchResults.map((user) => (
+                          <li key={user.prenom} className="friend-item">
+                            <span>{user.prenom}</span>
+                            <button 
+                              className="action-btn primary"
+                              onClick={() => handleSendFriendRequest(user.prenom)}
+                            >
+                              Envoyer demande
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {message && <div className={`message ${message.includes('succès') || message.includes('envoyée') ? 'success' : 'error'}`}>{message}</div>}
+                </div>
+              </div>
+            </div>
+          )}
 
         </div>
       </div>
-
 
     </div>
   )
