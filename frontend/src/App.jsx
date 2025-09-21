@@ -31,6 +31,7 @@ function App() {
   const [organizerFilter, setOrganizerFilter] = useState('')
   const [filterVersion, setFilterVersion] = useState(0)
   const [shareUsername, setShareUsername] = useState(null)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
 
   // Vérifier si on est sur la page de réinitialisation de mot de passe ou guide d'installation
@@ -217,6 +218,17 @@ function App() {
       {currentView !== 'landing' && currentView !== 'login' && currentView !== 'register' && isLoggedIn && (
         <div className="app-header">
           <div className="header-content">
+            {/* Bouton hamburger */}
+            <button 
+              className="hamburger-btn"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              title="Menu"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            
             <div className="header-actions">
               <button 
                 className="groups-btn"
@@ -247,6 +259,57 @@ function App() {
                   <path d="M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Barre latérale */}
+      {sidebarOpen && (
+        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)}>
+          <div className="sidebar" onClick={(e) => e.stopPropagation()}>
+            <div className="sidebar-header">
+              <h3>Navigation</h3>
+              <button 
+                className="sidebar-close"
+                onClick={() => setSidebarOpen(false)}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            <div className="sidebar-content">
+              <div 
+                className={`sidebar-item ${selectedType === 'mes-dispo' || selectedType === 'mes-dispo-calendar' ? 'active' : ''}`}
+                onClick={() => {
+                  setSelectedType('mes-dispo')
+                  setSidebarOpen(false)
+                }}
+              >
+                <span className="sidebar-icon">👤</span>
+                <span>Mes dispo</span>
+              </div>
+              <div 
+                className={`sidebar-item ${selectedType === 'communaute' || selectedType === 'communaute-calendar' ? 'active' : ''}`}
+                onClick={() => {
+                  setSelectedType('communaute')
+                  setSidebarOpen(false)
+                }}
+              >
+                <span className="sidebar-icon">👥</span>
+                <span>Dispo des groupes</span>
+              </div>
+              <div 
+                className={`sidebar-item ${selectedType === 'publiques' || selectedType === 'publiques-calendar' ? 'active' : ''}`}
+                onClick={() => {
+                  setSelectedType('publiques')
+                  setSidebarOpen(false)
+                }}
+              >
+                <span className="sidebar-icon">🌐</span>
+                <span>Publiques</span>
+              </div>
             </div>
           </div>
         </div>
@@ -291,26 +354,6 @@ function App() {
 
       {currentView === 'activity' && selectedActivity && (
         <div className="activity-container">
-          <div className="main-tabs">
-            <div 
-              className={`main-tab ${selectedType === 'mes-dispo' || selectedType === 'mes-dispo-calendar' ? 'active' : ''}`}
-              onClick={() => setSelectedType('mes-dispo')}
-            >
-              Mes dispo
-            </div>
-            <div 
-              className={`main-tab ${selectedType === 'communaute' || selectedType === 'communaute-calendar' ? 'active' : ''}`}
-              onClick={() => setSelectedType('communaute')}
-            >
-              Dispo des groupes
-            </div>
-            <div 
-              className={`main-tab ${selectedType === 'publiques' || selectedType === 'publiques-calendar' ? 'active' : ''}`}
-              onClick={() => setSelectedType('publiques')}
-            >
-              Publiques
-            </div>
-          </div>
 
 
           <div className="activity-content">
