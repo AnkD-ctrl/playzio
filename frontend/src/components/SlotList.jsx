@@ -403,7 +403,10 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                   </div>
                 </div>
                 
-                <div className="expand-icon-bottom" onClick={() => toggleSlotExpansion(slot.id)}>
+                <div className="expand-icon-bottom" onClick={(e) => {
+                  e.stopPropagation()
+                  toggleSlotExpansion(slot.id)
+                }}>
                   {isExpanded ? '▲' : '▼'}
                 </div>
 
