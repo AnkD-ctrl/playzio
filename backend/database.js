@@ -154,14 +154,22 @@ export async function getSlotById(id) {
 }
 
 export async function createSlot(slotData) {
-  const { id, date, heureDebut, heureFin, type, customActivity = null, description = '', lieu = '', maxParticipants = null, createdBy = null, visibleToGroups = [], visibleToAll = true, visibleToFriends = false, participants = [] } = slotData
-  
-  const typeValue = Array.isArray(type) ? JSON.stringify(type) : type
-  
-  const result = await pool.query(
-    'INSERT INTO slots (id, date, heure_debut, heure_fin, type, custom_activity, description, lieu, max_participants, created_by, visible_to_groups, visible_to_all, visible_to_friends, participants) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *',
-    [id, date, heureDebut, heureFin, typeValue, customActivity, description, lieu, maxParticipants, createdBy, visibleToGroups, visibleToAll, visibleToFriends, participants]
-  )
+  try {
+    console.log('🔄 createSlot appelée avec:', JSON.stringify(slotData, null, 2))
+    
+    const { id, date, heureDebut, heureFin, type, customActivity = null, description = '', lieu = '', maxParticipants = null, createdBy = null, visibleToGroups = [], visibleToAll = true, visibleToFriends = false, participants = [] } = slotData
+    
+    const typeValue = Array.isArray(type) ? JSON.stringify(type) : type
+    
+    console.log('📝 Paramètres SQL:', {
+      id, date, heureDebut, heureFin, typeValue, customActivity, description, lieu, 
+      maxParticipants, createdBy, visibleToGroups, visibleToAll, visibleToFriends, participants
+    })
+    
+    const result = await pool.query(
+      'INSERT INTO slots (id, date, heure_debut, heure_fin, type, custom_activity, description, lieu, max_participants, created_by, visible_to_groups, visible_to_all, visible_to_friends, participants) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *',
+      [id, date, heureDebut, heureFin, typeValue, customActivity, description, lieu, maxParticipants, createdBy, visibleToGroups, visibleToAll, visibleToFriends, participants]
+    )
   
   const row = result.rows[0]
   return {
@@ -179,6 +187,10 @@ export async function createSlot(slotData) {
     visibleToAll: row.visible_to_all,
     visibleToFriends: row.visible_to_friends,
     participants: row.participants
+  }
+  } catch (error) {
+    console.error('❌ Erreur createSlot:', error)
+    throw error
   }
 }
 
