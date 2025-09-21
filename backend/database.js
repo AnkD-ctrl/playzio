@@ -134,23 +134,7 @@ export async function getSlotById(id) {
   const result = await pool.query('SELECT * FROM slots WHERE id = $1', [id])
   if (result.rows.length === 0) return null
   
-  const row = result.rows[0]
-  return {
-    id: row.id,
-    date: row.date,
-    heureDebut: row.heure_debut,
-    heureFin: row.heure_fin,
-    type: typeof row.type === 'string' ? (row.type.startsWith('[') ? JSON.parse(row.type) : row.type) : row.type,
-    customActivity: row.custom_activity,
-    description: row.description,
-    lieu: row.lieu,
-    maxParticipants: row.max_participants,
-    createdBy: row.created_by,
-    visibleToGroups: row.visible_to_groups,
-    visibleToAll: row.visible_to_all,
-    visibleToFriends: row.visible_to_friends,
-    participants: row.participants
-  }
+  return formatSlotResult(result.rows[0])
 }
 
 export async function createSlot(slotData) {
@@ -159,12 +143,36 @@ export async function createSlot(slotData) {
     
     const typeValue = Array.isArray(type) ? JSON.stringify(type) : type
     
-    const result = await pool.query(
-      'INSERT INTO slots (id, date, heure_debut, heure_fin, type, custom_activity, description, lieu, max_participants, created_by, visible_to_groups, visible_to_all, visible_to_friends, participants, email_notifications) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING *',
-      [id, date, heureDebut, heureFin, typeValue, customActivity, description, lieu, maxParticipants, createdBy, visibleToGroups, visibleToAll, visibleToFriends, participants, emailNotifications]
-    )
-  
-  const row = result.rows[0]
+    // Vérifier si la colonne email_notifications existe
+    let query, values
+    try {
+      // Essayer d'abord avec la nouvelle colonne
+      query = 'INSERT INTO slots (id, date, heure_debut, heure_fin, type, custom_activity, description, lieu, max_participants, created_by, visible_to_groups, visible_to_all, visible_to_friends, participants, email_notifications) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING *'
+      values = [id, date, heureDebut, heureFin, typeValue, customActivity, description, lieu, maxParticipants, createdBy, visibleToGroups, visibleToAll, visibleToFriends, participants, emailNotifications]
+      
+      const result = await pool.query(query, values)
+      return formatSlotResult(result.rows[0])
+    } catch (error) {
+      // Si la colonne n'existe pas encore, utiliser l'ancienne requête
+      if (error.message.includes('email_notifications')) {
+        console.log('Colonne email_notifications non trouvée, utilisation de l\'ancienne structure')
+        query = 'INSERT INTO slots (id, date, heure_debut, heure_fin, type, custom_activity, description, lieu, max_participants, created_by, visible_to_groups, visible_to_all, visible_to_friends, participants) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *'
+        values = [id, date, heureDebut, heureFin, typeValue, customActivity, description, lieu, maxParticipants, createdBy, visibleToGroups, visibleToAll, visibleToFriends, participants]
+        
+        const result = await pool.query(query, values)
+        return formatSlotResult(result.rows[0])
+      } else {
+        throw error
+      }
+    }
+  } catch (error) {
+    console.error('❌ Erreur createSlot:', error)
+    throw error
+  }
+}
+
+// Fonction utilitaire pour formater le résultat d'un slot
+function formatSlotResult(row) {
   return {
     id: row.id,
     date: row.date,
@@ -180,11 +188,7 @@ export async function createSlot(slotData) {
     visibleToAll: row.visible_to_all,
     visibleToFriends: row.visible_to_friends,
     participants: row.participants,
-    emailNotifications: row.email_notifications
-  }
-  } catch (error) {
-    console.error('❌ Erreur createSlot:', error)
-    throw error
+    emailNotifications: row.email_notifications || false // Valeur par défaut si la colonne n'existe pas
   }
 }
 

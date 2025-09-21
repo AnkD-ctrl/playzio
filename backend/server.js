@@ -56,12 +56,16 @@ import {
   pool
 } from './database.js'
 import { sendPasswordResetEmail, testEmailConnection, sendSlotJoinNotification } from './emailService.js'
+import { ensureEmailNotificationsColumn } from './auto_migrate_email_notifications.js'
 
 const app = express()
 const port = process.env.PORT || 8080
 
 // Initialize database on startup
-initDatabase().catch(err => {
+initDatabase().then(async () => {
+  // Exécuter la migration automatique pour les notifications email
+  await ensureEmailNotificationsColumn()
+}).catch(err => {
   console.error('PostgreSQL initialization failed, falling back to JSON:', err)
 })
 
