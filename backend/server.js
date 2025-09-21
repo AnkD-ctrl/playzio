@@ -1607,6 +1607,65 @@ app.post('/api/debug-token', async (req, res) => {
   }
 })
 
+// Migration pour créer la table password_reset_tokens
+app.post('/api/migrate-password-tokens', async (req, res) => {
+  try {
+    console.log('🔄 Début de la migration password_reset_tokens...')
+    
+    // Créer la table password_reset_tokens
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS password_reset_tokens (
+          id VARCHAR(50) PRIMARY KEY,
+          user_email VARCHAR(255) NOT NULL,
+          token VARCHAR(255) NOT NULL UNIQUE,
+          expires_at TIMESTAMP NOT NULL,
+          used BOOLEAN DEFAULT FALSE,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `)
+    
+    // Créer les index
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_email 
+      ON password_reset_tokens(user_email);
+    `)
+    
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_token 
+      ON password_reset_tokens(token);
+    `)
+    
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_expires 
+      ON password_reset_tokens(expires_at);
+    `)
+    
+    console.log('✅ Migration réussie : table password_reset_tokens créée')
+    
+    // Vérifier que la table existe
+    const result = await pool.query(`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public' 
+      AND table_name = 'password_reset_tokens';
+    `)
+    
+    res.json({
+      success: true,
+      message: 'Table password_reset_tokens créée avec succès',
+      tableExists: result.rows.length > 0
+    })
+    
+  } catch (error) {
+    console.error('❌ Erreur migration password_reset_tokens:', error)
+    res.status(500).json({ 
+      success: false,
+      error: 'Erreur lors de la migration',
+      details: error.message
+    })
+  }
+})
+
 app.listen(port, () => {
   console.log(`🚀 Playzio Backend listening on port ${port}`)
 })
