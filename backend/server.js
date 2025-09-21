@@ -636,15 +636,19 @@ app.get('/api/slots/user/:username', async (req, res) => {
 // Gestion des amis
 app.post('/api/friends/request', async (req, res) => {
   try {
-    const { from, to } = req.body
+    const { sender, receiver } = req.body
     
-    const friendRequest = await createFriendRequest({
-      id: nanoid(),
-      from,
-      to
-    })
+    if (!sender || !receiver) {
+      return res.status(400).json({ error: 'Sender et receiver requis' })
+    }
     
-    res.json({ success: true })
+    if (sender === receiver) {
+      return res.status(400).json({ error: 'Vous ne pouvez pas vous ajouter vous-même' })
+    }
+    
+    const friendRequest = await createFriendRequest(sender, receiver)
+    
+    res.json({ success: true, requestId: friendRequest.id })
   } catch (error) {
     console.error('Friend request error:', error)
     res.status(500).json({ error: 'Erreur serveur' })
@@ -655,28 +659,24 @@ app.post('/api/friends/accept', async (req, res) => {
   try {
     const { requestId } = req.body
     
-    const request = await getFriendRequestById(requestId)
-    if (!request) {
+    if (!requestId) {
+      return res.status(400).json({ error: 'Request ID requis' })
+    }
+    
+    // Récupérer la demande pour obtenir les utilisateurs
+    const result = await pool.query(
+      'SELECT from_user, to_user FROM friend_requests WHERE id = $1 AND status = $2',
+      [requestId, 'pending']
+    )
+    
+    if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Demande non trouvée' })
     }
     
-    // Ajouter l'ami aux deux utilisateurs
-    const fromUser = await getUserByPrenom(request.from)
-    const toUser = await getUserByPrenom(request.to)
+    const { from_user, to_user } = result.rows[0]
     
-    if (fromUser && toUser) {
-      if (!fromUser.friends.includes(request.to)) {
-        fromUser.friends.push(request.to)
-        await updateUserFriends(fromUser.prenom, fromUser.friends)
-      }
-      if (!toUser.friends.includes(request.from)) {
-        toUser.friends.push(request.from)
-        await updateUserFriends(toUser.prenom, toUser.friends)
-      }
-    }
-    
-    // Marquer la demande comme acceptée
-    await updateFriendRequestStatus(requestId, 'accepted')
+    // Accepter la demande (supprime la demande et ajoute l'amitié)
+    await acceptFriendRequest(from_user, to_user)
     
     res.json({ success: true })
   } catch (error) {
@@ -744,6 +744,28 @@ app.post('/api/friends/accept-by-name', async (req, res) => {
     res.json({ success: true })
   } catch (error) {
     console.error('Accept friend by name error:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
+// Supprimer une demande d'ami
+app.delete('/api/friends/requests/:requestId', async (req, res) => {
+  try {
+    const { requestId } = req.params
+    
+    if (!requestId) {
+      return res.status(400).json({ error: 'Request ID requis' })
+    }
+    
+    const deletedRequest = await deleteFriendRequest(requestId)
+    
+    if (!deletedRequest) {
+      return res.status(404).json({ error: 'Demande non trouvée' })
+    }
+    
+    res.json({ success: true })
+  } catch (error) {
+    console.error('Delete friend request error:', error)
     res.status(500).json({ error: 'Erreur serveur' })
   }
 })

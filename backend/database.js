@@ -359,6 +359,61 @@ export async function updateUserFriends(prenom, friends) {
   return result.rows[0]
 }
 
+// Créer une demande d'ami
+export async function createFriendRequest(fromUser, toUser) {
+  try {
+    const id = nanoid()
+    const result = await pool.query(
+      'INSERT INTO friend_requests (id, from_user, to_user, status) VALUES ($1, $2, $3, $4) RETURNING *',
+      [id, fromUser, toUser, 'pending']
+    )
+    return result.rows[0]
+  } catch (error) {
+    console.error('Erreur createFriendRequest:', error)
+    throw error
+  }
+}
+
+// Accepter une demande d'ami
+export async function acceptFriendRequest(fromUser, toUser) {
+  try {
+    // Supprimer la demande
+    await pool.query(
+      'DELETE FROM friend_requests WHERE from_user = $1 AND to_user = $2 AND status = $3',
+      [fromUser, toUser, 'pending']
+    )
+    
+    // Ajouter l'amitié (s'assurer que user1 < user2 pour la contrainte UNIQUE)
+    const user1 = fromUser < toUser ? fromUser : toUser
+    const user2 = fromUser < toUser ? toUser : fromUser
+    const id = nanoid()
+    
+    const result = await pool.query(
+      'INSERT INTO friends (id, user1, user2) VALUES ($1, $2, $3) RETURNING *',
+      [id, user1, user2]
+    )
+    
+    return result.rows[0]
+  } catch (error) {
+    console.error('Erreur acceptFriendRequest:', error)
+    throw error
+  }
+}
+
+// Supprimer une demande d'ami
+export async function deleteFriendRequest(requestId) {
+  try {
+    const result = await pool.query(
+      'DELETE FROM friend_requests WHERE id = $1 RETURNING *',
+      [requestId]
+    )
+    return result.rows[0]
+  } catch (error) {
+    console.error('Erreur deleteFriendRequest:', error)
+    throw error
+  }
+}
+
 export async function updateUserRole(prenom, role) {
   const result = await pool.query(
     'UPDATE users SET role = $1 WHERE prenom = $2 RETURNING prenom, email, role',
@@ -369,30 +424,46 @@ export async function updateUserRole(prenom, role) {
 
 // Récupérer les amis d'un utilisateur
 export async function getUserFriends(prenom) {
-  const result = await pool.query('SELECT friends FROM users WHERE prenom = $1', [prenom])
-  if (result.rows.length === 0) return []
-  
-  return result.rows[0].friends || []
+  try {
+    const result = await pool.query(
+      'SELECT user2 as friend FROM friends WHERE user1 = $1 UNION SELECT user1 as friend FROM friends WHERE user2 = $1',
+      [prenom]
+    )
+    return result.rows.map(row => row.friend)
+  } catch (error) {
+    console.error('Erreur getUserFriends:', error)
+    return []
+  }
 }
 
 // Récupérer les demandes d'amis reçues par un utilisateur
 export async function getFriendRequestsReceived(prenom) {
-  const result = await pool.query(
-    'SELECT from_user FROM friend_requests WHERE to_user = $1 AND status = $2',
-    [prenom, 'pending']
-  )
-  
-  return result.rows.map(row => row.from_user)
+  try {
+    const result = await pool.query(
+      'SELECT id, from_user as sender, created_at FROM friend_requests WHERE to_user = $1 AND status = $2',
+      [prenom, 'pending']
+    )
+    
+    return result.rows
+  } catch (error) {
+    console.error('Erreur getFriendRequestsReceived:', error)
+    return []
+  }
 }
 
 // Récupérer les demandes d'amis envoyées par un utilisateur
 export async function getFriendRequestsSent(prenom) {
-  const result = await pool.query(
-    'SELECT to_user FROM friend_requests WHERE from_user = $1 AND status = $2',
-    [prenom, 'pending']
-  )
-  
-  return result.rows.map(row => row.to_user)
+  try {
+    const result = await pool.query(
+      'SELECT id, to_user as receiver, created_at FROM friend_requests WHERE from_user = $1 AND status = $2',
+      [prenom, 'pending']
+    )
+    
+    return result.rows
+  } catch (error) {
+    console.error('Erreur getFriendRequestsSent:', error)
+    return []
+  }
 }
 
 export async function updateUserPassword(prenom, hashedPassword) {
