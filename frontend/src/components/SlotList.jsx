@@ -125,6 +125,8 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
       
       if (response.ok) {
         const data = await response.json()
+        console.log('📥 Slots reçus de l\'API:', data.length, 'slots')
+        console.log('📥 Détails slots:', data.map(s => ({ id: s.id, createdBy: s.createdBy, visibleToAll: s.visibleToAll, customActivity: s.customActivity })))
         let filteredData = data
         
         // Filtrer selon le type d'onglet
@@ -142,7 +144,10 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           )
         } else if (filterType === 'publiques') {
           // Afficher seulement les créneaux publics (visibleToAll = true)
+          console.log('🔍 Filtrage slots publics - Avant:', filteredData.length, 'slots')
           filteredData = filteredData.filter(slot => slot.visibleToAll === true)
+          console.log('🔍 Filtrage slots publics - Après:', filteredData.length, 'slots')
+          console.log('🔍 Slots filtrés:', filteredData.map(s => ({ id: s.id, createdBy: s.createdBy, visibleToAll: s.visibleToAll, customActivity: s.customActivity })))
         } else if (filterType === 'amis') {
           // Afficher les créneaux des amis (visible_to_friends = true ET créés par un ami)
           filteredData = filteredData.filter(slot => 
