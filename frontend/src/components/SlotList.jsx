@@ -124,6 +124,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         }
       }
       
+      console.log('🌐 URL appelée:', url)
       const response = await fetch(url)
       
       if (response.ok) {
