@@ -26,6 +26,8 @@ import {
   updateGroupMembers,
   deleteGroup,
   createFriendRequest,
+  acceptFriendRequest,
+  deleteFriendRequest,
   getFriendRequestById,
   updateFriendRequestStatus,
   updateUserFriends,
