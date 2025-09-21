@@ -10,10 +10,6 @@ function UserProfile({ user, onClose, onUserUpdate }) {
   const [friendRequests, setFriendRequests] = useState([])
   const [sentFriendRequests, setSentFriendRequests] = useState([])
   const [showFriendsModal, setShowFriendsModal] = useState(false)
-  const [showAddFriendModal, setShowAddFriendModal] = useState(false)
-  const [searchUsername, setSearchUsername] = useState('')
-  const [searchResults, setSearchResults] = useState([])
-  const [searchLoading, setSearchLoading] = useState(false)
   const [friendsTab, setFriendsTab] = useState('friends') // 'friends', 'received', 'sent'
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: '',
@@ -179,119 +175,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
     }
   }
 
-  const validateAndSendRequest = async () => {
-    if (!searchUsername.trim()) {
-      alert('Veuillez entrer un nom d\'utilisateur')
-      return
-    }
 
-    setSearchLoading(true)
-    try {
-      console.log('🔍 Recherche utilisateur:', searchUsername.trim())
-      
-      // Vérifier si l'utilisateur existe exactement
-      const response = await fetch(`${API_BASE_URL}/api/users/search?q=${encodeURIComponent(searchUsername.trim())}`)
-      console.log('📡 Réponse API recherche:', response.status, response.ok)
-      
-      if (response.ok) {
-        const users = await response.json()
-        console.log('👥 Utilisateurs trouvés:', users)
-        
-        const exactUser = users.find(u => u.prenom.toLowerCase() === searchUsername.trim().toLowerCase())
-        console.log('✅ Utilisateur exact trouvé:', exactUser)
-        
-        if (!exactUser) {
-          console.log('❌ Aucun utilisateur exact trouvé')
-          alert(`Aucun utilisateur trouvé avec le nom "${searchUsername.trim()}"`)
-          setSearchLoading(false)
-          return
-        }
-
-        if (exactUser.prenom === user.prenom) {
-          alert('Vous ne pouvez pas vous ajouter vous-même')
-          setSearchLoading(false)
-          return
-        }
-
-        // Vérifier dans localStorage aussi
-        const localFriends = JSON.parse(localStorage.getItem(`playzio_friends_${user.prenom}`) || '[]')
-        const localRequests = JSON.parse(localStorage.getItem(`playzio_friend_requests_${user.prenom}`) || '[]')
-        const localSentRequests = JSON.parse(localStorage.getItem(`playzio_sent_friend_requests_${user.prenom}`) || '[]')
-
-        if (userFriends.includes(exactUser.prenom) || localFriends.includes(exactUser.prenom)) {
-          alert(`${exactUser.prenom} est déjà votre ami`)
-          setSearchLoading(false)
-          return
-        }
-
-        if (friendRequests.includes(exactUser.prenom) || localRequests.includes(exactUser.prenom) || localSentRequests.includes(exactUser.prenom)) {
-          alert(`Vous avez déjà une demande en cours avec ${exactUser.prenom}`)
-          setSearchLoading(false)
-          return
-        }
-
-        // Envoyer la demande d'ami
-        await handleSendFriendRequest(exactUser)
-      } else {
-        console.log('❌ Erreur API recherche:', response.status)
-        alert(`Erreur lors de la recherche: ${response.status}`)
-      }
-    } catch (error) {
-      console.error('❌ Erreur lors de la validation:', error)
-      alert('Erreur de connexion au serveur')
-    }
-    setSearchLoading(false)
-  }
-
-  const handleSendFriendRequest = async (targetUser) => {
-    try {
-      // Envoyer au serveur d'abord
-      const response = await fetch(`${API_BASE_URL}/api/friends/request`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          from: user.prenom,
-          to: targetUser.prenom
-        })
-      })
-
-      if (response.ok) {
-        alert(`Demande d'ami envoyée à ${targetUser.prenom}`)
-        setShowAddFriendModal(false)
-        setSearchUsername('')
-        setSearchResults([])
-        
-        // Recharger les données depuis le serveur
-        await fetchUserFriends()
-      } else {
-        // Si le serveur échoue, utiliser localStorage comme fallback
-        const targetRequests = JSON.parse(localStorage.getItem(`playzio_friend_requests_${targetUser.prenom}`) || '[]')
-        if (!targetRequests.includes(user.prenom)) {
-          targetRequests.push(user.prenom)
-          localStorage.setItem(`playzio_friend_requests_${targetUser.prenom}`, JSON.stringify(targetRequests))
-        }
-
-        const sentRequests = JSON.parse(localStorage.getItem(`playzio_sent_friend_requests_${user.prenom}`) || '[]')
-        if (!sentRequests.includes(targetUser.prenom)) {
-          sentRequests.push(targetUser.prenom)
-          localStorage.setItem(`playzio_sent_friend_requests_${user.prenom}`, JSON.stringify(sentRequests))
-        }
-
-        alert(`Demande d'ami envoyée à ${targetUser.prenom}`)
-        setShowAddFriendModal(false)
-        setSearchUsername('')
-        setSearchResults([])
-        
-        // Recharger les données locales
-        await fetchUserFriends()
-      }
-    } catch (error) {
-      console.error('Erreur lors de l\'envoi de la demande:', error)
-      alert('Erreur lors de l\'envoi de la demande')
-    }
-  }
 
   const handleEmailAdd = async (e) => {
     e.preventDefault()
@@ -440,18 +324,6 @@ function UserProfile({ user, onClose, onUserUpdate }) {
               title="Voir mes amis"
             >
               <span className="friends-text">Amis ({userFriends.length})</span>
-              <div className="friends-button-actions">
-                <button 
-                  className="add-friend-btn"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setShowAddFriendModal(true)
-                  }}
-                  title="Ajouter un ami"
-                >
-                  +
-                </button>
-              </div>
             </button>
           </div>
           
@@ -575,62 +447,6 @@ function UserProfile({ user, onClose, onUserUpdate }) {
         </div>
       </div>
 
-      {/* Modal de recherche d'utilisateurs */}
-      {showAddFriendModal && (
-        <div className="sub-modal-overlay" onClick={() => setShowAddFriendModal(false)}>
-          <div className="sub-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="sub-modal-header">
-              <h3>Ajouter un ami</h3>
-              <button 
-                className="sub-modal-close" 
-                onClick={() => setShowAddFriendModal(false)}
-                disabled={loading}
-              >
-                ×
-              </button>
-            </div>
-            <div className="sub-modal-content">
-              <div className="search-users-form">
-                <div className="form-group">
-                  <label>Nom d'utilisateur exact</label>
-                  <input
-                    type="text"
-                    placeholder="Entrez le nom exact de l'utilisateur..."
-                    value={searchUsername}
-                    onChange={(e) => setSearchUsername(e.target.value)}
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        validateAndSendRequest()
-                      }
-                    }}
-                  />
-                </div>
-                
-                {searchLoading && (
-                  <div className="search-loading">Vérification en cours...</div>
-                )}
-                
-                <div className="form-actions">
-                  <button 
-                    type="button" 
-                    onClick={() => setShowAddFriendModal(false)}
-                    disabled={searchLoading}
-                  >
-                    Annuler
-                  </button>
-                  <button 
-                    className="validate-btn"
-                    onClick={validateAndSendRequest}
-                    disabled={searchLoading || !searchUsername.trim()}
-                  >
-                    {searchLoading ? 'Vérification...' : 'Ajouter'}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Modal de liste des amis avec onglets */}
       {showFriendsModal && (
