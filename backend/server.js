@@ -431,7 +431,7 @@ app.get('/api/slots', async (req, res) => {
       })
     }
     
-    // Filtrer par visibilité des groupes si un utilisateur est spécifié
+    // Filtrer par visibilité si un utilisateur est spécifié
     if (user) {
       // Récupérer les groupes de l'utilisateur
       const userGroups = await getGroupsByUser(user)
@@ -439,8 +439,13 @@ app.get('/api/slots', async (req, res) => {
       
       // Filtrer les slots visibles pour cet utilisateur
       filteredSlots = filteredSlots.filter(slot => {
-        // Si le slot n'a pas de groupes spécifiés, il est public (rétrocompatibilité)
-        if (!slot.visibleToGroups || slot.visibleToGroups.length === 0) {
+        // Si le slot est public (visibleToAll = true), il est visible par tous
+        if (slot.visibleToAll === true) {
+          return true
+        }
+        
+        // Si le slot n'a pas de groupes spécifiés ET pas de visibilité définie, il est public (rétrocompatibilité)
+        if ((!slot.visibleToGroups || slot.visibleToGroups.length === 0) && slot.visibleToAll !== false) {
           return true
         }
         
