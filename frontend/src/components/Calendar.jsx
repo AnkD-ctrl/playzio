@@ -286,7 +286,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
   const handleSlotClick = (slot) => {
     // Si onJoinSlot est fourni (mode partage), rediriger vers l'inscription
     if (onJoinSlot) {
-      onJoinSlot()
+      onJoinSlot(slot.id)
     } else {
       // Mode normal - ouvrir popup avec les disponibilités du jour
       const daySlots = slots.filter(s => s.date === slot.date)
@@ -546,7 +546,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
                                   onClick={(e) => {
                                     e.stopPropagation()
                                     if (onJoinSlot) {
-                                      onJoinSlot()
+                                      onJoinSlot(slot.id)
                                     } else {
                                       handleJoinSlot(slot.id)
                                     }

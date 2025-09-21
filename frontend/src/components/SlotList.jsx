@@ -424,7 +424,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                           onClick={(e) => {
                             e.stopPropagation()
                             if (onJoinSlot) {
-                              onJoinSlot()
+                              onJoinSlot(slot.id)
                             } else {
                               handleJoinSlot(slot.id)
                             }
