@@ -569,9 +569,10 @@
 .slot-item-activity {
   color: #e0e0e0;
   font-weight: 500;
-  flex: 1;
+  flex: 0 0 auto;
   font-size: 0.95rem;
-  max-width: 120px;
+  width: 60px;
+  max-width: 60px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -992,6 +993,8 @@
 
   .slot-item-activity {
     font-size: 0.9rem;
+    width: 55px;
+    max-width: 55px;
   }
 
   .slot-item-participants {
