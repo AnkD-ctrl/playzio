@@ -470,6 +470,7 @@ function App() {
                 currentUser={currentUser}
                 onSlotAdded={() => setSelectedType('mes-dispos')}
                 preSelectedDate={selectedDate}
+                onClearDate={() => setSelectedDate(null)}
               />
             )}
           </div>

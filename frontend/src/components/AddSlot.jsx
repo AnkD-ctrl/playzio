@@ -4,7 +4,7 @@ import { API_BASE_URL } from '../config'
 import { trackSlotCreate } from '../utils/analytics'
 import CustomActivityModal from './CustomActivityModal'
 
-function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate }) {
+function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearDate }) {
   const [formData, setFormData] = useState({
     date: preSelectedDate || '',
     heureDebut: '',
@@ -152,6 +152,10 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate }) {
         setSelectedActivities([activity])
         setSelectedGroups([])
         setCustomActivityName('')
+        // Effacer le filtre de date si onClearDate est disponible
+        if (onClearDate) {
+          onClearDate()
+        }
         onSlotAdded()
       } else {
         setError(`${failedResponses.length} disponibilité(s) n'a/ont pas pu être créée(s)`)
