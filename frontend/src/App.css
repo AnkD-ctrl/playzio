@@ -520,29 +520,19 @@ body {
   .header-actions {
     width: auto;
     justify-content: flex-end;
-    gap: 6px;
+    gap: 2px;
     flex-wrap: nowrap;
+    margin-left: auto;
   }
   
   .groups-btn,
   .profile-btn,
   .logout-btn {
-    width: 36px;
-    height: 36px;
-    padding: 6px;
+    width: 32px;
+    height: 32px;
+    padding: 4px;
   }
   
-  .logout-btn {
-    font-size: 1.1rem;
-    padding: 10px 12px;
-    min-width: 48px;
-    flex: 0;
-  }
-  
-  .logout-btn svg {
-    width: 16px;
-    height: 16px;
-  }
   
   .activity-container,
   .add-slot-container {
