@@ -55,7 +55,7 @@ import {
   closeDatabase,
   pool
 } from './database.js'
-import { sendPasswordResetEmail, testEmailConnection } from './emailService.js'
+import { sendPasswordResetEmail, testEmailConnection, sendSlotJoinNotification } from './emailService.js'
 
 const app = express()
 const port = process.env.PORT || 8080
@@ -513,6 +513,33 @@ app.post('/api/slots/:id/join', async (req, res) => {
     if (!slot.participants.includes(userToAdd)) {
       slot.participants.push(userToAdd)
       const updatedSlot = await updateSlotParticipants(id, slot.participants)
+      
+      // Envoyer une notification email si activée et si l'organisateur a un email
+      if (slot.emailNotifications && slot.createdBy) {
+        try {
+          const organizer = await getUserByPrenom(slot.createdBy)
+          if (organizer && organizer.email) {
+            await sendSlotJoinNotification(
+              organizer.email,
+              organizer.prenom,
+              userToAdd,
+              {
+                date: slot.date,
+                heureDebut: slot.heureDebut,
+                heureFin: slot.heureFin,
+                type: slot.type,
+                customActivity: slot.customActivity,
+                lieu: slot.lieu
+              }
+            )
+            console.log(`Notification email envoyée à ${organizer.email} pour l'inscription de ${userToAdd}`)
+          }
+        } catch (emailError) {
+          console.error('Erreur lors de l\'envoi de la notification email:', emailError)
+          // Ne pas faire échouer la jointure si l'email échoue
+        }
+      }
+      
       res.json({ success: true, slot: updatedSlot })
     } else {
       res.json({ success: true, slot })
