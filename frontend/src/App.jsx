@@ -22,7 +22,7 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null)
   const [currentView, setCurrentView] = useState('landing') // Commencer par la landing page
   const [selectedActivity, setSelectedActivity] = useState(null)
-  const [selectedType, setSelectedType] = useState('mes-dispo')
+  const [selectedType, setSelectedType] = useState('mes-dispos')
   const [selectedDate, setSelectedDate] = useState(null)
   const [showUserProfile, setShowUserProfile] = useState(false)
   const [showFilterModal, setShowFilterModal] = useState(false)
@@ -108,7 +108,7 @@ function App() {
     setCurrentUser(user)
     setIsLoggedIn(true)
     setSelectedActivity('Tous') // Aller directement à l'activité "Tous"
-    setSelectedType('mes-dispo') // Aller directement sur "Mes dispo"
+    setSelectedType('mes-dispos') // Aller directement sur "Mes dispos"
     setCurrentView('activity')
     
     // Sauvegarder la session dans localStorage seulement si les cookies sont acceptés
@@ -281,14 +281,14 @@ function App() {
             </div>
             <div className="sidebar-content">
               <div 
-                className={`sidebar-item ${selectedType === 'mes-dispo' || selectedType === 'mes-dispo-calendar' ? 'active' : ''}`}
+                className={`sidebar-item ${selectedType === 'mes-dispos' || selectedType === 'mes-dispos-calendar' ? 'active' : ''}`}
                 onClick={() => {
-                  setSelectedType('mes-dispo')
+                  setSelectedType('mes-dispos')
                   setSidebarOpen(false)
                 }}
               >
                 <span className="sidebar-icon">👤</span>
-                <span>Mes dispo</span>
+                <span>Mes dispos</span>
               </div>
               <div 
                 className={`sidebar-item ${selectedType === 'communaute' || selectedType === 'communaute-calendar' ? 'active' : ''}`}
@@ -357,10 +357,10 @@ function App() {
 
 
           <div className="activity-content">
-            {/* Mes dispo - Vue liste */}
-            {selectedType === 'mes-dispo' && (
+            {/* Mes dispos - Vue liste */}
+            {selectedType === 'mes-dispos' && (
               <SlotList 
-                key={`mes-dispo-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
+                key={`mes-dispos-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
                 activity={selectedActivity}
                 currentUser={currentUser}
                 selectedDate={selectedDate}
@@ -369,15 +369,15 @@ function App() {
                 onSearchFilterChange={handleSearchFilterChange}
                 lieuFilter={lieuFilter}
                 organizerFilter={organizerFilter}
-                filterType="mes-dispo"
+                filterType="mes-dispos"
                 onAddSlot={() => setSelectedType('add')}
               />
             )}
             
-            {/* Mes dispo - Vue calendrier */}
-            {selectedType === 'mes-dispo-calendar' && (
+            {/* Mes dispos - Vue calendrier */}
+            {selectedType === 'mes-dispos-calendar' && (
               <Calendar 
-                key={`mes-dispo-calendar-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
+                key={`mes-dispos-calendar-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
                 activity={selectedActivity}
                 currentUser={currentUser}
                 onDateSelect={handleDateSelect}
@@ -385,7 +385,7 @@ function App() {
                 onSearchFilterChange={handleSearchFilterChange}
                 lieuFilter={lieuFilter}
                 organizerFilter={organizerFilter}
-                filterType="mes-dispo"
+                filterType="mes-dispos"
                 onAddSlot={(date) => {
                   setSelectedDate(date)
                   setSelectedType('add')
@@ -468,7 +468,7 @@ function App() {
               <AddSlot 
                 activity={selectedActivity}
                 currentUser={currentUser}
-                onSlotAdded={() => setSelectedType('mes-dispo')}
+                onSlotAdded={() => setSelectedType('mes-dispos')}
                 preSelectedDate={selectedDate}
               />
             )}
@@ -513,7 +513,7 @@ function App() {
               </div>
               
               {/* Bouton partager */}
-              {selectedType === 'mes-dispo' && currentUser && (
+              {selectedType === 'mes-dispos' && currentUser && (
                 <div className="footer-btn-wrapper">
                   <button 
                     className="view-toggle-btn share-btn"

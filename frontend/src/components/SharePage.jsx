@@ -177,7 +177,7 @@ const SharePage = ({ username }) => {
       {currentView === 'list' ? (
         <SlotList
           currentUser={mockUser}
-          filterType="mes-dispo"
+          filterType="mes-dispos"
           activity={activityFilter}
           searchFilter={searchFilter}
           lieuFilter={lieuFilter}
@@ -191,7 +191,7 @@ const SharePage = ({ username }) => {
       ) : (
         <Calendar
           currentUser={mockUser}
-          filterType="mes-dispo"
+          filterType="mes-dispos"
           activity={activityFilter}
           searchFilter={searchFilter}
           lieuFilter={lieuFilter}

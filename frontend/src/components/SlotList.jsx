@@ -112,7 +112,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         if (onJoinSlot) {
           // Mode partage public - ne pas filtrer, les données viennent déjà filtrées de l'API
           // Les données sont déjà filtrées par utilisateur côté serveur
-        } else if (filterType === 'mes-dispo') {
+        } else if (filterType === 'mes-dispos') {
           // Afficher seulement les créneaux créés par l'utilisateur
           filteredData = filteredData.filter(slot => slot.createdBy === currentUser.prenom)
         } else if (filterType === 'communaute' && userGroups.length > 0) {
