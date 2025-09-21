@@ -3,7 +3,7 @@ import SlotList from './SlotList'
 import Calendar from './Calendar'
 import '../App.css'
 
-const SharePage = ({ username }) => {
+const SharePage = ({ username, onNavigateToRegister }) => {
   // États pour les filtres et la vue
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [activityFilter, setActivityFilter] = useState('Tous')
@@ -58,7 +58,7 @@ const SharePage = ({ username }) => {
           Découvrez les créneaux disponibles et rejoignez-les !
         </p>
         <button 
-          onClick={() => window.location.href = `${window.location.origin}/#register`}
+          onClick={() => onNavigateToRegister && onNavigateToRegister()}
           style={{
             background: 'linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%)',
             color: 'white',

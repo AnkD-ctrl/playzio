@@ -370,7 +370,10 @@ function App() {
       )}
 
       {currentView === 'share' && shareUsername && (
-        <SharePage username={shareUsername} />
+        <SharePage 
+          username={shareUsername} 
+          onNavigateToRegister={() => setCurrentView('register')}
+        />
       )}
 
       {currentView === 'register' && (
