@@ -219,6 +219,21 @@ body {
   position: relative;
 }
 
+.activity-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/images/people playzio bara.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.3;
+  z-index: -1;
+}
+
 .activity-header {
   margin-bottom: 24px;
   padding: 0;
@@ -425,6 +440,7 @@ body {
   margin-top: 0; /* Plus besoin d'espace car view-toggle-container est en position relative */
   position: relative;
   overflow: hidden;
+  z-index: 1;
 }
 
 .activity-content > * {
