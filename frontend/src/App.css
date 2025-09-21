@@ -450,7 +450,7 @@ body {
   right: 0;
   background: #3a3a3a;
   border-top: 1px solid #4a4a4a;
-  padding: 24px 20px;
+  padding: 16px 20px;
   z-index: 100;
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
   transform: translateZ(0);
@@ -466,42 +466,47 @@ body {
   align-items: center;
 }
 
-.activity-switcher {
-  display: flex;
+/* View toggle container dans le footer */
+.activity-switcher-footer .view-toggle-container {
+  background: transparent;
+  border-bottom: none;
+  padding: 0;
   gap: 12px;
 }
 
-.activity-switch-btn {
+/* Boutons view toggle dans le footer */
+.activity-switcher-footer .view-toggle-btn {
+  background: rgba(42, 42, 42, 0.9);
+  border: 1px solid #5a5a5a;
+  border-radius: 8px;
+  padding: 0;
+  cursor: pointer;
+  color: #d4af8c;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 20px;
-  border: 1px solid #5a5a5a;
-  border-radius: 8px;
-  background: #4a4a4a;
-  color: #b0b0b0;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 0.875rem;
-  font-weight: 500;
-  min-width: 120px;
-  flex: 1;
-  max-width: 120px;
-  text-align: center;
+  width: 40px;
+  height: 40px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  box-sizing: border-box;
 }
 
-.activity-switch-btn:hover {
-  background: #5a5a5a;
-  border-color: #6a6a6a;
-  color: #e0e0e0;
-}
-
-.activity-switch-btn.active {
-  background: linear-gradient(45deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+.activity-switcher-footer .view-toggle-btn:hover {
+  background: rgba(52, 52, 52, 0.95);
   border-color: #d4af8c;
   color: #ffffff;
-  box-shadow: 0 2px 8px rgba(212, 175, 140, 0.3);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(212, 175, 140, 0.2);
 }
+
+.activity-switcher-footer .view-toggle-btn svg {
+  color: inherit;
+  transition: all 0.2s ease;
+}
+
 
 
 
@@ -686,21 +691,19 @@ body {
   
   /* Mobile footer adjustments */
   .activity-switcher-footer {
-    padding: 18px 16px;
+    padding: 16px 16px;
   }
   
-  .activity-switcher {
+  .activity-switcher-footer .view-toggle-container {
     gap: 8px;
     width: 100%;
     justify-content: center;
   }
   
-  .activity-switch-btn {
-    padding: 10px 12px;
-    font-size: 0.8rem;
-    min-width: 80px;
-    max-width: 100px;
-    flex: 1;
+  .activity-switcher-footer .view-toggle-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
   }
 }
 
@@ -766,21 +769,19 @@ body {
   
   /* iPhone footer adjustments */
   .activity-switcher-footer {
-    padding: 16px 12px;
+    padding: 14px 12px;
   }
   
-  .activity-switcher {
+  .activity-switcher-footer .view-toggle-container {
     gap: 6px;
     width: 100%;
     justify-content: center;
   }
   
-  .activity-switch-btn {
-    padding: 8px 10px;
-    font-size: 0.75rem;
-    min-width: 60px;
-    max-width: 80px;
-    flex: 1;
+  .activity-switcher-footer .view-toggle-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
   }
   
 }
