@@ -24,6 +24,9 @@ import {
   getFriendRequestById,
   updateFriendRequestStatus,
   updateUserFriends,
+  getUserFriends,
+  getFriendRequestsReceived,
+  getFriendRequestsSent,
   updateUserRole,
   updateUserPassword,
   updateUserEmail,
@@ -672,6 +675,69 @@ app.post('/api/friends/accept', async (req, res) => {
     res.json({ success: true })
   } catch (error) {
     console.error('Accept friend error:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
+// Récupérer les amis d'un utilisateur
+app.get('/api/friends/:prenom', async (req, res) => {
+  try {
+    const { prenom } = req.params
+    const friends = await getUserFriends(prenom)
+    res.json({ friends })
+  } catch (error) {
+    console.error('Get friends error:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
+// Récupérer les demandes d'amis reçues
+app.get('/api/friends/requests/received/:prenom', async (req, res) => {
+  try {
+    const { prenom } = req.params
+    const requests = await getFriendRequestsReceived(prenom)
+    res.json({ requests })
+  } catch (error) {
+    console.error('Get friend requests received error:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
+// Récupérer les demandes d'amis envoyées
+app.get('/api/friends/requests/sent/:prenom', async (req, res) => {
+  try {
+    const { prenom } = req.params
+    const requests = await getFriendRequestsSent(prenom)
+    res.json({ requests })
+  } catch (error) {
+    console.error('Get friend requests sent error:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
+// Accepter une demande d'ami par nom d'utilisateur
+app.post('/api/friends/accept-by-name', async (req, res) => {
+  try {
+    const { from, to } = req.body
+    
+    // Ajouter l'ami aux deux utilisateurs
+    const fromUser = await getUserByPrenom(from)
+    const toUser = await getUserByPrenom(to)
+    
+    if (fromUser && toUser) {
+      if (!fromUser.friends.includes(to)) {
+        fromUser.friends.push(to)
+        await updateUserFriends(fromUser.prenom, fromUser.friends)
+      }
+      if (!toUser.friends.includes(from)) {
+        toUser.friends.push(from)
+        await updateUserFriends(toUser.prenom, toUser.friends)
+      }
+    }
+    
+    res.json({ success: true })
+  } catch (error) {
+    console.error('Accept friend by name error:', error)
     res.status(500).json({ error: 'Erreur serveur' })
   }
 })

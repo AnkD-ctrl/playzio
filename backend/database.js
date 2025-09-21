@@ -363,6 +363,34 @@ export async function updateUserRole(prenom, role) {
   return result.rows[0]
 }
 
+// Récupérer les amis d'un utilisateur
+export async function getUserFriends(prenom) {
+  const result = await pool.query('SELECT friends FROM users WHERE prenom = $1', [prenom])
+  if (result.rows.length === 0) return []
+  
+  return result.rows[0].friends || []
+}
+
+// Récupérer les demandes d'amis reçues par un utilisateur
+export async function getFriendRequestsReceived(prenom) {
+  const result = await pool.query(
+    'SELECT from_user FROM friend_requests WHERE to_user = $1 AND status = $2',
+    [prenom, 'pending']
+  )
+  
+  return result.rows.map(row => row.from_user)
+}
+
+// Récupérer les demandes d'amis envoyées par un utilisateur
+export async function getFriendRequestsSent(prenom) {
+  const result = await pool.query(
+    'SELECT to_user FROM friend_requests WHERE from_user = $1 AND status = $2',
+    [prenom, 'pending']
+  )
+  
+  return result.rows.map(row => row.to_user)
+}
+
 export async function updateUserPassword(prenom, hashedPassword) {
   const result = await pool.query(
     'UPDATE users SET password = $1 WHERE prenom = $2 RETURNING prenom, email, role, is_founder',
