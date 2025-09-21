@@ -529,7 +529,14 @@ app.post('/api/slots/:id/join', async (req, res) => {
       const updatedSlot = await updateSlotParticipants(id, slot.participants)
       
       // Envoyer une notification email si activée et si l'organisateur a un email
-      if (slot.emailNotifications && slot.createdBy) {
+      console.log('🔔 Vérification notification email:', {
+        slotId: slot.id,
+        emailNotifications: slot.emailNotifications,
+        createdBy: slot.createdBy
+      })
+      
+      if (slot.emailNotifications === true && slot.createdBy) {
+        console.log('📧 Envoi de la notification email...')
         try {
           const organizer = await getUserByPrenom(slot.createdBy)
           if (organizer && organizer.email) {
@@ -552,6 +559,12 @@ app.post('/api/slots/:id/join', async (req, res) => {
           console.error('Erreur lors de l\'envoi de la notification email:', emailError)
           // Ne pas faire échouer la jointure si l'email échoue
         }
+      } else {
+        console.log('📧 Notification email non envoyée:', {
+          emailNotifications: slot.emailNotifications,
+          hasCreatedBy: !!slot.createdBy,
+          reason: slot.emailNotifications !== true ? 'emailNotifications not true' : 'no createdBy'
+        })
       }
       
       res.json({ success: true, slot: updatedSlot })
