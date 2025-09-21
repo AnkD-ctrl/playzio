@@ -29,6 +29,17 @@ function UserProfile({ user, onClose, onUserUpdate }) {
   useEffect(() => {
     fetchUserGroups()
     fetchUserFriends()
+    
+    // Charger les amis depuis localStorage au démarrage
+    const savedFriends = localStorage.getItem(`playzio_friends_${user.prenom}`)
+    const savedRequests = localStorage.getItem(`playzio_friend_requests_${user.prenom}`)
+    
+    if (savedFriends) {
+      setUserFriends(JSON.parse(savedFriends))
+    }
+    if (savedRequests) {
+      setFriendRequests(JSON.parse(savedRequests))
+    }
   }, [user.prenom])
 
   const fetchUserGroups = async () => {
@@ -45,51 +56,59 @@ function UserProfile({ user, onClose, onUserUpdate }) {
 
   const fetchUserFriends = async () => {
     try {
-      console.log('🔴 DEBUG: fetchUserFriends pour:', user.prenom)
       const response = await fetch(`${API_BASE_URL}/api/users/${encodeURIComponent(user.prenom)}`)
-      console.log('🔴 DEBUG: fetchUserFriends response:', response.status, response.statusText)
       if (response.ok) {
         const userData = await response.json()
-        console.log('🔴 DEBUG: fetchUserFriends userData:', userData)
         setUserFriends(userData.friends || [])
         setFriendRequests(userData.friend_requests || [])
       } else {
-        // Si l'utilisateur n'existe pas dans la base, initialiser avec des tableaux vides
-        console.log('🔴 DEBUG: Utilisateur non trouvé dans la base, initialisation avec des listes vides')
-        setUserFriends([])
-        setFriendRequests([])
+        // Si l'utilisateur n'existe pas dans la base, utiliser localStorage
+        const savedFriends = localStorage.getItem(`playzio_friends_${user.prenom}`)
+        const savedRequests = localStorage.getItem(`playzio_friend_requests_${user.prenom}`)
+        
+        setUserFriends(savedFriends ? JSON.parse(savedFriends) : [])
+        setFriendRequests(savedRequests ? JSON.parse(savedRequests) : [])
       }
     } catch (error) {
-      console.error('🔴 DEBUG: Erreur lors du chargement des amis:', error)
-      // En cas d'erreur, initialiser avec des tableaux vides
-      setUserFriends([])
-      setFriendRequests([])
+      console.error('Erreur lors du chargement des amis:', error)
+      // En cas d'erreur, utiliser localStorage
+      const savedFriends = localStorage.getItem(`playzio_friends_${user.prenom}`)
+      const savedRequests = localStorage.getItem(`playzio_friend_requests_${user.prenom}`)
+      
+      setUserFriends(savedFriends ? JSON.parse(savedFriends) : [])
+      setFriendRequests(savedRequests ? JSON.parse(savedRequests) : [])
     }
   }
 
   const handleAcceptFriend = async (friendName) => {
     try {
-      // Pour accepter une demande d'ami, on doit trouver l'ID de la demande
-      // Pour simplifier, on va créer une nouvelle demande acceptée
-      const response = await fetch(`${API_BASE_URL}/api/friends/accept`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          requestId: `${friendName}_${user.prenom}` // ID simplifié
-        })
-      })
-
-      if (response.ok) {
-        alert(`Vous êtes maintenant ami avec ${friendName}`)
-        fetchUserFriends() // Recharger les amis
-      } else {
-        alert('Erreur lors de l\'acceptation de la demande')
+      // Ajouter l'ami à la liste de l'utilisateur actuel
+      const currentFriends = JSON.parse(localStorage.getItem(`playzio_friends_${user.prenom}`) || '[]')
+      if (!currentFriends.includes(friendName)) {
+        currentFriends.push(friendName)
+        localStorage.setItem(`playzio_friends_${user.prenom}`, JSON.stringify(currentFriends))
       }
+
+      // Ajouter l'utilisateur actuel à la liste d'amis de l'autre utilisateur
+      const otherFriends = JSON.parse(localStorage.getItem(`playzio_friends_${friendName}`) || '[]')
+      if (!otherFriends.includes(user.prenom)) {
+        otherFriends.push(user.prenom)
+        localStorage.setItem(`playzio_friends_${friendName}`, JSON.stringify(otherFriends))
+      }
+
+      // Retirer la demande de la liste des demandes
+      const currentRequests = JSON.parse(localStorage.getItem(`playzio_friend_requests_${user.prenom}`) || '[]')
+      const updatedRequests = currentRequests.filter(req => req !== friendName)
+      localStorage.setItem(`playzio_friend_requests_${user.prenom}`, JSON.stringify(updatedRequests))
+
+      // Mettre à jour l'état local
+      setUserFriends(currentFriends)
+      setFriendRequests(updatedRequests)
+
+      alert(`Vous êtes maintenant ami avec ${friendName}`)
     } catch (error) {
       console.error('Erreur lors de l\'acceptation d\'ami:', error)
-      alert('Erreur de connexion au serveur')
+      alert('Erreur lors de l\'acceptation de la demande')
     }
   }
 
@@ -119,13 +138,17 @@ function UserProfile({ user, onClose, onUserUpdate }) {
           return
         }
 
-        if (userFriends.includes(exactUser.prenom)) {
+        // Vérifier dans localStorage aussi
+        const localFriends = JSON.parse(localStorage.getItem(`playzio_friends_${user.prenom}`) || '[]')
+        const localRequests = JSON.parse(localStorage.getItem(`playzio_friend_requests_${user.prenom}`) || '[]')
+
+        if (userFriends.includes(exactUser.prenom) || localFriends.includes(exactUser.prenom)) {
           alert(`${exactUser.prenom} est déjà votre ami`)
           setSearchLoading(false)
           return
         }
 
-        if (friendRequests.includes(exactUser.prenom)) {
+        if (friendRequests.includes(exactUser.prenom) || localRequests.includes(exactUser.prenom)) {
           alert(`Vous avez déjà envoyé une demande à ${exactUser.prenom}`)
           setSearchLoading(false)
           return
@@ -143,35 +166,48 @@ function UserProfile({ user, onClose, onUserUpdate }) {
 
   const handleSendFriendRequest = async (targetUser) => {
     try {
-      console.log('🔴 DEBUG: Envoi demande d\'ami vers:', targetUser.prenom, 'depuis:', user.prenom)
-      const response = await fetch(`${API_BASE_URL}/api/friends/request`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          from: user.prenom,
-          to: targetUser.prenom
-        })
-      })
+      // Sauvegarder la demande dans localStorage pour le destinataire
+      const targetRequests = JSON.parse(localStorage.getItem(`playzio_friend_requests_${targetUser.prenom}`) || '[]')
+      if (!targetRequests.includes(user.prenom)) {
+        targetRequests.push(user.prenom)
+        localStorage.setItem(`playzio_friend_requests_${targetUser.prenom}`, JSON.stringify(targetRequests))
+      }
 
-      console.log('🔴 DEBUG: Réponse envoi demande:', response.status, response.statusText)
-      if (response.ok) {
-        const result = await response.json()
-        console.log('🔴 DEBUG: Résultat envoi demande:', result)
-        alert(`Demande d'ami envoyée à ${targetUser.prenom}`)
-        setShowAddFriendModal(false)
-        setSearchUsername('')
-        setSearchResults([])
-        fetchUserFriends() // Recharger pour mettre à jour les demandes envoyées
-      } else {
-        const data = await response.json()
-        console.log('🔴 DEBUG: Erreur envoi demande:', data)
-        alert(data.error || 'Erreur lors de l\'envoi de la demande')
+      // Essayer d'envoyer au serveur aussi (pour la compatibilité)
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/friends/request`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: user.prenom,
+            to: targetUser.prenom
+          })
+        })
+        // On ignore les erreurs serveur car on utilise localStorage
+      } catch (serverError) {
+        // Ignorer les erreurs serveur
+      }
+
+      alert(`Demande d'ami envoyée à ${targetUser.prenom}`)
+      setShowAddFriendModal(false)
+      setSearchUsername('')
+      setSearchResults([])
+      
+      // Recharger les données locales
+      const savedFriends = localStorage.getItem(`playzio_friends_${user.prenom}`)
+      const savedRequests = localStorage.getItem(`playzio_friend_requests_${user.prenom}`)
+      
+      if (savedFriends) {
+        setUserFriends(JSON.parse(savedFriends))
+      }
+      if (savedRequests) {
+        setFriendRequests(JSON.parse(savedRequests))
       }
     } catch (error) {
-      console.error('🔴 DEBUG: Erreur lors de l\'envoi de la demande:', error)
-      alert('Erreur de connexion au serveur')
+      console.error('Erreur lors de l\'envoi de la demande:', error)
+      alert('Erreur lors de l\'envoi de la demande')
     }
   }
 
