@@ -94,40 +94,81 @@ export async function createUser(userData) {
   return result.rows[0]
 }
 
+// Fonction pour lire les données JSON
+function readJSONData() {
+  try {
+    const dbFile = fs.existsSync(path.join(__dirname, 'db.json')) 
+      ? 'db.json' 
+      : 'db.example.json'
+    const data = fs.readFileSync(path.join(__dirname, dbFile), 'utf8')
+    return JSON.parse(data)
+  } catch (error) {
+    console.error('❌ Erreur lecture JSON:', error)
+    return { slots: [], users: [], groups: [], friendRequests: [] }
+  }
+}
+
+function readJSONSlots() {
+  const jsonData = readJSONData()
+  return jsonData.slots || []
+}
+
 // Slots
 export async function getAllSlots(filters = {}) {
-  let query = 'SELECT * FROM slots'
-  const conditions = []
-  const values = []
-  
-  if (filters.type) {
-    conditions.push(`(type::jsonb ? $${values.length + 1} OR type = $${values.length + 1})`)
-    values.push(filters.type)
+  try {
+    let query = 'SELECT * FROM slots'
+    const conditions = []
+    const values = []
+    
+    if (filters.type) {
+      conditions.push(`(type::jsonb ? $${values.length + 1} OR type = $${values.length + 1})`)
+      values.push(filters.type)
+    }
+    
+    if (conditions.length > 0) {
+      query += ' WHERE ' + conditions.join(' AND ')
+    }
+    
+    query += ' ORDER BY date, heure_debut'
+    
+    const result = await pool.query(query, values)
+    return result.rows.map(row => ({
+      id: row.id,
+      date: row.date,
+      heureDebut: row.heure_debut,
+      heureFin: row.heure_fin,
+      type: typeof row.type === 'string' ? (row.type.startsWith('[') ? JSON.parse(row.type) : row.type) : row.type,
+      customActivity: row.custom_activity,
+      description: row.description,
+      lieu: row.lieu || '',
+      maxParticipants: row.max_participants,
+      createdBy: row.created_by,
+      visibleToGroups: row.visible_to_groups || [],
+      visibleToAll: row.visible_to_all !== undefined ? row.visible_to_all : true, // Par défaut public si pas défini
+      visibleToFriends: row.visible_to_friends !== undefined ? row.visible_to_friends : false,
+      participants: row.participants || []
+    }))
+  } catch (error) {
+    console.log('⚠️ PostgreSQL non disponible, utilisation du mode JSON pour les slots')
+    // Fallback vers JSON
+    const jsonSlots = readJSONSlots()
+    return jsonSlots.map(slot => ({
+      id: slot.id,
+      date: slot.date,
+      heureDebut: slot.heureDebut,
+      heureFin: slot.heureFin,
+      type: slot.type,
+      customActivity: slot.customActivity,
+      description: slot.description || '',
+      lieu: slot.lieu || '',
+      maxParticipants: slot.maxParticipants,
+      createdBy: slot.createdBy,
+      visibleToGroups: slot.visibleToGroups || [],
+      visibleToAll: slot.visibleToAll !== undefined ? slot.visibleToAll : true, // Par défaut public si pas défini
+      visibleToFriends: slot.visibleToFriends !== undefined ? slot.visibleToFriends : false,
+      participants: slot.participants || []
+    }))
   }
-  
-  if (conditions.length > 0) {
-    query += ' WHERE ' + conditions.join(' AND ')
-  }
-  
-  query += ' ORDER BY date, heure_debut'
-  
-  const result = await pool.query(query, values)
-  return result.rows.map(row => ({
-    id: row.id,
-    date: row.date,
-    heureDebut: row.heure_debut,
-    heureFin: row.heure_fin,
-    type: typeof row.type === 'string' ? (row.type.startsWith('[') ? JSON.parse(row.type) : row.type) : row.type,
-    customActivity: row.custom_activity,
-    description: row.description,
-    lieu: row.lieu,
-    maxParticipants: row.max_participants,
-    createdBy: row.created_by,
-    visibleToGroups: row.visible_to_groups,
-    visibleToAll: row.visible_to_all,
-    visibleToFriends: row.visible_to_friends,
-    participants: row.participants
-  }))
 }
 
 // Fonction utilitaire pour formater le résultat d'un slot
@@ -140,13 +181,13 @@ function formatSlotResult(row) {
     type: typeof row.type === 'string' ? (row.type.startsWith('[') ? JSON.parse(row.type) : row.type) : row.type,
     customActivity: row.custom_activity,
     description: row.description,
-    lieu: row.lieu,
+    lieu: row.lieu || '',
     maxParticipants: row.max_participants,
     createdBy: row.created_by,
-    visibleToGroups: row.visible_to_groups,
-    visibleToAll: row.visible_to_all,
-    visibleToFriends: row.visible_to_friends,
-    participants: row.participants,
+    visibleToGroups: row.visible_to_groups || [],
+    visibleToAll: row.visible_to_all !== undefined ? row.visible_to_all : true, // Par défaut public si pas défini
+    visibleToFriends: row.visible_to_friends !== undefined ? row.visible_to_friends : false,
+    participants: row.participants || [],
     emailNotifications: row.email_notifications || false // Valeur par défaut si la colonne n'existe pas
   }
 }
@@ -279,18 +320,35 @@ export async function getAllGroups() {
 }
 
 export async function getGroupsByUser(username) {
-  const result = await pool.query(
-    'SELECT * FROM groups WHERE creator = $1 OR $1 = ANY(members) ORDER BY name',
-    [username]
-  )
-  return result.rows.map(row => ({
-    id: row.id,
-    name: row.name,
-    description: row.description,
-    creator: row.creator,
-    members: row.members,
-    createdAt: row.created_at
-  }))
+  try {
+    const result = await pool.query(
+      'SELECT * FROM groups WHERE creator = $1 OR $1 = ANY(members) ORDER BY name',
+      [username]
+    )
+    return result.rows.map(row => ({
+      id: row.id,
+      name: row.name,
+      description: row.description,
+      creator: row.creator,
+      members: row.members,
+      createdAt: row.created_at
+    }))
+  } catch (error) {
+    console.log('⚠️ PostgreSQL non disponible, utilisation du mode JSON pour les groupes')
+    // Fallback vers JSON
+    const jsonData = readJSONData()
+    const groups = jsonData.groups || []
+    return groups.filter(group => 
+      group.creator === username || (group.members && group.members.includes(username))
+    ).map(group => ({
+      id: group.id,
+      name: group.name,
+      description: group.description || '',
+      creator: group.creator,
+      members: group.members || [],
+      createdAt: group.createdAt || new Date().toISOString()
+    }))
+  }
 }
 
 export async function getGroupById(id) {
