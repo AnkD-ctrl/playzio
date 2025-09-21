@@ -48,7 +48,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
     }
     
     // Validation email
-    const emailRegex = new RegExp('^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$')
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(emailForm.email)) {
       setMessage('Veuillez entrer une adresse email valide')
       return
@@ -151,7 +151,8 @@ function UserProfile({ user, onClose, onUserUpdate }) {
           </button>
         </div>
         
-        <div className="profile-info">
+        <div className="modal-content">
+          <div className="profile-info">
             
             <div className="profile-details">
               <h4>{user.prenom}</h4>
@@ -284,7 +285,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
                     <button type="submit" disabled={loading}>
                       {loading 
                         ? (user.email ? 'Modification...' : 'Ajout...') 
-                        : (user.email ? "Modifier l'email" : "Ajouter l'email")
+                        : (user.email ? 'Modifier l\'email' : 'Ajouter l\'email')
                       }
                     </button>
                   </div>
@@ -292,9 +293,12 @@ function UserProfile({ user, onClose, onUserUpdate }) {
               </div>
             </div>
           )}
+          
 
         </div>
       </div>
+
+
     </div>
   )
 }
