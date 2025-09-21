@@ -1719,6 +1719,64 @@ app.get('/api/last-token/:email', async (req, res) => {
   }
 })
 
+// Test direct de création de token
+app.post('/api/test-create-token', async (req, res) => {
+  try {
+    const { email } = req.body
+    
+    if (!email) {
+      return res.status(400).json({ error: 'Email requis' })
+    }
+    
+    console.log('🧪 TEST CRÉATION TOKEN pour:', email)
+    
+    // Créer la table si elle n'existe pas
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS password_reset_tokens (
+          id VARCHAR(50) PRIMARY KEY,
+          user_email VARCHAR(255) NOT NULL,
+          token VARCHAR(255) NOT NULL UNIQUE,
+          expires_at TIMESTAMP NOT NULL,
+          used BOOLEAN DEFAULT FALSE,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `)
+    console.log('✅ Table vérifiée/créée')
+    
+    // Générer un token de test
+    const testToken = nanoid(32)
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000)
+    const id = nanoid()
+    
+    console.log('🔑 Token généré:', testToken)
+    console.log('⏰ Expire le:', expiresAt)
+    
+    // Insérer directement
+    const result = await pool.query(
+      'INSERT INTO password_reset_tokens (id, user_email, token, expires_at) VALUES ($1, $2, $3, $4) RETURNING *',
+      [id, email, testToken, expiresAt]
+    )
+    
+    console.log('✅ Token inséré avec succès:', result.rows[0])
+    
+    res.json({
+      success: true,
+      token: testToken,
+      expiresAt: expiresAt,
+      id: id,
+      resetUrl: `https://playzio.fr/?token=${testToken}`
+    })
+    
+  } catch (error) {
+    console.error('❌ Erreur test création token:', error)
+    res.status(500).json({ 
+      success: false,
+      error: 'Erreur serveur',
+      details: error.message
+    })
+  }
+})
+
 app.listen(port, () => {
   console.log(`🚀 Playzio Backend listening on port ${port}`)
 })
