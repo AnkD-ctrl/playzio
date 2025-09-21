@@ -202,6 +202,7 @@
   padding: 28px;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 /* Profile Info Section */
@@ -209,7 +210,8 @@
   display: flex;
   gap: 24px;
   margin-bottom: 32px;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
 }
 
 
