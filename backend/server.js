@@ -1821,6 +1821,75 @@ app.post('/api/migrate-visible-to-friends', async (req, res) => {
   }
 })
 
+// Migration pour créer les tables d'amis
+app.post('/api/migrate-friends-tables', async (req, res) => {
+  try {
+    console.log('🔄 Début de la migration des tables d\'amis...')
+    
+    // Créer la table friend_requests si elle n'existe pas
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS friend_requests (
+          id VARCHAR(50) PRIMARY KEY,
+          from_user VARCHAR(255) NOT NULL,
+          to_user VARCHAR(255) NOT NULL,
+          status VARCHAR(20) DEFAULT 'pending',
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          UNIQUE(from_user, to_user)
+      );
+    `)
+    
+    // Créer la table friends si elle n'existe pas
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS friends (
+          id VARCHAR(50) PRIMARY KEY,
+          user1 VARCHAR(255) NOT NULL,
+          user2 VARCHAR(255) NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          UNIQUE(user1, user2),
+          CHECK(user1 < user2)
+      );
+    `)
+    
+    // Ajouter la colonne friends à la table users si elle n'existe pas
+    await pool.query(`
+      DO $$ 
+      BEGIN
+          IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                         WHERE table_name = 'users' AND column_name = 'friends') THEN
+              ALTER TABLE users ADD COLUMN friends TEXT DEFAULT '[]';
+              RAISE NOTICE 'Colonne friends ajoutée à la table users.';
+          ELSE
+              RAISE NOTICE 'La colonne friends existe déjà dans la table users.';
+          END IF;
+      END $$;
+    `)
+    
+    console.log('✅ Migration réussie : tables d\'amis créées')
+    
+    // Vérifier que les tables existent
+    const tablesResult = await pool.query(`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public' 
+      AND table_name IN ('friend_requests', 'friends');
+    `)
+    
+    res.json({
+      success: true,
+      message: 'Tables d\'amis créées avec succès',
+      tables: tablesResult.rows.map(row => row.table_name)
+    })
+    
+  } catch (error) {
+    console.error('❌ Erreur migration tables d\'amis:', error)
+    res.status(500).json({ 
+      success: false,
+      error: 'Erreur lors de la migration',
+      details: error.message
+    })
+  }
+})
+
 app.listen(port, () => {
   console.log(`🚀 Playzio Backend listening on port ${port}`)
 })
