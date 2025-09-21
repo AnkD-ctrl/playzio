@@ -187,13 +187,21 @@ function UserProfile({ user, onClose, onUserUpdate }) {
 
     setSearchLoading(true)
     try {
+      console.log('🔍 Recherche utilisateur:', searchUsername.trim())
+      
       // Vérifier si l'utilisateur existe exactement
       const response = await fetch(`${API_BASE_URL}/api/users/search?q=${encodeURIComponent(searchUsername.trim())}`)
+      console.log('📡 Réponse API recherche:', response.status, response.ok)
+      
       if (response.ok) {
         const users = await response.json()
+        console.log('👥 Utilisateurs trouvés:', users)
+        
         const exactUser = users.find(u => u.prenom.toLowerCase() === searchUsername.trim().toLowerCase())
+        console.log('✅ Utilisateur exact trouvé:', exactUser)
         
         if (!exactUser) {
+          console.log('❌ Aucun utilisateur exact trouvé')
           alert(`Aucun utilisateur trouvé avec le nom "${searchUsername.trim()}"`)
           setSearchLoading(false)
           return
@@ -224,9 +232,12 @@ function UserProfile({ user, onClose, onUserUpdate }) {
 
         // Envoyer la demande d'ami
         await handleSendFriendRequest(exactUser)
+      } else {
+        console.log('❌ Erreur API recherche:', response.status)
+        alert(`Erreur lors de la recherche: ${response.status}`)
       }
     } catch (error) {
-      console.error('Erreur lors de la validation:', error)
+      console.error('❌ Erreur lors de la validation:', error)
       alert('Erreur de connexion au serveur')
     }
     setSearchLoading(false)
