@@ -1551,6 +1551,62 @@ app.get('/api/users-list', async (req, res) => {
   }
 })
 
+// Diagnostiquer un token de réinitialisation
+app.post('/api/debug-token', async (req, res) => {
+  try {
+    const { token } = req.body
+    
+    if (!token) {
+      return res.status(400).json({ error: 'Token requis' })
+    }
+    
+    console.log('🔍 DIAGNOSTIC TOKEN:', token)
+    
+    // Vérifier le token en base
+    let resetToken = null
+    try {
+      resetToken = await getPasswordResetToken(token)
+      console.log('✅ Token trouvé en base:', resetToken ? 'Oui' : 'Non')
+    } catch (dbError) {
+      console.error('❌ Erreur base de données:', dbError.message)
+    }
+    
+    if (resetToken) {
+      const now = new Date()
+      const isExpired = now > new Date(resetToken.expires_at)
+      const isUsed = resetToken.used
+      
+      console.log('📊 État du token:')
+      console.log('- Expiré:', isExpired)
+      console.log('- Utilisé:', isUsed)
+      console.log('- Expire le:', resetToken.expires_at)
+      console.log('- Email:', resetToken.user_email)
+      
+      res.json({
+        success: true,
+        token: token,
+        found: true,
+        expired: isExpired,
+        used: isUsed,
+        expiresAt: resetToken.expires_at,
+        userEmail: resetToken.user_email,
+        createdAt: resetToken.created_at
+      })
+    } else {
+      console.log('❌ Token non trouvé en base de données')
+      res.json({
+        success: true,
+        token: token,
+        found: false,
+        message: 'Token non trouvé en base de données'
+      })
+    }
+  } catch (error) {
+    console.error('Erreur diagnostic token:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
 app.listen(port, () => {
   console.log(`🚀 Playzio Backend listening on port ${port}`)
 })
