@@ -1,4 +1,120 @@
 /* User Profile Modal Styles */
+
+/* Friends Modal with Tabs */
+.friends-modal {
+  max-width: 600px;
+  width: 90%;
+}
+
+.friends-tabs {
+  display: flex;
+  border-bottom: 1px solid #4a4a4a;
+  margin-bottom: 16px;
+}
+
+.friends-tab {
+  flex: 1;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  color: #b0b0b0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 2px solid transparent;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.friends-tab:hover {
+  color: #e0e0e0;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.friends-tab.active {
+  color: #d4af8c;
+  border-bottom-color: #d4af8c;
+  background: rgba(212, 175, 140, 0.1);
+}
+
+.friends-tab-content {
+  min-height: 200px;
+}
+
+.request-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.accept-btn {
+  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.accept-btn:hover {
+  background: linear-gradient(135deg, #5cbf60 0%, #55b059 100%);
+  transform: translateY(-1px);
+}
+
+.reject-btn {
+  background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.reject-btn:hover {
+  background: linear-gradient(135deg, #ff5555 0%, #e33e3e 100%);
+  transform: translateY(-1px);
+}
+
+.cancel-btn {
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn:hover {
+  background: linear-gradient(135deg, #ffa726 0%, #ff8f00 100%);
+  transform: translateY(-1px);
+}
+
+/* Responsive pour les onglets */
+@media (max-width: 768px) {
+  .friends-tabs {
+    flex-direction: column;
+  }
+  
+  .friends-tab {
+    border-bottom: 1px solid #4a4a4a;
+    border-right: none;
+  }
+  
+  .friends-tab.active {
+    border-bottom-color: #d4af8c;
+    border-right: none;
+  }
+  
+  .request-actions {
+    flex-direction: column;
+    gap: 4px;
+  }
+}
 .user-profile-overlay {
   position: fixed;
   top: 0;

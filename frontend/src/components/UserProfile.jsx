@@ -8,11 +8,13 @@ function UserProfile({ user, onClose, onUserUpdate }) {
   const [userGroups, setUserGroups] = useState([])
   const [userFriends, setUserFriends] = useState([])
   const [friendRequests, setFriendRequests] = useState([])
+  const [sentFriendRequests, setSentFriendRequests] = useState([])
   const [showFriendsModal, setShowFriendsModal] = useState(false)
   const [showAddFriendModal, setShowAddFriendModal] = useState(false)
   const [searchUsername, setSearchUsername] = useState('')
   const [searchResults, setSearchResults] = useState([])
   const [searchLoading, setSearchLoading] = useState(false)
+  const [friendsTab, setFriendsTab] = useState('friends') // 'friends', 'received', 'sent'
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: '',
     newPassword: '',
@@ -33,12 +35,16 @@ function UserProfile({ user, onClose, onUserUpdate }) {
     // Charger les amis depuis localStorage au démarrage
     const savedFriends = localStorage.getItem(`playzio_friends_${user.prenom}`)
     const savedRequests = localStorage.getItem(`playzio_friend_requests_${user.prenom}`)
+    const savedSentRequests = localStorage.getItem(`playzio_sent_friend_requests_${user.prenom}`)
     
     if (savedFriends) {
       setUserFriends(JSON.parse(savedFriends))
     }
     if (savedRequests) {
       setFriendRequests(JSON.parse(savedRequests))
+    }
+    if (savedSentRequests) {
+      setSentFriendRequests(JSON.parse(savedSentRequests))
     }
   }, [user.prenom])
 
@@ -96,10 +102,15 @@ function UserProfile({ user, onClose, onUserUpdate }) {
         localStorage.setItem(`playzio_friends_${friendName}`, JSON.stringify(otherFriends))
       }
 
-      // Retirer la demande de la liste des demandes
+      // Retirer la demande de la liste des demandes reçues
       const currentRequests = JSON.parse(localStorage.getItem(`playzio_friend_requests_${user.prenom}`) || '[]')
       const updatedRequests = currentRequests.filter(req => req !== friendName)
       localStorage.setItem(`playzio_friend_requests_${user.prenom}`, JSON.stringify(updatedRequests))
+
+      // Retirer la demande de la liste des demandes envoyées de l'autre utilisateur
+      const otherSentRequests = JSON.parse(localStorage.getItem(`playzio_sent_friend_requests_${friendName}`) || '[]')
+      const updatedOtherSentRequests = otherSentRequests.filter(req => req !== user.prenom)
+      localStorage.setItem(`playzio_sent_friend_requests_${friendName}`, JSON.stringify(updatedOtherSentRequests))
 
       // Mettre à jour l'état local
       setUserFriends(currentFriends)
@@ -109,6 +120,28 @@ function UserProfile({ user, onClose, onUserUpdate }) {
     } catch (error) {
       console.error('Erreur lors de l\'acceptation d\'ami:', error)
       alert('Erreur lors de l\'acceptation de la demande')
+    }
+  }
+
+  const handleCancelSentRequest = async (friendName) => {
+    try {
+      // Retirer de la liste des demandes envoyées
+      const sentRequests = JSON.parse(localStorage.getItem(`playzio_sent_friend_requests_${user.prenom}`) || '[]')
+      const updatedSentRequests = sentRequests.filter(req => req !== friendName)
+      localStorage.setItem(`playzio_sent_friend_requests_${user.prenom}`, JSON.stringify(updatedSentRequests))
+
+      // Retirer de la liste des demandes reçues de l'autre utilisateur
+      const otherRequests = JSON.parse(localStorage.getItem(`playzio_friend_requests_${friendName}`) || '[]')
+      const updatedOtherRequests = otherRequests.filter(req => req !== user.prenom)
+      localStorage.setItem(`playzio_friend_requests_${friendName}`, JSON.stringify(updatedOtherRequests))
+
+      // Mettre à jour l'état local
+      setSentFriendRequests(updatedSentRequests)
+
+      alert(`Demande d'ami annulée pour ${friendName}`)
+    } catch (error) {
+      console.error('Erreur lors de l\'annulation de la demande:', error)
+      alert('Erreur lors de l\'annulation de la demande')
     }
   }
 
@@ -141,6 +174,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
         // Vérifier dans localStorage aussi
         const localFriends = JSON.parse(localStorage.getItem(`playzio_friends_${user.prenom}`) || '[]')
         const localRequests = JSON.parse(localStorage.getItem(`playzio_friend_requests_${user.prenom}`) || '[]')
+        const localSentRequests = JSON.parse(localStorage.getItem(`playzio_sent_friend_requests_${user.prenom}`) || '[]')
 
         if (userFriends.includes(exactUser.prenom) || localFriends.includes(exactUser.prenom)) {
           alert(`${exactUser.prenom} est déjà votre ami`)
@@ -148,8 +182,8 @@ function UserProfile({ user, onClose, onUserUpdate }) {
           return
         }
 
-        if (friendRequests.includes(exactUser.prenom) || localRequests.includes(exactUser.prenom)) {
-          alert(`Vous avez déjà envoyé une demande à ${exactUser.prenom}`)
+        if (friendRequests.includes(exactUser.prenom) || localRequests.includes(exactUser.prenom) || localSentRequests.includes(exactUser.prenom)) {
+          alert(`Vous avez déjà une demande en cours avec ${exactUser.prenom}`)
           setSearchLoading(false)
           return
         }
@@ -171,6 +205,13 @@ function UserProfile({ user, onClose, onUserUpdate }) {
       if (!targetRequests.includes(user.prenom)) {
         targetRequests.push(user.prenom)
         localStorage.setItem(`playzio_friend_requests_${targetUser.prenom}`, JSON.stringify(targetRequests))
+      }
+
+      // Sauvegarder la demande envoyée dans localStorage pour l'expéditeur
+      const sentRequests = JSON.parse(localStorage.getItem(`playzio_sent_friend_requests_${user.prenom}`) || '[]')
+      if (!sentRequests.includes(targetUser.prenom)) {
+        sentRequests.push(targetUser.prenom)
+        localStorage.setItem(`playzio_sent_friend_requests_${user.prenom}`, JSON.stringify(sentRequests))
       }
 
       // Essayer d'envoyer au serveur aussi (pour la compatibilité)
@@ -198,12 +239,16 @@ function UserProfile({ user, onClose, onUserUpdate }) {
       // Recharger les données locales
       const savedFriends = localStorage.getItem(`playzio_friends_${user.prenom}`)
       const savedRequests = localStorage.getItem(`playzio_friend_requests_${user.prenom}`)
+      const savedSentRequests = localStorage.getItem(`playzio_sent_friend_requests_${user.prenom}`)
       
       if (savedFriends) {
         setUserFriends(JSON.parse(savedFriends))
       }
       if (savedRequests) {
         setFriendRequests(JSON.parse(savedRequests))
+      }
+      if (savedSentRequests) {
+        setSentFriendRequests(JSON.parse(savedSentRequests))
       }
     } catch (error) {
       console.error('Erreur lors de l\'envoi de la demande:', error)
@@ -550,10 +595,10 @@ function UserProfile({ user, onClose, onUserUpdate }) {
         </div>
       )}
 
-      {/* Modal de liste des amis */}
+      {/* Modal de liste des amis avec onglets */}
       {showFriendsModal && (
         <div className="sub-modal-overlay" onClick={() => setShowFriendsModal(false)}>
-          <div className="sub-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="sub-modal friends-modal" onClick={(e) => e.stopPropagation()}>
             <div className="sub-modal-header">
               <h3>Mes amis</h3>
               <button 
@@ -564,35 +609,99 @@ function UserProfile({ user, onClose, onUserUpdate }) {
                 ×
               </button>
             </div>
+            
+            {/* Onglets */}
+            <div className="friends-tabs">
+              <button 
+                className={`friends-tab ${friendsTab === 'friends' ? 'active' : ''}`}
+                onClick={() => setFriendsTab('friends')}
+              >
+                Amis ({userFriends.length})
+              </button>
+              <button 
+                className={`friends-tab ${friendsTab === 'received' ? 'active' : ''}`}
+                onClick={() => setFriendsTab('received')}
+              >
+                Demandes reçues ({friendRequests.length})
+              </button>
+              <button 
+                className={`friends-tab ${friendsTab === 'sent' ? 'active' : ''}`}
+                onClick={() => setFriendsTab('sent')}
+              >
+                Demandes envoyées ({sentFriendRequests.length})
+              </button>
+            </div>
+
             <div className="sub-modal-content">
               <div className="friends-modal-content">
-                {userFriends.length > 0 ? (
-                  <div className="friends-list">
-                    {userFriends.map(friend => (
-                      <div key={friend} className="friend-item">
-                        <span className="friend-name">👤 {friend}</span>
+                {/* Onglet Amis */}
+                {friendsTab === 'friends' && (
+                  <div className="friends-tab-content">
+                    {userFriends.length > 0 ? (
+                      <div className="friends-list">
+                        {userFriends.map(friend => (
+                          <div key={friend} className="friend-item">
+                            <span className="friend-name">👤 {friend}</span>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    ) : (
+                      <p className="no-friends">Vous n'avez pas encore d'amis</p>
+                    )}
                   </div>
-                ) : (
-                  <p className="no-friends">Vous n'avez pas encore d'amis</p>
                 )}
-                
-                {friendRequests.length > 0 && (
-                  <div className="friend-requests">
-                    <h4>Demandes d'amis ({friendRequests.length})</h4>
-                    {friendRequests.map(request => (
-                      <div key={request} className="friend-request-item">
-                        <span>👤 {request}</span>
-                        <button 
-                          className="accept-btn"
-                          onClick={() => handleAcceptFriend(request)}
-                          title="Accepter"
-                        >
-                          ✓
-                        </button>
+
+                {/* Onglet Demandes reçues */}
+                {friendsTab === 'received' && (
+                  <div className="friends-tab-content">
+                    {friendRequests.length > 0 ? (
+                      <div className="friend-requests">
+                        {friendRequests.map(request => (
+                          <div key={request} className="friend-request-item">
+                            <span>👤 {request}</span>
+                            <div className="request-actions">
+                              <button 
+                                className="accept-btn"
+                                onClick={() => handleAcceptFriend(request)}
+                              >
+                                Accepter
+                              </button>
+                              <button 
+                                className="reject-btn"
+                                onClick={() => handleCancelSentRequest(request)}
+                              >
+                                Refuser
+                              </button>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    ) : (
+                      <p className="no-friends">Aucune demande d'ami reçue</p>
+                    )}
+                  </div>
+                )}
+
+                {/* Onglet Demandes envoyées */}
+                {friendsTab === 'sent' && (
+                  <div className="friends-tab-content">
+                    {sentFriendRequests.length > 0 ? (
+                      <div className="friend-requests">
+                        {sentFriendRequests.map(request => (
+                          <div key={request} className="friend-request-item">
+                            <span>👤 {request}</span>
+                            <button 
+                              className="cancel-btn"
+                              onClick={() => handleCancelSentRequest(request)}
+                            >
+                              Annuler
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="no-friends">Aucune demande d'ami envoyée</p>
+                    )}
                   </div>
                 )}
               </div>
