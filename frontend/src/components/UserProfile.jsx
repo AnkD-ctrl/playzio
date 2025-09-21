@@ -474,12 +474,14 @@ function UserProfile({ user, onClose, onUserUpdate }) {
                 <div className="friends-content">
                   {friendsTab === 'friends' && (
                     <div>
-                      <button 
-                        className="action-btn primary"
-                        onClick={() => setShowAddFriendModal(true)}
-                      >
-                        Ajouter un ami
-                      </button>
+                      <div className="add-friend-btn-container">
+                        <button 
+                          className="action-btn primary"
+                          onClick={() => setShowAddFriendModal(true)}
+                        >
+                          Ajouter un ami
+                        </button>
+                      </div>
                       {userFriends.length === 0 ? (
                         <p>Aucun ami pour le moment</p>
                       ) : (
