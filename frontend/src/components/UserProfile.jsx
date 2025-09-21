@@ -45,14 +45,19 @@ function UserProfile({ user, onClose, onUserUpdate }) {
 
   const fetchUserFriends = async () => {
     try {
+      console.log('🔴 DEBUG: fetchUserFriends - user.prenom:', user.prenom)
       const response = await fetch(`${API_BASE_URL}/api/users/${encodeURIComponent(user.prenom)}`)
+      console.log('🔴 DEBUG: fetchUserFriends - response:', response.status, response.statusText)
       if (response.ok) {
         const userData = await response.json()
+        console.log('🔴 DEBUG: fetchUserFriends - userData:', userData)
         setUserFriends(userData.friends || [])
         setFriendRequests(userData.friend_requests || [])
+      } else {
+        console.log('🔴 DEBUG: fetchUserFriends - erreur:', response.status)
       }
     } catch (error) {
-      console.error('Erreur lors du chargement des amis:', error)
+      console.error('🔴 DEBUG: Erreur lors du chargement des amis:', error)
     }
   }
 
