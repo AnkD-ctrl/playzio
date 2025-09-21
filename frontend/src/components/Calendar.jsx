@@ -519,35 +519,37 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
                               👥 {slot.participants ? slot.participants.length : 0}
                             </div>
                           </div>
-                          <div className="slot-item-actions">
-                            {isParticipant ? (
-                              <button 
-                                className="quick-action-btn leave-btn"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  handleLeaveSlot(slot.id)
-                                }}
-                                title="Quitter"
-                              >
-                                Quitter
-                              </button>
-                            ) : (
-                              <button 
-                                className="quick-action-btn join-btn"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  if (onJoinSlot) {
-                                    onJoinSlot()
-                                  } else {
-                                    handleJoinSlot(slot.id)
-                                  }
-                                }}
-                                title="Rejoindre"
-                              >
-                                Rejoindre
-                              </button>
-                            )}
-                          </div>
+                          {onJoinSlot && (
+                            <div className="slot-item-actions">
+                              {isParticipant ? (
+                                <button 
+                                  className="quick-action-btn leave-btn"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    handleLeaveSlot(slot.id)
+                                  }}
+                                  title="Quitter"
+                                >
+                                  Quitter
+                                </button>
+                              ) : (
+                                <button 
+                                  className="quick-action-btn join-btn"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    if (onJoinSlot) {
+                                      onJoinSlot()
+                                    } else {
+                                      handleJoinSlot(slot.id)
+                                    }
+                                  }}
+                                  title="Rejoindre"
+                                >
+                                  Rejoindre
+                                </button>
+                              )}
+                            </div>
+                          )}
                         </div>
                         
                         <div className="expand-icon-bottom" onClick={(e) => {
@@ -588,30 +590,32 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
                               <strong>Organisateur:</strong> {slot.createdBy || slot.creator}
                             </div>
 
-                            <div className="slot-item-actions-detail">
-                              <button 
-                                className="action-btn discuss-btn"
-                                onClick={() => setSelectedSlot(slot)}
-                                title="Voir la discussion"
-                              >
-                                Discussion
-                              </button>
-                              
-                              {(isAdmin || isOwner) && (
+                            {onJoinSlot && (
+                              <div className="slot-item-actions-detail">
                                 <button 
-                                  className="action-btn delete-btn"
-                                  onClick={() => {
-                                    if (confirm('Êtes-vous sûr de vouloir supprimer cette disponibilité ?')) {
-                                      // TODO: Implémenter la suppression
-                                      alert('Fonction de suppression à implémenter')
-                                    }
-                                  }}
-                                  title="Supprimer"
+                                  className="action-btn discuss-btn"
+                                  onClick={() => setSelectedSlot(slot)}
+                                  title="Voir la discussion"
                                 >
-                                  Supprimer
+                                  Discussion
                                 </button>
-                              )}
-                            </div>
+                                
+                                {(isAdmin || isOwner) && (
+                                  <button 
+                                    className="action-btn delete-btn"
+                                    onClick={() => {
+                                      if (confirm('Êtes-vous sûr de vouloir supprimer cette disponibilité ?')) {
+                                        // TODO: Implémenter la suppression
+                                        alert('Fonction de suppression à implémenter')
+                                      }
+                                    }}
+                                    title="Supprimer"
+                                  >
+                                    Supprimer
+                                  </button>
+                                )}
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>

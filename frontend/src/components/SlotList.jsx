@@ -392,35 +392,37 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                       👥 {slot.participants ? slot.participants.length : 0}
                     </div>
                   </div>
-                  <div className="slot-item-actions">
-                    {isParticipant ? (
-                      <button 
-                        className="quick-action-btn leave-btn"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleLeaveSlot(slot.id)
-                        }}
-                        title="Quitter"
-                      >
-                        Quitter
-                      </button>
-                    ) : (
-                      <button 
-                        className="quick-action-btn join-btn"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          if (onJoinSlot) {
-                            onJoinSlot()
-                          } else {
-                            handleJoinSlot(slot.id)
-                          }
-                        }}
-                        title="Rejoindre"
-                      >
-                        Rejoindre
-                      </button>
-                    )}
-                  </div>
+                  {onJoinSlot && (
+                    <div className="slot-item-actions">
+                      {isParticipant ? (
+                        <button 
+                          className="quick-action-btn leave-btn"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleLeaveSlot(slot.id)
+                          }}
+                          title="Quitter"
+                        >
+                          Quitter
+                        </button>
+                      ) : (
+                        <button 
+                          className="quick-action-btn join-btn"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            if (onJoinSlot) {
+                              onJoinSlot()
+                            } else {
+                              handleJoinSlot(slot.id)
+                            }
+                          }}
+                          title="Rejoindre"
+                        >
+                          Rejoindre
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
                 
                 <div className="expand-icon-bottom" onClick={(e) => {
@@ -457,30 +459,32 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                       )}
                     </div>
 
-                    <div className="slot-item-actions-detail">
-                      <button 
-                        className="action-btn discuss-btn"
-                        onClick={() => setSelectedSlot(slot)}
-                        title="Voir la discussion"
-                      >
-                        Discussion
-                      </button>
-                      
-
-                      {(isAdmin || isOwner) && (
+                    {onJoinSlot && (
+                      <div className="slot-item-actions-detail">
                         <button 
-                          className="action-btn delete-btn"
-                          onClick={() => handleDeleteSlot(slot.id)}
-                          title="Supprimer"
+                          className="action-btn discuss-btn"
+                          onClick={() => setSelectedSlot(slot)}
+                          title="Voir la discussion"
                         >
-                          Supprimer
+                          Discussion
                         </button>
-                      )}
-                      
-                      {isOwner && (
-                        <span className="owner-badge">Vous êtes l'organisateur</span>
-                      )}
-                    </div>
+                        
+
+                        {(isAdmin || isOwner) && (
+                          <button 
+                            className="action-btn delete-btn"
+                            onClick={() => handleDeleteSlot(slot.id)}
+                            title="Supprimer"
+                          >
+                            Supprimer
+                          </button>
+                        )}
+                        
+                        {isOwner && (
+                          <span className="owner-badge">Vous êtes l'organisateur</span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
