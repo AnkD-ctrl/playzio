@@ -1680,6 +1680,45 @@ app.post('/api/migrate-password-tokens', async (req, res) => {
   }
 })
 
+// Récupérer le dernier token généré pour un email
+app.get('/api/last-token/:email', async (req, res) => {
+  try {
+    const { email } = req.params
+    
+    const result = await pool.query(`
+      SELECT token, expires_at, created_at, used 
+      FROM password_reset_tokens 
+      WHERE user_email = $1 
+      ORDER BY created_at DESC 
+      LIMIT 1
+    `, [email])
+    
+    if (result.rows.length > 0) {
+      const token = result.rows[0]
+      res.json({
+        success: true,
+        token: token.token,
+        expiresAt: token.expires_at,
+        createdAt: token.created_at,
+        used: token.used,
+        resetUrl: `https://playzio.fr/?token=${token.token}`
+      })
+    } else {
+      res.json({
+        success: false,
+        message: 'Aucun token trouvé pour cet email'
+      })
+    }
+  } catch (error) {
+    console.error('Erreur récupération dernier token:', error)
+    res.status(500).json({ 
+      success: false,
+      error: 'Erreur serveur',
+      details: error.message
+    })
+  }
+})
+
 app.listen(port, () => {
   console.log(`🚀 Playzio Backend listening on port ${port}`)
 })
