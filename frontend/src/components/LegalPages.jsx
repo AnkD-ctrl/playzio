@@ -20,15 +20,15 @@ export const MentionsLegales = ({ onBack }) => {
             <strong>Description :</strong> Plateforme de partage de disponibilités entre amis
           </p>
           <p>
-            <strong>Éditeur :</strong> [À compléter - Nom de l'entreprise/individu]<br/>
-            <strong>Forme juridique :</strong> [À compléter]<br/>
-            <strong>Capital social :</strong> [À compléter si applicable]<br/>
-            <strong>RCS :</strong> [À compléter si applicable]<br/>
-            <strong>SIRET :</strong> [À compléter]<br/>
-            <strong>Adresse :</strong> [À compléter - Adresse complète]
+            <strong>Éditeur :</strong> TBD<br/>
+            <strong>Forme juridique :</strong> TBD<br/>
+            <strong>Capital social :</strong> TBD<br/>
+            <strong>RCS :</strong> TBD<br/>
+            <strong>SIRET :</strong> TBD<br/>
+            <strong>Adresse :</strong> TBD
           </p>
           <p>
-            <strong>Directeur de publication :</strong> [À compléter - Nom du responsable]
+            <strong>Directeur de publication :</strong> TBD
           </p>
         </section>
 
@@ -84,8 +84,8 @@ export const MentionsLegales = ({ onBack }) => {
         <section>
           <h2>7. Contact</h2>
           <p>
-            <strong>Email :</strong> contact@playzio.fr<br/>
-            <strong>Adresse :</strong> [À compléter]
+            <strong>Email :</strong> playzio.fr@gmail.com<br/>
+            <strong>Adresse :</strong> TBD
           </p>
         </section>
       </div>
@@ -181,7 +181,7 @@ export const PolitiqueConfidentialite = ({ onBack }) => {
             <li><strong>Droit de limitation :</strong> Limiter le traitement de vos données</li>
           </ul>
           <p>
-            Pour exercer ces droits, contactez-nous à : <strong>contact@playzio.fr</strong>
+            Pour exercer ces droits, contactez-nous à : <strong>playzio.fr@gmail.com</strong>
           </p>
         </section>
 
@@ -223,9 +223,9 @@ export const PolitiqueConfidentialite = ({ onBack }) => {
         <section>
           <h2>10. Contact et réclamations</h2>
           <p>
-            <strong>Responsable du traitement :</strong> [À compléter]<br/>
-            <strong>Email :</strong> contact@playzio.fr<br/>
-            <strong>Adresse :</strong> [À compléter]
+            <strong>Responsable du traitement :</strong> TBD<br/>
+            <strong>Email :</strong> playzio.fr@gmail.com<br/>
+            <strong>Adresse :</strong> TBD
           </p>
           <p>
             Vous avez le droit d'introduire une réclamation auprès de la CNIL si vous estimez que vos droits ne sont pas respectés :
@@ -376,7 +376,7 @@ export const ConditionsUtilisation = ({ onBack }) => {
           <p>
             Pour toute question concernant ces conditions d'utilisation :
             <br/>
-            <strong>Email :</strong> contact@playzio.fr
+            <strong>Email :</strong> playzio.fr@gmail.com
           </p>
         </section>
       </div>
@@ -403,13 +403,13 @@ export const ContactPage = ({ onBack }) => {
           
           <div className="contact-info">
             <div className="contact-item">
-              <strong>📧 Email :</strong> contact@playzio.fr
+              <strong>📧 Email :</strong> playzio.fr@gmail.com
             </div>
             <div className="contact-item">
               <strong>🌐 Site web :</strong> https://www.playzio.fr
             </div>
             <div className="contact-item">
-              <strong>📍 Adresse :</strong> [À compléter]
+              <strong>📍 Adresse :</strong> TBD
             </div>
           </div>
         </section>
@@ -433,7 +433,7 @@ export const ContactPage = ({ onBack }) => {
             <li>Les conditions d'utilisation</li>
           </ul>
           <p>
-            Contactez-nous à l'adresse : <strong>contact@playzio.fr</strong>
+            Contactez-nous à l'adresse : <strong>playzio.fr@gmail.com</strong>
           </p>
         </section>
 

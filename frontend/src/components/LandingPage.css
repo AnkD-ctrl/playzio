@@ -1242,7 +1242,7 @@
   justify-content: center;
   flex-wrap: wrap;
   gap: 30px;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
 }
 
 .footer-link {
@@ -1265,6 +1265,10 @@
 .footer-copyright {
   color: #888;
   font-size: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 20px;
+  margin-top: 20px;
+  text-align: center;
 }
 
 .footer-copyright p {

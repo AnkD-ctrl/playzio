@@ -332,9 +332,9 @@ const LandingPage = ({ onLogin, onRegister }) => {
               Contact
             </button>
           </div>
-          <div className="footer-copyright">
-            <p>&copy; 2024 Playzio. Tous droits réservés.</p>
-          </div>
+        </div>
+        <div className="footer-copyright">
+          <p>&copy; 2025 Playzio. Tous droits réservés.</p>
         </div>
       </footer>
 
