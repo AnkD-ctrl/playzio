@@ -109,7 +109,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
       
       // Pour l'onglet "Dispos publiques", toujours utiliser public_only
       if (filterType === 'publiques') {
-        url = `${API_BASE_URL}/api/slots?public_only=true`
+        url = `${API_BASE_URL}/api/slots?public_only=true&user=${encodeURIComponent(currentUser.prenom)}`
       } else if (onJoinSlot) {
         // Mode partage public - utiliser l'endpoint public
         url = `${API_BASE_URL}/api/slots/user/${encodeURIComponent(currentUser.prenom)}`
