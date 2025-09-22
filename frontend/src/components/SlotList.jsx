@@ -142,18 +142,23 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           // Afficher seulement les créneaux créés par l'utilisateur
           filteredData = filteredData.filter(slot => slot.createdBy === currentUser.prenom)
         } else if (filterType === 'communaute' && userGroups.length > 0) {
-          // Afficher seulement les créneaux des groupes de l'utilisateur
+          // Afficher seulement les créneaux des groupes de l'utilisateur (exclure ses propres slots)
           const userGroupNames = userGroups.map(group => group.name)
           filteredData = filteredData.filter(slot => 
+            slot.createdBy !== currentUser.prenom && // Exclure ses propres slots
             slot.visibleToGroups && slot.visibleToGroups.some(groupName => userGroupNames.includes(groupName))
           )
         } else if (filterType === 'publiques') {
           // Les slots publics sont déjà filtrés côté serveur avec public_only=true
+          // Exclure les slots de l'utilisateur lui-même
+          filteredData = filteredData.filter(slot => slot.createdBy !== currentUser.prenom)
           console.log('🔍 Slots publics reçus du serveur:', filteredData.length, 'slots')
           console.log('🔍 Détails slots publics:', filteredData.map(s => ({ id: s.id, createdBy: s.createdBy, visibleToAll: s.visibleToAll, customActivity: s.customActivity })))
         } else if (filterType === 'amis') {
           // Afficher les créneaux des amis (visible_to_friends = true ET créés par un ami)
+          // Exclure les slots de l'utilisateur lui-même
           filteredData = filteredData.filter(slot => 
+            slot.createdBy !== currentUser.prenom && // Exclure ses propres slots
             slot.visibleToFriends === true && 
             userFriends.includes(slot.createdBy)
           )

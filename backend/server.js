@@ -460,7 +460,11 @@ app.get('/api/slots', async (req, res) => {
     // Filtrer par visibilité
     if (public_only === 'true') {
       // Pour l'onglet "Dispos publiques", afficher seulement les slots publics
-      filteredSlots = filteredSlots.filter(slot => slot.visibleToAll === true)
+      // Exclure les slots de l'utilisateur lui-même
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.visibleToAll === true && 
+        slot.createdBy !== user
+      )
     } else if (user) {
       // Récupérer les groupes de l'utilisateur
       const userGroups = await getGroupsByUser(user)
