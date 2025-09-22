@@ -460,7 +460,10 @@ app.get('/api/slots', async (req, res) => {
     // Filtrer par visibilité
     if (my_slots_only === 'true') {
       // Pour l'onglet "Mes dispo", afficher TOUS les slots de l'utilisateur
+      console.log('🔍 Filtrage my_slots_only pour user:', user)
+      console.log('🔍 Slots avant filtrage:', filteredSlots.length)
       filteredSlots = filteredSlots.filter(slot => slot.createdBy === user)
+      console.log('🔍 Slots après filtrage:', filteredSlots.length)
     } else if (public_only === 'true') {
       // Pour l'onglet "Dispos publiques", afficher seulement les slots publics
       // Exclure les slots de l'utilisateur lui-même
