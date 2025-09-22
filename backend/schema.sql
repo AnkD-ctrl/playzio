@@ -120,6 +120,15 @@ BEGIN
     END IF;
 END $$;
 
+-- Migration: Add email_notifications column if it doesn't exist
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'slots' AND column_name = 'email_notifications') THEN
+        ALTER TABLE slots ADD COLUMN email_notifications BOOLEAN DEFAULT FALSE;
+    END IF;
+END $$;
+
 -- Migration: Ensure email column allows NULL values
 DO $$ 
 BEGIN
