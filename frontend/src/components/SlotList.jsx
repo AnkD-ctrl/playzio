@@ -144,6 +144,8 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         } else if (filterType === 'mes-dispos') {
           // Pour "Mes dispo", les données viennent déjà filtrées de l'API avec my_slots_only=true
           // Pas besoin de filtrer côté frontend
+          console.log('🔍 Mes dispo - Slots reçus:', filteredData.length, 'slots')
+          console.log('🔍 Mes dispo - Détails:', filteredData.map(s => ({ id: s.id, createdBy: s.createdBy, description: s.description })))
         } else if (filterType === 'communaute' && userGroups.length > 0) {
           // Afficher seulement les créneaux des groupes de l'utilisateur (exclure ses propres slots)
           const userGroupIds = userGroups.map(group => group.id)
@@ -151,6 +153,8 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
             slot.createdBy !== currentUser.prenom && // Exclure ses propres slots
             slot.visibleToGroups && slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId))
           )
+          console.log('🔍 Communauté - Slots après filtrage:', filteredData.length, 'slots')
+          console.log('🔍 Communauté - Détails:', filteredData.map(s => ({ id: s.id, createdBy: s.createdBy, visibleToGroups: s.visibleToGroups })))
         } else if (filterType === 'publiques') {
           // Les slots publics sont déjà filtrés côté serveur avec public_only=true
           // Exclure les slots de l'utilisateur lui-même
@@ -165,6 +169,8 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
             slot.visibleToFriends === true && 
             userFriends.includes(slot.createdBy)
           )
+          console.log('🔍 Amis - Slots après filtrage:', filteredData.length, 'slots')
+          console.log('🔍 Amis - Détails:', filteredData.map(s => ({ id: s.id, createdBy: s.createdBy, visibleToFriends: s.visibleToFriends })))
         }
         
         // Filtrer par date si une date est sélectionnée
