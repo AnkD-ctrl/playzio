@@ -143,10 +143,10 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           filteredData = filteredData.filter(slot => slot.createdBy === currentUser.prenom)
         } else if (filterType === 'communaute' && userGroups.length > 0) {
           // Afficher seulement les créneaux des groupes de l'utilisateur (exclure ses propres slots)
-          const userGroupNames = userGroups.map(group => group.name)
+          const userGroupIds = userGroups.map(group => group.id)
           filteredData = filteredData.filter(slot => 
             slot.createdBy !== currentUser.prenom && // Exclure ses propres slots
-            slot.visibleToGroups && slot.visibleToGroups.some(groupName => userGroupNames.includes(groupName))
+            slot.visibleToGroups && slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId))
           )
         } else if (filterType === 'publiques') {
           // Les slots publics sont déjà filtrés côté serveur avec public_only=true
