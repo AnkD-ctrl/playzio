@@ -432,7 +432,7 @@ app.post('/api/slots/:id/enable-email-notifications', async (req, res) => {
 // Récupérer les créneaux
 app.get('/api/slots', async (req, res) => {
   try {
-    const { type, user, public_only } = req.query
+    const { type, user, public_only, my_slots_only } = req.query
     
     // Récupérer tous les slots
     let filteredSlots = await getAllSlots()
@@ -458,7 +458,10 @@ app.get('/api/slots', async (req, res) => {
     }
     
     // Filtrer par visibilité
-    if (public_only === 'true') {
+    if (my_slots_only === 'true') {
+      // Pour l'onglet "Mes dispo", afficher TOUS les slots de l'utilisateur
+      filteredSlots = filteredSlots.filter(slot => slot.createdBy === user)
+    } else if (public_only === 'true') {
       // Pour l'onglet "Dispos publiques", afficher seulement les slots publics
       // Exclure les slots de l'utilisateur lui-même
       filteredSlots = filteredSlots.filter(slot => 

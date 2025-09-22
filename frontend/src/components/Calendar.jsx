@@ -149,8 +149,11 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
         url = `${API_BASE_URL}/api/slots/user/${encodeURIComponent(currentUser.prenom)}`
       } else {
         // Mode normal - utiliser l'endpoint avec authentification
-        // Pour les onglets avec filtrage côté frontend, toujours récupérer tous les slots
-        if (filterType === 'mes-dispos' || filterType === 'amis' || filterType === 'communaute') {
+        if (filterType === 'mes-dispos') {
+          // Pour "Mes dispo", utiliser le paramètre spécial pour récupérer TOUS les slots de l'utilisateur
+          url = `${API_BASE_URL}/api/slots?my_slots_only=true&user=${encodeURIComponent(currentUser.prenom)}`
+        } else if (filterType === 'amis' || filterType === 'communaute') {
+          // Pour les autres onglets, récupérer tous les slots pour filtrage côté frontend
           url = `${API_BASE_URL}/api/slots?user=${encodeURIComponent(currentUser.prenom)}`
         } else {
           url = activity === 'Tous' 
@@ -171,19 +174,24 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
           // Mode partage public - ne pas filtrer, les données viennent déjà filtrées de l'API
           // Les données sont déjà filtrées par utilisateur côté serveur
         } else if (filterType === 'mes-dispos') {
-          // Afficher seulement les créneaux créés par l'utilisateur
-          filteredData = filteredData.filter(slot => slot.createdBy === currentUser.prenom)
+          // Pour "Mes dispo", les données viennent déjà filtrées de l'API avec my_slots_only=true
+          // Pas besoin de filtrer côté frontend
         } else if (filterType === 'communaute' && userGroups.length > 0) {
-          // Afficher seulement les créneaux des groupes de l'utilisateur
-          const userGroupNames = userGroups.map(group => group.name)
+          // Afficher seulement les créneaux des groupes de l'utilisateur (exclure ses propres slots)
+          const userGroupIds = userGroups.map(group => group.id)
           filteredData = filteredData.filter(slot => 
-            slot.visibleToGroups && slot.visibleToGroups.some(groupName => userGroupNames.includes(groupName))
+            slot.createdBy !== currentUser.prenom && // Exclure ses propres slots
+            slot.visibleToGroups && slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId))
           )
         } else if (filterType === 'publiques') {
           // Les slots publics sont déjà filtrés côté serveur avec public_only=true
+          // Exclure les slots de l'utilisateur lui-même
+          filteredData = filteredData.filter(slot => slot.createdBy !== currentUser.prenom)
         } else if (filterType === 'amis') {
           // Afficher les créneaux des amis (visible_to_friends = true ET créés par un ami)
+          // Exclure les slots de l'utilisateur lui-même
           filteredData = filteredData.filter(slot => 
+            slot.createdBy !== currentUser.prenom && // Exclure ses propres slots
             slot.visibleToFriends === true && 
             userFriends.includes(slot.createdBy)
           )

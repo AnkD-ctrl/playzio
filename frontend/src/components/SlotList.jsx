@@ -115,8 +115,11 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         url = `${API_BASE_URL}/api/slots/user/${encodeURIComponent(currentUser.prenom)}`
       } else {
         // Mode normal - utiliser l'endpoint avec authentification
-        // Pour les onglets avec filtrage côté frontend, toujours récupérer tous les slots
-        if (filterType === 'mes-dispos' || filterType === 'amis' || filterType === 'communaute') {
+        if (filterType === 'mes-dispos') {
+          // Pour "Mes dispo", utiliser le paramètre spécial pour récupérer TOUS les slots de l'utilisateur
+          url = `${API_BASE_URL}/api/slots?my_slots_only=true&user=${encodeURIComponent(currentUser.prenom)}`
+        } else if (filterType === 'amis' || filterType === 'communaute') {
+          // Pour les autres onglets, récupérer tous les slots pour filtrage côté frontend
           url = `${API_BASE_URL}/api/slots?user=${encodeURIComponent(currentUser.prenom)}`
         } else {
           url = activity === 'Tous' 
@@ -139,8 +142,8 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           // Mode partage public - ne pas filtrer, les données viennent déjà filtrées de l'API
           // Les données sont déjà filtrées par utilisateur côté serveur
         } else if (filterType === 'mes-dispos') {
-          // Afficher seulement les créneaux créés par l'utilisateur
-          filteredData = filteredData.filter(slot => slot.createdBy === currentUser.prenom)
+          // Pour "Mes dispo", les données viennent déjà filtrées de l'API avec my_slots_only=true
+          // Pas besoin de filtrer côté frontend
         } else if (filterType === 'communaute' && userGroups.length > 0) {
           // Afficher seulement les créneaux des groupes de l'utilisateur (exclure ses propres slots)
           const userGroupIds = userGroups.map(group => group.id)
