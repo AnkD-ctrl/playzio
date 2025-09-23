@@ -139,94 +139,70 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
     try {
       setLoading(true)
       
-      let url
-      
-      // Toujours récupérer TOUS les slots - le filtrage sera fait côté frontend
-      if (onJoinSlot) {
-        // Mode partage public - utiliser l'endpoint public (seulement pour les pages de partage)
-        url = `${API_BASE_URL}/api/slots/user/${encodeURIComponent(currentUser.prenom)}`
-      } else {
-        // Mode normal - récupérer tous les slots
-        url = activity === 'Tous'
-          ? `${API_BASE_URL}/api/slots`
-          : `${API_BASE_URL}/api/slots?type=${encodeURIComponent(activity.toLowerCase())}`
-      }
-      
+      // Récupérer TOUS les slots depuis l'API
+      const url = `${API_BASE_URL}/api/slots`
       const response = await fetch(url)
       
       if (response.ok) {
-        const data = await response.json()
+        const allSlots = await response.json()
+        console.log('📥 Tous les slots reçus:', allSlots.length)
         
-        // Appliquer les logiques de filtrage EXACTES selon les spécifications
-        let filteredData = data
+        // Appliquer les logiques de filtrage SIMPLES
+        let filteredSlots = allSlots
         
-        if (onJoinSlot) {
-          // Mode partage public - ne pas filtrer, les données viennent déjà filtrées de l'API
-        } else if (filterType === 'mes-dispos') {
-          // MES DISPO : pour chaque dispo du server : si organisateur = user connecté, alors affiche ici, sinon n'affiche pas
-          filteredData = filteredData.filter(slot => slot.createdBy === currentUser.prenom)
+        if (filterType === 'mes-dispos') {
+          // MES DISPO : seulement les slots créés par l'utilisateur connecté
+          filteredSlots = allSlots.filter(slot => slot.createdBy === currentUser.prenom)
         } else if (filterType === 'amis') {
-          // DISPOS DES AMIS : pour chaque dispo du server : si organisateur de la dispo est amis avec user alors affiche ici sinon si organisateur = user connecté, alors n'affiche pas ici. pour tout le reste n'affiche pas ici
-          filteredData = filteredData.filter(slot => {
-            // Si organisateur = user connecté, alors n'affiche pas ici
-            if (slot.createdBy === currentUser.prenom) {
-              return false
-            }
-            // Si organisateur de la dispo est amis avec user alors affiche ici
-            return userFriends.includes(slot.createdBy)
-          })
+          // DISPOS DES AMIS : slots des amis (pas les siens)
+          filteredSlots = allSlots.filter(slot => 
+            slot.createdBy !== currentUser.prenom && 
+            userFriends.includes(slot.createdBy)
+          )
         } else if (filterType === 'communaute') {
-          // DISPOS DES GROUPES : pour chaque dispo du server : si organisateur de la dispo a coché un groupe dans lequel est user alors affiche ici sinon si organisateur = user connecté, alors n'affiche pas ici. pour tout le reste n'affiche pas ici
+          // DISPOS DES GROUPES : slots des groupes (pas les siens)
           const userGroupIds = userGroups.map(group => group.id)
-          filteredData = filteredData.filter(slot => {
-            // Si organisateur = user connecté, alors n'affiche pas ici
-            if (slot.createdBy === currentUser.prenom) {
-              return false
-            }
-            // Si organisateur de la dispo a coché un groupe dans lequel est user alors affiche ici
-            return slot.visibleToGroups && slot.visibleToGroups.length > 0 && 
-                   slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId))
-          })
+          filteredSlots = allSlots.filter(slot => 
+            slot.createdBy !== currentUser.prenom && 
+            slot.visibleToGroups && 
+            slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId))
+          )
         } else if (filterType === 'publiques') {
-          // DISPOS PUBLIQUES : pour chaque dispo du server : si organisateur de la dispo a coché publiques alors affiche ici. si organisateur = user alors n'affiche pas ici
-          filteredData = filteredData.filter(slot => {
-            // Si organisateur = user alors n'affiche pas ici
-            if (slot.createdBy === currentUser.prenom) {
-              return false
-            }
-            // Si organisateur de la dispo a coché publiques alors affiche ici
-            return slot.visibleToAll === true
-          })
+          // DISPOS PUBLIQUES : slots publics (pas les siens)
+          filteredSlots = allSlots.filter(slot => 
+            slot.createdBy !== currentUser.prenom && 
+            slot.visibleToAll === true
+          )
         }
         
-        // Filtrer par activité personnalisée si un filtre de recherche est défini
+        // Filtrer par date si sélectionnée
+        if (selectedDate) {
+          filteredSlots = filteredSlots.filter(slot => slot.date === selectedDate)
+        }
+        
+        // Filtrer par recherche
         if (searchFilter) {
-          filteredData = filteredData.filter(slot => 
+          filteredSlots = filteredSlots.filter(slot => 
             slot.customActivity && slot.customActivity.toLowerCase().includes(searchFilter.toLowerCase())
           )
         }
         
-        // Filtrer par lieu si un filtre de lieu est défini
+        // Filtrer par lieu
         if (lieuFilter) {
-          filteredData = filteredData.filter(slot => 
+          filteredSlots = filteredSlots.filter(slot => 
             slot.lieu && slot.lieu.toLowerCase().includes(lieuFilter.toLowerCase())
           )
         }
         
-        // Filtrer par organisateur si un filtre d'organisateur est défini
+        // Filtrer par organisateur
         if (organizerFilter) {
-          filteredData = filteredData.filter(slot => 
+          filteredSlots = filteredSlots.filter(slot => 
             slot.createdBy && slot.createdBy.toLowerCase().includes(organizerFilter.toLowerCase())
           )
         }
         
-        // Filtrer par date si une date est sélectionnée
-        if (selectedDate) {
-          filteredData = filteredData.filter(slot => slot.date === selectedDate)
-        }
-        
-        
-        setSlots(filteredData)
+        console.log(`✅ ${filterType}: ${filteredSlots.length} slots affichés`)
+        setSlots(filteredSlots)
       } else {
         setError('Erreur lors du chargement des disponibilités')
       }

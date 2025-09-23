@@ -105,122 +105,70 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
     try {
       setLoading(true)
       
-      let url
-      
-      // Toujours récupérer TOUS les slots - le filtrage sera fait côté frontend
-      // Mode partage public - utiliser l'endpoint public (seulement pour les pages de partage)
-      if (onJoinSlot && filterType === 'partage') {
-        url = `${API_BASE_URL}/api/slots/user/${encodeURIComponent(currentUser.prenom)}`
-      } else {
-        // Mode normal - récupérer tous les slots avec cache-busting
-        const cacheBuster = `?t=${Date.now()}`
-        url = activity === 'Tous' 
-          ? `${API_BASE_URL}/api/slots${cacheBuster}`
-          : `${API_BASE_URL}/api/slots?type=${encodeURIComponent(activity.toLowerCase())}${cacheBuster}`
-      }
-      
-      console.log('🌐 URL appelée:', url)
-      console.log('🔍 Type d\'onglet:', filterType)
-      console.log('🔍 onJoinSlot:', onJoinSlot)
+      // Récupérer TOUS les slots depuis l'API
+      const url = `${API_BASE_URL}/api/slots`
       const response = await fetch(url)
-      console.log('📡 Status de la réponse:', response.status, response.statusText)
-      console.log('📡 Headers de la réponse:', Object.fromEntries(response.headers.entries()))
       
       if (response.ok) {
-        const data = await response.json()
-        console.log('📥 Slots reçus de l\'API:', data.length, 'slots')
-        console.log('📥 Détails slots:', data.map(s => ({ id: s.id, createdBy: s.createdBy, visibleToAll: s.visibleToAll, visibleToFriends: s.visibleToFriends, visibleToGroups: s.visibleToGroups, customActivity: s.customActivity })))
-        console.log('📥 Réponse complète:', data)
-        let filteredData = data
+        const allSlots = await response.json()
+        console.log('📥 Tous les slots reçus:', allSlots.length)
         
-        // Appliquer les logiques de filtrage EXACTES selon les spécifications
-        if (onJoinSlot) {
-          // Mode partage public - ne pas filtrer, les données viennent déjà filtrées de l'API
-        } else if (filterType === 'mes-dispos') {
-          // MES DISPO : pour chaque dispo du server : si organisateur = user connecté, alors affiche ici, sinon n'affiche pas
-          console.log('🔍 Mes dispo - Slots avant filtrage:', filteredData.length, 'slots')
-          console.log('🔍 Mes dispo - Détails slots avant:', filteredData.map(s => ({ id: s.id, createdBy: s.createdBy, date: s.date })))
-          filteredData = filteredData.filter(slot => slot.createdBy === currentUser.prenom)
-          console.log('🔍 Mes dispo - Slots après filtrage:', filteredData.length, 'slots')
-          console.log('🔍 Mes dispo - Détails slots après:', filteredData.map(s => ({ id: s.id, createdBy: s.createdBy, date: s.date })))
+        // Appliquer les logiques de filtrage SIMPLES
+        let filteredSlots = allSlots
+        
+        if (filterType === 'mes-dispos') {
+          // MES DISPO : seulement les slots créés par l'utilisateur connecté
+          filteredSlots = allSlots.filter(slot => slot.createdBy === currentUser.prenom)
         } else if (filterType === 'amis') {
-          // DISPOS DES AMIS : pour chaque dispo du server : si organisateur de la dispo est amis avec user alors affiche ici sinon si organisateur = user connecté, alors n'affiche pas ici. pour tout le reste n'affiche pas ici
-          filteredData = filteredData.filter(slot => {
-            // Si organisateur = user connecté, alors n'affiche pas ici
-            if (slot.createdBy === currentUser.prenom) {
-              return false
-            }
-            // Si organisateur de la dispo est amis avec user alors affiche ici
-            return userFriends.includes(slot.createdBy)
-          })
-          console.log('🔍 Amis - Slots après filtrage:', filteredData.length, 'slots')
+          // DISPOS DES AMIS : slots des amis (pas les siens)
+          filteredSlots = allSlots.filter(slot => 
+            slot.createdBy !== currentUser.prenom && 
+            userFriends.includes(slot.createdBy)
+          )
         } else if (filterType === 'communaute') {
-          // DISPOS DES GROUPES : pour chaque dispo du server : si organisateur de la dispo a coché un groupe dans lequel est user alors affiche ici sinon si organisateur = user connecté, alors n'affiche pas ici. pour tout le reste n'affiche pas ici
+          // DISPOS DES GROUPES : slots des groupes (pas les siens)
           const userGroupIds = userGroups.map(group => group.id)
-          filteredData = filteredData.filter(slot => {
-            // Si organisateur = user connecté, alors n'affiche pas ici
-            if (slot.createdBy === currentUser.prenom) {
-              return false
-            }
-            // Si organisateur de la dispo a coché un groupe dans lequel est user alors affiche ici
-            return slot.visibleToGroups && slot.visibleToGroups.length > 0 && 
-                   slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId))
-          })
-          console.log('🔍 Communauté - Slots après filtrage:', filteredData.length, 'slots')
+          filteredSlots = allSlots.filter(slot => 
+            slot.createdBy !== currentUser.prenom && 
+            slot.visibleToGroups && 
+            slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId))
+          )
         } else if (filterType === 'publiques') {
-          // DISPOS PUBLIQUES : pour chaque dispo du server : si organisateur de la dispo a coché publiques alors affiche ici. si organisateur = user alors n'affiche pas ici
-          filteredData = filteredData.filter(slot => {
-            // Si organisateur = user alors n'affiche pas ici
-            if (slot.createdBy === currentUser.prenom) {
-              return false
-            }
-            // Si organisateur de la dispo a coché publiques alors affiche ici
-            return slot.visibleToAll === true
-          })
-          console.log('🔍 Publiques - Slots après filtrage:', filteredData.length, 'slots')
+          // DISPOS PUBLIQUES : slots publics (pas les siens)
+          filteredSlots = allSlots.filter(slot => 
+            slot.createdBy !== currentUser.prenom && 
+            slot.visibleToAll === true
+          )
         }
         
-        // Filtrer par date si une date est sélectionnée
+        // Filtrer par date si sélectionnée
         if (selectedDate) {
-          console.log('🔍 Filtrage par date:', selectedDate)
-          const beforeDateFilter = filteredData.length
-          filteredData = filteredData.filter(slot => slot.date === selectedDate)
-          console.log('🔍 Après filtrage date:', filteredData.length, 'slots (avant:', beforeDateFilter, ')')
+          filteredSlots = filteredSlots.filter(slot => slot.date === selectedDate)
         }
         
-        // Filtrer par activité personnalisée si un filtre de recherche est défini
+        // Filtrer par recherche
         if (searchFilter) {
-          console.log('🔍 Filtrage par recherche:', searchFilter)
-          const beforeSearchFilter = filteredData.length
-          filteredData = filteredData.filter(slot => 
+          filteredSlots = filteredSlots.filter(slot => 
             slot.customActivity && slot.customActivity.toLowerCase().includes(searchFilter.toLowerCase())
           )
-          console.log('🔍 Après filtrage recherche:', filteredData.length, 'slots (avant:', beforeSearchFilter, ')')
         }
         
-        // Filtrer par lieu si un filtre de lieu est défini
+        // Filtrer par lieu
         if (lieuFilter) {
-          console.log('🔍 Filtrage par lieu:', lieuFilter)
-          const beforeLieuFilter = filteredData.length
-          filteredData = filteredData.filter(slot => 
+          filteredSlots = filteredSlots.filter(slot => 
             slot.lieu && slot.lieu.toLowerCase().includes(lieuFilter.toLowerCase())
           )
-          console.log('🔍 Après filtrage lieu:', filteredData.length, 'slots (avant:', beforeLieuFilter, ')')
         }
         
-        // Filtrer par organisateur si un filtre d'organisateur est défini
+        // Filtrer par organisateur
         if (organizerFilter) {
-          console.log('🔍 Filtrage par organisateur:', organizerFilter)
-          const beforeOrganizerFilter = filteredData.length
-          filteredData = filteredData.filter(slot => 
+          filteredSlots = filteredSlots.filter(slot => 
             slot.createdBy && slot.createdBy.toLowerCase().includes(organizerFilter.toLowerCase())
           )
-          console.log('🔍 Après filtrage organisateur:', filteredData.length, 'slots (avant:', beforeOrganizerFilter, ')')
         }
         
-        console.log('🔍 FINAL - Slots à afficher:', filteredData.length, 'slots')
-        console.log('🔍 FINAL - Détails slots:', filteredData.map(s => ({ id: s.id, createdBy: s.createdBy, date: s.date, customActivity: s.customActivity })))
-        setSlots(filteredData)
+        console.log(`✅ ${filterType}: ${filteredSlots.length} slots affichés`)
+        setSlots(filteredSlots)
       } else {
         setError('Erreur lors du chargement des disponibilités')
       }
