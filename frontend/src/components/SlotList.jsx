@@ -139,40 +139,34 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         console.log('📥 Détails slots:', data.map(s => ({ id: s.id, createdBy: s.createdBy, visibleToAll: s.visibleToAll, customActivity: s.customActivity })))
         let filteredData = data
         
-        // Filtrer selon le type d'onglet
+        // Filtrer selon les logiques définies
         if (onJoinSlot) {
           // Mode partage public - ne pas filtrer, les données viennent déjà filtrées de l'API
-          // Les données sont déjà filtrées par utilisateur côté serveur
         } else if (filterType === 'mes-dispos') {
-          // Pour "Mes dispo", les données viennent déjà filtrées de l'API avec my_slots_only=true
-          // Pas besoin de filtrer côté frontend
+          // MES DISPO : si organisateur = user connecté, alors affiche ici
+          // Les données viennent déjà filtrées de l'API avec my_slots_only=true
           console.log('🔍 Mes dispo - Slots reçus:', filteredData.length, 'slots')
-          console.log('🔍 Mes dispo - Détails:', filteredData.map(s => ({ id: s.id, createdBy: s.createdBy, description: s.description })))
-        } else if (filterType === 'communaute' && userGroups.length > 0) {
-          // Afficher seulement les créneaux des groupes de l'utilisateur (exclure ses propres slots)
-          const userGroupIds = userGroups.map(group => group.id)
-          filteredData = filteredData.filter(slot => 
-            slot.createdBy !== currentUser.prenom && // Exclure ses propres slots
-            slot.visibleToGroups && slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId))
-          )
-          console.log('🔍 Communauté - Slots après filtrage:', filteredData.length, 'slots')
-          console.log('🔍 Communauté - Détails:', filteredData.map(s => ({ id: s.id, createdBy: s.createdBy, visibleToGroups: s.visibleToGroups })))
-        } else if (filterType === 'publiques') {
-          // Les slots publics sont déjà filtrés côté serveur avec public_only=true
-          // Exclure les slots de l'utilisateur lui-même
-          filteredData = filteredData.filter(slot => slot.createdBy !== currentUser.prenom)
-          console.log('🔍 Slots publics reçus du serveur:', filteredData.length, 'slots')
-          console.log('🔍 Détails slots publics:', filteredData.map(s => ({ id: s.id, createdBy: s.createdBy, visibleToAll: s.visibleToAll, customActivity: s.customActivity })))
         } else if (filterType === 'amis') {
-          // Afficher les créneaux des amis (visible_to_friends = true ET créés par un ami)
-          // Exclure les slots de l'utilisateur lui-même
+          // DISPOS DES AMIS : si organisateur est ami avec user ET organisateur ≠ user connecté
           filteredData = filteredData.filter(slot => 
-            slot.createdBy !== currentUser.prenom && // Exclure ses propres slots
-            slot.visibleToFriends === true && 
-            userFriends.includes(slot.createdBy)
+            slot.createdBy !== currentUser.prenom && // organisateur ≠ user connecté
+            slot.visibleToFriends === true && // organisateur a coché "amis"
+            userFriends.includes(slot.createdBy) // organisateur est ami avec user
           )
           console.log('🔍 Amis - Slots après filtrage:', filteredData.length, 'slots')
-          console.log('🔍 Amis - Détails:', filteredData.map(s => ({ id: s.id, createdBy: s.createdBy, visibleToFriends: s.visibleToFriends })))
+        } else if (filterType === 'communaute') {
+          // DISPOS DES GROUPES : si organisateur a coché un groupe de user ET organisateur ≠ user connecté
+          const userGroupIds = userGroups.map(group => group.id)
+          filteredData = filteredData.filter(slot => 
+            slot.createdBy !== currentUser.prenom && // organisateur ≠ user connecté
+            slot.visibleToGroups && slot.visibleToGroups.length > 0 && // organisateur a coché des groupes
+            slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId)) // organisateur a coché un groupe de user
+          )
+          console.log('🔍 Communauté - Slots après filtrage:', filteredData.length, 'slots')
+        } else if (filterType === 'publiques') {
+          // DISPOS PUBLIQUES : si organisateur a coché publiques ET organisateur ≠ user connecté
+          // Les données viennent déjà filtrées de l'API avec public_only=true
+          console.log('🔍 Publiques - Slots reçus:', filteredData.length, 'slots')
         }
         
         // Filtrer par date si une date est sélectionnée

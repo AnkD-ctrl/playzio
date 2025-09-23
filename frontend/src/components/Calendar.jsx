@@ -167,34 +167,32 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
       if (response.ok) {
         const data = await response.json()
         
-        // Filtrer selon le type d'onglet
+        // Filtrer selon les logiques définies
         let filteredData = data
         
         if (onJoinSlot) {
           // Mode partage public - ne pas filtrer, les données viennent déjà filtrées de l'API
-          // Les données sont déjà filtrées par utilisateur côté serveur
         } else if (filterType === 'mes-dispos') {
-          // Pour "Mes dispo", les données viennent déjà filtrées de l'API avec my_slots_only=true
-          // Pas besoin de filtrer côté frontend
-        } else if (filterType === 'communaute' && userGroups.length > 0) {
-          // Afficher seulement les créneaux des groupes de l'utilisateur (exclure ses propres slots)
+          // MES DISPO : si organisateur = user connecté, alors affiche ici
+          // Les données viennent déjà filtrées de l'API avec my_slots_only=true
+        } else if (filterType === 'amis') {
+          // DISPOS DES AMIS : si organisateur est ami avec user ET organisateur ≠ user connecté
+          filteredData = filteredData.filter(slot => 
+            slot.createdBy !== currentUser.prenom && // organisateur ≠ user connecté
+            slot.visibleToFriends === true && // organisateur a coché "amis"
+            userFriends.includes(slot.createdBy) // organisateur est ami avec user
+          )
+        } else if (filterType === 'communaute') {
+          // DISPOS DES GROUPES : si organisateur a coché un groupe de user ET organisateur ≠ user connecté
           const userGroupIds = userGroups.map(group => group.id)
           filteredData = filteredData.filter(slot => 
-            slot.createdBy !== currentUser.prenom && // Exclure ses propres slots
-            slot.visibleToGroups && slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId))
+            slot.createdBy !== currentUser.prenom && // organisateur ≠ user connecté
+            slot.visibleToGroups && slot.visibleToGroups.length > 0 && // organisateur a coché des groupes
+            slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId)) // organisateur a coché un groupe de user
           )
         } else if (filterType === 'publiques') {
-          // Les slots publics sont déjà filtrés côté serveur avec public_only=true
-          // Exclure les slots de l'utilisateur lui-même
-          filteredData = filteredData.filter(slot => slot.createdBy !== currentUser.prenom)
-        } else if (filterType === 'amis') {
-          // Afficher les créneaux des amis (visible_to_friends = true ET créés par un ami)
-          // Exclure les slots de l'utilisateur lui-même
-          filteredData = filteredData.filter(slot => 
-            slot.createdBy !== currentUser.prenom && // Exclure ses propres slots
-            slot.visibleToFriends === true && 
-            userFriends.includes(slot.createdBy)
-          )
+          // DISPOS PUBLIQUES : si organisateur a coché publiques ET organisateur ≠ user connecté
+          // Les données viennent déjà filtrées de l'API avec public_only=true
         }
         
         // Filtrer par activité personnalisée si un filtre de recherche est défini

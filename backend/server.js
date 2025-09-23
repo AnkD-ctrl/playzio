@@ -457,24 +457,20 @@ app.get('/api/slots', async (req, res) => {
       })
     }
     
-    // Filtrer par visibilité
+    // Filtrer par visibilité selon les logiques définies
     if (my_slots_only === 'true') {
-      // Pour l'onglet "Mes dispo", afficher TOUS les slots de l'utilisateur
-      console.log('🔍 Filtrage my_slots_only pour user:', user)
-      console.log('🔍 Slots avant filtrage:', filteredSlots.length)
+      // MES DISPO : si organisateur = user connecté, alors affiche ici
       filteredSlots = filteredSlots.filter(slot => slot.createdBy === user)
-      console.log('🔍 Slots après filtrage:', filteredSlots.length)
     } else if (public_only === 'true') {
-      // Pour l'onglet "Dispos publiques", afficher seulement les slots publics
-      // Exclure les slots de l'utilisateur lui-même
+      // DISPOS PUBLIQUES : si organisateur a coché publiques ET organisateur ≠ user connecté
       filteredSlots = filteredSlots.filter(slot => 
         slot.visibleToAll === true && 
         slot.createdBy !== user
       )
     } else if (user) {
-      // Pour les onglets "amis" et "communaute", retourner tous les slots sauf ceux de l'utilisateur
-      // Le filtrage spécifique sera fait côté frontend
-      filteredSlots = filteredSlots.filter(slot => slot.createdBy !== user)
+      // Pour les onglets "amis" et "communaute", retourner tous les slots
+      // Le filtrage spécifique sera fait côté frontend selon les logiques définies
+      // Pas de filtrage côté backend pour ces onglets
     }
     
     res.json(filteredSlots)
