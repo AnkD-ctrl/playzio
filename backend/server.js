@@ -432,7 +432,7 @@ app.post('/api/slots/:id/enable-email-notifications', async (req, res) => {
 // Récupérer les créneaux
 app.get('/api/slots', async (req, res) => {
   try {
-    const { type, user, public_only, my_slots_only } = req.query
+    const { type } = req.query
     
     // Récupérer tous les slots
     let filteredSlots = await getAllSlots()
@@ -457,31 +457,7 @@ app.get('/api/slots', async (req, res) => {
       })
     }
     
-    // Filtrer par visibilité selon les logiques définies
-    if (my_slots_only === 'true') {
-      // MES DISPO : si organisateur = user connecté, alors affiche ici
-      filteredSlots = filteredSlots.filter(slot => slot.createdBy === user)
-    } else if (public_only === 'true') {
-      // DISPOS PUBLIQUES : si organisateur a coché publiques ET organisateur ≠ user connecté
-      filteredSlots = filteredSlots.filter(slot => 
-        slot.visibleToAll === true && 
-        slot.createdBy !== user
-      )
-    } else if (user) {
-      // Pour les onglets "amis" et "communaute", retourner tous les slots SAUF ceux de l'utilisateur
-      // Le filtrage spécifique sera fait côté frontend selon les logiques définies
-      console.log('🔍 Filtrage pour user:', user, 'slots avant:', filteredSlots.length)
-      const originalLength = filteredSlots.length
-      filteredSlots = filteredSlots.filter(slot => {
-        const isNotUserSlot = slot.createdBy !== user
-        if (!isNotUserSlot) {
-          console.log(`🔍 Exclu slot de ${slot.createdBy} pour user ${user}`)
-        }
-        return isNotUserSlot
-      })
-      console.log('🔍 Slots après filtrage:', filteredSlots.length, `(exclus: ${originalLength - filteredSlots.length})`)
-    }
-    
+    // Retourner TOUS les slots - le filtrage sera fait côté frontend
     res.json(filteredSlots)
   } catch (error) {
     console.error('Get slots error:', error)

@@ -141,25 +141,15 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
       
       let url
       
-      // Pour l'onglet "Dispos publiques", toujours utiliser public_only
-      if (filterType === 'publiques') {
-        url = `${API_BASE_URL}/api/slots?public_only=true`
-      } else if (onJoinSlot) {
-        // Mode partage public - utiliser l'endpoint public
+      // Toujours récupérer TOUS les slots - le filtrage sera fait côté frontend
+      if (onJoinSlot) {
+        // Mode partage public - utiliser l'endpoint public (seulement pour les pages de partage)
         url = `${API_BASE_URL}/api/slots/user/${encodeURIComponent(currentUser.prenom)}`
       } else {
-        // Mode normal - utiliser l'endpoint avec authentification
-        if (filterType === 'mes-dispos') {
-          // Pour "Mes dispo", utiliser le paramètre spécial pour récupérer TOUS les slots de l'utilisateur
-          url = `${API_BASE_URL}/api/slots?my_slots_only=true&user=${encodeURIComponent(currentUser.prenom)}`
-        } else if (filterType === 'amis' || filterType === 'communaute') {
-          // Pour les autres onglets, récupérer tous les slots pour filtrage côté frontend
-          url = `${API_BASE_URL}/api/slots?user=${encodeURIComponent(currentUser.prenom)}`
-        } else {
-          url = activity === 'Tous' 
-            ? `${API_BASE_URL}/api/slots?user=${encodeURIComponent(currentUser.prenom)}`
-            : `${API_BASE_URL}/api/slots?type=${encodeURIComponent(activity.toLowerCase())}&user=${encodeURIComponent(currentUser.prenom)}`
-        }
+        // Mode normal - récupérer tous les slots
+        url = activity === 'Tous'
+          ? `${API_BASE_URL}/api/slots`
+          : `${API_BASE_URL}/api/slots?type=${encodeURIComponent(activity.toLowerCase())}`
       }
       
       const response = await fetch(url)
@@ -167,32 +157,46 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
       if (response.ok) {
         const data = await response.json()
         
-        // Filtrer selon les logiques définies
+        // Appliquer les logiques de filtrage EXACTES selon les spécifications
         let filteredData = data
         
         if (onJoinSlot) {
           // Mode partage public - ne pas filtrer, les données viennent déjà filtrées de l'API
         } else if (filterType === 'mes-dispos') {
-          // MES DISPO : si organisateur = user connecté, alors affiche ici
-          // Les données viennent déjà filtrées de l'API avec my_slots_only=true
+          // MES DISPO : pour chaque dispo du server : si organisateur = user connecté, alors affiche ici, sinon n'affiche pas
+          filteredData = filteredData.filter(slot => slot.createdBy === currentUser.prenom)
         } else if (filterType === 'amis') {
-          // DISPOS DES AMIS : si organisateur est ami avec user ET organisateur ≠ user connecté
-          filteredData = filteredData.filter(slot => 
-            slot.createdBy !== currentUser.prenom && // organisateur ≠ user connecté
-            slot.visibleToFriends === true && // organisateur a coché "amis"
-            userFriends.includes(slot.createdBy) // organisateur est ami avec user
-          )
+          // DISPOS DES AMIS : pour chaque dispo du server : si organisateur de la dispo est amis avec user alors affiche ici sinon si organisateur = user connecté, alors n'affiche pas ici. pour tout le reste n'affiche pas ici
+          filteredData = filteredData.filter(slot => {
+            // Si organisateur = user connecté, alors n'affiche pas ici
+            if (slot.createdBy === currentUser.prenom) {
+              return false
+            }
+            // Si organisateur de la dispo est amis avec user alors affiche ici
+            return userFriends.includes(slot.createdBy)
+          })
         } else if (filterType === 'communaute') {
-          // DISPOS DES GROUPES : si organisateur a coché un groupe de user ET organisateur ≠ user connecté
+          // DISPOS DES GROUPES : pour chaque dispo du server : si organisateur de la dispo a coché un groupe dans lequel est user alors affiche ici sinon si organisateur = user connecté, alors n'affiche pas ici. pour tout le reste n'affiche pas ici
           const userGroupIds = userGroups.map(group => group.id)
-          filteredData = filteredData.filter(slot => 
-            slot.createdBy !== currentUser.prenom && // organisateur ≠ user connecté
-            slot.visibleToGroups && slot.visibleToGroups.length > 0 && // organisateur a coché des groupes
-            slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId)) // organisateur a coché un groupe de user
-          )
+          filteredData = filteredData.filter(slot => {
+            // Si organisateur = user connecté, alors n'affiche pas ici
+            if (slot.createdBy === currentUser.prenom) {
+              return false
+            }
+            // Si organisateur de la dispo a coché un groupe dans lequel est user alors affiche ici
+            return slot.visibleToGroups && slot.visibleToGroups.length > 0 && 
+                   slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId))
+          })
         } else if (filterType === 'publiques') {
-          // DISPOS PUBLIQUES : si organisateur a coché publiques ET organisateur ≠ user connecté
-          // Les données viennent déjà filtrées de l'API avec public_only=true
+          // DISPOS PUBLIQUES : pour chaque dispo du server : si organisateur de la dispo a coché publiques alors affiche ici. si organisateur = user alors n'affiche pas ici
+          filteredData = filteredData.filter(slot => {
+            // Si organisateur = user alors n'affiche pas ici
+            if (slot.createdBy === currentUser.prenom) {
+              return false
+            }
+            // Si organisateur de la dispo a coché publiques alors affiche ici
+            return slot.visibleToAll === true
+          })
         }
         
         // Filtrer par activité personnalisée si un filtre de recherche est défini
