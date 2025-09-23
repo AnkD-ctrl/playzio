@@ -28,8 +28,12 @@ function LoginScreen({ onLogin, isLogin: initialIsLogin = true, onBack }) {
   }
 
   const handleSubmit = async (e) => {
+    console.log('🔐 handleSubmit appelé!')
     e.preventDefault()
     setError('')
+
+    console.log('📝 Données du formulaire:', formData)
+    console.log('🔑 Mode:', isLogin ? 'connexion' : 'inscription')
 
     // Validation email obligatoire pour l'inscription
     if (!isLogin) {
@@ -43,6 +47,8 @@ function LoginScreen({ onLogin, isLogin: initialIsLogin = true, onBack }) {
       }
     }
 
+    console.log('🌐 Appel API vers:', `${API_BASE_URL}${isLogin ? '/api/login' : '/api/register'}`)
+
     try {
       const endpoint = isLogin ? '/api/login' : '/api/register'
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -53,9 +59,12 @@ function LoginScreen({ onLogin, isLogin: initialIsLogin = true, onBack }) {
         body: JSON.stringify(formData),
       })
 
+      console.log('📡 Réponse reçue:', response.status, response.statusText)
       const data = await response.json()
+      console.log('📦 Données reçues:', data)
 
       if (response.ok) {
+        console.log('✅ Connexion réussie!')
         if (isLogin) {
           onLogin(data.user)
         } else {
@@ -68,9 +77,11 @@ function LoginScreen({ onLogin, isLogin: initialIsLogin = true, onBack }) {
           }
         }
       } else {
+        console.log('❌ Erreur de connexion:', data.error)
         setError(data.error || 'Une erreur est survenue')
       }
     } catch (error) {
+      console.log('💥 Erreur catch:', error.message)
       setError('Erreur de connexion au serveur')
     }
   }
