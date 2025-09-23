@@ -112,10 +112,11 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         // Mode partage public - utiliser l'endpoint public (seulement pour les pages de partage)
         url = `${API_BASE_URL}/api/slots/user/${encodeURIComponent(currentUser.prenom)}`
       } else {
-        // Mode normal - récupérer tous les slots
+        // Mode normal - récupérer tous les slots avec cache-busting
+        const cacheBuster = `?t=${Date.now()}`
         url = activity === 'Tous' 
-          ? `${API_BASE_URL}/api/slots`
-          : `${API_BASE_URL}/api/slots?type=${encodeURIComponent(activity.toLowerCase())}`
+          ? `${API_BASE_URL}/api/slots${cacheBuster}`
+          : `${API_BASE_URL}/api/slots?type=${encodeURIComponent(activity.toLowerCase())}${cacheBuster}`
       }
       
       console.log('🌐 URL appelée:', url)
