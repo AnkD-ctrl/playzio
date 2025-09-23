@@ -20,6 +20,7 @@ import { testAnalyticsExclusion } from './utils/testAnalytics'
 import { API_BASE_URL } from './config'
 
 function App() {
+  // Force redeploy - hamburger menu removed successfully
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [currentUser, setCurrentUser] = useState(null)
   const [currentView, setCurrentView] = useState('landing') // Commencer par la landing page
