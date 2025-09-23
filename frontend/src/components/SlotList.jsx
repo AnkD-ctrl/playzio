@@ -73,9 +73,11 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   const fetchSlots = async () => {
     try {
       setLoading(true)
+      console.log('🔍 fetchSlots appelé avec currentUser:', currentUser)
       
       // Vérifier que currentUser est défini
       if (!currentUser || !currentUser.prenom) {
+        console.log('❌ currentUser non défini:', currentUser)
         setError('Utilisateur non connecté')
         setLoading(false)
         return
@@ -83,6 +85,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
       
       // Récupérer TOUS les slots depuis l'API
       const url = `${API_BASE_URL}/api/slots`
+      console.log('🌐 Appel API:', url)
       const response = await fetch(url)
       
       if (response.ok) {
@@ -145,9 +148,11 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         console.log(`✅ Slots accessibles affichés: ${filteredSlots.length}`)
         setSlots(filteredSlots)
       } else {
+        console.log('❌ Erreur API:', response.status, response.statusText)
         setError('Erreur lors du chargement des disponibilités')
       }
     } catch (error) {
+      console.log('❌ Erreur catch:', error)
       setError('Erreur de connexion au serveur')
     } finally {
       setLoading(false)
