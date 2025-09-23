@@ -699,6 +699,7 @@ app.get('/api/slots/user/:username', async (req, res) => {
     slots = slots.filter(slot => isSlotStillValid(slot))
     
     // Filtrer par créateur (nom d'utilisateur) - retourner seulement les slots publics
+    // Cet endpoint est utilisé pour le partage public, donc seulement les slots publics
     const userSlots = slots.filter(slot => 
       slot.createdBy && slot.createdBy.toLowerCase() === username.toLowerCase() &&
       slot.visibleToAll === true

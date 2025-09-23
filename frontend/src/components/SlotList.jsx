@@ -130,6 +130,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
       
       console.log('🌐 URL appelée:', url)
       console.log('🔍 Type d\'onglet:', filterType)
+      console.log('🔍 onJoinSlot:', onJoinSlot)
       const response = await fetch(url)
       
       if (response.ok) {
