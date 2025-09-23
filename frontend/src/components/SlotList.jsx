@@ -93,18 +93,14 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
             return true
           }
           
-          // 3. Slots des amis (visibleToFriends = true ET organisateur dans mes amis)
-          if (slot.visibleToFriends === true && userFriends.includes(slot.createdBy)) {
+          // 3. Slots des amis (visibleToFriends = true)
+          if (slot.visibleToFriends === true) {
             return true
           }
           
-          // 4. Slots des groupes (visibleToGroups contient un groupe dont je fais partie)
+          // 4. Slots des groupes (visibleToGroups contient des groupes)
           if (slot.visibleToGroups && slot.visibleToGroups.length > 0) {
-            const userGroupIds = userGroups.map(group => group.id)
-            const hasCommonGroup = slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId))
-            if (hasCommonGroup) {
-              return true
-            }
+            return true
           }
           
           // 5. Si aucun des critères ci-dessus n'est rempli, ne pas afficher
