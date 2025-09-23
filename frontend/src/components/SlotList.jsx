@@ -134,8 +134,11 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           // Mode partage public - ne pas filtrer, les données viennent déjà filtrées de l'API
         } else if (filterType === 'mes-dispos') {
           // MES DISPO : pour chaque dispo du server : si organisateur = user connecté, alors affiche ici, sinon n'affiche pas
+          console.log('🔍 Mes dispo - Slots avant filtrage:', filteredData.length, 'slots')
+          console.log('🔍 Mes dispo - Détails slots avant:', filteredData.map(s => ({ id: s.id, createdBy: s.createdBy, date: s.date })))
           filteredData = filteredData.filter(slot => slot.createdBy === currentUser.prenom)
           console.log('🔍 Mes dispo - Slots après filtrage:', filteredData.length, 'slots')
+          console.log('🔍 Mes dispo - Détails slots après:', filteredData.map(s => ({ id: s.id, createdBy: s.createdBy, date: s.date })))
         } else if (filterType === 'amis') {
           // DISPOS DES AMIS : pour chaque dispo du server : si organisateur de la dispo est amis avec user alors affiche ici sinon si organisateur = user connecté, alors n'affiche pas ici. pour tout le reste n'affiche pas ici
           filteredData = filteredData.filter(slot => {
@@ -174,32 +177,45 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         }
         
         // Filtrer par date si une date est sélectionnée
-        filteredData = selectedDate 
-          ? filteredData.filter(slot => slot.date === selectedDate)
-          : filteredData
+        if (selectedDate) {
+          console.log('🔍 Filtrage par date:', selectedDate)
+          const beforeDateFilter = filteredData.length
+          filteredData = filteredData.filter(slot => slot.date === selectedDate)
+          console.log('🔍 Après filtrage date:', filteredData.length, 'slots (avant:', beforeDateFilter, ')')
+        }
         
         // Filtrer par activité personnalisée si un filtre de recherche est défini
         if (searchFilter) {
+          console.log('🔍 Filtrage par recherche:', searchFilter)
+          const beforeSearchFilter = filteredData.length
           filteredData = filteredData.filter(slot => 
             slot.customActivity && slot.customActivity.toLowerCase().includes(searchFilter.toLowerCase())
           )
+          console.log('🔍 Après filtrage recherche:', filteredData.length, 'slots (avant:', beforeSearchFilter, ')')
         }
         
         // Filtrer par lieu si un filtre de lieu est défini
         if (lieuFilter) {
+          console.log('🔍 Filtrage par lieu:', lieuFilter)
+          const beforeLieuFilter = filteredData.length
           filteredData = filteredData.filter(slot => 
             slot.lieu && slot.lieu.toLowerCase().includes(lieuFilter.toLowerCase())
           )
+          console.log('🔍 Après filtrage lieu:', filteredData.length, 'slots (avant:', beforeLieuFilter, ')')
         }
         
         // Filtrer par organisateur si un filtre d'organisateur est défini
         if (organizerFilter) {
+          console.log('🔍 Filtrage par organisateur:', organizerFilter)
+          const beforeOrganizerFilter = filteredData.length
           filteredData = filteredData.filter(slot => 
             slot.createdBy && slot.createdBy.toLowerCase().includes(organizerFilter.toLowerCase())
           )
+          console.log('🔍 Après filtrage organisateur:', filteredData.length, 'slots (avant:', beforeOrganizerFilter, ')')
         }
         
-        
+        console.log('🔍 FINAL - Slots à afficher:', filteredData.length, 'slots')
+        console.log('🔍 FINAL - Détails slots:', filteredData.map(s => ({ id: s.id, createdBy: s.createdBy, date: s.date, customActivity: s.customActivity })))
         setSlots(filteredData)
       } else {
         setError('Erreur lors du chargement des disponibilités')
