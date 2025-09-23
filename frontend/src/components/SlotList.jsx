@@ -129,6 +129,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
       }
       
       console.log('🌐 URL appelée:', url)
+      console.log('🔍 Type d\'onglet:', filterType)
       const response = await fetch(url)
       
       if (response.ok) {
