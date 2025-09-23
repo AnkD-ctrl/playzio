@@ -471,8 +471,15 @@ app.get('/api/slots', async (req, res) => {
       // Pour les onglets "amis" et "communaute", retourner tous les slots SAUF ceux de l'utilisateur
       // Le filtrage spécifique sera fait côté frontend selon les logiques définies
       console.log('🔍 Filtrage pour user:', user, 'slots avant:', filteredSlots.length)
-      filteredSlots = filteredSlots.filter(slot => slot.createdBy !== user)
-      console.log('🔍 Slots après filtrage:', filteredSlots.length)
+      const originalLength = filteredSlots.length
+      filteredSlots = filteredSlots.filter(slot => {
+        const isNotUserSlot = slot.createdBy !== user
+        if (!isNotUserSlot) {
+          console.log(`🔍 Exclu slot de ${slot.createdBy} pour user ${user}`)
+        }
+        return isNotUserSlot
+      })
+      console.log('🔍 Slots après filtrage:', filteredSlots.length, `(exclus: ${originalLength - filteredSlots.length})`)
     }
     
     res.json(filteredSlots)
