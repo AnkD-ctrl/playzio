@@ -108,8 +108,8 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
       let url
       
       // Toujours récupérer TOUS les slots - le filtrage sera fait côté frontend
-      if (onJoinSlot) {
-        // Mode partage public - utiliser l'endpoint public (seulement pour les pages de partage)
+      // Mode partage public - utiliser l'endpoint public (seulement pour les pages de partage)
+      if (onJoinSlot && filterType === 'partage') {
         url = `${API_BASE_URL}/api/slots/user/${encodeURIComponent(currentUser.prenom)}`
       } else {
         // Mode normal - récupérer tous les slots avec cache-busting
