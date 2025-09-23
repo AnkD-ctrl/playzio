@@ -153,6 +153,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         }
         
         console.log(`✅ Slots accessibles affichés: ${filteredSlots.length}`)
+        console.log('📋 Slots finaux:', filteredSlots)
         setSlots(filteredSlots)
       } else {
         console.log('❌ Erreur API:', response.status, response.statusText)
@@ -250,6 +251,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   }
 
   if (error) {
+    console.log('🚨 Erreur affichée:', error)
     return (
       <div className="slot-list">
         <div className="error">{error}</div>
