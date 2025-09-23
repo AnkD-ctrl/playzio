@@ -95,7 +95,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         // LOGIQUE DE FILTRAGE INTELLIGENTE
         // Afficher seulement les slots auxquels l'utilisateur a accès
         let filteredSlots = allSlots.filter(slot => {
-          console.log('🔍 Filtrage slot:', slot.id, 'par', slot.createdBy)
+          console.log('🔍 Filtrage slot:', slot.id, 'par', slot.createdBy, 'pour', currentUser.prenom)
           
           // 1. Mes propres slots (toujours visibles)
           if (slot.createdBy === currentUser.prenom) {
@@ -103,22 +103,22 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
             return true
           }
           
-          // 2. Slots publics (visibleToAll = true)
+          // 2. Slots publics (visibleToAll = true) - TOUJOURS visibles
           if (slot.visibleToAll === true) {
             console.log('✅ Slot public:', slot.id)
             return true
           }
           
-          // 3. Slots des amis (visibleToFriends = true)
+          // 3. Slots des amis (visibleToFriends = true) - seulement si on a des amis
           if (slot.visibleToFriends === true) {
-            console.log('✅ Slot amis:', slot.id)
-            return true
+            console.log('⚠️ Slot amis (non implémenté):', slot.id)
+            return false // Temporairement désactivé
           }
           
-          // 4. Slots des groupes (visibleToGroups contient des groupes)
+          // 4. Slots des groupes (visibleToGroups contient des groupes) - seulement si on est dans le groupe
           if (slot.visibleToGroups && slot.visibleToGroups.length > 0) {
-            console.log('✅ Slot groupes:', slot.id)
-            return true
+            console.log('⚠️ Slot groupes (non implémenté):', slot.id)
+            return false // Temporairement désactivé
           }
           
           // 5. Si aucun des critères ci-dessus n'est rempli, ne pas afficher
