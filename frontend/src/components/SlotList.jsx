@@ -122,11 +122,14 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
       console.log('🔍 Type d\'onglet:', filterType)
       console.log('🔍 onJoinSlot:', onJoinSlot)
       const response = await fetch(url)
+      console.log('📡 Status de la réponse:', response.status, response.statusText)
+      console.log('📡 Headers de la réponse:', Object.fromEntries(response.headers.entries()))
       
       if (response.ok) {
         const data = await response.json()
         console.log('📥 Slots reçus de l\'API:', data.length, 'slots')
         console.log('📥 Détails slots:', data.map(s => ({ id: s.id, createdBy: s.createdBy, visibleToAll: s.visibleToAll, visibleToFriends: s.visibleToFriends, visibleToGroups: s.visibleToGroups, customActivity: s.customActivity })))
+        console.log('📥 Réponse complète:', data)
         let filteredData = data
         
         // Appliquer les logiques de filtrage EXACTES selon les spécifications
