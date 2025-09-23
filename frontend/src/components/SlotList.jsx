@@ -5,15 +5,12 @@ import { trackSlotJoin, trackSlotLeave } from '../utils/analytics'
 import SlotDiscussion from './SlotDiscussion'
 import ActivitySearchModal from './ActivitySearchModal'
 
-function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, filterType = 'publiques', onAddSlot, onJoinSlot, viewToggleContainer }) {
+function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, onAddSlot, onJoinSlot, viewToggleContainer }) {
   const [slots, setSlots] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [selectedSlot, setSelectedSlot] = useState(null)
   const [showSearchModal, setShowSearchModal] = useState(false)
-  const [showOnlyMyGroups, setShowOnlyMyGroups] = useState(false)
-  const [userGroups, setUserGroups] = useState([])
-  const [userFriends, setUserFriends] = useState([])
   const [searchInput, setSearchInput] = useState('')
   const [searchTimeout, setSearchTimeout] = useState(null)
   const [expandedSlots, setExpandedSlots] = useState(new Set())
@@ -63,42 +60,12 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
     })
   }
 
-  const handleGroupsFilterToggle = () => {
-    setShowOnlyMyGroups(!showOnlyMyGroups)
-  }
-
-
-  const fetchUserGroups = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/groups?user=${encodeURIComponent(currentUser.prenom)}`)
-      const data = await response.json()
-      setUserGroups(data)
-    } catch (error) {
-      console.error('Erreur lors du chargement des groupes:', error)
-    }
-  }
-
-  const fetchUserFriends = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/friends/${encodeURIComponent(currentUser.prenom)}`)
-      if (response.ok) {
-        const data = await response.json()
-        setUserFriends(data.friends || [])
-      }
-    } catch (error) {
-      console.error('Erreur lors du chargement des amis:', error)
-    }
-  }
 
 
   useEffect(() => {
     fetchSlots()
-  }, [activity, selectedDate, searchFilter, lieuFilter, organizerFilter, filterType, userGroups, userFriends])
+  }, [activity, selectedDate, searchFilter, lieuFilter, organizerFilter])
 
-  useEffect(() => {
-    fetchUserGroups()
-    fetchUserFriends()
-  }, [currentUser])
 
 
   const fetchSlots = async () => {
@@ -113,33 +80,8 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         const allSlots = await response.json()
         console.log('📥 Tous les slots reçus:', allSlots.length)
         
-        // Appliquer les logiques de filtrage SIMPLES
+        // Afficher TOUS les slots sans filtrage par onglet
         let filteredSlots = allSlots
-        
-        if (filterType === 'mes-dispos') {
-          // MES DISPO : seulement les slots créés par l'utilisateur connecté
-          filteredSlots = allSlots.filter(slot => slot.createdBy === currentUser.prenom)
-        } else if (filterType === 'amis') {
-          // DISPOS DES AMIS : slots des amis (pas les siens)
-          filteredSlots = allSlots.filter(slot => 
-            slot.createdBy !== currentUser.prenom && 
-            userFriends.includes(slot.createdBy)
-          )
-        } else if (filterType === 'communaute') {
-          // DISPOS DES GROUPES : slots des groupes (pas les siens)
-          const userGroupIds = userGroups.map(group => group.id)
-          filteredSlots = allSlots.filter(slot => 
-            slot.createdBy !== currentUser.prenom && 
-            slot.visibleToGroups && 
-            slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId))
-          )
-        } else if (filterType === 'publiques') {
-          // DISPOS PUBLIQUES : slots publics (pas les siens)
-          filteredSlots = allSlots.filter(slot => 
-            slot.createdBy !== currentUser.prenom && 
-            slot.visibleToAll === true
-          )
-        }
         
         // Filtrer par date si sélectionnée
         if (selectedDate) {
@@ -167,7 +109,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           )
         }
         
-        console.log(`✅ ${filterType}: ${filteredSlots.length} slots affichés`)
+        console.log(`✅ Slots affichés: ${filteredSlots.length}`)
         setSlots(filteredSlots)
       } else {
         setError('Erreur lors du chargement des disponibilités')

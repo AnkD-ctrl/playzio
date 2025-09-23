@@ -4,15 +4,12 @@ import './SlotList.css'
 import { API_BASE_URL } from '../config'
 import ActivitySearchModal from './ActivitySearchModal'
 
-function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, filterType = 'publiques', onAddSlot, onJoinSlot, selectedDate, onClearDate }) {
+function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, onAddSlot, onJoinSlot, selectedDate, onClearDate }) {
   const [slots, setSlots] = useState([])
   const [currentDate, setCurrentDate] = useState(new Date())
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [showSearchModal, setShowSearchModal] = useState(false)
-  const [showOnlyMyGroups, setShowOnlyMyGroups] = useState(false)
-  const [userGroups, setUserGroups] = useState([])
-  const [userFriends, setUserFriends] = useState([])
   const [searchInput, setSearchInput] = useState('')
   const [searchTimeout, setSearchTimeout] = useState(null)
   const [showDayPopup, setShowDayPopup] = useState(false)
@@ -85,41 +82,10 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
     }
   }
 
-  const handleGroupsFilterToggle = () => {
-    setShowOnlyMyGroups(!showOnlyMyGroups)
-  }
-
-
-  const fetchUserGroups = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/groups?user=${encodeURIComponent(currentUser.prenom)}`)
-      const data = await response.json()
-      setUserGroups(data)
-    } catch (error) {
-      console.error('Erreur lors du chargement des groupes:', error)
-    }
-  }
-
-  const fetchUserFriends = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/friends/${encodeURIComponent(currentUser.prenom)}`)
-      if (response.ok) {
-        const data = await response.json()
-        setUserFriends(data.friends || [])
-      }
-    } catch (error) {
-      console.error('Erreur lors du chargement des amis:', error)
-    }
-  }
 
   useEffect(() => {
     fetchSlots()
-  }, [activity, searchFilter, lieuFilter, organizerFilter, filterType, userGroups, userFriends, selectedDate])
-
-  useEffect(() => {
-    fetchUserGroups()
-    fetchUserFriends()
-  }, [currentUser])
+  }, [activity, searchFilter, lieuFilter, organizerFilter, selectedDate])
 
   // Fermer le menu déroulant quand on clique ailleurs
   useEffect(() => {
@@ -147,33 +113,8 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
         const allSlots = await response.json()
         console.log('📥 Tous les slots reçus:', allSlots.length)
         
-        // Appliquer les logiques de filtrage SIMPLES
+        // Afficher TOUS les slots sans filtrage par onglet
         let filteredSlots = allSlots
-        
-        if (filterType === 'mes-dispos') {
-          // MES DISPO : seulement les slots créés par l'utilisateur connecté
-          filteredSlots = allSlots.filter(slot => slot.createdBy === currentUser.prenom)
-        } else if (filterType === 'amis') {
-          // DISPOS DES AMIS : slots des amis (pas les siens)
-          filteredSlots = allSlots.filter(slot => 
-            slot.createdBy !== currentUser.prenom && 
-            userFriends.includes(slot.createdBy)
-          )
-        } else if (filterType === 'communaute') {
-          // DISPOS DES GROUPES : slots des groupes (pas les siens)
-          const userGroupIds = userGroups.map(group => group.id)
-          filteredSlots = allSlots.filter(slot => 
-            slot.createdBy !== currentUser.prenom && 
-            slot.visibleToGroups && 
-            slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId))
-          )
-        } else if (filterType === 'publiques') {
-          // DISPOS PUBLIQUES : slots publics (pas les siens)
-          filteredSlots = allSlots.filter(slot => 
-            slot.createdBy !== currentUser.prenom && 
-            slot.visibleToAll === true
-          )
-        }
         
         // Filtrer par date si sélectionnée
         if (selectedDate) {
@@ -201,7 +142,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
           )
         }
         
-        console.log(`✅ ${filterType}: ${filteredSlots.length} slots affichés`)
+        console.log(`✅ Slots affichés: ${filteredSlots.length}`)
         setSlots(filteredSlots)
       } else {
         setError('Erreur lors du chargement des disponibilités')
