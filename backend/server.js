@@ -698,9 +698,10 @@ app.get('/api/slots/user/:username', async (req, res) => {
     // Filtrer les disponibilités passées
     slots = slots.filter(slot => isSlotStillValid(slot))
     
-    // Filtrer par créateur (nom d'utilisateur)
+    // Filtrer par créateur (nom d'utilisateur) - retourner seulement les slots publics
     const userSlots = slots.filter(slot => 
-      slot.createdBy && slot.createdBy.toLowerCase() === username.toLowerCase()
+      slot.createdBy && slot.createdBy.toLowerCase() === username.toLowerCase() &&
+      slot.visibleToAll === true
     )
     
     res.json(userSlots)
