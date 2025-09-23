@@ -80,8 +80,36 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         const allSlots = await response.json()
         console.log('📥 Tous les slots reçus:', allSlots.length)
         
-        // Afficher TOUS les slots sans filtrage par onglet
-        let filteredSlots = allSlots
+        // LOGIQUE DE FILTRAGE INTELLIGENTE
+        // Afficher seulement les slots auxquels l'utilisateur a accès
+        let filteredSlots = allSlots.filter(slot => {
+          // 1. Mes propres slots (toujours visibles)
+          if (slot.createdBy === currentUser.prenom) {
+            return true
+          }
+          
+          // 2. Slots publics (visibleToAll = true)
+          if (slot.visibleToAll === true) {
+            return true
+          }
+          
+          // 3. Slots des amis (visibleToFriends = true ET organisateur dans mes amis)
+          if (slot.visibleToFriends === true && userFriends.includes(slot.createdBy)) {
+            return true
+          }
+          
+          // 4. Slots des groupes (visibleToGroups contient un groupe dont je fais partie)
+          if (slot.visibleToGroups && slot.visibleToGroups.length > 0) {
+            const userGroupIds = userGroups.map(group => group.id)
+            const hasCommonGroup = slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId))
+            if (hasCommonGroup) {
+              return true
+            }
+          }
+          
+          // 5. Si aucun des critères ci-dessus n'est rempli, ne pas afficher
+          return false
+        })
         
         // Filtrer par date si sélectionnée
         if (selectedDate) {
@@ -109,7 +137,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           )
         }
         
-        console.log(`✅ Slots affichés: ${filteredSlots.length}`)
+        console.log(`✅ Slots accessibles affichés: ${filteredSlots.length}`)
         setSlots(filteredSlots)
       } else {
         setError('Erreur lors du chargement des disponibilités')

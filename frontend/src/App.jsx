@@ -24,7 +24,7 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null)
   const [currentView, setCurrentView] = useState('landing') // Commencer par la landing page
   const [selectedActivity, setSelectedActivity] = useState(null)
-  const [selectedType, setSelectedType] = useState('mes-dispos')
+  const [selectedType, setSelectedType] = useState('list')
   const [selectedDate, setSelectedDate] = useState(null)
   const [showUserProfile, setShowUserProfile] = useState(false)
   const [showFilterModal, setShowFilterModal] = useState(false)
@@ -33,7 +33,6 @@ function App() {
   const [organizerFilter, setOrganizerFilter] = useState('')
   const [filterVersion, setFilterVersion] = useState(0)
   const [shareUsername, setShareUsername] = useState(null)
-  const [sidebarOpen, setSidebarOpen] = useState(false)
 
 
   // Vérifier si on est sur la page de réinitialisation de mot de passe ou guide d'installation
@@ -115,7 +114,7 @@ function App() {
     setCurrentUser(user)
     setIsLoggedIn(true)
     setSelectedActivity('Tous') // Aller directement à l'activité "Tous"
-    setSelectedType('mes-dispos') // Aller directement sur "Mes dispos"
+    setSelectedType('list') // Aller directement sur la vue liste
     setCurrentView('activity')
     
     // Sauvegarder la session dans localStorage seulement si les cookies sont acceptés
@@ -251,16 +250,6 @@ function App() {
       {currentView !== 'landing' && currentView !== 'login' && currentView !== 'register' && isLoggedIn && (
         <div className="app-header">
           <div className="header-content">
-            {/* Bouton hamburger */}
-            <button 
-              className="hamburger-btn"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              title="Menu"
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
             
             <div className="header-actions">
               <button 
@@ -297,92 +286,6 @@ function App() {
         </div>
       )}
 
-      {/* Barre latérale */}
-      {sidebarOpen && (
-        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)}>
-          <div className="sidebar" onClick={(e) => e.stopPropagation()}>
-            <div className="sidebar-header">
-              <h3>Navigation</h3>
-              <button 
-                className="sidebar-close"
-                onClick={() => setSidebarOpen(false)}
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-            </div>
-            <div className="sidebar-content">
-              <div 
-                className={`sidebar-item ${selectedType === 'mes-dispos' || selectedType === 'mes-dispos-calendar' ? 'active' : ''}`}
-                onClick={() => {
-                  setSelectedType('mes-dispos')
-                  setSidebarOpen(false)
-                }}
-              >
-                <span className="sidebar-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </span>
-                <span>Mes dispos</span>
-              </div>
-              <div 
-                className={`sidebar-item ${selectedType === 'amis' || selectedType === 'amis-calendar' ? 'active' : ''}`}
-                onClick={() => {
-                  setSelectedType('amis')
-                  setSidebarOpen(false)
-                }}
-              >
-                <span className="sidebar-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </span>
-                <span>Dispos des amis</span>
-              </div>
-              <div 
-                className={`sidebar-item ${selectedType === 'communaute' || selectedType === 'communaute-calendar' ? 'active' : ''}`}
-                onClick={() => {
-                  setSelectedType('communaute')
-                  setSidebarOpen(false)
-                }}
-              >
-                <span className="sidebar-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <circle cx="19" cy="7" r="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </span>
-                <span>Dispos des groupes</span>
-              </div>
-              <div 
-                className={`sidebar-item ${selectedType === 'publiques' || selectedType === 'publiques-calendar' ? 'active' : ''}`}
-                onClick={() => {
-                  setSelectedType('publiques')
-                  setSidebarOpen(false)
-                }}
-              >
-                <span className="sidebar-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M2 12h20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </span>
-                <span>Dispos publiques</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {currentView === 'landing' && (
         <>
@@ -426,13 +329,11 @@ function App() {
 
       {currentView === 'activity' && selectedActivity && (
         <div className="activity-container">
-
-
           <div className="activity-content">
-            {/* Mes dispos - Vue liste */}
-            {selectedType === 'mes-dispos' && (
+            {/* Vue liste - TOUS les slots accessibles */}
+            {selectedType === 'list' && (
               <SlotList 
-                key={`mes-dispos-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
+                key={`all-slots-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
                 activity={selectedActivity}
                 currentUser={currentUser}
                 selectedDate={selectedDate}
@@ -441,16 +342,15 @@ function App() {
                 onSearchFilterChange={handleSearchFilterChange}
                 lieuFilter={lieuFilter}
                 organizerFilter={organizerFilter}
-                filterType="mes-dispos"
                 onAddSlot={() => setSelectedType('add')}
                 onJoinSlot={handleJoinSlot}
               />
             )}
             
-            {/* Mes dispos - Vue calendrier */}
-            {selectedType === 'mes-dispos-calendar' && (
+            {/* Vue calendrier - TOUS les slots accessibles */}
+            {selectedType === 'calendar' && (
               <Calendar 
-                key={`mes-dispos-calendar-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
+                key={`all-slots-calendar-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
                 activity={selectedActivity}
                 currentUser={currentUser}
                 onDateSelect={handleDateSelect}
@@ -458,118 +358,6 @@ function App() {
                 onSearchFilterChange={handleSearchFilterChange}
                 lieuFilter={lieuFilter}
                 organizerFilter={organizerFilter}
-                filterType="mes-dispos"
-                onAddSlot={(date) => {
-                  setSelectedDate(date)
-                  setSelectedType('add')
-                }}
-                onJoinSlot={handleJoinSlot}
-              />
-            )}
-
-            {/* Dispos des amis - Vue liste */}
-            {selectedType === 'amis' && (
-              <SlotList 
-                key={`amis-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
-                activity={selectedActivity}
-                currentUser={currentUser}
-                selectedDate={selectedDate}
-                onClearDate={() => setSelectedDate(null)}
-                searchFilter={searchFilter}
-                onSearchFilterChange={handleSearchFilterChange}
-                lieuFilter={lieuFilter}
-                organizerFilter={organizerFilter}
-                filterType="amis"
-                onJoinSlot={handleJoinSlot}
-              />
-            )}
-            
-            {/* Dispos des amis - Vue calendrier */}
-            {selectedType === 'amis-calendar' && (
-              <Calendar 
-                key={`amis-calendar-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
-                activity={selectedActivity}
-                currentUser={currentUser}
-                onDateSelect={handleDateSelect}
-                searchFilter={searchFilter}
-                onSearchFilterChange={handleSearchFilterChange}
-                lieuFilter={lieuFilter}
-                organizerFilter={organizerFilter}
-                filterType="amis"
-                onAddSlot={(date) => {
-                  setSelectedDate(date)
-                  setSelectedType('add')
-                }}
-                onJoinSlot={handleJoinSlot}
-              />
-            )}
-            
-            {/* Dispo de ma communauté - Vue liste */}
-            {selectedType === 'communaute' && (
-              <SlotList 
-                key={`communaute-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
-                activity={selectedActivity}
-                currentUser={currentUser}
-                selectedDate={selectedDate}
-                onClearDate={() => setSelectedDate(null)}
-                searchFilter={searchFilter}
-                onSearchFilterChange={handleSearchFilterChange}
-                lieuFilter={lieuFilter}
-                organizerFilter={organizerFilter}
-                filterType="communaute"
-                onJoinSlot={handleJoinSlot}
-              />
-            )}
-            
-            {/* Dispo de ma communauté - Vue calendrier */}
-            {selectedType === 'communaute-calendar' && (
-              <Calendar 
-                key={`communaute-calendar-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
-                activity={selectedActivity}
-                currentUser={currentUser}
-                onDateSelect={handleDateSelect}
-                searchFilter={searchFilter}
-                onSearchFilterChange={handleSearchFilterChange}
-                lieuFilter={lieuFilter}
-                organizerFilter={organizerFilter}
-                filterType="communaute"
-                onAddSlot={(date) => {
-                  setSelectedDate(date)
-                  setSelectedType('add')
-                }}
-                onJoinSlot={handleJoinSlot}
-              />
-            )}
-            
-            {/* Publiques - Vue liste */}
-            {selectedType === 'publiques' && (
-              <SlotList 
-                key={`publiques-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
-                activity={selectedActivity}
-                currentUser={currentUser}
-                selectedDate={selectedDate}
-                onClearDate={() => setSelectedDate(null)}
-                searchFilter={searchFilter}
-                onSearchFilterChange={handleSearchFilterChange}
-                lieuFilter={lieuFilter}
-                organizerFilter={organizerFilter}
-                filterType="publiques"
-                onJoinSlot={handleJoinSlot}
-              />
-            )}
-            
-            {/* Publiques - Vue calendrier */}
-            {selectedType === 'publiques-calendar' && (
-              <Calendar 
-                key={`publiques-calendar-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
-                activity={selectedActivity}
-                currentUser={currentUser}
-                onDateSelect={handleDateSelect}
-                searchFilter={searchFilter}
-                onSearchFilterChange={handleSearchFilterChange}
-                lieuFilter={lieuFilter}
-                organizerFilter={organizerFilter}
-                filterType="publiques"
                 onAddSlot={(date) => {
                   setSelectedDate(date)
                   setSelectedType('add')
@@ -583,7 +371,7 @@ function App() {
               <AddSlot 
                 activity={selectedActivity}
                 currentUser={currentUser}
-                onSlotAdded={() => setSelectedType('mes-dispos')}
+                onSlotAdded={() => setSelectedType('list')}
                 preSelectedDate={selectedDate}
                 onClearDate={() => setSelectedDate(null)}
               />
@@ -629,7 +417,7 @@ function App() {
               </div>
               
               {/* Bouton partager */}
-              {selectedType === 'mes-dispos' && currentUser && (
+              {currentUser && (
                 <div className="footer-btn-wrapper">
                   <button 
                     className="view-toggle-btn share-btn"
@@ -664,18 +452,15 @@ function App() {
                 <button 
                   className="view-toggle-btn"
                   onClick={() => {
-                    if (selectedType.includes('-calendar')) {
-                      // Passer de calendrier à liste
-                      const baseType = selectedType.replace('-calendar', '')
-                      setSelectedType(baseType)
+                    if (selectedType === 'calendar') {
+                      setSelectedType('list')
                     } else {
-                      // Passer de liste à calendrier
-                      setSelectedType(`${selectedType}-calendar`)
+                      setSelectedType('calendar')
                     }
                   }}
-                  title={selectedType.includes('-calendar') ? 'Vue liste' : 'Vue calendrier'}
+                  title={selectedType === 'calendar' ? 'Vue liste' : 'Vue calendrier'}
                 >
-                  {selectedType.includes('-calendar') ? (
+                  {selectedType === 'calendar' ? (
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M8 6h13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                       <path d="M8 12h13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -693,7 +478,7 @@ function App() {
                     </svg>
                   )}
                 </button>
-                <span className="btn-label">{selectedType.includes('-calendar') ? 'Liste' : 'Calendrier'}</span>
+                <span className="btn-label">{selectedType === 'calendar' ? 'Liste' : 'Calendrier'}</span>
               </div>
             </div>
           </div>
