@@ -107,25 +107,24 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
       
       let url
       
-      // Pour l'onglet "Dispos publiques", toujours utiliser public_only
+      // Logique de sélection d'URL selon le type d'onglet
       if (filterType === 'publiques') {
+        // DISPOS PUBLIQUES : utiliser public_only
         url = `${API_BASE_URL}/api/slots?public_only=true&user=${encodeURIComponent(currentUser.prenom)}`
+      } else if (filterType === 'mes-dispos') {
+        // MES DISPO : utiliser my_slots_only pour récupérer TOUS les slots de l'utilisateur
+        url = `${API_BASE_URL}/api/slots?my_slots_only=true&user=${encodeURIComponent(currentUser.prenom)}`
+      } else if (filterType === 'amis' || filterType === 'communaute') {
+        // AMIS ET COMMUNAUTÉ : récupérer tous les slots pour filtrage côté frontend
+        url = `${API_BASE_URL}/api/slots?user=${encodeURIComponent(currentUser.prenom)}`
       } else if (onJoinSlot) {
-        // Mode partage public - utiliser l'endpoint public
+        // Mode partage public - utiliser l'endpoint public (seulement pour les pages de partage)
         url = `${API_BASE_URL}/api/slots/user/${encodeURIComponent(currentUser.prenom)}`
       } else {
-        // Mode normal - utiliser l'endpoint avec authentification
-        if (filterType === 'mes-dispos') {
-          // Pour "Mes dispo", utiliser le paramètre spécial pour récupérer TOUS les slots de l'utilisateur
-          url = `${API_BASE_URL}/api/slots?my_slots_only=true&user=${encodeURIComponent(currentUser.prenom)}`
-        } else if (filterType === 'amis' || filterType === 'communaute') {
-          // Pour les autres onglets, récupérer tous les slots pour filtrage côté frontend
-          url = `${API_BASE_URL}/api/slots?user=${encodeURIComponent(currentUser.prenom)}`
-        } else {
-          url = activity === 'Tous' 
-            ? `${API_BASE_URL}/api/slots?user=${encodeURIComponent(currentUser.prenom)}`
-            : `${API_BASE_URL}/api/slots?type=${encodeURIComponent(activity.toLowerCase())}&user=${encodeURIComponent(currentUser.prenom)}`
-        }
+        // Mode normal par défaut
+        url = activity === 'Tous' 
+          ? `${API_BASE_URL}/api/slots?user=${encodeURIComponent(currentUser.prenom)}`
+          : `${API_BASE_URL}/api/slots?type=${encodeURIComponent(activity.toLowerCase())}&user=${encodeURIComponent(currentUser.prenom)}`
       }
       
       console.log('🌐 URL appelée:', url)
