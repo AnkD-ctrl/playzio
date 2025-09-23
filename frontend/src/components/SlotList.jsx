@@ -63,14 +63,23 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
 
 
   useEffect(() => {
-    fetchSlots()
-  }, [activity, selectedDate, searchFilter, lieuFilter, organizerFilter])
+    if (currentUser && currentUser.prenom) {
+      fetchSlots()
+    }
+  }, [currentUser, activity, selectedDate, searchFilter, lieuFilter, organizerFilter])
 
 
 
   const fetchSlots = async () => {
     try {
       setLoading(true)
+      
+      // Vérifier que currentUser est défini
+      if (!currentUser || !currentUser.prenom) {
+        setError('Utilisateur non connecté')
+        setLoading(false)
+        return
+      }
       
       // Récupérer TOUS les slots depuis l'API
       const url = `${API_BASE_URL}/api/slots`
