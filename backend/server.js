@@ -472,30 +472,9 @@ app.get('/api/slots', async (req, res) => {
         slot.createdBy !== user
       )
     } else if (user) {
-      // Récupérer les groupes de l'utilisateur
-      const userGroups = await getGroupsByUser(user)
-      const userGroupIds = userGroups.map(group => group.id)
-      
-      // Filtrer les slots visibles pour cet utilisateur
-      filteredSlots = filteredSlots.filter(slot => {
-        // Exclure les slots créés par l'utilisateur lui-même
-        if (slot.createdBy === user) {
-          return false
-        }
-        
-        // Si le slot est public (visibleToAll = true), il est visible par tous
-        if (slot.visibleToAll === true) {
-          return true
-        }
-        
-        // Si le slot n'a pas de groupes spécifiés ET pas de visibilité définie, il est public (rétrocompatibilité)
-        if ((!slot.visibleToGroups || slot.visibleToGroups.length === 0) && slot.visibleToAll !== false) {
-          return true
-        }
-        
-        // Vérifier si l'utilisateur est dans au moins un des groupes visibles
-        return slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId))
-      })
+      // Pour les onglets "amis" et "communaute", retourner tous les slots sauf ceux de l'utilisateur
+      // Le filtrage spécifique sera fait côté frontend
+      filteredSlots = filteredSlots.filter(slot => slot.createdBy !== user)
     }
     
     res.json(filteredSlots)
