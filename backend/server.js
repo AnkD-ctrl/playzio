@@ -478,6 +478,11 @@ app.get('/api/slots', async (req, res) => {
       
       // Filtrer les slots visibles pour cet utilisateur
       filteredSlots = filteredSlots.filter(slot => {
+        // Exclure les slots créés par l'utilisateur lui-même
+        if (slot.createdBy === user) {
+          return false
+        }
+        
         // Si le slot est public (visibleToAll = true), il est visible par tous
         if (slot.visibleToAll === true) {
           return true
