@@ -468,9 +468,9 @@ app.get('/api/slots', async (req, res) => {
         slot.createdBy !== user
       )
     } else if (user) {
-      // Pour les onglets "amis" et "communaute", retourner tous les slots
+      // Pour les onglets "amis" et "communaute", retourner tous les slots SAUF ceux de l'utilisateur
       // Le filtrage spécifique sera fait côté frontend selon les logiques définies
-      // Pas de filtrage côté backend pour ces onglets
+      filteredSlots = filteredSlots.filter(slot => slot.createdBy !== user)
     }
     
     res.json(filteredSlots)
