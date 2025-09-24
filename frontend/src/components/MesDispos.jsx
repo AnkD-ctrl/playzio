@@ -21,12 +21,18 @@ function MesDispos({ currentUser, onBack }) {
       setLoading(true)
       console.log('🔍 Récupération des slots de:', currentUser.prenom)
       
-      const url = `${API_BASE_URL}/api/slots?my_slots_only=true&user=${currentUser.prenom}`
+      // LOGIQUE SIMPLE : Récupérer TOUS les slots et filtrer côté frontend
+      const url = `${API_BASE_URL}/api/slots`
       const response = await fetch(url)
       
       if (response.ok) {
-        const mySlots = await response.json()
-        console.log('📥 Mes slots reçus:', mySlots.length)
+        const allSlots = await response.json()
+        console.log('📥 Tous les slots reçus:', allSlots.length)
+        
+        // FILTRAGE SIMPLE : Seulement les slots créés par l'utilisateur
+        const mySlots = allSlots.filter(slot => slot.createdBy === currentUser.prenom)
+        console.log('📥 Mes slots filtrés:', mySlots.length)
+        
         setSlots(mySlots)
       } else {
         console.log('❌ Erreur API:', response.status, response.statusText)

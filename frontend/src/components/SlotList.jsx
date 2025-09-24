@@ -24,9 +24,6 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   const [lieuInput, setLieuInput] = useState('')
   const [organizerInput, setOrganizerInput] = useState('')
   
-  // Données des amis et groupes
-  const [userFriends, setUserFriends] = useState([])
-  const [userGroups, setUserGroups] = useState([])
   
 
   const handleActivitySelect = (activityName) => {
@@ -68,39 +65,9 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
 
   useEffect(() => {
     if (currentUser && currentUser.prenom) {
-      fetchUserData()
-    }
-  }, [currentUser])
-
-  useEffect(() => {
-    if (currentUser && currentUser.prenom && userFriends.length >= 0 && userGroups.length >= 0) {
       fetchSlots()
     }
-  }, [currentUser, activity, selectedDate, searchFilter, lieuFilter, organizerFilter, userFriends, userGroups])
-
-  const fetchUserData = async () => {
-    try {
-      // Récupérer les amis
-      const friendsResponse = await fetch(`${API_BASE_URL}/api/friends/${currentUser.prenom}`)
-      if (friendsResponse.ok) {
-        const friendsData = await friendsResponse.json()
-        setUserFriends(friendsData.friends || [])
-        console.log('👥 Amis récupérés:', friendsData.friends)
-      }
-
-      // Récupérer les groupes
-      const groupsResponse = await fetch(`${API_BASE_URL}/api/groups?user=${currentUser.prenom}`)
-      if (groupsResponse.ok) {
-        const groupsData = await groupsResponse.json()
-        setUserGroups(groupsData || [])
-        console.log('👥 Groupes récupérés:', groupsData)
-      }
-    } catch (error) {
-      console.log('❌ Erreur récupération amis/groupes:', error)
-      setUserFriends([])
-      setUserGroups([])
-    }
-  }
+  }, [currentUser, activity, selectedDate, searchFilter, lieuFilter, organizerFilter])
 
 
 
@@ -126,51 +93,8 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         const allSlots = await response.json()
         console.log('📥 Tous les slots reçus:', allSlots.length)
         
-        // LOGIQUE DE FILTRAGE INTELLIGENTE
-        // Afficher seulement les slots auxquels l'utilisateur a accès
-        let filteredSlots = allSlots.filter(slot => {
-          console.log('🔍 Filtrage slot:', slot.id, 'par', slot.createdBy, 'pour', currentUser.prenom)
-          
-          // 1. Mes propres slots (toujours visibles)
-          if (slot.createdBy === currentUser.prenom) {
-            console.log('✅ Slot personnel:', slot.id)
-            return true
-          }
-          
-          // 2. Slots publics (visibleToAll = true) - TOUJOURS visibles
-          if (slot.visibleToAll === true) {
-            console.log('✅ Slot public:', slot.id)
-            return true
-          }
-          
-          // 3. Slots des amis (visibleToFriends = true) - seulement si l'organisateur est dans mes amis
-          if (slot.visibleToFriends === true) {
-            if (userFriends.includes(slot.createdBy)) {
-              console.log('✅ Slot amis (ami confirmé):', slot.id, 'par', slot.createdBy)
-              return true
-            } else {
-              console.log('❌ Slot amis (pas ami):', slot.id, 'par', slot.createdBy)
-              return false
-            }
-          }
-          
-          // 4. Slots des groupes (visibleToGroups contient des groupes) - seulement si je suis dans le groupe
-          if (slot.visibleToGroups && slot.visibleToGroups.length > 0) {
-            const userGroupIds = userGroups.map(group => group.id)
-            const hasCommonGroup = slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId))
-            if (hasCommonGroup) {
-              console.log('✅ Slot groupes (groupe commun):', slot.id)
-              return true
-            } else {
-              console.log('❌ Slot groupes (pas dans le groupe):', slot.id)
-              return false
-            }
-          }
-          
-          // 5. Si aucun des critères ci-dessus n'est rempli, ne pas afficher
-          console.log('❌ Slot non accessible:', slot.id)
-          return false
-        })
+        // LOGIQUE SIMPLE : Afficher TOUS les slots (filtrage fait côté backend)
+        let filteredSlots = allSlots
         
         // Filtrer par date si sélectionnée
         if (selectedDate) {
