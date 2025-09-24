@@ -533,16 +533,14 @@ function UserProfile({ user, onClose, onUserUpdate }) {
                       ) : (
                         <ul className="friends-list">
                           {friendRequests.map((request) => (
-                            <li key={request.id} className="friend-item">
-                              <span>{request.sender}</span>
-                              <div className="request-actions">
-                                <button 
-                                  className="accept-btn"
-                                  onClick={() => handleAcceptFriend(request.id, request.sender)}
-                                >
-                                  Accepter
-                                </button>
-                              </div>
+                            <li key={request.id} className="friend-item clickable-friend">
+                              <span 
+                                className="clickable-username"
+                                onClick={() => handleAcceptFriend(request.id, request.sender)}
+                                title="Cliquer pour accepter la demande d'ami"
+                              >
+                                {request.sender}
+                              </span>
                             </li>
                           ))}
                         </ul>
