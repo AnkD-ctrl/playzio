@@ -197,6 +197,25 @@ function UserProfile({ user, onClose, onUserUpdate }) {
     }
   }
 
+  const handleRejectFriend = async (requestId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/friends/requests/${requestId}`, {
+        method: 'DELETE',
+      })
+
+      if (response.ok) {
+        setMessage('Demande d\'ami refusée')
+        fetchUserFriends() // Recharger la liste
+      } else {
+        const errorData = await response.json()
+        setMessage(errorData.error || 'Erreur lors du refus')
+      }
+    } catch (error) {
+      console.error('Erreur lors du refus:', error)
+      setMessage('Erreur lors du refus')
+    }
+  }
+
 
 
 
@@ -533,14 +552,24 @@ function UserProfile({ user, onClose, onUserUpdate }) {
                       ) : (
                         <ul className="friends-list">
                           {friendRequests.map((request) => (
-                            <li key={request.id} className="friend-item clickable-friend">
-                              <span 
-                                className="clickable-username"
-                                onClick={() => handleAcceptFriend(request.id, request.sender)}
-                                title="Cliquer pour accepter la demande d'ami"
-                              >
-                                {request.sender}
-                              </span>
+                            <li key={request.id} className="friend-item">
+                              <span>{request.sender}</span>
+                              <div className="request-actions">
+                                <button 
+                                  className="accept-btn-icon"
+                                  onClick={() => handleAcceptFriend(request.id, request.sender)}
+                                  title="Accepter la demande"
+                                >
+                                  ✓
+                                </button>
+                                <button 
+                                  className="reject-btn-icon"
+                                  onClick={() => handleRejectFriend(request.id)}
+                                  title="Refuser la demande"
+                                >
+                                  ✕
+                                </button>
+                              </div>
                             </li>
                           ))}
                         </ul>
