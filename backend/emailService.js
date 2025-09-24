@@ -131,6 +131,17 @@ export async function sendSlotJoinNotification(organizerEmail, organizerName, pa
   const { date, heureDebut, heureFin, type, customActivity, lieu } = slotDetails
   const activityName = customActivity || (Array.isArray(type) ? type.join(', ') : type)
   
+  // Convertir la date au format JJ/MM/AAAA
+  const formatDate = (dateString) => {
+    const date = new Date(dateString)
+    const day = date.getDate().toString().padStart(2, '0')
+    const month = (date.getMonth() + 1).toString().padStart(2, '0')
+    const year = date.getFullYear()
+    return `${day}/${month}/${year}`
+  }
+  
+  const formattedDate = formatDate(date)
+  
   const emailData = {
     personalizations: [{
       to: [{ email: organizerEmail }],
@@ -154,7 +165,7 @@ export async function sendSlotJoinNotification(organizerEmail, organizerName, pa
                 <strong>${participantName}</strong> souhaite te notifier concernant ta disponibilité ci-dessous :
               </p>
               <div style="color: #333; font-size: 16px; line-height: 1.6;">
-                <p style="margin: 8px 0;"><strong>Date :</strong> ${date}</p>
+                <p style="margin: 8px 0;"><strong>Date :</strong> ${formattedDate}</p>
                 <p style="margin: 8px 0;"><strong>Heure :</strong> ${heureDebut} - ${heureFin}</p>
                 <p style="margin: 8px 0;"><strong>Activité :</strong> ${activityName}</p>
                 ${lieu ? `<p style="margin: 8px 0;"><strong>Lieu :</strong> ${lieu}</p>` : ''}
