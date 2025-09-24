@@ -20,56 +20,25 @@ function DisposAmis({ currentUser, onBack }) {
   const fetchFriendsAndSlots = async () => {
     try {
       setLoading(true)
-      console.log('🔍 Récupération des amis et slots pour:', currentUser.prenom)
+      console.log('🔍 RÉCUPÉRATION RADICALE pour:', currentUser.prenom)
       
-      // 1. Récupérer les amis
-      const friendsResponse = await fetch(`${API_BASE_URL}/api/friends/${currentUser.prenom}`)
-      if (friendsResponse.ok) {
-        const friendsData = await friendsResponse.json()
-        setUserFriends(friendsData.friends || [])
-        console.log('👥 Amis récupérés:', friendsData.friends)
-      }
-
-      // 2. Récupérer TOUS les slots
+      // MÉTHODE RADICALE : Récupérer TOUS les slots avec visibleToFriends=true
       const slotsResponse = await fetch(`${API_BASE_URL}/api/slots`)
       if (slotsResponse.ok) {
         const allSlots = await slotsResponse.json()
         console.log('📥 Tous les slots reçus:', allSlots.length)
         
-        // 3. FILTRAGE SIMPLE : Slots des amis avec visibleToFriends=true
+        // FILTRAGE RADICAL : Seulement visibleToFriends=true ET pas mes slots
         const amisSlots = allSlots.filter(slot => {
-          console.log('🔍 Filtrage slot:', slot.id, 'par', slot.createdBy, 'pour', currentUser.prenom)
-          console.log('  - visibleToFriends:', slot.visibleToFriends)
-          console.log('  - userFriends:', userFriends)
-          console.log('  - isFriend:', userFriends.includes(slot.createdBy))
-          
-          // Ne pas afficher mes propres slots
-          if (slot.createdBy === currentUser.prenom) {
-            console.log('  ❌ Slot personnel exclu')
-            return false
-          }
-          
-          // Afficher seulement si créé par un ami ET visibleToFriends=true
-          const isFriend = userFriends.includes(slot.createdBy)
-          const isVisibleToFriends = slot.visibleToFriends === true
-          
-          if (isFriend && isVisibleToFriends) {
-            console.log('  ✅ Slot des amis accepté')
-            return true
-          } else {
-            console.log('  ❌ Slot des amis rejeté - isFriend:', isFriend, 'isVisibleToFriends:', isVisibleToFriends)
-            return false
-          }
+          return slot.visibleToFriends === true && slot.createdBy !== currentUser.prenom
         })
         
-        console.log('📥 Slots des amis filtrés:', amisSlots.length)
+        console.log('📥 Slots des amis RADICAUX:', amisSlots.length)
         setSlots(amisSlots)
       } else {
-        console.log('❌ Erreur API slots:', slotsResponse.status, slotsResponse.statusText)
         setError('Erreur lors du chargement des disponibilités des amis')
       }
     } catch (error) {
-      console.log('❌ Erreur catch:', error)
       setError('Erreur de connexion au serveur')
     } finally {
       setLoading(false)
