@@ -170,8 +170,17 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         }
         
         // Si le slot a les notifications activées, afficher la popup
+        console.log('🔔 Vérification popup notification:', {
+          shouldNotify: data.shouldNotify,
+          slotId,
+          slotsCount: slots.length,
+          currentUser: currentUser.prenom
+        })
+        
         if (data.shouldNotify) {
           const slot = slots.find(s => s.id === slotId)
+          console.log('🔍 Slot trouvé pour popup:', slot)
+          
           if (slot) {
             setPendingNotification({
               slotId,
@@ -187,6 +196,9 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
               participantName: currentUser.prenom
             })
             setShowNotificationPopup(true)
+            console.log('✅ Popup de notification affichée')
+          } else {
+            console.log('❌ Slot non trouvé pour la popup')
           }
         }
       } else {
