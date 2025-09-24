@@ -1007,6 +1007,71 @@ app.post('/api/friends/accept-by-name', async (req, res) => {
   }
 })
 
+// Endpoint pour générer un token de partage
+app.post('/api/share/generate-token', async (req, res) => {
+  try {
+    const { username } = req.body
+    
+    if (!username) {
+      return res.status(400).json({ error: 'Nom d\'utilisateur requis' })
+    }
+    
+    // Vérifier que l'utilisateur existe
+    const user = await getUserByPrenom(username)
+    if (!user) {
+      return res.status(404).json({ error: 'Utilisateur non trouvé' })
+    }
+    
+    // Générer un token unique
+    const token = require('crypto').randomBytes(32).toString('hex')
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24h
+    
+    // Stocker le token dans la base de données
+    await pool.query(
+      'INSERT INTO share_tokens (token, username, expires_at) VALUES ($1, $2, $3)',
+      [token, username, expiresAt]
+    )
+    
+    res.json({ 
+      token, 
+      expiresAt: expiresAt.toISOString(),
+      shareUrl: `${req.protocol}://${req.get('host')}/#share/${username}?token=${token}`
+    })
+  } catch (error) {
+    console.error('Generate share token error:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
+// Endpoint pour valider un token de partage
+app.get('/api/share/validate-token/:username/:token', async (req, res) => {
+  try {
+    const { username, token } = req.params
+    
+    // Vérifier le token dans la base de données
+    const result = await pool.query(
+      'SELECT * FROM share_tokens WHERE token = $1 AND username = $2 AND expires_at > NOW()',
+      [token, username]
+    )
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ 
+        valid: false, 
+        error: 'Token invalide ou expiré' 
+      })
+    }
+    
+    res.json({ 
+      valid: true, 
+      username: result.rows[0].username,
+      expiresAt: result.rows[0].expires_at
+    })
+  } catch (error) {
+    console.error('Validate share token error:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
 // Supprimer une demande d'ami
 app.delete('/api/friends/requests/:requestId', async (req, res) => {
   try {

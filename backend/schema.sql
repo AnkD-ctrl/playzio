@@ -200,3 +200,17 @@ CREATE INDEX IF NOT EXISTS idx_groups_members ON groups USING GIN (members);
 CREATE INDEX IF NOT EXISTS idx_friend_requests_users ON friend_requests(from_user, to_user);
 CREATE INDEX IF NOT EXISTS idx_messages_slot_id ON messages(slot_id);
 CREATE INDEX IF NOT EXISTS idx_messages_created_at ON messages(created_at);
+
+-- Share tokens table for temporary sharing links
+CREATE TABLE IF NOT EXISTS share_tokens (
+    id SERIAL PRIMARY KEY,
+    token VARCHAR(64) UNIQUE NOT NULL,
+    username VARCHAR(100) NOT NULL REFERENCES users(prenom),
+    expires_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Indexes for share tokens
+CREATE INDEX IF NOT EXISTS idx_share_tokens_token ON share_tokens(token);
+CREATE INDEX IF NOT EXISTS idx_share_tokens_username ON share_tokens(username);
+CREATE INDEX IF NOT EXISTS idx_share_tokens_expires ON share_tokens(expires_at);

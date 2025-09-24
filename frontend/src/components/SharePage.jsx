@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import SlotList from './SlotList'
 import Calendar from './Calendar'
+import { API_BASE_URL } from '../config'
 import '../App.css'
 
 const SharePage = ({ username, onNavigateToRegister }) => {
@@ -21,28 +22,38 @@ const SharePage = ({ username, onNavigateToRegister }) => {
     role: 'user'
   }
 
-  // Vérifier si le lien a expiré (24h)
+  // Vérifier si le token est valide
   useEffect(() => {
-    const checkLinkExpiry = () => {
-      // Récupérer le timestamp de création du lien depuis l'URL
+    const validateToken = async () => {
+      // Récupérer le token depuis l'URL
       const urlParams = new URLSearchParams(window.location.hash.split('?')[1])
-      const timestamp = urlParams.get('t')
+      const token = urlParams.get('token')
       
-      if (timestamp) {
-        const creationTime = parseInt(timestamp)
-        const now = Date.now()
-        const twentyFourHours = 24 * 60 * 60 * 1000 // 24h en millisecondes
+      if (!token) {
+        setLinkExpired(true)
+        return
+      }
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/share/validate-token/${username}/${token}`)
         
-        if (now - creationTime > twentyFourHours) {
+        if (response.ok) {
+          const data = await response.json()
+          if (data.valid) {
+            setLinkExpired(false)
+          } else {
+            setLinkExpired(true)
+          }
+        } else {
           setLinkExpired(true)
         }
-      } else {
-        // Si pas de timestamp dans l'URL, considérer comme expiré
+      } catch (error) {
+        console.error('Erreur lors de la validation du token:', error)
         setLinkExpired(true)
       }
     }
 
-    checkLinkExpiry()
+    validateToken()
   }, [username])
 
 
