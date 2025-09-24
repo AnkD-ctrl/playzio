@@ -18,7 +18,7 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
   const [selectedGroups, setSelectedGroups] = useState([])
   const [visibleToAll, setVisibleToAll] = useState(true)
   const [visibleToFriends, setVisibleToFriends] = useState(false)
-  const [emailNotifications, setEmailNotifications] = useState(true) // Par défaut activé
+  const [emailNotifications, setEmailNotifications] = useState(false) // Par défaut désactivé
   const [userGroups, setUserGroups] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
