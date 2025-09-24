@@ -148,6 +148,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   }
 
   const handleJoinSlot = async (slotId) => {
+    console.log('🚀 handleJoinSlot appelé pour slotId:', slotId)
     try {
       const response = await fetch(`${API_BASE_URL}/api/slots/${slotId}/join`, {
         method: 'POST',
@@ -198,6 +199,12 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
             })
             setShowNotificationPopup(true)
             console.log('✅ Popup de notification affichée')
+            console.log('🔔 État showNotificationPopup:', true)
+            console.log('🔔 État pendingNotification:', {
+              slotId,
+              organizerName: slot.createdBy,
+              participantName: currentUser.prenom
+            })
           } else {
             console.log('❌ Slot non trouvé pour la popup')
           }
