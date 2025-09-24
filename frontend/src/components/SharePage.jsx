@@ -152,7 +152,7 @@ const SharePage = ({ username, onNavigateToRegister }) => {
           fontSize: '0.9rem',
           color: '#d4af8c'
         }}>
-          ⏰ Ce lien de partage expire dans 24h
+          Ce lien de partage expire dans 24h
         </div>
         <button 
           onClick={() => onNavigateToRegister && onNavigateToRegister()}
