@@ -26,20 +26,14 @@
 
 .day-slots-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #5a5a5a;
-  background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+  padding: 12px 16px;
+  border-bottom: none;
+  background: transparent;
   border-radius: 12px 12px 0 0;
 }
 
-.day-slots-header h2 {
-  color: white;
-  margin: 0;
-  font-size: 1.4rem;
-  font-weight: 600;
-}
 
 .close-btn {
   background: rgba(255, 255, 255, 0.2);
@@ -64,7 +58,7 @@
 .day-slots-content {
   flex: 1;
   overflow-y: auto;
-  padding: 20px 24px;
+  padding: 16px 24px 20px 24px;
 }
 
 .loading, .error, .no-slots {

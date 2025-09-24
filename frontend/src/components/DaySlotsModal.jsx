@@ -169,7 +169,6 @@ function DaySlotsModal({
     <div className="day-slots-modal-overlay" onClick={onClose}>
       <div className="day-slots-modal" onClick={(e) => e.stopPropagation()}>
         <div className="day-slots-header">
-          <h2>{getPageTitle()} - {formatDate(selectedDate)}</h2>
           <button className="close-btn" onClick={onClose}>×</button>
         </div>
         
