@@ -1865,6 +1865,7 @@ app.post('/api/slots/:id/notify-organizer', async (req, res) => {
     if (!process.env.SENDGRID_API_KEY) {
       console.log('🔗 NOTIFICATION POUR', organizer.email, ':', `${participant} s'est inscrit à votre disponibilité du ${slot.date}`)
       console.log('📧 Copiez ce message et envoyez-le manuellement à l\'organisateur')
+      console.log('✅ SIMULATION: Email de notification envoyé à', organizer.email)
     } else {
       try {
         console.log('Tentative d\'envoi de notification à:', organizer.email)
