@@ -38,13 +38,28 @@ function DisposAmis({ currentUser, onBack }) {
         
         // 3. FILTRAGE SIMPLE : Slots des amis avec visibleToFriends=true
         const amisSlots = allSlots.filter(slot => {
+          console.log('🔍 Filtrage slot:', slot.id, 'par', slot.createdBy, 'pour', currentUser.prenom)
+          console.log('  - visibleToFriends:', slot.visibleToFriends)
+          console.log('  - userFriends:', userFriends)
+          console.log('  - isFriend:', userFriends.includes(slot.createdBy))
+          
           // Ne pas afficher mes propres slots
           if (slot.createdBy === currentUser.prenom) {
+            console.log('  ❌ Slot personnel exclu')
             return false
           }
           
           // Afficher seulement si créé par un ami ET visibleToFriends=true
-          return userFriends.includes(slot.createdBy) && slot.visibleToFriends === true
+          const isFriend = userFriends.includes(slot.createdBy)
+          const isVisibleToFriends = slot.visibleToFriends === true
+          
+          if (isFriend && isVisibleToFriends) {
+            console.log('  ✅ Slot des amis accepté')
+            return true
+          } else {
+            console.log('  ❌ Slot des amis rejeté - isFriend:', isFriend, 'isVisibleToFriends:', isVisibleToFriends)
+            return false
+          }
         })
         
         console.log('📥 Slots des amis filtrés:', amisSlots.length)
