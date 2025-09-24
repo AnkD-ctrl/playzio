@@ -18,7 +18,6 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
   const [selectedGroups, setSelectedGroups] = useState([])
   const [visibleToAll, setVisibleToAll] = useState(true)
   const [visibleToFriends, setVisibleToFriends] = useState(false)
-  const [emailNotifications, setEmailNotifications] = useState(false) // Par défaut désactivé
   const [userGroups, setUserGroups] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -126,7 +125,7 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
         visibleToGroups: visibleToAll ? [] : selectedGroups,
         visibleToAll: visibleToAll,
         visibleToFriends: visibleToFriends,
-        emailNotifications: emailNotifications
+        emailNotifications: false
       }
 
       // Créer un slot pour chaque date sélectionnée
@@ -398,24 +397,6 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
             )}
           </div>
 
-          {/* Notifications email */}
-          <div className="notifications-section">
-            <div className="notification-option">
-              <label className="notification-checkbox">
-                <input
-                  type="checkbox"
-                  checked={emailNotifications}
-                  onChange={(e) => setEmailNotifications(e.target.checked)}
-                />
-                <span className="notification-label">
-                  Recevoir un email quand quelqu'un s'inscrit à cette disponibilité
-                </span>
-              </label>
-              <p className="notification-info">
-                Vous serez notifié par email à chaque nouvelle inscription
-              </p>
-            </div>
-          </div>
 
           {error && <div className="error-message">{error}</div>}
 
