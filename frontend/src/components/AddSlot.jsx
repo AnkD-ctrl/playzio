@@ -4,7 +4,7 @@ import { API_BASE_URL } from '../config'
 import { trackSlotCreate } from '../utils/analytics'
 import CustomActivityModal from './CustomActivityModal'
 
-function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearDate }) {
+function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate }) {
   const [formData, setFormData] = useState({
     date: preSelectedDate || '',
     heureDebut: '',
@@ -13,12 +13,9 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
     lieu: '',
     maxParticipants: ''
   })
-  const [selectedDates, setSelectedDates] = useState(preSelectedDate ? [preSelectedDate] : [])
   const [selectedActivities, setSelectedActivities] = useState([activity])
   const [selectedGroups, setSelectedGroups] = useState([])
   const [visibleToAll, setVisibleToAll] = useState(true)
-  const [visibleToFriends, setVisibleToFriends] = useState(false)
-  const [emailNotifications, setEmailNotifications] = useState(true) // Par défaut activé
   const [userGroups, setUserGroups] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -34,7 +31,6 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
   useEffect(() => {
     if (preSelectedDate) {
       setFormData(prev => ({ ...prev, date: preSelectedDate }))
-      setSelectedDates([preSelectedDate])
     }
   }, [preSelectedDate])
 
@@ -54,17 +50,6 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
       [e.target.name]: e.target.value
     })
     setError('')
-  }
-
-  const handleDateAdd = () => {
-    if (formData.date && !selectedDates.includes(formData.date)) {
-      setSelectedDates(prev => [...prev, formData.date])
-      setFormData(prev => ({ ...prev, date: '' }))
-    }
-  }
-
-  const handleDateRemove = (dateToRemove) => {
-    setSelectedDates(prev => prev.filter(date => date !== dateToRemove))
   }
 
   const handleActivityToggle = (activityName) => {
@@ -107,64 +92,35 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
       return
     }
 
-    if (selectedDates.length === 0) {
-      setError('Veuillez sélectionner au moins une date')
-      setIsSubmitting(false)
-      return
-    }
-
     try {
-      const baseSlotData = {
-        heureDebut: formData.heureDebut,
-        heureFin: formData.heureFin,
-        description: formData.description,
-        lieu: formData.lieu,
-        maxParticipants: formData.maxParticipants,
+      const slotData = {
+        ...formData,
         type: selectedActivities,
         customActivity: customActivityName || null,
         createdBy: currentUser.prenom,
         visibleToGroups: visibleToAll ? [] : selectedGroups,
-        visibleToAll: visibleToAll,
-        visibleToFriends: visibleToFriends,
-        emailNotifications: emailNotifications
+        visibleToAll: visibleToAll
       }
 
-      // Créer un slot pour chaque date sélectionnée
-      const promises = selectedDates.map(date => {
-        const slotData = {
-          ...baseSlotData,
-          date: date
-        }
-
-        return fetch(`${API_BASE_URL}/api/slots`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(slotData),
-        })
+      const response = await fetch(`${API_BASE_URL}/api/slots`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(slotData),
       })
 
-      const responses = await Promise.all(promises)
-      const failedResponses = responses.filter(response => !response.ok)
-
-      if (failedResponses.length === 0) {
+      if (response.ok) {
         trackSlotCreate(selectedActivities.join(', '), selectedGroups.length > 0)
-        alert(`${selectedDates.length} disponibilité(s) ajoutée(s) avec succès !`)
+        alert('Disponibilité ajoutée avec succès !')
         setFormData({ date: '', heureDebut: '', heureFin: '', description: '', lieu: '', maxParticipants: '' })
-        setSelectedDates([])
         setSelectedActivities([activity])
         setSelectedGroups([])
-        setVisibleToAll(true)
-        setVisibleToFriends(false)
         setCustomActivityName('')
-        // Effacer le filtre de date si onClearDate est disponible
-        if (onClearDate) {
-          onClearDate()
-        }
         onSlotAdded()
       } else {
-        setError(`${failedResponses.length} disponibilité(s) n'a/ont pas pu être créée(s)`)
+        const data = await response.json()
+        setError(data.error || 'Erreur lors de l\'ajout')
       }
     } catch (error) {
       setError('Erreur de connexion au serveur')
@@ -177,51 +133,17 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
     <div className="add-slot">
       <div className="add-slot-content">
         <form onSubmit={handleSubmit} className="slot-form">
-          <div className="form-group">
-            <label htmlFor="date">Dates (sélectionner plusieurs si nécessaire)</label>
-            <div className="date-selector">
-              <input
-                type="date"
-                id="date"
-                name="date"
-                value={formData.date}
-                onChange={handleInputChange}
-                min={new Date().toISOString().split('T')[0]}
-              />
-              <button 
-                type="button" 
-                onClick={handleDateAdd}
-                disabled={!formData.date || selectedDates.includes(formData.date)}
-                className="add-date-btn"
-              >
-                Ajouter
-              </button>
-            </div>
-            
-            {selectedDates.length > 0 && (
-              <div className="selected-dates">
-                <p className="selected-dates-label">Dates sélectionnées ({selectedDates.length}) :</p>
-                <div className="dates-list">
-                  {selectedDates.map(date => (
-                    <div key={date} className="date-tag">
-                      <span>{new Date(date).toLocaleDateString('fr-FR', { 
-                        weekday: 'short', 
-                        day: 'numeric', 
-                        month: 'short' 
-                      })}</span>
-                      <button 
-                        type="button" 
-                        onClick={() => handleDateRemove(date)}
-                        className="remove-date-btn"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+                  <div className="form-group">
+          <label htmlFor="date">Date</label>
+          <input
+            type="date"
+            id="date"
+            name="date"
+            value={formData.date}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
 
         <div className="form-group">
           <label htmlFor="heureDebut">Heure de début</label>
@@ -347,14 +269,6 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
                 />
                 <span className="visibility-label">Publique (visible par tout le monde)</span>
               </label>
-              <label className="visibility-option">
-                <input
-                  type="checkbox"
-                  checked={visibleToFriends}
-                  onChange={(e) => setVisibleToFriends(e.target.checked)}
-                />
-                <span className="visibility-label">Visible par mes amis</span>
-              </label>
             </div>
             
             {userGroups.length > 0 && (
@@ -380,42 +294,16 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
                 ✅ Cette disponibilité sera visible par tout le monde
               </p>
             )}
-            {visibleToFriends && !visibleToAll && (
+            {!visibleToAll && selectedGroups.length === 0 && (
               <p className="visibility-info">
-                👥 Cette disponibilité sera visible par vos amis seulement
-              </p>
-            )}
-            {!visibleToAll && selectedGroups.length === 0 && !visibleToFriends && (
-              <p className="visibility-info">
-                ⚠️ Aucun groupe ou ami sélectionné : cette disponibilité sera visible par tous les utilisateurs
+                ⚠️ Aucun groupe sélectionné : cette disponibilité sera visible par tous les utilisateurs
               </p>
             )}
             {!visibleToAll && selectedGroups.length > 0 && (
               <p className="visibility-info">
                 ✅ Cette disponibilité sera visible par {selectedGroups.length} groupe(s) sélectionné(s)
-                {visibleToFriends && " et vos amis"}
               </p>
             )}
-          </div>
-
-          {/* Notifications email */}
-          <div className="notifications-section">
-            <h3 className="section-title">📧 Notifications</h3>
-            <div className="notification-option">
-              <label className="notification-checkbox">
-                <input
-                  type="checkbox"
-                  checked={emailNotifications}
-                  onChange={(e) => setEmailNotifications(e.target.checked)}
-                />
-                <span className="notification-label">
-                  Recevoir un email quand quelqu'un s'inscrit à cette disponibilité
-                </span>
-              </label>
-              <p className="notification-info">
-                Vous serez notifié par email à chaque nouvelle inscription
-              </p>
-            </div>
           </div>
 
           {error && <div className="error-message">{error}</div>}

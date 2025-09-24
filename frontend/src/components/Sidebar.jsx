@@ -1,48 +1,34 @@
 import React from 'react'
 import './Sidebar.css'
 
-function Sidebar({ isOpen, onClose, onNavigate, currentView }) {
-  if (!isOpen) return null
+function Sidebar({ currentView, onViewChange, selectedActivity }) {
+  const menuItems = [
+    { id: 'welcome', name: 'Accueil', icon: '🏠' },
+    { id: 'activity', name: selectedActivity || 'Activité', icon: '🎯' },
+    { id: 'add', name: 'Ajouter', icon: '➕' }
+  ]
 
   return (
-    <>
-      {/* Overlay */}
-      <div className="sidebar-overlay" onClick={onClose}></div>
-      
-      {/* Sidebar */}
-      <div className="sidebar">
+    <div className="sidebar">
+      <div className="sidebar-content">
         <div className="sidebar-header">
-          <h3>Menu</h3>
-          <button className="sidebar-close" onClick={onClose}>
-            ✕
-          </button>
+          <h3>Navigation</h3>
         </div>
         
-        <div className="sidebar-content">
-          <div 
-            className={`sidebar-item ${currentView === 'mes-dispos' ? 'active' : ''}`}
-            onClick={() => {
-              onNavigate('mes-dispos')
-              onClose()
-            }}
-          >
-            <span className="sidebar-icon">📅</span>
-            <span>Mes dispos</span>
-          </div>
-          
-          <div 
-            className={`sidebar-item ${currentView === 'dispos-amis' ? 'active' : ''}`}
-            onClick={() => {
-              onNavigate('dispos-amis')
-              onClose()
-            }}
-          >
-            <span className="sidebar-icon">👥</span>
-            <span>Dispos des amis</span>
-          </div>
-        </div>
+        <nav className="sidebar-nav">
+          {menuItems.map(item => (
+            <button
+              key={item.id}
+              className={`nav-item ${currentView === item.id ? 'active' : ''}`}
+              onClick={() => onViewChange(item.id)}
+            >
+              <span className="nav-icon">{item.icon}</span>
+              <span className="nav-name">{item.name}</span>
+            </button>
+          ))}
+        </nav>
       </div>
-    </>
+    </div>
   )
 }
 

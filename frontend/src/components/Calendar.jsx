@@ -4,12 +4,14 @@ import './SlotList.css'
 import { API_BASE_URL } from '../config'
 import ActivitySearchModal from './ActivitySearchModal'
 
-function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, onAddSlot, onJoinSlot, selectedDate, onClearDate }) {
+function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, filterType = 'publiques', onAddSlot, onJoinSlot, selectedDate, onClearDate }) {
   const [slots, setSlots] = useState([])
   const [currentDate, setCurrentDate] = useState(new Date())
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [showSearchModal, setShowSearchModal] = useState(false)
+  const [showOnlyMyGroups, setShowOnlyMyGroups] = useState(false)
+  const [userGroups, setUserGroups] = useState([])
   const [searchInput, setSearchInput] = useState('')
   const [searchTimeout, setSearchTimeout] = useState(null)
   const [showDayPopup, setShowDayPopup] = useState(false)
@@ -82,10 +84,28 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
     }
   }
 
+  const handleGroupsFilterToggle = () => {
+    setShowOnlyMyGroups(!showOnlyMyGroups)
+  }
+
+
+  const fetchUserGroups = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/groups?user=${encodeURIComponent(currentUser.prenom)}`)
+      const data = await response.json()
+      setUserGroups(data)
+    } catch (error) {
+      console.error('Erreur lors du chargement des groupes:', error)
+    }
+  }
 
   useEffect(() => {
     fetchSlots()
-  }, [activity, searchFilter, lieuFilter, organizerFilter, selectedDate])
+  }, [activity, searchFilter, lieuFilter, organizerFilter, filterType, userGroups, selectedDate])
+
+  useEffect(() => {
+    fetchUserGroups()
+  }, [currentUser])
 
   // Fermer le menu déroulant quand on clique ailleurs
   useEffect(() => {
@@ -105,73 +125,70 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
     try {
       setLoading(true)
       
-      // Récupérer TOUS les slots depuis l'API
-      const url = `${API_BASE_URL}/api/slots`
+      let url
+      if (onJoinSlot) {
+        // Mode partage public - utiliser l'endpoint public
+        url = `${API_BASE_URL}/api/slots/user/${encodeURIComponent(currentUser.prenom)}`
+      } else {
+        // Mode normal - utiliser l'endpoint avec authentification
+        url = activity === 'Tous' 
+          ? `${API_BASE_URL}/api/slots?user=${encodeURIComponent(currentUser.prenom)}`
+          : `${API_BASE_URL}/api/slots?type=${encodeURIComponent(activity.toLowerCase())}&user=${encodeURIComponent(currentUser.prenom)}`
+      }
+      
       const response = await fetch(url)
       
       if (response.ok) {
-        const allSlots = await response.json()
-        console.log('📥 Tous les slots reçus:', allSlots.length)
+        const data = await response.json()
         
-        // LOGIQUE DE FILTRAGE INTELLIGENTE
-        // Afficher seulement les slots auxquels l'utilisateur a accès
-        let filteredSlots = allSlots.filter(slot => {
-          // 1. Mes propres slots (toujours visibles)
-          if (slot.createdBy === currentUser.prenom) {
-            return true
-          }
-          
-          // 2. Slots publics (visibleToAll = true)
-          if (slot.visibleToAll === true) {
-            return true
-          }
-          
-          // 3. Slots des amis (visibleToFriends = true ET organisateur dans mes amis)
-          if (slot.visibleToFriends === true && userFriends.includes(slot.createdBy)) {
-            return true
-          }
-          
-          // 4. Slots des groupes (visibleToGroups contient un groupe dont je fais partie)
-          if (slot.visibleToGroups && slot.visibleToGroups.length > 0) {
-            const userGroupIds = userGroups.map(group => group.id)
-            const hasCommonGroup = slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId))
-            if (hasCommonGroup) {
-              return true
-            }
-          }
-          
-          // 5. Si aucun des critères ci-dessus n'est rempli, ne pas afficher
-          return false
-        })
+        // Filtrer selon le type d'onglet
+        let filteredData = data
         
-        // Filtrer par date si sélectionnée
-        if (selectedDate) {
-          filteredSlots = filteredSlots.filter(slot => slot.date === selectedDate)
+        if (onJoinSlot) {
+          // Mode partage public - ne pas filtrer, les données viennent déjà filtrées de l'API
+          // Les données sont déjà filtrées par utilisateur côté serveur
+        } else if (filterType === 'mes-dispo') {
+          // Afficher seulement les créneaux créés par l'utilisateur
+          filteredData = filteredData.filter(slot => slot.createdBy === currentUser.prenom)
+        } else if (filterType === 'communaute' && userGroups.length > 0) {
+          // Afficher seulement les créneaux des groupes de l'utilisateur
+          const userGroupNames = userGroups.map(group => group.name)
+          filteredData = filteredData.filter(slot => 
+            slot.visibleToGroups && slot.visibleToGroups.some(groupName => userGroupNames.includes(groupName))
+          )
+        } else if (filterType === 'publiques') {
+          // Afficher seulement les créneaux visibles à tous (visible_to_all = true)
+          filteredData = filteredData.filter(slot => slot.visibleToAll === true)
         }
         
-        // Filtrer par recherche
+        // Filtrer par activité personnalisée si un filtre de recherche est défini
         if (searchFilter) {
-          filteredSlots = filteredSlots.filter(slot => 
+          filteredData = filteredData.filter(slot => 
             slot.customActivity && slot.customActivity.toLowerCase().includes(searchFilter.toLowerCase())
           )
         }
         
-        // Filtrer par lieu
+        // Filtrer par lieu si un filtre de lieu est défini
         if (lieuFilter) {
-          filteredSlots = filteredSlots.filter(slot => 
+          filteredData = filteredData.filter(slot => 
             slot.lieu && slot.lieu.toLowerCase().includes(lieuFilter.toLowerCase())
           )
         }
         
-        // Filtrer par organisateur
+        // Filtrer par organisateur si un filtre d'organisateur est défini
         if (organizerFilter) {
-          filteredSlots = filteredSlots.filter(slot => 
+          filteredData = filteredData.filter(slot => 
             slot.createdBy && slot.createdBy.toLowerCase().includes(organizerFilter.toLowerCase())
           )
         }
         
-        console.log(`✅ Slots accessibles affichés: ${filteredSlots.length}`)
-        setSlots(filteredSlots)
+        // Filtrer par date si une date est sélectionnée
+        if (selectedDate) {
+          filteredData = filteredData.filter(slot => slot.date === selectedDate)
+        }
+        
+        
+        setSlots(filteredData)
       } else {
         setError('Erreur lors du chargement des disponibilités')
       }
@@ -241,7 +258,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
   const handleSlotClick = (slot) => {
     // Si onJoinSlot est fourni (mode partage), rediriger vers l'inscription
     if (onJoinSlot) {
-      onJoinSlot(slot.id)
+      onJoinSlot()
     } else {
       // Mode normal - ouvrir popup avec les disponibilités du jour
       const daySlots = slots.filter(s => s.date === slot.date)
@@ -482,43 +499,38 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
                               👥 {slot.participants ? slot.participants.length : 0}
                             </div>
                           </div>
-                          {onJoinSlot && (
-                            <div className="slot-item-actions">
-                              {isParticipant ? (
-                                <button 
-                                  className="quick-action-btn leave-btn"
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    handleLeaveSlot(slot.id)
-                                  }}
-                                  title="Quitter"
-                                >
-                                  Quitter
-                                </button>
-                              ) : (
-                                <button 
-                                  className="quick-action-btn join-btn"
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    if (onJoinSlot) {
-                                      onJoinSlot(slot.id)
-                                    } else {
-                                      handleJoinSlot(slot.id)
-                                    }
-                                  }}
-                                  title="Rejoindre"
-                                >
-                                  Rejoindre
-                                </button>
-                              )}
-                            </div>
-                          )}
+                          <div className="slot-item-actions">
+                            {isParticipant ? (
+                              <button 
+                                className="quick-action-btn leave-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleLeaveSlot(slot.id)
+                                }}
+                                title="Quitter"
+                              >
+                                Quitter
+                              </button>
+                            ) : (
+                              <button 
+                                className="quick-action-btn join-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  if (onJoinSlot) {
+                                    onJoinSlot()
+                                  } else {
+                                    handleJoinSlot(slot.id)
+                                  }
+                                }}
+                                title="Rejoindre"
+                              >
+                                Rejoindre
+                              </button>
+                            )}
+                          </div>
                         </div>
                         
-                        <div className="expand-icon-bottom" onClick={(e) => {
-                          e.stopPropagation()
-                          toggleSlotExpansion(slot.id)
-                        }}>
+                        <div className="expand-icon-bottom" onClick={() => toggleSlotExpansion(slot.id)}>
                           {isExpanded ? '▲' : '▼'}
                         </div>
                         
@@ -553,32 +565,30 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
                               <strong>Organisateur:</strong> {slot.createdBy || slot.creator}
                             </div>
 
-                            {onJoinSlot && (
-                              <div className="slot-item-actions-detail">
+                            <div className="slot-item-actions-detail">
+                              <button 
+                                className="action-btn discuss-btn"
+                                onClick={() => setSelectedSlot(slot)}
+                                title="Voir la discussion"
+                              >
+                                Discussion
+                              </button>
+                              
+                              {(isAdmin || isOwner) && (
                                 <button 
-                                  className="action-btn discuss-btn"
-                                  onClick={() => setSelectedSlot(slot)}
-                                  title="Voir la discussion"
+                                  className="action-btn delete-btn"
+                                  onClick={() => {
+                                    if (confirm('Êtes-vous sûr de vouloir supprimer cette disponibilité ?')) {
+                                      // TODO: Implémenter la suppression
+                                      alert('Fonction de suppression à implémenter')
+                                    }
+                                  }}
+                                  title="Supprimer"
                                 >
-                                  Discussion
+                                  Supprimer
                                 </button>
-                                
-                                {(isAdmin || isOwner) && (
-                                  <button 
-                                    className="action-btn delete-btn"
-                                    onClick={() => {
-                                      if (confirm('Êtes-vous sûr de vouloir supprimer cette disponibilité ?')) {
-                                        // TODO: Implémenter la suppression
-                                        alert('Fonction de suppression à implémenter')
-                                      }
-                                    }}
-                                    title="Supprimer"
-                                  >
-                                    Supprimer
-                                  </button>
-                                )}
-                              </div>
-                            )}
+                              )}
+                            </div>
                           </div>
                         )}
                       </div>

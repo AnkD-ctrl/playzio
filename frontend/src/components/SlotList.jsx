@@ -5,12 +5,14 @@ import { trackSlotJoin, trackSlotLeave } from '../utils/analytics'
 import SlotDiscussion from './SlotDiscussion'
 import ActivitySearchModal from './ActivitySearchModal'
 
-function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, onAddSlot, onJoinSlot, viewToggleContainer }) {
+function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, filterType = 'publiques', onAddSlot, onJoinSlot, viewToggleContainer }) {
   const [slots, setSlots] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [selectedSlot, setSelectedSlot] = useState(null)
   const [showSearchModal, setShowSearchModal] = useState(false)
+  const [showOnlyMyGroups, setShowOnlyMyGroups] = useState(false)
+  const [userGroups, setUserGroups] = useState([])
   const [searchInput, setSearchInput] = useState('')
   const [searchTimeout, setSearchTimeout] = useState(null)
   const [expandedSlots, setExpandedSlots] = useState(new Set())
@@ -23,7 +25,6 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   const [activityInput, setActivityInput] = useState('')
   const [lieuInput, setLieuInput] = useState('')
   const [organizerInput, setOrganizerInput] = useState('')
-  
   
 
   const handleActivitySelect = (activityName) => {
@@ -61,76 +62,102 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
     })
   }
 
+  const handleGroupsFilterToggle = () => {
+    setShowOnlyMyGroups(!showOnlyMyGroups)
+  }
+
+
+  const fetchUserGroups = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/groups?user=${encodeURIComponent(currentUser.prenom)}`)
+      const data = await response.json()
+      setUserGroups(data)
+    } catch (error) {
+      console.error('Erreur lors du chargement des groupes:', error)
+    }
+  }
 
 
   useEffect(() => {
-    if (currentUser && currentUser.prenom) {
-      fetchSlots()
-    }
-  }, [currentUser, activity, selectedDate, searchFilter, lieuFilter, organizerFilter])
+    fetchSlots()
+  }, [activity, selectedDate, searchFilter, lieuFilter, organizerFilter, filterType, userGroups])
 
+  useEffect(() => {
+    fetchUserGroups()
+  }, [currentUser])
 
 
   const fetchSlots = async () => {
     try {
       setLoading(true)
-      console.log('🔍 fetchSlots appelé avec currentUser:', currentUser)
       
-      // Vérifier que currentUser est défini
-      if (!currentUser || !currentUser.prenom) {
-        console.log('❌ currentUser non défini:', currentUser)
-        setError('Utilisateur non connecté')
-        setLoading(false)
-        return
+      let url
+      if (onJoinSlot) {
+        // Mode partage public - utiliser l'endpoint public
+        url = `${API_BASE_URL}/api/slots/user/${encodeURIComponent(currentUser.prenom)}`
+      } else {
+        // Mode normal - utiliser l'endpoint avec authentification
+        url = activity === 'Tous' 
+          ? `${API_BASE_URL}/api/slots?user=${encodeURIComponent(currentUser.prenom)}`
+          : `${API_BASE_URL}/api/slots?type=${encodeURIComponent(activity.toLowerCase())}&user=${encodeURIComponent(currentUser.prenom)}`
       }
       
-      // Récupérer TOUS les slots depuis l'API
-      const url = `${API_BASE_URL}/api/slots`
-      console.log('🌐 Appel API:', url)
       const response = await fetch(url)
       
       if (response.ok) {
-        const allSlots = await response.json()
-        console.log('📥 Tous les slots reçus:', allSlots.length)
+        const data = await response.json()
+        let filteredData = data
         
-        // LOGIQUE SIMPLE : Afficher TOUS les slots (filtrage fait côté backend)
-        let filteredSlots = allSlots
-        
-        // Filtrer par date si sélectionnée
-        if (selectedDate) {
-          filteredSlots = filteredSlots.filter(slot => slot.date === selectedDate)
+        // Filtrer selon le type d'onglet
+        if (onJoinSlot) {
+          // Mode partage public - ne pas filtrer, les données viennent déjà filtrées de l'API
+          // Les données sont déjà filtrées par utilisateur côté serveur
+        } else if (filterType === 'mes-dispo') {
+          // Afficher seulement les créneaux créés par l'utilisateur
+          filteredData = filteredData.filter(slot => slot.createdBy === currentUser.prenom)
+        } else if (filterType === 'communaute' && userGroups.length > 0) {
+          // Afficher seulement les créneaux des groupes de l'utilisateur
+          const userGroupNames = userGroups.map(group => group.name)
+          filteredData = filteredData.filter(slot => 
+            slot.visibleToGroups && slot.visibleToGroups.some(groupName => userGroupNames.includes(groupName))
+          )
+        } else if (filterType === 'publiques') {
+          // Afficher seulement les créneaux visibles à tous (visible_to_all = true)
+          filteredData = filteredData.filter(slot => slot.visibleToAll === true)
         }
         
-        // Filtrer par recherche
+        // Filtrer par date si une date est sélectionnée
+        filteredData = selectedDate 
+          ? filteredData.filter(slot => slot.date === selectedDate)
+          : filteredData
+        
+        // Filtrer par activité personnalisée si un filtre de recherche est défini
         if (searchFilter) {
-          filteredSlots = filteredSlots.filter(slot => 
+          filteredData = filteredData.filter(slot => 
             slot.customActivity && slot.customActivity.toLowerCase().includes(searchFilter.toLowerCase())
           )
         }
         
-        // Filtrer par lieu
+        // Filtrer par lieu si un filtre de lieu est défini
         if (lieuFilter) {
-          filteredSlots = filteredSlots.filter(slot => 
+          filteredData = filteredData.filter(slot => 
             slot.lieu && slot.lieu.toLowerCase().includes(lieuFilter.toLowerCase())
           )
         }
         
-        // Filtrer par organisateur
+        // Filtrer par organisateur si un filtre d'organisateur est défini
         if (organizerFilter) {
-          filteredSlots = filteredSlots.filter(slot => 
+          filteredData = filteredData.filter(slot => 
             slot.createdBy && slot.createdBy.toLowerCase().includes(organizerFilter.toLowerCase())
           )
         }
         
-        console.log(`✅ Slots accessibles affichés: ${filteredSlots.length}`)
-        console.log('📋 Slots finaux:', filteredSlots)
-        setSlots(filteredSlots)
+        
+        setSlots(filteredData)
       } else {
-        console.log('❌ Erreur API:', response.status, response.statusText)
         setError('Erreur lors du chargement des disponibilités')
       }
     } catch (error) {
-      console.log('❌ Erreur catch:', error)
       setError('Erreur de connexion au serveur')
     } finally {
       setLoading(false)
@@ -221,7 +248,6 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   }
 
   if (error) {
-    console.log('🚨 Erreur affichée:', error)
     return (
       <div className="slot-list">
         <div className="error">{error}</div>
@@ -346,43 +372,38 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                       👥 {slot.participants ? slot.participants.length : 0}
                     </div>
                   </div>
-                  {onJoinSlot && (
-                    <div className="slot-item-actions">
-                      {isParticipant ? (
-                        <button 
-                          className="quick-action-btn leave-btn"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleLeaveSlot(slot.id)
-                          }}
-                          title="Quitter"
-                        >
-                          Quitter
-                        </button>
-                      ) : (
-                        <button 
-                          className="quick-action-btn join-btn"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            if (onJoinSlot) {
-                              onJoinSlot(slot.id)
-                            } else {
-                              handleJoinSlot(slot.id)
-                            }
-                          }}
-                          title="Rejoindre"
-                        >
-                          Rejoindre
-                        </button>
-                      )}
-                    </div>
-                  )}
+                  <div className="slot-item-actions">
+                    {isParticipant ? (
+                      <button 
+                        className="quick-action-btn leave-btn"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleLeaveSlot(slot.id)
+                        }}
+                        title="Quitter"
+                      >
+                        Quitter
+                      </button>
+                    ) : (
+                      <button 
+                        className="quick-action-btn join-btn"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          if (onJoinSlot) {
+                            onJoinSlot()
+                          } else {
+                            handleJoinSlot(slot.id)
+                          }
+                        }}
+                        title="Rejoindre"
+                      >
+                        Rejoindre
+                      </button>
+                    )}
+                  </div>
                 </div>
                 
-                <div className="expand-icon-bottom" onClick={(e) => {
-                  e.stopPropagation()
-                  toggleSlotExpansion(slot.id)
-                }}>
+                <div className="expand-icon-bottom" onClick={() => toggleSlotExpansion(slot.id)}>
                   {isExpanded ? '▲' : '▼'}
                 </div>
 
@@ -413,32 +434,30 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                       )}
                     </div>
 
-                    {onJoinSlot && (
-                      <div className="slot-item-actions-detail">
-                        <button 
-                          className="action-btn discuss-btn"
-                          onClick={() => setSelectedSlot(slot)}
-                          title="Voir la discussion"
-                        >
-                          Discussion
-                        </button>
-                        
+                    <div className="slot-item-actions-detail">
+                      <button 
+                        className="action-btn discuss-btn"
+                        onClick={() => setSelectedSlot(slot)}
+                        title="Voir la discussion"
+                      >
+                        Discussion
+                      </button>
+                      
 
-                        {(isAdmin || isOwner) && (
-                          <button 
-                            className="action-btn delete-btn"
-                            onClick={() => handleDeleteSlot(slot.id)}
-                            title="Supprimer"
-                          >
-                            Supprimer
-                          </button>
-                        )}
-                        
-                        {isOwner && (
-                          <span className="owner-badge">Vous êtes l'organisateur</span>
-                        )}
-                      </div>
-                    )}
+                      {(isAdmin || isOwner) && (
+                        <button 
+                          className="action-btn delete-btn"
+                          onClick={() => handleDeleteSlot(slot.id)}
+                          title="Supprimer"
+                        >
+                          Supprimer
+                        </button>
+                      )}
+                      
+                      {isOwner && (
+                        <span className="owner-badge">Vous êtes l'organisateur</span>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>

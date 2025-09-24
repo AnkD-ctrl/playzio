@@ -2,14 +2,13 @@ import pkg from 'pg'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import { nanoid } from 'nanoid'
 
 const { Pool } = pkg
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 // Configuration de la base de données
-export const pool = new Pool({
+const pool = new Pool({
   connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
   ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false
 })
@@ -94,7 +93,6 @@ export async function createUser(userData) {
   return result.rows[0]
 }
 
-
 // Slots
 export async function getAllSlots(filters = {}) {
   let query = 'SELECT * FROM slots'
@@ -121,18 +119,20 @@ export async function getAllSlots(filters = {}) {
     type: typeof row.type === 'string' ? (row.type.startsWith('[') ? JSON.parse(row.type) : row.type) : row.type,
     customActivity: row.custom_activity,
     description: row.description,
-    lieu: row.lieu || '',
+    lieu: row.lieu,
     maxParticipants: row.max_participants,
     createdBy: row.created_by,
-    visibleToGroups: row.visible_to_groups || [],
-    visibleToAll: row.visible_to_all !== undefined ? row.visible_to_all : true, // Par défaut public si pas défini
-    visibleToFriends: row.visible_to_friends !== undefined ? row.visible_to_friends : false,
-    participants: row.participants || []
+    visibleToGroups: row.visible_to_groups,
+    visibleToAll: row.visible_to_all,
+    participants: row.participants
   }))
 }
 
-// Fonction utilitaire pour formater le résultat d'un slot
-function formatSlotResult(row) {
+export async function getSlotById(id) {
+  const result = await pool.query('SELECT * FROM slots WHERE id = $1', [id])
+  if (result.rows.length === 0) return null
+  
+  const row = result.rows[0]
   return {
     id: row.id,
     date: row.date,
@@ -141,90 +141,40 @@ function formatSlotResult(row) {
     type: typeof row.type === 'string' ? (row.type.startsWith('[') ? JSON.parse(row.type) : row.type) : row.type,
     customActivity: row.custom_activity,
     description: row.description,
-    lieu: row.lieu || '',
+    lieu: row.lieu,
     maxParticipants: row.max_participants,
     createdBy: row.created_by,
-    visibleToGroups: row.visible_to_groups || [],
-    visibleToAll: row.visible_to_all !== undefined ? row.visible_to_all : true, // Par défaut public si pas défini
-    visibleToFriends: row.visible_to_friends !== undefined ? row.visible_to_friends : false,
-    participants: row.participants || [],
-    emailNotifications: row.email_notifications || false // Valeur par défaut si la colonne n'existe pas
+    visibleToGroups: row.visible_to_groups,
+    visibleToAll: row.visible_to_all,
+    participants: row.participants
   }
 }
 
-export async function getSlotById(id) {
-  const result = await pool.query('SELECT * FROM slots WHERE id = $1', [id])
-  if (result.rows.length === 0) return null
-  
-  return formatSlotResult(result.rows[0])
-}
-
 export async function createSlot(slotData) {
-  try {
-    const { id, date, heureDebut, heureFin, type, customActivity = null, description = '', lieu = '', maxParticipants = null, createdBy = null, visibleToGroups = [], visibleToAll = true, visibleToFriends = false, participants = [], emailNotifications = false } = slotData
-    
-    const typeValue = Array.isArray(type) ? JSON.stringify(type) : type
-    
-    // Vérifier si la colonne email_notifications existe
-    try {
-      // Essayer d'abord avec la nouvelle colonne
-      const result = await pool.query(
-        'INSERT INTO slots (id, date, heure_debut, heure_fin, type, custom_activity, description, lieu, max_participants, created_by, visible_to_groups, visible_to_all, visible_to_friends, participants, email_notifications) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING *',
-        [id, date, heureDebut, heureFin, typeValue, customActivity, description, lieu, maxParticipants, createdBy, visibleToGroups, visibleToAll, visibleToFriends, participants, emailNotifications]
-      )
-      
-      const row = result.rows[0]
-      return {
-        id: row.id,
-        date: row.date,
-        heureDebut: row.heure_debut,
-        heureFin: row.heure_fin,
-        type: typeof row.type === 'string' ? (row.type.startsWith('[') ? JSON.parse(row.type) : row.type) : row.type,
-        customActivity: row.custom_activity,
-        description: row.description,
-        lieu: row.lieu,
-        maxParticipants: row.max_participants,
-        createdBy: row.created_by,
-        visibleToGroups: row.visible_to_groups,
-        visibleToAll: row.visible_to_all,
-        visibleToFriends: row.visible_to_friends,
-        participants: row.participants,
-        emailNotifications: row.email_notifications || false
-      }
-    } catch (error) {
-      // Si la colonne n'existe pas encore, utiliser l'ancienne requête
-      if (error.message.includes('email_notifications')) {
-        console.log('Colonne email_notifications non trouvée, utilisation de l\'ancienne structure')
-        const result = await pool.query(
-          'INSERT INTO slots (id, date, heure_debut, heure_fin, type, custom_activity, description, lieu, max_participants, created_by, visible_to_groups, visible_to_all, visible_to_friends, participants) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *',
-          [id, date, heureDebut, heureFin, typeValue, customActivity, description, lieu, maxParticipants, createdBy, visibleToGroups, visibleToAll, visibleToFriends, participants]
-        )
-        
-        const row = result.rows[0]
-        return {
-          id: row.id,
-          date: row.date,
-          heureDebut: row.heure_debut,
-          heureFin: row.heure_fin,
-          type: typeof row.type === 'string' ? (row.type.startsWith('[') ? JSON.parse(row.type) : row.type) : row.type,
-          customActivity: row.custom_activity,
-          description: row.description,
-          lieu: row.lieu,
-          maxParticipants: row.max_participants,
-          createdBy: row.created_by,
-          visibleToGroups: row.visible_to_groups,
-          visibleToAll: row.visible_to_all,
-          visibleToFriends: row.visible_to_friends,
-          participants: row.participants,
-          emailNotifications: false // Valeur par défaut
-        }
-      } else {
-        throw error
-      }
-    }
-  } catch (error) {
-    console.error('❌ Erreur createSlot:', error)
-    throw error
+  const { id, date, heureDebut, heureFin, type, customActivity = null, description = '', lieu = '', maxParticipants = null, createdBy = null, visibleToGroups = [], visibleToAll = true, participants = [] } = slotData
+  
+  const typeValue = Array.isArray(type) ? JSON.stringify(type) : type
+  
+  const result = await pool.query(
+    'INSERT INTO slots (id, date, heure_debut, heure_fin, type, custom_activity, description, lieu, max_participants, created_by, visible_to_groups, visible_to_all, participants) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *',
+    [id, date, heureDebut, heureFin, typeValue, customActivity, description, lieu, maxParticipants, createdBy, visibleToGroups, visibleToAll, participants]
+  )
+  
+  const row = result.rows[0]
+  return {
+    id: row.id,
+    date: row.date,
+    heureDebut: row.heure_debut,
+    heureFin: row.heure_fin,
+    type: typeof row.type === 'string' ? (row.type.startsWith('[') ? JSON.parse(row.type) : row.type) : row.type,
+    customActivity: row.custom_activity,
+    description: row.description,
+    lieu: row.lieu,
+    maxParticipants: row.max_participants,
+    createdBy: row.created_by,
+    visibleToGroups: row.visible_to_groups,
+    visibleToAll: row.visible_to_all,
+    participants: row.participants
   }
 }
 
@@ -353,7 +303,16 @@ export async function deleteGroup(id) {
 }
 
 // Friend Requests
-// Ancienne fonction createFriendRequest supprimée - remplacée par la nouvelle version ci-dessous
+export async function createFriendRequest(requestData) {
+  const { id, from, to } = requestData
+  
+  const result = await pool.query(
+    'INSERT INTO friend_requests (id, from_user, to_user) VALUES ($1, $2, $3) RETURNING *',
+    [id, from, to]
+  )
+  
+  return result.rows[0]
+}
 
 export async function getFriendRequestById(id) {
   const result = await pool.query('SELECT * FROM friend_requests WHERE id = $1', [id])
@@ -396,61 +355,6 @@ export async function updateUserFriends(prenom, friends) {
   return result.rows[0]
 }
 
-// Créer une demande d'ami
-export async function createFriendRequest(fromUser, toUser) {
-  try {
-    const id = nanoid()
-    const result = await pool.query(
-      'INSERT INTO friend_requests (id, from_user, to_user, status) VALUES ($1, $2, $3, $4) RETURNING *',
-      [id, fromUser, toUser, 'pending']
-    )
-    return result.rows[0]
-  } catch (error) {
-    console.error('Erreur createFriendRequest:', error)
-    throw error
-  }
-}
-
-// Accepter une demande d'ami
-export async function acceptFriendRequest(fromUser, toUser) {
-  try {
-    // Supprimer la demande
-    await pool.query(
-      'DELETE FROM friend_requests WHERE from_user = $1 AND to_user = $2 AND status = $3',
-      [fromUser, toUser, 'pending']
-    )
-    
-    // Ajouter l'amitié (s'assurer que user1 < user2 pour la contrainte UNIQUE)
-    const user1 = fromUser < toUser ? fromUser : toUser
-    const user2 = fromUser < toUser ? toUser : fromUser
-    const id = nanoid()
-    
-    const result = await pool.query(
-      'INSERT INTO friends (id, user1, user2) VALUES ($1, $2, $3) RETURNING *',
-      [id, user1, user2]
-    )
-    
-    return result.rows[0]
-  } catch (error) {
-    console.error('❌ Erreur acceptFriendRequest:', error)
-    throw error
-  }
-}
-
-// Supprimer une demande d'ami
-export async function deleteFriendRequest(requestId) {
-  try {
-    const result = await pool.query(
-      'DELETE FROM friend_requests WHERE id = $1 RETURNING *',
-      [requestId]
-    )
-    return result.rows[0]
-  } catch (error) {
-    console.error('Erreur deleteFriendRequest:', error)
-    throw error
-  }
-}
-
 export async function updateUserRole(prenom, role) {
   const result = await pool.query(
     'UPDATE users SET role = $1 WHERE prenom = $2 RETURNING prenom, email, role',
@@ -459,61 +363,12 @@ export async function updateUserRole(prenom, role) {
   return result.rows[0]
 }
 
-// Récupérer les amis d'un utilisateur
-export async function getUserFriends(prenom) {
-  try {
-    const result = await pool.query(
-      'SELECT user2 as friend FROM friends WHERE user1 = $1 UNION SELECT user1 as friend FROM friends WHERE user2 = $1',
-      [prenom]
-    )
-    return result.rows.map(row => row.friend)
-  } catch (error) {
-    console.error('Erreur getUserFriends:', error)
-    return []
-  }
-}
-
-// Récupérer les demandes d'amis reçues par un utilisateur
-export async function getFriendRequestsReceived(prenom) {
-  try {
-    const result = await pool.query(
-      'SELECT id, from_user as sender, created_at FROM friend_requests WHERE to_user = $1 AND status = $2',
-      [prenom, 'pending']
-    )
-    
-    return result.rows
-  } catch (error) {
-    console.error('Erreur getFriendRequestsReceived:', error)
-    return []
-  }
-}
-
-// Récupérer les demandes d'amis envoyées par un utilisateur
-export async function getFriendRequestsSent(prenom) {
-  try {
-    const result = await pool.query(
-      'SELECT id, to_user as receiver, created_at FROM friend_requests WHERE from_user = $1 AND status = $2',
-      [prenom, 'pending']
-    )
-    
-    return result.rows
-  } catch (error) {
-    console.error('Erreur getFriendRequestsSent:', error)
-    return []
-  }
-}
-
 export async function updateUserPassword(prenom, hashedPassword) {
-  try {
-    const result = await pool.query(
-      'UPDATE users SET password = $1 WHERE prenom = $2 RETURNING prenom, email, role, is_founder',
-      [hashedPassword, prenom]
-    )
-    return result.rows[0]
-  } catch (error) {
-    // Si la base de données n'est pas accessible, lancer l'erreur pour gestion en amont
-    throw error
-  }
+  const result = await pool.query(
+    'UPDATE users SET password = $1 WHERE prenom = $2 RETURNING prenom, email, role, is_founder',
+    [hashedPassword, prenom]
+  )
+  return result.rows[0]
 }
 
 export async function getUserByEmail(email) {

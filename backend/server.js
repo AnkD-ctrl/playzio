@@ -2,11 +2,6 @@ import express from 'express'
 import cors from 'cors'
 import { nanoid } from 'nanoid'
 import crypto from 'crypto'
-
-// Rate limiting pour la réinitialisation de mot de passe
-const resetAttempts = new Map()
-const RESET_COOLDOWN = 15 * 60 * 1000 // 15 minutes
-const MAX_ATTEMPTS = 3 // 3 tentatives max par IP
 import {
   initDatabase,
   getAllUsers,
@@ -26,14 +21,9 @@ import {
   updateGroupMembers,
   deleteGroup,
   createFriendRequest,
-  acceptFriendRequest,
-  deleteFriendRequest,
   getFriendRequestById,
   updateFriendRequestStatus,
   updateUserFriends,
-  getUserFriends,
-  getFriendRequestsReceived,
-  getFriendRequestsSent,
   updateUserRole,
   updateUserPassword,
   updateUserEmail,
@@ -52,22 +42,15 @@ import {
   getPasswordResetToken,
   markTokenAsUsed,
   cleanupExpiredTokens,
-  closeDatabase,
-  pool
+  closeDatabase
 } from './database.js'
-import { sendPasswordResetEmail, testEmailConnection, sendSlotJoinNotification } from './emailService.js'
-import { ensureEmailNotificationsColumn } from './auto_migrate_email_notifications.js'
-import { ensureVisibilityColumns } from './auto_migrate_visibility.js'
+import { sendPasswordResetEmail, testEmailConnection } from './emailService.js'
 
 const app = express()
 const port = process.env.PORT || 8080
 
 // Initialize database on startup
-initDatabase().then(async () => {
-  // Exécuter la migration automatique pour les notifications email
-  await ensureVisibilityColumns()
-  await ensureEmailNotificationsColumn()
-}).catch(err => {
+initDatabase().catch(err => {
   console.error('PostgreSQL initialization failed, falling back to JSON:', err)
 })
 
@@ -405,34 +388,10 @@ app.delete('/api/messages/:messageId', async (req, res) => {
   }
 })
 
-// Endpoint temporaire pour activer les notifications email d'un slot
-app.post('/api/slots/:id/enable-email-notifications', async (req, res) => {
-  try {
-    const { id } = req.params
-    
-    // Mettre à jour le slot pour activer les notifications email
-    const result = await pool.query(`
-      UPDATE slots 
-      SET email_notifications = true 
-      WHERE id = $1
-    `, [id])
-    
-    if (result.rowCount === 0) {
-      return res.status(404).json({ error: 'Slot non trouvé' })
-    }
-    
-    console.log(`✅ Notifications email activées pour le slot ${id}`)
-    res.json({ success: true, message: 'Notifications email activées' })
-  } catch (error) {
-    console.error('Erreur lors de l\'activation des notifications email:', error)
-    res.status(500).json({ error: 'Erreur serveur' })
-  }
-})
-
 // Récupérer les créneaux
 app.get('/api/slots', async (req, res) => {
   try {
-    const { type } = req.query
+    const { type, user } = req.query
     
     // Récupérer tous les slots
     let filteredSlots = await getAllSlots()
@@ -457,7 +416,24 @@ app.get('/api/slots', async (req, res) => {
       })
     }
     
-    // Retourner TOUS les slots - le filtrage sera fait côté frontend
+    // Filtrer par visibilité des groupes si un utilisateur est spécifié
+    if (user) {
+      // Récupérer les groupes de l'utilisateur
+      const userGroups = await getGroupsByUser(user)
+      const userGroupIds = userGroups.map(group => group.id)
+      
+      // Filtrer les slots visibles pour cet utilisateur
+      filteredSlots = filteredSlots.filter(slot => {
+        // Si le slot n'a pas de groupes spécifiés, il est public (rétrocompatibilité)
+        if (!slot.visibleToGroups || slot.visibleToGroups.length === 0) {
+          return true
+        }
+        
+        // Vérifier si l'utilisateur est dans au moins un des groupes visibles
+        return slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId))
+      })
+    }
+    
     res.json(filteredSlots)
   } catch (error) {
     console.error('Get slots error:', error)
@@ -468,7 +444,7 @@ app.get('/api/slots', async (req, res) => {
 // Ajouter un créneau
 app.post('/api/slots', async (req, res) => {
   try {
-    const { date, heureDebut, heureFin, type, customActivity, participants, createdBy, visibleToGroups, visibleToAll, visibleToFriends, description, lieu, maxParticipants, emailNotifications } = req.body
+    const { date, heureDebut, heureFin, type, customActivity, participants, createdBy, visibleToGroups, visibleToAll, description, lieu } = req.body
     
     const newSlot = await createSlot({
       id: nanoid(),
@@ -479,13 +455,10 @@ app.post('/api/slots', async (req, res) => {
       customActivity: customActivity || null,
       description: description || '',
       lieu: lieu || '',
-      maxParticipants: maxParticipants || null,
       createdBy: createdBy || null,
       visibleToGroups: visibleToGroups || [],
       visibleToAll: visibleToAll !== undefined ? visibleToAll : true,
-      visibleToFriends: visibleToFriends !== undefined ? visibleToFriends : false,
-      participants: participants || [],
-      emailNotifications: emailNotifications !== undefined ? emailNotifications : true
+      participants: participants || []
     })
     
     res.json({ success: true, slot: newSlot })
@@ -527,46 +500,6 @@ app.post('/api/slots/:id/join', async (req, res) => {
     if (!slot.participants.includes(userToAdd)) {
       slot.participants.push(userToAdd)
       const updatedSlot = await updateSlotParticipants(id, slot.participants)
-      
-      // Envoyer une notification email si activée et si l'organisateur a un email
-      console.log('🔔 Vérification notification email:', {
-        slotId: slot.id,
-        emailNotifications: slot.emailNotifications,
-        createdBy: slot.createdBy
-      })
-      
-      if ((slot.emailNotifications === true || slot.emailNotifications === 'true') && slot.createdBy) {
-        console.log('📧 Envoi de la notification email...')
-        try {
-          const organizer = await getUserByPrenom(slot.createdBy)
-          if (organizer && organizer.email) {
-            await sendSlotJoinNotification(
-              organizer.email,
-              organizer.prenom,
-              userToAdd,
-              {
-                date: slot.date,
-                heureDebut: slot.heureDebut,
-                heureFin: slot.heureFin,
-                type: slot.type,
-                customActivity: slot.customActivity,
-                lieu: slot.lieu
-              }
-            )
-            console.log(`Notification email envoyée à ${organizer.email} pour l'inscription de ${userToAdd}`)
-          }
-        } catch (emailError) {
-          console.error('Erreur lors de l\'envoi de la notification email:', emailError)
-          // Ne pas faire échouer la jointure si l'email échoue
-        }
-      } else {
-        console.log('📧 Notification email non envoyée:', {
-          emailNotifications: slot.emailNotifications,
-          hasCreatedBy: !!slot.createdBy,
-          reason: slot.emailNotifications !== true ? 'emailNotifications not true' : 'no createdBy'
-        })
-      }
-      
       res.json({ success: true, slot: updatedSlot })
     } else {
       res.json({ success: true, slot })
@@ -679,11 +612,9 @@ app.get('/api/slots/user/:username', async (req, res) => {
     // Filtrer les disponibilités passées
     slots = slots.filter(slot => isSlotStillValid(slot))
     
-    // Filtrer par créateur (nom d'utilisateur) - retourner seulement les slots publics
-    // Cet endpoint est utilisé pour le partage public, donc seulement les slots publics
+    // Filtrer par créateur (nom d'utilisateur)
     const userSlots = slots.filter(slot => 
-      slot.createdBy && slot.createdBy.toLowerCase() === username.toLowerCase() &&
-      slot.visibleToAll === true
+      slot.createdBy && slot.createdBy.toLowerCase() === username.toLowerCase()
     )
     
     res.json(userSlots)
@@ -696,19 +627,15 @@ app.get('/api/slots/user/:username', async (req, res) => {
 // Gestion des amis
 app.post('/api/friends/request', async (req, res) => {
   try {
-    const { sender, receiver } = req.body
+    const { from, to } = req.body
     
-    if (!sender || !receiver) {
-      return res.status(400).json({ error: 'Sender et receiver requis' })
-    }
+    const friendRequest = await createFriendRequest({
+      id: nanoid(),
+      from,
+      to
+    })
     
-    if (sender === receiver) {
-      return res.status(400).json({ error: 'Vous ne pouvez pas vous ajouter vous-même' })
-    }
-    
-    const friendRequest = await createFriendRequest(sender, receiver)
-    
-    res.json({ success: true, requestId: friendRequest.id })
+    res.json({ success: true })
   } catch (error) {
     console.error('Friend request error:', error)
     res.status(500).json({ error: 'Erreur serveur' })
@@ -719,113 +646,32 @@ app.post('/api/friends/accept', async (req, res) => {
   try {
     const { requestId } = req.body
     
-    if (!requestId) {
-      return res.status(400).json({ error: 'Request ID requis' })
-    }
-    
-    // Récupérer la demande pour obtenir les utilisateurs
-    const result = await pool.query(
-      'SELECT from_user, to_user FROM friend_requests WHERE id = $1 AND status = $2',
-      [requestId, 'pending']
-    )
-    
-    if (result.rows.length === 0) {
+    const request = await getFriendRequestById(requestId)
+    if (!request) {
       return res.status(404).json({ error: 'Demande non trouvée' })
     }
     
-    const { from_user, to_user } = result.rows[0]
-    
-    // Accepter la demande (supprime la demande et ajoute l'amitié)
-    await acceptFriendRequest(from_user, to_user)
-    
-    res.json({ success: true })
-  } catch (error) {
-    console.error('Accept friend error:', error)
-    res.status(500).json({ error: 'Erreur serveur' })
-  }
-})
-
-// Récupérer les amis d'un utilisateur
-app.get('/api/friends/:prenom', async (req, res) => {
-  try {
-    const { prenom } = req.params
-    const friends = await getUserFriends(prenom)
-    res.json({ friends })
-  } catch (error) {
-    console.error('Get friends error:', error)
-    res.status(500).json({ error: 'Erreur serveur' })
-  }
-})
-
-// Récupérer les demandes d'amis reçues
-app.get('/api/friends/requests/received/:prenom', async (req, res) => {
-  try {
-    const { prenom } = req.params
-    const requests = await getFriendRequestsReceived(prenom)
-    res.json({ requests })
-  } catch (error) {
-    console.error('Get friend requests received error:', error)
-    res.status(500).json({ error: 'Erreur serveur' })
-  }
-})
-
-// Récupérer les demandes d'amis envoyées
-app.get('/api/friends/requests/sent/:prenom', async (req, res) => {
-  try {
-    const { prenom } = req.params
-    const requests = await getFriendRequestsSent(prenom)
-    res.json({ requests })
-  } catch (error) {
-    console.error('Get friend requests sent error:', error)
-    res.status(500).json({ error: 'Erreur serveur' })
-  }
-})
-
-// Accepter une demande d'ami par nom d'utilisateur
-app.post('/api/friends/accept-by-name', async (req, res) => {
-  try {
-    const { from, to } = req.body
-    
     // Ajouter l'ami aux deux utilisateurs
-    const fromUser = await getUserByPrenom(from)
-    const toUser = await getUserByPrenom(to)
+    const fromUser = await getUserByPrenom(request.from)
+    const toUser = await getUserByPrenom(request.to)
     
     if (fromUser && toUser) {
-      if (!fromUser.friends.includes(to)) {
-        fromUser.friends.push(to)
+      if (!fromUser.friends.includes(request.to)) {
+        fromUser.friends.push(request.to)
         await updateUserFriends(fromUser.prenom, fromUser.friends)
       }
-      if (!toUser.friends.includes(from)) {
-        toUser.friends.push(from)
+      if (!toUser.friends.includes(request.from)) {
+        toUser.friends.push(request.from)
         await updateUserFriends(toUser.prenom, toUser.friends)
       }
     }
     
-    res.json({ success: true })
-  } catch (error) {
-    console.error('Accept friend by name error:', error)
-    res.status(500).json({ error: 'Erreur serveur' })
-  }
-})
-
-// Supprimer une demande d'ami
-app.delete('/api/friends/requests/:requestId', async (req, res) => {
-  try {
-    const { requestId } = req.params
-    
-    if (!requestId) {
-      return res.status(400).json({ error: 'Request ID requis' })
-    }
-    
-    const deletedRequest = await deleteFriendRequest(requestId)
-    
-    if (!deletedRequest) {
-      return res.status(404).json({ error: 'Demande non trouvée' })
-    }
+    // Marquer la demande comme acceptée
+    await updateFriendRequestStatus(requestId, 'accepted')
     
     res.json({ success: true })
   } catch (error) {
-    console.error('Delete friend request error:', error)
+    console.error('Accept friend error:', error)
     res.status(500).json({ error: 'Erreur serveur' })
   }
 })
@@ -1185,44 +1031,10 @@ app.put('/api/admin/contact-messages/:id/response', async (req, res) => {
   }
 })
 
-// Fonction de rate limiting
-function checkRateLimit(ip) {
-  const now = Date.now()
-  const attempts = resetAttempts.get(ip) || { count: 0, lastAttempt: 0 }
-  
-  // Réinitialiser le compteur si le cooldown est passé
-  if (now - attempts.lastAttempt > RESET_COOLDOWN) {
-    attempts.count = 0
-  }
-  
-  // Vérifier si on dépasse la limite
-  if (attempts.count >= MAX_ATTEMPTS) {
-    const timeLeft = Math.ceil((RESET_COOLDOWN - (now - attempts.lastAttempt)) / 60000)
-    return { allowed: false, timeLeft }
-  }
-  
-  // Incrémenter le compteur
-  attempts.count++
-  attempts.lastAttempt = now
-  resetAttempts.set(ip, attempts)
-  
-  return { allowed: true }
-}
-
 // Mot de passe oublié - Demander la réinitialisation
 app.post('/api/forgot-password', async (req, res) => {
   try {
     const { email } = req.body
-    const clientIP = req.ip || req.connection.remoteAddress || 'unknown'
-    
-    // Vérifier le rate limiting
-    const rateLimit = checkRateLimit(clientIP)
-    if (!rateLimit.allowed) {
-      console.log('🚫 Rate limit atteint pour IP:', clientIP)
-      return res.status(429).json({ 
-        error: `Trop de tentatives. Réessayez dans ${rateLimit.timeLeft} minutes.` 
-      })
-    }
     
     if (!email) {
       return res.status(400).json({ error: 'Email requis' })
@@ -1233,95 +1045,33 @@ app.post('/api/forgot-password', async (req, res) => {
     }
     
     // Vérifier si l'utilisateur existe avec cet email
-    let user = null
-    try {
-      user = await getUserByEmail(email)
-      console.log('Utilisateur trouvé pour email:', email, user ? 'Oui' : 'Non')
-    } catch (dbError) {
-      console.error('⚠️  Erreur base de données lors de la recherche utilisateur:', dbError.message)
-      // En mode développement sans DB, on ne peut pas vérifier l'existence
-      console.log('📝 Mode développement - impossible de vérifier l\'existence de l\'utilisateur')
-    }
-    
+    const user = await getUserByEmail(email)
     if (!user) {
-      // En mode développement sans base de données, on peut permettre la réinitialisation
-      // avec un email fourni manuellement
-      console.log('⚠️  Utilisateur non trouvé en base de données:', email)
-      console.log('📝 Mode développement - génération de token pour test')
-      
-      // Générer un token même sans utilisateur (mode développement)
-      const resetToken = nanoid(32)
-      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000)
-      const frontendUrl = process.env.FRONTEND_URL || 'https://playzio.fr'
-      const resetUrl = `${frontendUrl}/?token=${resetToken}`
-      
-      console.log('🔗 LIEN DE RÉINITIALISATION POUR', email, ':', resetUrl)
-      console.log('📧 Copiez ce lien et testez la réinitialisation')
-      
+      // Pour des raisons de sécurité, on retourne toujours un succès
+      // même si l'email n'existe pas
       return res.json({ 
         success: true, 
-        message: 'Si cet email est associé à un compte, vous recevrez un lien de réinitialisation.',
-        developmentMode: true,
-        resetUrl: resetUrl,
-        note: 'Mode développement - lien affiché dans les logs'
+        message: 'Si cet email est associé à un compte, vous recevrez un lien de réinitialisation.' 
       })
     }
     
-    // Générer un token de réinitialisation SEULEMENT si l'utilisateur existe
+    // Générer un token de réinitialisation
     const resetToken = nanoid(32)
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 heures
     
-    console.log('✅ Token de réinitialisation créé pour utilisateur existant:', user.prenom)
-    
-             // Sauvegarder le token en base (avec gestion d'erreur)
-             try {
-               // Créer la table si elle n'existe pas
-               await pool.query(`
-                 CREATE TABLE IF NOT EXISTS password_reset_tokens (
-                     id VARCHAR(50) PRIMARY KEY,
-                     user_email VARCHAR(255) NOT NULL,
-                     token VARCHAR(255) NOT NULL UNIQUE,
-                     expires_at TIMESTAMP NOT NULL,
-                     used BOOLEAN DEFAULT FALSE,
-                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                 );
-               `)
-               console.log('✅ Table password_reset_tokens créée/vérifiée')
-
-               // Invalider tous les tokens précédents pour cet utilisateur (sécurité)
-               await pool.query('UPDATE password_reset_tokens SET used = true WHERE user_email = $1', [email])
-               console.log('🔒 Tokens précédents invalidés pour:', email)
-
-               await createPasswordResetToken(email, resetToken, expiresAt)
-               console.log('✅ Nouveau token sauvegardé en base de données')
-             } catch (dbError) {
-               console.error('⚠️  Erreur base de données (token non sauvegardé):', dbError.message)
-               console.log('📝 Le token sera affiché dans les logs pour utilisation immédiate')
-             }
+    // Sauvegarder le token en base (temporairement désactivé)
+    console.log('Token de réinitialisation simulé:', resetToken)
+    // await createPasswordResetToken(email, resetToken, expiresAt)
     
     // Envoyer l'email
     const frontendUrl = process.env.FRONTEND_URL || 'https://playzio.fr'
-    const resetUrl = `${frontendUrl}/?token=${resetToken}`
-    
-    console.log('Configuration email - SENDGRID_API_KEY présent:', !!process.env.SENDGRID_API_KEY)
-    console.log('FROM_EMAIL:', process.env.SENDGRID_FROM_EMAIL || 'playzio.fr@gmail.com')
-    console.log('FRONTEND_URL:', frontendUrl)
-    
-    // Si SendGrid n'est pas configuré, afficher le lien dans les logs
-    if (!process.env.SENDGRID_API_KEY) {
-      console.log('⚠️  SendGrid non configuré - Lien de réinitialisation affiché dans les logs')
-      console.log('🔗 LIEN DE RÉINITIALISATION POUR', email, ':', resetUrl)
-      console.log('📧 Copiez ce lien et envoyez-le manuellement à l\'utilisateur')
-    } else {
-      try {
-        console.log('Tentative d\'envoi d\'email à:', email)
-        await sendPasswordResetEmail(email, resetToken, frontendUrl)
-        console.log('✅ Email envoyé avec succès à:', email)
-      } catch (error) {
-        console.error('❌ Erreur lors de l\'envoi de l\'email:', error)
-        console.error('Détails de l\'erreur:', error.message)
-        console.log('🔗 Lien de réinitialisation (en cas d\'erreur email):', resetUrl)
-      }
+    try {
+      await sendPasswordResetEmail(email, resetToken, frontendUrl)
+      console.log('Email envoyé avec succès à:', email)
+    } catch (error) {
+      console.error('Erreur lors de l\'envoi de l\'email:', error)
+      // Afficher le lien dans les logs en cas d'erreur
+      console.log('Lien de réinitialisation (en cas d\'erreur email):', `${frontendUrl}/?token=${resetToken}`)
     }
     
     res.json({ 
@@ -1337,7 +1087,7 @@ app.post('/api/forgot-password', async (req, res) => {
 // Mot de passe oublié - Réinitialiser avec le token
 app.post('/api/reset-password', async (req, res) => {
   try {
-    const { token, newPassword, email } = req.body
+    const { token, newPassword } = req.body
     
     if (!token || !newPassword) {
       return res.status(400).json({ error: 'Token et nouveau mot de passe requis' })
@@ -1347,46 +1097,14 @@ app.post('/api/reset-password', async (req, res) => {
       return res.status(400).json({ error: 'Le mot de passe doit contenir au moins 6 caractères' })
     }
     
-    console.log('Tentative de réinitialisation avec token:', token)
-    
     // Vérifier le token
-    let resetToken = null
-    try {
-      resetToken = await getPasswordResetToken(token)
-      console.log('Token trouvé en base:', resetToken ? 'Oui' : 'Non')
-    } catch (dbError) {
-      console.error('⚠️  Erreur base de données lors de la vérification du token:', dbError.message)
-      // En mode développement, on peut permettre la réinitialisation sans vérification de token
-      if (!email) {
-        return res.status(400).json({ error: 'Email requis en mode développement (base de données non accessible)' })
-      }
+    const resetToken = await getPasswordResetToken(token)
+    if (!resetToken) {
+      return res.status(400).json({ error: 'Token invalide ou expiré' })
     }
     
-    // Trouver l'utilisateur
-    let user = null
-    if (resetToken) {
-      try {
-        user = await getUserByEmail(resetToken.user_email)
-      } catch (dbError) {
-        console.error('⚠️  Erreur base de données lors de la recherche utilisateur:', dbError.message)
-      }
-    } else if (email) {
-      // Mode développement : utiliser l'email fourni
-      try {
-        user = await getUserByEmail(email)
-        console.log('Mode développement - utilisation de l\'email fourni:', email)
-      } catch (dbError) {
-        console.error('⚠️  Erreur base de données en mode développement:', dbError.message)
-        // En mode développement, créer un utilisateur fictif
-        user = {
-          prenom: email.split('@')[0], // Utiliser la partie avant @ comme prénom
-          email: email,
-          password: 'hashed_password'
-        }
-        console.log('📝 Mode développement - utilisateur fictif créé:', user.prenom)
-      }
-    }
-    
+    // Trouver l'utilisateur par email
+    const user = await getUserByEmail(resetToken.user_email)
     if (!user) {
       return res.status(400).json({ error: 'Utilisateur non trouvé' })
     }
@@ -1394,30 +1112,11 @@ app.post('/api/reset-password', async (req, res) => {
     // Hasher le nouveau mot de passe
     const hashedPassword = hashPassword(newPassword)
     
-    try {
-      const updateResult = await updateUserPassword(user.prenom, hashedPassword)
-      console.log('✅ Mot de passe mis à jour pour:', user.prenom)
-    } catch (updateError) {
-      console.error('❌ Erreur lors de la mise à jour du mot de passe:', updateError.message)
-      // En mode développement, on peut simuler le succès
-      if (updateError.message.includes('ECONNREFUSED') || updateError.code === 'ECONNREFUSED') {
-        console.log('📝 Mode développement - simulation de mise à jour réussie')
-        console.log('✅ Mot de passe simulé mis à jour pour:', user.prenom)
-      } else {
-        console.error('❌ Erreur non gérée:', updateError)
-        return res.status(500).json({ error: 'Erreur lors de la mise à jour du mot de passe' })
-      }
-    }
+    // Mettre à jour le mot de passe
+    await updateUserPassword(user.prenom, hashedPassword)
     
-    // Marquer le token comme utilisé (si disponible)
-    if (resetToken) {
-      try {
-        await markTokenAsUsed(token)
-        console.log('✅ Token marqué comme utilisé')
-      } catch (markError) {
-        console.error('⚠️  Erreur lors du marquage du token:', markError.message)
-      }
-    }
+    // Marquer le token comme utilisé
+    await markTokenAsUsed(token)
     
     res.json({ 
       success: true, 
@@ -1457,66 +1156,6 @@ app.get('/api/test-email', async (req, res) => {
   }
 })
 
-// Diagnostic de la configuration email
-app.get('/api/email-config', async (req, res) => {
-  try {
-    const config = {
-      hasApiKey: !!process.env.SENDGRID_API_KEY,
-      fromEmail: process.env.SENDGRID_FROM_EMAIL || 'playzio.fr@gmail.com',
-      frontendUrl: process.env.FRONTEND_URL || 'https://playzio.fr',
-      apiKeyLength: process.env.SENDGRID_API_KEY ? process.env.SENDGRID_API_KEY.length : 0
-    }
-    
-    console.log('Configuration email:', config)
-    res.json({ config })
-  } catch (error) {
-    console.error('Erreur config email:', error)
-    res.status(500).json({ error: 'Erreur serveur' })
-  }
-})
-
-// Test de la base de données
-app.get('/api/db-test', async (req, res) => {
-  try {
-    // Test simple de connexion
-    const result = await pool.query('SELECT NOW() as current_time')
-    const currentTime = result.rows[0].current_time
-    
-    // Test de la table users
-    let usersCount = 0
-    try {
-      const usersResult = await pool.query('SELECT COUNT(*) as count FROM users')
-      usersCount = usersResult.rows[0].count
-    } catch (usersError) {
-      console.log('Erreur table users:', usersError.message)
-    }
-    
-    // Test de la colonne email
-    let hasEmailColumn = false
-    try {
-      const emailResult = await pool.query('SELECT email FROM users LIMIT 1')
-      hasEmailColumn = true
-    } catch (emailError) {
-      console.log('Colonne email manquante:', emailError.message)
-    }
-    
-    res.json({
-      dbConnected: true,
-      currentTime,
-      usersCount,
-      hasEmailColumn,
-      message: 'Base de données accessible'
-    })
-  } catch (error) {
-    console.error('Erreur test DB:', error)
-    res.status(500).json({ 
-      dbConnected: false,
-      error: 'Base de données non accessible',
-      details: error.message
-    })
-  }
-})
-
 // Test d'envoi d'email réel
 app.post('/api/test-send-email', async (req, res) => {
   try {
@@ -1528,447 +1167,11 @@ app.post('/api/test-send-email', async (req, res) => {
     const frontendUrl = process.env.FRONTEND_URL || 'https://playzio.fr'
     const testToken = 'test-token-123'
     
-    console.log('Tentative d\'envoi d\'email de test à:', email)
     await sendPasswordResetEmail(email, testToken, frontendUrl)
     res.json({ success: true, message: 'Email de test envoyé avec succès' })
   } catch (error) {
     console.error('Erreur envoi email test:', error)
     res.status(500).json({ error: 'Erreur envoi email: ' + error.message })
-  }
-})
-
-// Test de sécurité - simuler un utilisateur existant
-app.post('/api/test-security', async (req, res) => {
-  try {
-    const { email } = req.body
-    
-    if (!email) {
-      return res.status(400).json({ error: 'Email requis' })
-    }
-    
-    // Simuler un utilisateur existant pour le test
-    const mockUser = {
-      prenom: 'TestUser',
-      email: email,
-      password: 'hashed_password'
-    }
-    
-    console.log('🔒 TEST DE SÉCURITÉ - Simulation utilisateur existant:', email)
-    
-    // Générer un token de test
-    const resetToken = nanoid(32)
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000)
-    const frontendUrl = process.env.FRONTEND_URL || 'https://playzio.fr'
-    const resetUrl = `${frontendUrl}/?token=${resetToken}`
-    
-    console.log('✅ Token de test généré:', resetToken)
-    console.log('🔗 Lien de réinitialisation:', resetUrl)
-    
-    res.json({
-      success: true,
-      message: 'Test de sécurité - Token généré pour utilisateur simulé',
-      user: mockUser.prenom,
-      token: resetToken,
-      resetUrl: resetUrl,
-      expiresAt: expiresAt.toISOString(),
-      securityNote: 'Ceci est un test - en production, seul l\'utilisateur recevrait ce lien par email'
-    })
-  } catch (error) {
-    console.error('Erreur test sécurité:', error)
-    res.status(500).json({ error: 'Erreur serveur' })
-  }
-})
-
-// Test de réinitialisation en mode développement
-app.post('/api/test-reset-dev', async (req, res) => {
-  try {
-    const { email, newPassword } = req.body
-    
-    if (!email || !newPassword) {
-      return res.status(400).json({ error: 'Email et nouveau mot de passe requis' })
-    }
-    
-    console.log('🧪 TEST RÉINITIALISATION DEV - Email:', email)
-    
-    // Créer un utilisateur fictif
-    const user = {
-      prenom: email.split('@')[0],
-      email: email,
-      password: 'hashed_password'
-    }
-    
-    console.log('📝 Utilisateur fictif créé:', user.prenom)
-    
-    // Hasher le nouveau mot de passe
-    const hashedPassword = hashPassword(newPassword)
-    console.log('🔒 Mot de passe hashé:', hashedPassword.substring(0, 20) + '...')
-    
-    // Simuler la mise à jour
-    console.log('✅ Simulation de mise à jour réussie pour:', user.prenom)
-    
-    res.json({
-      success: true,
-      message: 'Test de réinitialisation en mode développement réussi',
-      user: user.prenom,
-      email: user.email,
-      passwordUpdated: true
-    })
-  } catch (error) {
-    console.error('Erreur test reset dev:', error)
-    res.status(500).json({ error: 'Erreur serveur' })
-  }
-})
-
-// Lister les utilisateurs (pour diagnostic)
-app.get('/api/users-list', async (req, res) => {
-  try {
-    const users = await getAllUsers()
-    const userList = users.map(user => ({
-      prenom: user.prenom,
-      email: user.email,
-      role: user.role,
-      is_founder: user.is_founder
-    }))
-    
-    console.log('📋 Liste des utilisateurs:', userList.length, 'utilisateurs trouvés')
-    
-    res.json({
-      success: true,
-      count: userList.length,
-      users: userList
-    })
-  } catch (error) {
-    console.error('Erreur liste utilisateurs:', error)
-    res.status(500).json({ 
-      success: false,
-      error: 'Erreur serveur',
-      details: error.message
-    })
-  }
-})
-
-// Diagnostiquer un token de réinitialisation
-app.post('/api/debug-token', async (req, res) => {
-  try {
-    const { token } = req.body
-    
-    if (!token) {
-      return res.status(400).json({ error: 'Token requis' })
-    }
-    
-    console.log('🔍 DIAGNOSTIC TOKEN:', token)
-    
-    // Vérifier le token en base
-    let resetToken = null
-    try {
-      resetToken = await getPasswordResetToken(token)
-      console.log('✅ Token trouvé en base:', resetToken ? 'Oui' : 'Non')
-    } catch (dbError) {
-      console.error('❌ Erreur base de données:', dbError.message)
-    }
-    
-    if (resetToken) {
-      const now = new Date()
-      const isExpired = now > new Date(resetToken.expires_at)
-      const isUsed = resetToken.used
-      
-      console.log('📊 État du token:')
-      console.log('- Expiré:', isExpired)
-      console.log('- Utilisé:', isUsed)
-      console.log('- Expire le:', resetToken.expires_at)
-      console.log('- Email:', resetToken.user_email)
-      
-      res.json({
-        success: true,
-        token: token,
-        found: true,
-        expired: isExpired,
-        used: isUsed,
-        expiresAt: resetToken.expires_at,
-        userEmail: resetToken.user_email,
-        createdAt: resetToken.created_at
-      })
-    } else {
-      console.log('❌ Token non trouvé en base de données')
-      res.json({
-        success: true,
-        token: token,
-        found: false,
-        message: 'Token non trouvé en base de données'
-      })
-    }
-  } catch (error) {
-    console.error('Erreur diagnostic token:', error)
-    res.status(500).json({ error: 'Erreur serveur' })
-  }
-})
-
-// Migration pour créer la table password_reset_tokens
-app.post('/api/migrate-password-tokens', async (req, res) => {
-  try {
-    console.log('🔄 Début de la migration password_reset_tokens...')
-    
-    // Créer la table password_reset_tokens
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS password_reset_tokens (
-          id VARCHAR(50) PRIMARY KEY,
-          user_email VARCHAR(255) NOT NULL,
-          token VARCHAR(255) NOT NULL UNIQUE,
-          expires_at TIMESTAMP NOT NULL,
-          used BOOLEAN DEFAULT FALSE,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `)
-    
-    // Créer les index
-    await pool.query(`
-      CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_email 
-      ON password_reset_tokens(user_email);
-    `)
-    
-    await pool.query(`
-      CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_token 
-      ON password_reset_tokens(token);
-    `)
-    
-    await pool.query(`
-      CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_expires 
-      ON password_reset_tokens(expires_at);
-    `)
-    
-    console.log('✅ Migration réussie : table password_reset_tokens créée')
-    
-    // Vérifier que la table existe
-    const result = await pool.query(`
-      SELECT table_name 
-      FROM information_schema.tables 
-      WHERE table_schema = 'public' 
-      AND table_name = 'password_reset_tokens';
-    `)
-    
-    res.json({
-      success: true,
-      message: 'Table password_reset_tokens créée avec succès',
-      tableExists: result.rows.length > 0
-    })
-    
-  } catch (error) {
-    console.error('❌ Erreur migration password_reset_tokens:', error)
-    res.status(500).json({ 
-      success: false,
-      error: 'Erreur lors de la migration',
-      details: error.message
-    })
-  }
-})
-
-// Récupérer le dernier token généré pour un email
-app.get('/api/last-token/:email', async (req, res) => {
-  try {
-    const { email } = req.params
-    
-    const result = await pool.query(`
-      SELECT token, expires_at, created_at, used 
-      FROM password_reset_tokens 
-      WHERE user_email = $1 
-      ORDER BY created_at DESC 
-      LIMIT 1
-    `, [email])
-    
-    if (result.rows.length > 0) {
-      const token = result.rows[0]
-      res.json({
-        success: true,
-        token: token.token,
-        expiresAt: token.expires_at,
-        createdAt: token.created_at,
-        used: token.used,
-        resetUrl: `https://playzio.fr/?token=${token.token}`
-      })
-    } else {
-      res.json({
-        success: false,
-        message: 'Aucun token trouvé pour cet email'
-      })
-    }
-  } catch (error) {
-    console.error('Erreur récupération dernier token:', error)
-    res.status(500).json({ 
-      success: false,
-      error: 'Erreur serveur',
-      details: error.message
-    })
-  }
-})
-
-// Test direct de création de token
-app.post('/api/test-create-token', async (req, res) => {
-  try {
-    const { email } = req.body
-    
-    if (!email) {
-      return res.status(400).json({ error: 'Email requis' })
-    }
-    
-    console.log('🧪 TEST CRÉATION TOKEN pour:', email)
-    
-    // Créer la table si elle n'existe pas
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS password_reset_tokens (
-          id VARCHAR(50) PRIMARY KEY,
-          user_email VARCHAR(255) NOT NULL,
-          token VARCHAR(255) NOT NULL UNIQUE,
-          expires_at TIMESTAMP NOT NULL,
-          used BOOLEAN DEFAULT FALSE,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `)
-    console.log('✅ Table vérifiée/créée')
-    
-    // Générer un token de test
-    const testToken = nanoid(32)
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000)
-    const id = nanoid()
-    
-    console.log('🔑 Token généré:', testToken)
-    console.log('⏰ Expire le:', expiresAt)
-    
-    // Insérer directement
-    const result = await pool.query(
-      'INSERT INTO password_reset_tokens (id, user_email, token, expires_at) VALUES ($1, $2, $3, $4) RETURNING *',
-      [id, email, testToken, expiresAt]
-    )
-    
-    console.log('✅ Token inséré avec succès:', result.rows[0])
-    
-    res.json({
-      success: true,
-      token: testToken,
-      expiresAt: expiresAt,
-      id: id,
-      resetUrl: `https://playzio.fr/?token=${testToken}`
-    })
-    
-  } catch (error) {
-    console.error('❌ Erreur test création token:', error)
-    res.status(500).json({ 
-      success: false,
-      error: 'Erreur serveur',
-      details: error.message
-    })
-  }
-})
-
-// Migration pour ajouter la colonne visible_to_friends
-app.post('/api/migrate-visible-to-friends', async (req, res) => {
-  try {
-    console.log('🔄 Début de la migration visible_to_friends...')
-    
-    // Ajouter la colonne visible_to_friends si elle n'existe pas
-    await pool.query(`
-      DO $$ 
-      BEGIN
-          IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
-                         WHERE table_name = 'slots' AND column_name = 'visible_to_friends') THEN
-              ALTER TABLE slots ADD COLUMN visible_to_friends BOOLEAN DEFAULT FALSE;
-              RAISE NOTICE 'Colonne visible_to_friends ajoutée à la table slots.';
-          ELSE
-              RAISE NOTICE 'La colonne visible_to_friends existe déjà dans la table slots.';
-          END IF;
-      END $$;
-    `)
-    
-    console.log('✅ Migration réussie : colonne visible_to_friends ajoutée')
-    
-    // Vérifier que la colonne existe
-    const result = await pool.query(`
-      SELECT column_name, data_type, is_nullable, column_default
-      FROM information_schema.columns 
-      WHERE table_name = 'slots' AND column_name = 'visible_to_friends';
-    `)
-    
-    res.json({
-      success: true,
-      message: 'Colonne visible_to_friends créée avec succès',
-      columnInfo: result.rows[0] || null
-    })
-    
-  } catch (error) {
-    console.error('❌ Erreur migration visible_to_friends:', error)
-    res.status(500).json({ 
-      success: false,
-      error: 'Erreur lors de la migration',
-      details: error.message
-    })
-  }
-})
-
-// Migration pour créer les tables d'amis
-app.post('/api/migrate-friends-tables', async (req, res) => {
-  try {
-    console.log('🔄 Début de la migration des tables d\'amis...')
-    
-    // Créer la table friend_requests si elle n'existe pas
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS friend_requests (
-          id VARCHAR(50) PRIMARY KEY,
-          from_user VARCHAR(255) NOT NULL,
-          to_user VARCHAR(255) NOT NULL,
-          status VARCHAR(20) DEFAULT 'pending',
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          UNIQUE(from_user, to_user)
-      );
-    `)
-    
-    // Créer la table friends si elle n'existe pas
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS friends (
-          id VARCHAR(50) PRIMARY KEY,
-          user1 VARCHAR(255) NOT NULL,
-          user2 VARCHAR(255) NOT NULL,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          UNIQUE(user1, user2),
-          CHECK(user1 < user2)
-      );
-    `)
-    
-    // Ajouter la colonne friends à la table users si elle n'existe pas
-    await pool.query(`
-      DO $$ 
-      BEGIN
-          IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
-                         WHERE table_name = 'users' AND column_name = 'friends') THEN
-              ALTER TABLE users ADD COLUMN friends TEXT DEFAULT '[]';
-              RAISE NOTICE 'Colonne friends ajoutée à la table users.';
-          ELSE
-              RAISE NOTICE 'La colonne friends existe déjà dans la table users.';
-          END IF;
-      END $$;
-    `)
-    
-    console.log('✅ Migration réussie : tables d\'amis créées')
-    
-    // Vérifier que les tables existent
-    const tablesResult = await pool.query(`
-      SELECT table_name 
-      FROM information_schema.tables 
-      WHERE table_schema = 'public' 
-      AND table_name IN ('friend_requests', 'friends');
-    `)
-    
-    res.json({
-      success: true,
-      message: 'Tables d\'amis créées avec succès',
-      tables: tablesResult.rows.map(row => row.table_name)
-    })
-    
-  } catch (error) {
-    console.error('❌ Erreur migration tables d\'amis:', error)
-    res.status(500).json({ 
-      success: false,
-      error: 'Erreur lors de la migration',
-      details: error.message
-    })
   }
 })
 
