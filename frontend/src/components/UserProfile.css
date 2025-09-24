@@ -43,7 +43,7 @@
 .request-actions {
   display: flex;
   gap: 8px;
-  margin-left: auto;
+  margin-left: 12px;
 }
 
 .accept-btn {
