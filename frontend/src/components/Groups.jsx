@@ -183,23 +183,13 @@ const Groups = ({ currentUser, onBack }) => {
   return (
     <div className="groups-container">
       <div className="groups-header">
-        <div className="groups-header-left">
-          {onBack && (
-            <button 
-              className="back-btn"
-              onClick={onBack}
-              title="Retour aux activités"
-            >
-              ← Retour
-            </button>
-          )}
-          <h2>Mes Groupes</h2>
-        </div>
+        <h2>Mes Groupes</h2>
         <button 
-          className="create-group-btn"
+          className="create-group-btn-icon"
           onClick={() => setShowCreateForm(true)}
+          title="Créer un nouveau groupe"
         >
-          Créer un groupe
+          +
         </button>
       </div>
 

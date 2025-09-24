@@ -42,6 +42,27 @@
   transform: translateY(-2px);
 }
 
+.create-group-btn-icon {
+  background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.create-group-btn-icon:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(212, 175, 140, 0.4);
+}
+
 .back-btn {
   background: #4a4a4a;
   color: #e0e0e0;
