@@ -21,7 +21,7 @@ function MesDispos({ currentUser, onBack }) {
       setLoading(true)
       console.log('🔍 Récupération des slots de:', currentUser.prenom)
       
-      const url = `${API_BASE_URL}/api/slots?my_slots_only=true`
+      const url = `${API_BASE_URL}/api/slots?my_slots_only=true&user=${currentUser.prenom}`
       const response = await fetch(url)
       
       if (response.ok) {
