@@ -98,13 +98,10 @@
   transition: background-color 0.3s ease;
 }
 
-.view-toggle-btn:hover {
-  background: #0056b3;
-}
 
 .btn-label {
   font-size: 12px;
-  color: #666;
+  color: #d4af8c;
   font-weight: 500;
 }
 
