@@ -466,15 +466,13 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                         </button>
                         
                         {/* Bouton pour notifier l'organisateur */}
-                        {isParticipant && slot.emailNotifications && slot.createdBy !== currentUser.prenom && (
-                          <button 
-                            className="action-btn notify-btn"
-                            onClick={() => handleNotifyOrganizer(slot)}
-                            title="Notifier l'organisateur par email"
-                          >
-                            📧 Notifier
-                          </button>
-                        )}
+                        <button 
+                          className="action-btn notify-btn"
+                          onClick={() => handleNotifyOrganizer(slot)}
+                          title="Notifier l'organisateur par email"
+                        >
+                          📧 Notifier
+                        </button>
 
                         {(isAdmin || isOwner) && (
                           <button 
