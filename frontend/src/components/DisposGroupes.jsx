@@ -141,31 +141,51 @@ function DisposGroupes({ currentUser, onBack }) {
     setSelectedType(type)
   }
 
-  const handleShareUserDispo = () => {
+  const handleShareUserDispo = async () => {
     if (currentUser && currentUser.prenom) {
-      const shareUrl = `${window.location.origin}/#share/${currentUser.prenom}`
-      
-      if (navigator.share) {
-        // Utiliser l'API Web Share si disponible
-        navigator.share({
-          title: `Disponibilités de ${currentUser.prenom}`,
-          text: `Découvrez les disponibilités de ${currentUser.prenom} sur Playzio`,
-          url: shareUrl
-        }).catch(console.error)
-      } else {
-        // Fallback: copier dans le presse-papiers
-        navigator.clipboard.writeText(shareUrl).then(() => {
-          alert('Lien copié dans le presse-papiers !')
-        }).catch(() => {
-          // Fallback si clipboard API n'est pas disponible
-          const textArea = document.createElement('textarea')
-          textArea.value = shareUrl
-          document.body.appendChild(textArea)
-          textArea.select()
-          document.execCommand('copy')
-          document.body.removeChild(textArea)
-          alert('Lien copié dans le presse-papiers !')
+      try {
+        // Générer un token de partage via l'API
+        const response = await fetch(`${API_BASE_URL}/api/share/generate-token`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username: currentUser.prenom })
         })
+        
+        if (response.ok) {
+          const data = await response.json()
+          const shareUrl = data.shareUrl
+          
+          if (navigator.share) {
+            // Utiliser l'API Web Share si disponible
+            navigator.share({
+              title: `Disponibilités de ${currentUser.prenom}`,
+              text: `Découvrez les disponibilités de ${currentUser.prenom} sur Playzio (lien valable 24h)`,
+              url: shareUrl
+            }).catch(console.error)
+          } else {
+            // Fallback: copier dans le presse-papiers
+            navigator.clipboard.writeText(shareUrl).then(() => {
+              alert('Lien copié dans le presse-papiers ! (Valable 24h)')
+            }).catch(() => {
+              // Fallback si clipboard API n'est pas disponible
+              const textArea = document.createElement('textarea')
+              textArea.value = shareUrl
+              document.body.appendChild(textArea)
+              textArea.select()
+              document.execCommand('copy')
+              document.body.removeChild(textArea)
+              alert('Lien copié dans le presse-papiers ! (Valable 24h)')
+            })
+          }
+        } else {
+          const errorData = await response.json()
+          alert(`Erreur lors de la génération du lien: ${errorData.error}`)
+        }
+      } catch (error) {
+        console.error('Erreur lors de la génération du token:', error)
+        alert('Erreur de connexion au serveur')
       }
     }
   }
