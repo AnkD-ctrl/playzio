@@ -11,6 +11,9 @@ import Calendar from './components/Calendar'
 import UserProfile from './components/UserProfile'
 import SharePage from './components/SharePage'
 import Groups from './components/Groups'
+import Sidebar from './components/Sidebar'
+import MesDispos from './components/MesDispos'
+import DisposAmis from './components/DisposAmis'
 import CookieBanner from './components/CookieBanner'
 import PWAInstaller from './components/PWAInstaller'
 import InstallGuide from './components/InstallGuide'
@@ -34,6 +37,7 @@ function App() {
   const [organizerFilter, setOrganizerFilter] = useState('')
   const [filterVersion, setFilterVersion] = useState(0)
   const [shareUsername, setShareUsername] = useState(null)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
 
   // Vérifier si on est sur la page de réinitialisation de mot de passe ou guide d'installation
@@ -241,6 +245,14 @@ function App() {
     setSearchFilter(filter)
   }
 
+  const handleNavigate = (view) => {
+    setCurrentView(view)
+    if (view === 'mes-dispos') {
+      setSelectedActivity('Tous')
+      setSelectedType('list')
+    }
+  }
+
   // Suppression de la redirection automatique pour permettre la landing page
   // if (!isLoggedIn) {
   //   return <LoginScreen onLogin={handleLogin} />
@@ -251,6 +263,13 @@ function App() {
       {currentView !== 'landing' && currentView !== 'login' && currentView !== 'register' && isLoggedIn && (
         <div className="app-header">
           <div className="header-content">
+            <button 
+              className="hamburger-btn"
+              onClick={() => setSidebarOpen(true)}
+              title="Menu"
+            >
+              ☰
+            </button>
             
             <div className="header-actions">
               <button 
@@ -321,12 +340,34 @@ function App() {
         />
       )}
 
+      {currentView === 'mes-dispos' && (
+        <MesDispos 
+          currentUser={currentUser} 
+          onBack={() => setCurrentView('activity')}
+        />
+      )}
+
+      {currentView === 'dispos-amis' && (
+        <DisposAmis 
+          currentUser={currentUser} 
+          onBack={() => setCurrentView('activity')}
+        />
+      )}
+
       {currentView === 'groups' && (
         <Groups 
           currentUser={currentUser} 
           onBack={() => setCurrentView('activity')}
         />
       )}
+
+      {/* Sidebar */}
+      <Sidebar 
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        onNavigate={handleNavigate}
+        currentView={currentView}
+      />
 
       {currentView === 'activity' && selectedActivity && (
         <div className="activity-container">

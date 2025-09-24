@@ -24,6 +24,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   const [lieuInput, setLieuInput] = useState('')
   const [organizerInput, setOrganizerInput] = useState('')
   
+  
 
   const handleActivitySelect = (activityName) => {
     onSearchFilterChange(activityName)
@@ -63,53 +64,37 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
 
 
   useEffect(() => {
-    fetchSlots()
-  }, [activity, selectedDate, searchFilter, lieuFilter, organizerFilter])
+    if (currentUser && currentUser.prenom) {
+      fetchSlots()
+    }
+  }, [currentUser, activity, selectedDate, searchFilter, lieuFilter, organizerFilter])
 
 
 
   const fetchSlots = async () => {
     try {
       setLoading(true)
+      console.log('🔍 fetchSlots appelé avec currentUser:', currentUser)
+      
+      // Vérifier que currentUser est défini
+      if (!currentUser || !currentUser.prenom) {
+        console.log('❌ currentUser non défini:', currentUser)
+        setError('Utilisateur non connecté')
+        setLoading(false)
+        return
+      }
       
       // Récupérer TOUS les slots depuis l'API
       const url = `${API_BASE_URL}/api/slots`
+      console.log('🌐 Appel API:', url)
       const response = await fetch(url)
       
       if (response.ok) {
         const allSlots = await response.json()
         console.log('📥 Tous les slots reçus:', allSlots.length)
         
-        // LOGIQUE DE FILTRAGE INTELLIGENTE
-        // Afficher seulement les slots auxquels l'utilisateur a accès
-        let filteredSlots = allSlots.filter(slot => {
-          // 1. Mes propres slots (toujours visibles)
-          if (slot.createdBy === currentUser.prenom) {
-            return true
-          }
-          
-          // 2. Slots publics (visibleToAll = true)
-          if (slot.visibleToAll === true) {
-            return true
-          }
-          
-          // 3. Slots des amis (visibleToFriends = true ET organisateur dans mes amis)
-          if (slot.visibleToFriends === true && userFriends.includes(slot.createdBy)) {
-            return true
-          }
-          
-          // 4. Slots des groupes (visibleToGroups contient un groupe dont je fais partie)
-          if (slot.visibleToGroups && slot.visibleToGroups.length > 0) {
-            const userGroupIds = userGroups.map(group => group.id)
-            const hasCommonGroup = slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId))
-            if (hasCommonGroup) {
-              return true
-            }
-          }
-          
-          // 5. Si aucun des critères ci-dessus n'est rempli, ne pas afficher
-          return false
-        })
+        // LOGIQUE SIMPLE : Afficher TOUS les slots (filtrage fait côté backend)
+        let filteredSlots = allSlots
         
         // Filtrer par date si sélectionnée
         if (selectedDate) {
@@ -138,11 +123,14 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         }
         
         console.log(`✅ Slots accessibles affichés: ${filteredSlots.length}`)
+        console.log('📋 Slots finaux:', filteredSlots)
         setSlots(filteredSlots)
       } else {
+        console.log('❌ Erreur API:', response.status, response.statusText)
         setError('Erreur lors du chargement des disponibilités')
       }
     } catch (error) {
+      console.log('❌ Erreur catch:', error)
       setError('Erreur de connexion au serveur')
     } finally {
       setLoading(false)
@@ -233,6 +221,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   }
 
   if (error) {
+    console.log('🚨 Erreur affichée:', error)
     return (
       <div className="slot-list">
         <div className="error">{error}</div>

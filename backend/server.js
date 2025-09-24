@@ -432,32 +432,21 @@ app.post('/api/slots/:id/enable-email-notifications', async (req, res) => {
 // Récupérer les créneaux
 app.get('/api/slots', async (req, res) => {
   try {
-    const { type } = req.query
+    const { my_slots_only, user } = req.query
     
     // Récupérer tous les slots
     let filteredSlots = await getAllSlots()
     
-    // Filtrer les disponibilités passées (amélioration UX + optimisation base)
+    // Filtrer les disponibilités passées
     filteredSlots = filteredSlots.filter(slot => isSlotStillValid(slot))
     
-    // Filtrer par type d'activité
-    if (type) {
-      filteredSlots = filteredSlots.filter(slot => {
-        if (!slot.type) return false
-        
-        // Si type est un tableau (activités multiples)
-        if (Array.isArray(slot.type)) {
-          return slot.type.some(activity => 
-            activity && activity.toLowerCase() === type.toLowerCase()
-          )
-        }
-        
-        // Si type est une chaîne (rétrocompatibilité)
-        return slot.type && slot.type.toLowerCase() === type.toLowerCase()
-      })
+    // LOGIQUE SIMPLE : Si my_slots_only=true, retourner SEULEMENT les slots de l'utilisateur
+    if (my_slots_only === 'true' && user) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.createdBy === user
+      )
     }
     
-    // Retourner TOUS les slots - le filtrage sera fait côté frontend
     res.json(filteredSlots)
   } catch (error) {
     console.error('Get slots error:', error)
