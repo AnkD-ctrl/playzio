@@ -151,7 +151,7 @@ export async function sendSlotJoinNotification(organizerEmail, organizerName, pa
             
             <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #d4af8c;">
               <p style="color: #666; font-size: 16px; margin: 0 0 10px 0;">
-                <strong>${participantName}</strong> s'est inscrit à votre disponibilité :
+                <strong>${participantName}</strong> :
               </p>
               <div style="color: #333; font-size: 16px; line-height: 1.6;">
                 <p style="margin: 5px 0;"><strong>Date :</strong> ${date}</p>
