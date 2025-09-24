@@ -4,7 +4,7 @@ import './SlotList.css'
 import { API_BASE_URL } from '../config'
 import ActivitySearchModal from './ActivitySearchModal'
 
-function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, onAddSlot, onJoinSlot, selectedDate, onClearDate }) {
+function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, onAddSlot, onJoinSlot, selectedDate, onClearDate, customSlots }) {
   const [slots, setSlots] = useState([])
   const [currentDate, setCurrentDate] = useState(new Date())
   const [loading, setLoading] = useState(true)
@@ -84,8 +84,15 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
 
 
   useEffect(() => {
-    fetchSlots()
-  }, [activity, searchFilter, lieuFilter, organizerFilter, selectedDate])
+    if (customSlots) {
+      // Utiliser les slots personnalisés fournis
+      setSlots(customSlots)
+      setLoading(false)
+      setError('')
+    } else {
+      fetchSlots()
+    }
+  }, [activity, searchFilter, lieuFilter, organizerFilter, selectedDate, customSlots])
 
   // Fermer le menu déroulant quand on clique ailleurs
   useEffect(() => {

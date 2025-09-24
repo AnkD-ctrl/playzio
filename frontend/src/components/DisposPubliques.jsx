@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import './DisposPubliques.css'
 import { API_BASE_URL } from '../config'
+import SlotList from './SlotList'
+import Calendar from './Calendar'
 
 function DisposPubliques({ currentUser, onBack }) {
   const [slots, setSlots] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [selectedActivity, setSelectedActivity] = useState('Tous')
+  const [selectedType, setSelectedType] = useState('list')
   const [selectedDate, setSelectedDate] = useState(null)
   const [searchFilter, setSearchFilter] = useState('')
   const [lieuFilter, setLieuFilter] = useState('')
@@ -26,8 +28,8 @@ function DisposPubliques({ currentUser, onBack }) {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            userId: currentUser.id,
-            activity: selectedActivity === 'Tous' ? null : selectedActivity,
+            userId: currentUser.prenom,
+            activity: null,
             date: selectedDate,
             search: searchFilter,
             lieu: lieuFilter,
@@ -52,7 +54,7 @@ function DisposPubliques({ currentUser, onBack }) {
     }
 
     fetchPublicSlots()
-  }, [currentUser, selectedActivity, selectedDate, searchFilter, lieuFilter, organizerFilter, filterVersion])
+  }, [currentUser, selectedDate, searchFilter, lieuFilter, organizerFilter, filterVersion])
 
   const handleJoinSlot = async (slotId) => {
     try {
@@ -79,63 +81,31 @@ function DisposPubliques({ currentUser, onBack }) {
     }
   }
 
-  const handleLeaveSlot = async (slotId) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/slots/${slotId}/leave`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          participant: currentUser.prenom
-        }),
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        setFilterVersion(prev => prev + 1)
-        console.log('Slot quitté avec succès')
-      } else {
-        console.error('Erreur lors de la sortie du slot:', data.error)
-      }
-    } catch (error) {
-      console.error('Erreur lors de la sortie du slot:', error)
-    }
+  const handleDateSelect = (date) => {
+    setSelectedDate(date)
+    setSelectedType('list')
   }
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('fr-FR', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    })
+  const handleSearchFilterChange = (filter) => {
+    setSearchFilter(filter)
   }
 
-  const formatTime = (timeString) => {
-    return timeString.substring(0, 5)
+  const handleTypeChange = (type) => {
+    setSelectedType(type)
   }
-
-  const isUserParticipant = (participants) => {
-    return participants && participants.some(p => p === currentUser.prenom)
-  }
-
-  const filteredSlots = slots.filter(slot => {
-    if (selectedDate && slot.date !== selectedDate) return false
-    if (searchFilter && !slot.activity.toLowerCase().includes(searchFilter.toLowerCase())) return false
-    if (lieuFilter && !slot.lieu.toLowerCase().includes(lieuFilter.toLowerCase())) return false
-    if (organizerFilter && !slot.organizer.toLowerCase().includes(organizerFilter.toLowerCase())) return false
-    return true
-  })
-
-  const activities = [...new Set(slots.map(slot => slot.activity))].sort()
 
   if (loading) {
     return (
       <div className="dispos-publiques-container">
         <div className="loading">Chargement des disponibilités publiques...</div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="dispos-publiques-container">
+        <div className="error-message">{error}</div>
       </div>
     )
   }
@@ -149,121 +119,85 @@ function DisposPubliques({ currentUser, onBack }) {
         <h2>Disponibilités Publiques</h2>
       </div>
 
-      {error && (
-        <div className="error-message">
-          {error}
-        </div>
-      )}
-
-      <div className="filters-section">
-        <div className="filter-group">
-          <label>Activité</label>
-          <select 
-            value={selectedActivity} 
-            onChange={(e) => setSelectedActivity(e.target.value)}
-          >
-            <option value="Tous">Toutes les activités</option>
-            {activities.map(activity => (
-              <option key={activity} value={activity}>{activity}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="filter-group">
-          <label>Date</label>
-          <input 
-            type="date" 
-            value={selectedDate || ''} 
-            onChange={(e) => setSelectedDate(e.target.value || null)}
-          />
-        </div>
-
-        <div className="filter-group">
-          <label>Recherche</label>
-          <input 
-            type="text" 
-            placeholder="Rechercher une activité..."
-            value={searchFilter}
-            onChange={(e) => setSearchFilter(e.target.value)}
-          />
-        </div>
-
-        <div className="filter-group">
-          <label>Lieu</label>
-          <input 
-            type="text" 
-            placeholder="Rechercher un lieu..."
-            value={lieuFilter}
-            onChange={(e) => setLieuFilter(e.target.value)}
-          />
-        </div>
-
-        <div className="filter-group">
-          <label>Organisateur</label>
-          <input 
-            type="text" 
-            placeholder="Rechercher un organisateur..."
-            value={organizerFilter}
-            onChange={(e) => setOrganizerFilter(e.target.value)}
-          />
+      <div className="activity-container">
+        <div className="activity-content">
+          {/* Vue liste */}
+          {selectedType === 'list' && (
+            <SlotList 
+              key={`public-slots-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
+              activity="Tous"
+              currentUser={currentUser}
+              selectedDate={selectedDate}
+              onClearDate={() => setSelectedDate(null)}
+              searchFilter={searchFilter}
+              onSearchFilterChange={handleSearchFilterChange}
+              lieuFilter={lieuFilter}
+              organizerFilter={organizerFilter}
+              onAddSlot={() => setSelectedType('add')}
+              onJoinSlot={handleJoinSlot}
+              customSlots={slots}
+            />
+          )}
+          
+          {/* Vue calendrier */}
+          {selectedType === 'calendar' && (
+            <Calendar 
+              key={`public-slots-calendar-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
+              activity="Tous"
+              currentUser={currentUser}
+              onDateSelect={handleDateSelect}
+              searchFilter={searchFilter}
+              onSearchFilterChange={handleSearchFilterChange}
+              lieuFilter={lieuFilter}
+              organizerFilter={organizerFilter}
+              onAddSlot={(date) => {
+                setSelectedDate(date)
+                setSelectedType('add')
+              }}
+              onJoinSlot={handleJoinSlot}
+              customSlots={slots}
+            />
+          )}
         </div>
       </div>
 
-      <div className="slots-list">
-        {filteredSlots.length === 0 ? (
-          <div className="no-slots">
-            Aucune disponibilité publique trouvée
-          </div>
-        ) : (
-          filteredSlots.map(slot => (
-            <div key={slot.id} className="slot-card">
-              <div className="slot-header">
-                <h3>{slot.activity}</h3>
-                <span className="slot-date">{formatDate(slot.date)}</span>
-              </div>
-              
-              <div className="slot-details">
-                <div className="slot-info">
-                  <span className="slot-time">{formatTime(slot.startTime)} - {formatTime(slot.endTime)}</span>
-                  <span className="slot-lieu">{slot.lieu}</span>
-                  <span className="slot-organizer">Organisé par {slot.organizer}</span>
-                </div>
-                
-                <div className="slot-participants">
-                  <span className="participants-count">
-                    {slot.participants ? slot.participants.length : 0}/{slot.maxParticipants} participants
-                  </span>
-                  <div className="participants-list">
-                    {slot.participants && slot.participants.map((participant, index) => (
-                      <span key={index} className="participant">
-                        {participant}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="slot-actions">
-                {isUserParticipant(slot.participants) ? (
-                  <button 
-                    className="leave-btn"
-                    onClick={() => handleLeaveSlot(slot.id)}
-                  >
-                    Quitter
-                  </button>
+      <div className="activity-switcher-footer">
+        <div className="footer-content">
+          <div className="view-toggle-container">
+            <div className="footer-btn-wrapper">
+              <button 
+                className="view-toggle-btn"
+                onClick={() => {
+                  if (selectedType === 'calendar') {
+                    setSelectedType('list')
+                  } else {
+                    setSelectedType('calendar')
+                  }
+                }}
+                title={selectedType === 'calendar' ? 'Vue liste' : 'Vue calendrier'}
+              >
+                {selectedType === 'calendar' ? (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8 6h13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M8 12h13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M8 18h13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M3 6h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M3 12h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M3 18h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
                 ) : (
-                  <button 
-                    className="join-btn"
-                    onClick={() => handleJoinSlot(slot.id)}
-                    disabled={slot.participants && slot.participants.length >= slot.maxParticipants}
-                  >
-                    Rejoindre
-                  </button>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor" strokeWidth="2"/>
+                    <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" strokeWidth="2"/>
+                    <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" strokeWidth="2"/>
+                  </svg>
                 )}
-              </div>
+              </button>
+              <span className="btn-label">{selectedType === 'calendar' ? 'Liste' : 'Calendrier'}</span>
             </div>
-          ))
-        )}
+          </div>
+        </div>
       </div>
     </div>
   )

@@ -5,7 +5,7 @@ import { trackSlotJoin, trackSlotLeave } from '../utils/analytics'
 import SlotDiscussion from './SlotDiscussion'
 import ActivitySearchModal from './ActivitySearchModal'
 
-function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, onAddSlot, onJoinSlot, viewToggleContainer }) {
+function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, onAddSlot, onJoinSlot, viewToggleContainer, customSlots }) {
   const [slots, setSlots] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -64,10 +64,15 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
 
 
   useEffect(() => {
-    if (currentUser && currentUser.prenom) {
+    if (customSlots) {
+      // Utiliser les slots personnalisés fournis
+      setSlots(customSlots)
+      setLoading(false)
+      setError('')
+    } else if (currentUser && currentUser.prenom) {
       fetchSlots()
     }
-  }, [currentUser, activity, selectedDate, searchFilter, lieuFilter, organizerFilter])
+  }, [currentUser, activity, selectedDate, searchFilter, lieuFilter, organizerFilter, customSlots])
 
 
 
