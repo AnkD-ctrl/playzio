@@ -182,8 +182,15 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           // Utiliser les données du slot retourné par l'API au lieu de chercher dans slots
           const slot = data.slot
           console.log('🔍 Slot pour popup (depuis API):', slot)
+          console.log('🔍 Slot details:', {
+            createdBy: slot?.createdBy,
+            date: slot?.date,
+            heureDebut: slot?.heureDebut,
+            heureFin: slot?.heureFin,
+            type: slot?.type
+          })
           
-          if (slot) {
+          if (slot && slot.createdBy) {
             setPendingNotification({
               slotId,
               organizerName: slot.createdBy,
@@ -559,14 +566,21 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
 
       {/* Popup de notification */}
       {showNotificationPopup && pendingNotification && (
-        <NotificationPopup
-          isOpen={showNotificationPopup}
-          onClose={handleNotificationCancel}
-          onConfirm={handleNotificationConfirm}
-          organizerName={pendingNotification.organizerName}
-          slotDetails={pendingNotification.slotDetails}
-          participantName={pendingNotification.participantName}
-        />
+        <>
+          {console.log('🎯 Rendu de la popup de notification:', {
+            showNotificationPopup,
+            pendingNotification,
+            organizerName: pendingNotification.organizerName
+          })}
+          <NotificationPopup
+            isOpen={showNotificationPopup}
+            onClose={handleNotificationCancel}
+            onConfirm={handleNotificationConfirm}
+            organizerName={pendingNotification.organizerName}
+            slotDetails={pendingNotification.slotDetails}
+            participantName={pendingNotification.participantName}
+          />
+        </>
       )}
     </div>
   )
