@@ -4,7 +4,6 @@ import { API_BASE_URL } from '../config'
 import { trackSlotJoin, trackSlotLeave } from '../utils/analytics'
 import SlotDiscussion from './SlotDiscussion'
 import ActivitySearchModal from './ActivitySearchModal'
-import NotificationPopup from './NotificationPopup'
 
 function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, onAddSlot, onJoinSlot, onLeaveSlot, viewToggleContainer, customSlots }) {
   const [slots, setSlots] = useState([])
@@ -20,9 +19,6 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   const [dateFilter, setDateFilter] = useState('')
   const [showActivityModal, setShowActivityModal] = useState(false)
   
-  // État pour la popup de notification
-  const [showNotificationPopup, setShowNotificationPopup] = useState(false)
-  const [pendingNotification, setPendingNotification] = useState(null)
   const [showLieuModal, setShowLieuModal] = useState(false)
   const [showOrganizerModal, setShowOrganizerModal] = useState(false)
   const [activityInput, setActivityInput] = useState('')
@@ -170,52 +166,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           fetchSlots()
         }
         
-        // Si le slot a les notifications activées, afficher la popup
-        console.log('🔔 Vérification popup notification:', {
-          shouldNotify: data.shouldNotify,
-          slotId,
-          slotsCount: slots.length,
-          currentUser: currentUser.prenom
-        })
-        
-        if (data.shouldNotify) {
-          // Utiliser les données du slot retourné par l'API au lieu de chercher dans slots
-          const slot = data.slot
-          console.log('🔍 Slot pour popup (depuis API):', slot)
-          console.log('🔍 Slot details:', {
-            createdBy: slot?.createdBy,
-            date: slot?.date,
-            heureDebut: slot?.heureDebut,
-            heureFin: slot?.heureFin,
-            type: slot?.type
-          })
-          
-          if (slot && slot.createdBy) {
-            setPendingNotification({
-              slotId,
-              organizerName: slot.createdBy,
-              slotDetails: {
-                date: slot.date,
-                heureDebut: slot.heureDebut,
-                heureFin: slot.heureFin,
-                type: slot.type,
-                customActivity: slot.customActivity,
-                lieu: slot.lieu
-              },
-              participantName: currentUser.prenom
-            })
-            setShowNotificationPopup(true)
-            console.log('✅ Popup de notification affichée')
-            console.log('🔔 État showNotificationPopup:', true)
-            console.log('🔔 État pendingNotification:', {
-              slotId,
-              organizerName: slot.createdBy,
-              participantName: currentUser.prenom
-            })
-          } else {
-            console.log('❌ Slot non trouvé pour la popup')
-          }
-        }
+        // Pas de popup automatique, l'utilisateur peut cliquer sur le bouton "Notifier"
       } else {
         const data = await response.json()
         alert(data.error || 'Erreur lors de la participation')
@@ -256,16 +207,15 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
     }
   }
 
-  const handleNotificationConfirm = async () => {
-    if (!pendingNotification) return
-    
+
+  const handleNotifyOrganizer = async (slot) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/slots/${pendingNotification.slotId}/notify-organizer`, {
+      const response = await fetch(`${API_BASE_URL}/api/slots/${slot.id}/notify-organizer`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ participant: pendingNotification.participantName }),
+        body: JSON.stringify({ participant: currentUser.prenom }),
       })
 
       if (response.ok) {
@@ -276,15 +226,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
       }
     } catch (error) {
       alert('Erreur de connexion au serveur')
-    } finally {
-      setShowNotificationPopup(false)
-      setPendingNotification(null)
     }
-  }
-
-  const handleNotificationCancel = () => {
-    setShowNotificationPopup(false)
-    setPendingNotification(null)
   }
 
   const handleDeleteSlot = async (slotId) => {
@@ -523,6 +465,16 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                           Discussion
                         </button>
                         
+                        {/* Bouton pour notifier l'organisateur */}
+                        {isParticipant && slot.emailNotifications && slot.createdBy !== currentUser.prenom && (
+                          <button 
+                            className="action-btn notify-btn"
+                            onClick={() => handleNotifyOrganizer(slot)}
+                            title="Notifier l'organisateur par email"
+                          >
+                            📧 Notifier
+                          </button>
+                        )}
 
                         {(isAdmin || isOwner) && (
                           <button 
@@ -564,24 +516,6 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         />
       )}
 
-      {/* Popup de notification */}
-      {showNotificationPopup && pendingNotification && (
-        <>
-          {console.log('🎯 Rendu de la popup de notification:', {
-            showNotificationPopup,
-            pendingNotification,
-            organizerName: pendingNotification.organizerName
-          })}
-          <NotificationPopup
-            isOpen={showNotificationPopup}
-            onClose={handleNotificationCancel}
-            onConfirm={handleNotificationConfirm}
-            organizerName={pendingNotification.organizerName}
-            slotDetails={pendingNotification.slotDetails}
-            participantName={pendingNotification.participantName}
-          />
-        </>
-      )}
     </div>
   )
 }
