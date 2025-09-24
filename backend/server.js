@@ -1,3 +1,6 @@
+import dotenv from 'dotenv'
+dotenv.config()
+
 import express from 'express'
 import cors from 'cors'
 import { nanoid } from 'nanoid'
@@ -820,20 +823,24 @@ app.post('/api/slots/friends-slots', async (req, res) => {
       return res.status(400).json({ error: 'ID utilisateur requis' })
     }
     
-    // Récupérer l'utilisateur pour obtenir ses amis
-    const user = await getUserByPrenom(userId)
-    if (!user) {
-      return res.status(404).json({ error: 'Utilisateur non trouvé' })
-    }
-    
     // Récupérer tous les slots
     let slots = await getAllSlots()
     
     // Filtrer les disponibilités passées
     slots = slots.filter(slot => isSlotStillValid(slot))
     
-    // Récupérer la liste des amis de l'utilisateur
-    const userFriends = user.friends || []
+    // Récupérer les amis directement depuis la table friends
+    let userFriends = []
+    try {
+      const friendsQuery = await pool.query(
+        'SELECT user2 as friend FROM friends WHERE user1 = $1 UNION SELECT user1 as friend FROM friends WHERE user2 = $1',
+        [userId]
+      )
+      userFriends = friendsQuery.rows.map(row => row.friend)
+    } catch (dbError) {
+      console.log('⚠️ Erreur lors de la récupération des amis:', dbError.message)
+      userFriends = []
+    }
     
     // Filtrer les slots des amis : créés par des amis ET visible par les amis
     const friendsSlots = slots.filter(slot => {
