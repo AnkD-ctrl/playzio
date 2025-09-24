@@ -19,46 +19,68 @@ function DisposPubliques({ currentUser, onBack }) {
   const [showAddSlot, setShowAddSlot] = useState(false)
   const [addSlotPage, setAddSlotPage] = useState(false)
 
-  // Récupérer les slots publiques
   useEffect(() => {
-    const fetchPublicSlots = async () => {
-      if (!currentUser) return
-
-      try {
-        setLoading(true)
-        const response = await fetch(`${API_BASE_URL}/api/slots/public-slots`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            userId: currentUser.prenom,
-            activity: null,
-            date: selectedDate,
-            search: searchFilter,
-            lieu: lieuFilter,
-            organizer: organizerFilter
-          }),
-        })
-
-        const data = await response.json()
-
-        if (response.ok) {
-          setSlots(data.slots || [])
-          setError(null)
-        } else {
-          setError(data.error || 'Erreur lors du chargement des disponibilités publiques')
-        }
-      } catch (err) {
-        setError('Erreur de connexion')
-        console.error('Erreur:', err)
-      } finally {
-        setLoading(false)
-      }
+    if (currentUser && currentUser.prenom) {
+      fetchPublicSlots()
     }
+  }, [currentUser, filterVersion])
 
-    fetchPublicSlots()
-  }, [currentUser, selectedDate, searchFilter, lieuFilter, organizerFilter, filterVersion])
+  const fetchPublicSlots = async () => {
+    try {
+      setLoading(true)
+      console.log('🔍 Récupération des slots publiques pour:', currentUser.prenom)
+      
+      // Récupérer TOUS les slots et filtrer côté frontend
+      const url = `${API_BASE_URL}/api/slots`
+      const response = await fetch(url)
+      
+      if (response.ok) {
+        const allSlots = await response.json()
+        console.log('📥 Tous les slots reçus:', allSlots.length)
+        
+        // FILTRAGE : Seulement visibleToEveryone=true
+        let publicSlots = allSlots.filter(slot => {
+          return slot.visibleToEveryone === true
+        })
+        
+        // Appliquer les filtres côté frontend
+        if (searchFilter) {
+          publicSlots = publicSlots.filter(slot => 
+            slot.activity.toLowerCase().includes(searchFilter.toLowerCase())
+          )
+        }
+        
+        if (selectedDate) {
+          publicSlots = publicSlots.filter(slot => 
+            slot.date === selectedDate
+          )
+        }
+        
+        if (lieuFilter) {
+          publicSlots = publicSlots.filter(slot => 
+            slot.lieu && slot.lieu.toLowerCase().includes(lieuFilter.toLowerCase())
+          )
+        }
+        
+        if (organizerFilter) {
+          publicSlots = publicSlots.filter(slot => 
+            slot.createdBy && slot.createdBy.toLowerCase().includes(organizerFilter.toLowerCase())
+          )
+        }
+        
+        console.log('📥 Slots publics après filtrage:', publicSlots.length)
+        setSlots(publicSlots)
+      } else {
+        console.log('❌ Erreur API:', response.status, response.statusText)
+        setError('Erreur lors du chargement des disponibilités publiques')
+      }
+    } catch (error) {
+      console.log('❌ Erreur catch:', error)
+      setError('Erreur de connexion au serveur')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleJoinSlot = async (slotId) => {
     try {

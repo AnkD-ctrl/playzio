@@ -19,46 +19,68 @@ function DisposGroupes({ currentUser, onBack }) {
   const [showAddSlot, setShowAddSlot] = useState(false)
   const [addSlotPage, setAddSlotPage] = useState(false)
 
-  // Récupérer les slots des groupes
   useEffect(() => {
-    const fetchGroupSlots = async () => {
-      if (!currentUser) return
-
-      try {
-        setLoading(true)
-        const response = await fetch(`${API_BASE_URL}/api/slots/group-slots`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            userId: currentUser.prenom,
-            activity: null,
-            date: selectedDate,
-            search: searchFilter,
-            lieu: lieuFilter,
-            organizer: organizerFilter
-          }),
-        })
-
-        const data = await response.json()
-
-        if (response.ok) {
-          setSlots(data.slots || [])
-          setError(null)
-        } else {
-          setError(data.error || 'Erreur lors du chargement des disponibilités des groupes')
-        }
-      } catch (err) {
-        setError('Erreur de connexion')
-        console.error('Erreur:', err)
-      } finally {
-        setLoading(false)
-      }
+    if (currentUser && currentUser.prenom) {
+      fetchGroupSlots()
     }
+  }, [currentUser, filterVersion])
 
-    fetchGroupSlots()
-  }, [currentUser, selectedDate, searchFilter, lieuFilter, organizerFilter, filterVersion])
+  const fetchGroupSlots = async () => {
+    try {
+      setLoading(true)
+      console.log('🔍 Récupération des slots des groupes pour:', currentUser.prenom)
+      
+      // Récupérer TOUS les slots et filtrer côté frontend
+      const url = `${API_BASE_URL}/api/slots`
+      const response = await fetch(url)
+      
+      if (response.ok) {
+        const allSlots = await response.json()
+        console.log('📥 Tous les slots reçus:', allSlots.length)
+        
+        // FILTRAGE : Seulement visibleToGroups=true ET pas mes slots
+        let groupSlots = allSlots.filter(slot => {
+          return slot.visibleToGroups === true && slot.createdBy !== currentUser.prenom
+        })
+        
+        // Appliquer les filtres côté frontend
+        if (searchFilter) {
+          groupSlots = groupSlots.filter(slot => 
+            slot.activity.toLowerCase().includes(searchFilter.toLowerCase())
+          )
+        }
+        
+        if (selectedDate) {
+          groupSlots = groupSlots.filter(slot => 
+            slot.date === selectedDate
+          )
+        }
+        
+        if (lieuFilter) {
+          groupSlots = groupSlots.filter(slot => 
+            slot.lieu && slot.lieu.toLowerCase().includes(lieuFilter.toLowerCase())
+          )
+        }
+        
+        if (organizerFilter) {
+          groupSlots = groupSlots.filter(slot => 
+            slot.createdBy && slot.createdBy.toLowerCase().includes(organizerFilter.toLowerCase())
+          )
+        }
+        
+        console.log('📥 Slots des groupes après filtrage:', groupSlots.length)
+        setSlots(groupSlots)
+      } else {
+        console.log('❌ Erreur API:', response.status, response.statusText)
+        setError('Erreur lors du chargement des disponibilités des groupes')
+      }
+    } catch (error) {
+      console.log('❌ Erreur catch:', error)
+      setError('Erreur de connexion au serveur')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleJoinSlot = async (slotId) => {
     try {

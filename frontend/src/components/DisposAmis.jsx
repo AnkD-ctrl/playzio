@@ -23,7 +23,7 @@ function DisposAmis({ currentUser, onBack }) {
     if (currentUser && currentUser.prenom) {
       fetchFriendsSlots()
     }
-  }, [currentUser, searchFilter, lieuFilter, organizerFilter, filterVersion])
+  }, [currentUser, filterVersion])
 
   const fetchFriendsSlots = async () => {
     try {
@@ -37,11 +37,36 @@ function DisposAmis({ currentUser, onBack }) {
         console.log('📥 Tous les slots reçus:', allSlots.length)
         
         // FILTRAGE RADICAL : Seulement visibleToFriends=true ET pas mes slots
-        const amisSlots = allSlots.filter(slot => {
+        let amisSlots = allSlots.filter(slot => {
           return slot.visibleToFriends === true && slot.createdBy !== currentUser.prenom
         })
         
-        console.log('📥 Slots des amis RADICAUX:', amisSlots.length)
+        // Appliquer les filtres côté frontend
+        if (searchFilter) {
+          amisSlots = amisSlots.filter(slot => 
+            slot.activity.toLowerCase().includes(searchFilter.toLowerCase())
+          )
+        }
+        
+        if (selectedDate) {
+          amisSlots = amisSlots.filter(slot => 
+            slot.date === selectedDate
+          )
+        }
+        
+        if (lieuFilter) {
+          amisSlots = amisSlots.filter(slot => 
+            slot.lieu && slot.lieu.toLowerCase().includes(lieuFilter.toLowerCase())
+          )
+        }
+        
+        if (organizerFilter) {
+          amisSlots = amisSlots.filter(slot => 
+            slot.createdBy && slot.createdBy.toLowerCase().includes(organizerFilter.toLowerCase())
+          )
+        }
+        
+        console.log('📥 Slots des amis après filtrage:', amisSlots.length)
         setSlots(amisSlots)
       } else {
         setError('Erreur lors du chargement des disponibilités des amis')

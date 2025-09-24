@@ -23,7 +23,7 @@ function MesDispos({ currentUser, onBack }) {
     if (currentUser && currentUser.prenom) {
       fetchMySlots()
     }
-  }, [currentUser, searchFilter, lieuFilter, organizerFilter, filterVersion])
+  }, [currentUser, filterVersion])
 
   const fetchMySlots = async () => {
     try {
@@ -39,9 +39,35 @@ function MesDispos({ currentUser, onBack }) {
         console.log('📥 Tous les slots reçus:', allSlots.length)
         
         // FILTRAGE SIMPLE : Seulement les slots créés par l'utilisateur
-        const mySlots = allSlots.filter(slot => slot.createdBy === currentUser.prenom)
+        let mySlots = allSlots.filter(slot => slot.createdBy === currentUser.prenom)
         console.log('📥 Mes slots filtrés:', mySlots.length)
         
+        // Appliquer les filtres côté frontend
+        if (searchFilter) {
+          mySlots = mySlots.filter(slot => 
+            slot.activity.toLowerCase().includes(searchFilter.toLowerCase())
+          )
+        }
+        
+        if (selectedDate) {
+          mySlots = mySlots.filter(slot => 
+            slot.date === selectedDate
+          )
+        }
+        
+        if (lieuFilter) {
+          mySlots = mySlots.filter(slot => 
+            slot.lieu && slot.lieu.toLowerCase().includes(lieuFilter.toLowerCase())
+          )
+        }
+        
+        if (organizerFilter) {
+          mySlots = mySlots.filter(slot => 
+            slot.createdBy && slot.createdBy.toLowerCase().includes(organizerFilter.toLowerCase())
+          )
+        }
+        
+        console.log('📥 Slots après filtrage:', mySlots.length)
         setSlots(mySlots)
       } else {
         console.log('❌ Erreur API:', response.status, response.statusText)
