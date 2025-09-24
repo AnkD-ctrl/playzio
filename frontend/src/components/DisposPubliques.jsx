@@ -32,18 +32,26 @@ function DisposPubliques({ currentUser, onBack }) {
       setLoading(true)
       console.log('🔍 Récupération des slots publiques pour:', currentUser.prenom)
       
-      // Récupérer TOUS les slots et filtrer côté frontend
-      const url = `${API_BASE_URL}/api/slots`
-      const response = await fetch(url)
+      // Utiliser l'endpoint backend spécialisé pour les slots publics
+      const response = await fetch(`${API_BASE_URL}/api/slots/public-slots`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: currentUser.prenom,
+          activity: null,
+          date: null,
+          search: null,
+          lieu: null,
+          organizer: null
+        }),
+      })
       
       if (response.ok) {
-        const allSlots = await response.json()
-        console.log('📥 Tous les slots reçus:', allSlots.length)
-        
-        // FILTRAGE : Seulement visibleToEveryone=true
-        const publicSlots = allSlots.filter(slot => {
-          return slot.visibleToEveryone === true
-        })
+        const data = await response.json()
+        const publicSlots = data.slots || []
+        console.log('📥 Slots publics reçus:', publicSlots.length)
         
         // Stocker tous les slots et afficher sans filtres appliqués
         setAllSlots(publicSlots)

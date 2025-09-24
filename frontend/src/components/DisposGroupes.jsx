@@ -32,18 +32,26 @@ function DisposGroupes({ currentUser, onBack }) {
       setLoading(true)
       console.log('🔍 Récupération des slots des groupes pour:', currentUser.prenom)
       
-      // Récupérer TOUS les slots et filtrer côté frontend
-      const url = `${API_BASE_URL}/api/slots`
-      const response = await fetch(url)
+      // Utiliser l'endpoint backend spécialisé pour les groupes
+      const response = await fetch(`${API_BASE_URL}/api/slots/group-slots`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: currentUser.prenom,
+          activity: null,
+          date: null,
+          search: null,
+          lieu: null,
+          organizer: null
+        }),
+      })
       
       if (response.ok) {
-        const allSlots = await response.json()
-        console.log('📥 Tous les slots reçus:', allSlots.length)
-        
-        // FILTRAGE : Seulement visibleToGroups=true ET pas mes slots
-        const groupSlots = allSlots.filter(slot => {
-          return slot.visibleToGroups === true && slot.createdBy !== currentUser.prenom
-        })
+        const data = await response.json()
+        const groupSlots = data.slots || []
+        console.log('📥 Slots des groupes reçus:', groupSlots.length)
         
         // Stocker tous les slots et afficher sans filtres appliqués
         setAllSlots(groupSlots)
