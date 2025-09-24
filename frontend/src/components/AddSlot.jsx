@@ -18,6 +18,7 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
   const [selectedGroups, setSelectedGroups] = useState([])
   const [visibleToAll, setVisibleToAll] = useState(true)
   const [visibleToFriends, setVisibleToFriends] = useState(false)
+  const [emailNotifications, setEmailNotifications] = useState(true) // Par défaut activé
   const [userGroups, setUserGroups] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -124,7 +125,8 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
         createdBy: currentUser.prenom,
         visibleToGroups: visibleToAll ? [] : selectedGroups,
         visibleToAll: visibleToAll,
-        visibleToFriends: visibleToFriends
+        visibleToFriends: visibleToFriends,
+        emailNotifications: emailNotifications
       }
 
       // Créer un slot pour chaque date sélectionnée
@@ -394,6 +396,26 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
                 {visibleToFriends && " et vos amis"}
               </p>
             )}
+          </div>
+
+          {/* Notifications email */}
+          <div className="notifications-section">
+            <h3 className="section-title">📧 Notifications</h3>
+            <div className="notification-option">
+              <label className="notification-checkbox">
+                <input
+                  type="checkbox"
+                  checked={emailNotifications}
+                  onChange={(e) => setEmailNotifications(e.target.checked)}
+                />
+                <span className="notification-label">
+                  Recevoir un email quand quelqu'un s'inscrit à cette disponibilité
+                </span>
+              </label>
+              <p className="notification-info">
+                Vous serez notifié par email à chaque nouvelle inscription
+              </p>
+            </div>
           </div>
 
           {error && <div className="error-message">{error}</div>}

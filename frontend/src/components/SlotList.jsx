@@ -5,15 +5,12 @@ import { trackSlotJoin, trackSlotLeave } from '../utils/analytics'
 import SlotDiscussion from './SlotDiscussion'
 import ActivitySearchModal from './ActivitySearchModal'
 
-function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, filterType = 'publiques', onAddSlot, onJoinSlot, viewToggleContainer }) {
+function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, onAddSlot, onJoinSlot, viewToggleContainer }) {
   const [slots, setSlots] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [selectedSlot, setSelectedSlot] = useState(null)
   const [showSearchModal, setShowSearchModal] = useState(false)
-  const [showOnlyMyGroups, setShowOnlyMyGroups] = useState(false)
-  const [userGroups, setUserGroups] = useState([])
-  const [userFriends, setUserFriends] = useState([])
   const [searchInput, setSearchInput] = useState('')
   const [searchTimeout, setSearchTimeout] = useState(null)
   const [expandedSlots, setExpandedSlots] = useState(new Set())
@@ -26,6 +23,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   const [activityInput, setActivityInput] = useState('')
   const [lieuInput, setLieuInput] = useState('')
   const [organizerInput, setOrganizerInput] = useState('')
+  
   
 
   const handleActivitySelect = (activityName) => {
@@ -63,121 +61,76 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
     })
   }
 
-  const handleGroupsFilterToggle = () => {
-    setShowOnlyMyGroups(!showOnlyMyGroups)
-  }
-
-
-  const fetchUserGroups = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/groups?user=${encodeURIComponent(currentUser.prenom)}`)
-      const data = await response.json()
-      setUserGroups(data)
-    } catch (error) {
-      console.error('Erreur lors du chargement des groupes:', error)
-    }
-  }
-
-  const fetchUserFriends = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/friends/${encodeURIComponent(currentUser.prenom)}`)
-      if (response.ok) {
-        const data = await response.json()
-        setUserFriends(data.friends || [])
-      }
-    } catch (error) {
-      console.error('Erreur lors du chargement des amis:', error)
-    }
-  }
 
 
   useEffect(() => {
-    fetchSlots()
-  }, [activity, selectedDate, searchFilter, lieuFilter, organizerFilter, filterType, userGroups, userFriends])
+    if (currentUser && currentUser.prenom) {
+      fetchSlots()
+    }
+  }, [currentUser, activity, selectedDate, searchFilter, lieuFilter, organizerFilter])
 
-  useEffect(() => {
-    fetchUserGroups()
-    fetchUserFriends()
-  }, [currentUser])
 
 
   const fetchSlots = async () => {
     try {
       setLoading(true)
+      console.log('🔍 fetchSlots appelé avec currentUser:', currentUser)
       
-      let url
-      if (onJoinSlot) {
-        // Mode partage public - utiliser l'endpoint public
-        url = `${API_BASE_URL}/api/slots/user/${encodeURIComponent(currentUser.prenom)}`
-      } else {
-        // Mode normal - utiliser l'endpoint avec authentification
-        url = activity === 'Tous' 
-          ? `${API_BASE_URL}/api/slots?user=${encodeURIComponent(currentUser.prenom)}`
-          : `${API_BASE_URL}/api/slots?type=${encodeURIComponent(activity.toLowerCase())}&user=${encodeURIComponent(currentUser.prenom)}`
+      // Vérifier que currentUser est défini
+      if (!currentUser || !currentUser.prenom) {
+        console.log('❌ currentUser non défini:', currentUser)
+        setError('Utilisateur non connecté')
+        setLoading(false)
+        return
       }
       
+      // Récupérer TOUS les slots depuis l'API
+      const url = `${API_BASE_URL}/api/slots`
+      console.log('🌐 Appel API:', url)
       const response = await fetch(url)
       
       if (response.ok) {
-        const data = await response.json()
-        let filteredData = data
+        const allSlots = await response.json()
+        console.log('📥 Tous les slots reçus:', allSlots.length)
         
-        // Filtrer selon le type d'onglet
-        if (onJoinSlot) {
-          // Mode partage public - ne pas filtrer, les données viennent déjà filtrées de l'API
-          // Les données sont déjà filtrées par utilisateur côté serveur
-        } else if (filterType === 'mes-dispos') {
-          // Afficher seulement les créneaux créés par l'utilisateur
-          filteredData = filteredData.filter(slot => slot.createdBy === currentUser.prenom)
-        } else if (filterType === 'communaute' && userGroups.length > 0) {
-          // Afficher seulement les créneaux des groupes de l'utilisateur
-          const userGroupNames = userGroups.map(group => group.name)
-          filteredData = filteredData.filter(slot => 
-            slot.visibleToGroups && slot.visibleToGroups.some(groupName => userGroupNames.includes(groupName))
-          )
-        } else if (filterType === 'publiques') {
-          // Afficher seulement les créneaux visibles à tous (visible_to_all = true)
-          filteredData = filteredData.filter(slot => slot.visibleToAll === true)
-        } else if (filterType === 'amis') {
-          // Afficher les créneaux des amis (visible_to_friends = true ET créés par un ami)
-          filteredData = filteredData.filter(slot => 
-            slot.visibleToFriends === true && 
-            userFriends.includes(slot.createdBy)
-          )
+        // LOGIQUE SIMPLE : Afficher TOUS les slots (filtrage fait côté backend)
+        let filteredSlots = allSlots
+        
+        // Filtrer par date si sélectionnée
+        if (selectedDate) {
+          filteredSlots = filteredSlots.filter(slot => slot.date === selectedDate)
         }
         
-        // Filtrer par date si une date est sélectionnée
-        filteredData = selectedDate 
-          ? filteredData.filter(slot => slot.date === selectedDate)
-          : filteredData
-        
-        // Filtrer par activité personnalisée si un filtre de recherche est défini
+        // Filtrer par recherche
         if (searchFilter) {
-          filteredData = filteredData.filter(slot => 
+          filteredSlots = filteredSlots.filter(slot => 
             slot.customActivity && slot.customActivity.toLowerCase().includes(searchFilter.toLowerCase())
           )
         }
         
-        // Filtrer par lieu si un filtre de lieu est défini
+        // Filtrer par lieu
         if (lieuFilter) {
-          filteredData = filteredData.filter(slot => 
+          filteredSlots = filteredSlots.filter(slot => 
             slot.lieu && slot.lieu.toLowerCase().includes(lieuFilter.toLowerCase())
           )
         }
         
-        // Filtrer par organisateur si un filtre d'organisateur est défini
+        // Filtrer par organisateur
         if (organizerFilter) {
-          filteredData = filteredData.filter(slot => 
+          filteredSlots = filteredSlots.filter(slot => 
             slot.createdBy && slot.createdBy.toLowerCase().includes(organizerFilter.toLowerCase())
           )
         }
         
-        
-        setSlots(filteredData)
+        console.log(`✅ Slots accessibles affichés: ${filteredSlots.length}`)
+        console.log('📋 Slots finaux:', filteredSlots)
+        setSlots(filteredSlots)
       } else {
+        console.log('❌ Erreur API:', response.status, response.statusText)
         setError('Erreur lors du chargement des disponibilités')
       }
     } catch (error) {
+      console.log('❌ Erreur catch:', error)
       setError('Erreur de connexion au serveur')
     } finally {
       setLoading(false)
@@ -268,6 +221,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   }
 
   if (error) {
+    console.log('🚨 Erreur affichée:', error)
     return (
       <div className="slot-list">
         <div className="error">{error}</div>
@@ -411,7 +365,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                           onClick={(e) => {
                             e.stopPropagation()
                             if (onJoinSlot) {
-                              onJoinSlot()
+                              onJoinSlot(slot.id)
                             } else {
                               handleJoinSlot(slot.id)
                             }

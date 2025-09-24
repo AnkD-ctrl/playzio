@@ -55,13 +55,19 @@ import {
   closeDatabase,
   pool
 } from './database.js'
-import { sendPasswordResetEmail, testEmailConnection } from './emailService.js'
+import { sendPasswordResetEmail, testEmailConnection, sendSlotJoinNotification } from './emailService.js'
+import { ensureEmailNotificationsColumn } from './auto_migrate_email_notifications.js'
+import { ensureVisibilityColumns } from './auto_migrate_visibility.js'
 
 const app = express()
 const port = process.env.PORT || 8080
 
 // Initialize database on startup
-initDatabase().catch(err => {
+initDatabase().then(async () => {
+  // Exécuter la migration automatique pour les notifications email
+  await ensureVisibilityColumns()
+  await ensureEmailNotificationsColumn()
+}).catch(err => {
   console.error('PostgreSQL initialization failed, falling back to JSON:', err)
 })
 
@@ -399,10 +405,34 @@ app.delete('/api/messages/:messageId', async (req, res) => {
   }
 })
 
+// Endpoint temporaire pour activer les notifications email d'un slot
+app.post('/api/slots/:id/enable-email-notifications', async (req, res) => {
+  try {
+    const { id } = req.params
+    
+    // Mettre à jour le slot pour activer les notifications email
+    const result = await pool.query(`
+      UPDATE slots 
+      SET email_notifications = true 
+      WHERE id = $1
+    `, [id])
+    
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Slot non trouvé' })
+    }
+    
+    console.log(`✅ Notifications email activées pour le slot ${id}`)
+    res.json({ success: true, message: 'Notifications email activées' })
+  } catch (error) {
+    console.error('Erreur lors de l\'activation des notifications email:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
 // Récupérer les créneaux
 app.get('/api/slots', async (req, res) => {
   try {
-    const { type, user } = req.query
+    const { type } = req.query
     
     // Récupérer tous les slots
     let filteredSlots = await getAllSlots()
@@ -427,24 +457,7 @@ app.get('/api/slots', async (req, res) => {
       })
     }
     
-    // Filtrer par visibilité des groupes si un utilisateur est spécifié
-    if (user) {
-      // Récupérer les groupes de l'utilisateur
-      const userGroups = await getGroupsByUser(user)
-      const userGroupIds = userGroups.map(group => group.id)
-      
-      // Filtrer les slots visibles pour cet utilisateur
-      filteredSlots = filteredSlots.filter(slot => {
-        // Si le slot n'a pas de groupes spécifiés, il est public (rétrocompatibilité)
-        if (!slot.visibleToGroups || slot.visibleToGroups.length === 0) {
-          return true
-        }
-        
-        // Vérifier si l'utilisateur est dans au moins un des groupes visibles
-        return slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId))
-      })
-    }
-    
+    // Retourner TOUS les slots - le filtrage sera fait côté frontend
     res.json(filteredSlots)
   } catch (error) {
     console.error('Get slots error:', error)
@@ -455,7 +468,7 @@ app.get('/api/slots', async (req, res) => {
 // Ajouter un créneau
 app.post('/api/slots', async (req, res) => {
   try {
-    const { date, heureDebut, heureFin, type, customActivity, participants, createdBy, visibleToGroups, visibleToAll, visibleToFriends, description, lieu, maxParticipants } = req.body
+    const { date, heureDebut, heureFin, type, customActivity, participants, createdBy, visibleToGroups, visibleToAll, visibleToFriends, description, lieu, maxParticipants, emailNotifications } = req.body
     
     const newSlot = await createSlot({
       id: nanoid(),
@@ -471,7 +484,8 @@ app.post('/api/slots', async (req, res) => {
       visibleToGroups: visibleToGroups || [],
       visibleToAll: visibleToAll !== undefined ? visibleToAll : true,
       visibleToFriends: visibleToFriends !== undefined ? visibleToFriends : false,
-      participants: participants || []
+      participants: participants || [],
+      emailNotifications: emailNotifications !== undefined ? emailNotifications : true
     })
     
     res.json({ success: true, slot: newSlot })
@@ -513,6 +527,46 @@ app.post('/api/slots/:id/join', async (req, res) => {
     if (!slot.participants.includes(userToAdd)) {
       slot.participants.push(userToAdd)
       const updatedSlot = await updateSlotParticipants(id, slot.participants)
+      
+      // Envoyer une notification email si activée et si l'organisateur a un email
+      console.log('🔔 Vérification notification email:', {
+        slotId: slot.id,
+        emailNotifications: slot.emailNotifications,
+        createdBy: slot.createdBy
+      })
+      
+      if ((slot.emailNotifications === true || slot.emailNotifications === 'true') && slot.createdBy) {
+        console.log('📧 Envoi de la notification email...')
+        try {
+          const organizer = await getUserByPrenom(slot.createdBy)
+          if (organizer && organizer.email) {
+            await sendSlotJoinNotification(
+              organizer.email,
+              organizer.prenom,
+              userToAdd,
+              {
+                date: slot.date,
+                heureDebut: slot.heureDebut,
+                heureFin: slot.heureFin,
+                type: slot.type,
+                customActivity: slot.customActivity,
+                lieu: slot.lieu
+              }
+            )
+            console.log(`Notification email envoyée à ${organizer.email} pour l'inscription de ${userToAdd}`)
+          }
+        } catch (emailError) {
+          console.error('Erreur lors de l\'envoi de la notification email:', emailError)
+          // Ne pas faire échouer la jointure si l'email échoue
+        }
+      } else {
+        console.log('📧 Notification email non envoyée:', {
+          emailNotifications: slot.emailNotifications,
+          hasCreatedBy: !!slot.createdBy,
+          reason: slot.emailNotifications !== true ? 'emailNotifications not true' : 'no createdBy'
+        })
+      }
+      
       res.json({ success: true, slot: updatedSlot })
     } else {
       res.json({ success: true, slot })
@@ -625,9 +679,11 @@ app.get('/api/slots/user/:username', async (req, res) => {
     // Filtrer les disponibilités passées
     slots = slots.filter(slot => isSlotStillValid(slot))
     
-    // Filtrer par créateur (nom d'utilisateur)
+    // Filtrer par créateur (nom d'utilisateur) - retourner seulement les slots publics
+    // Cet endpoint est utilisé pour le partage public, donc seulement les slots publics
     const userSlots = slots.filter(slot => 
-      slot.createdBy && slot.createdBy.toLowerCase() === username.toLowerCase()
+      slot.createdBy && slot.createdBy.toLowerCase() === username.toLowerCase() &&
+      slot.visibleToAll === true
     )
     
     res.json(userSlots)

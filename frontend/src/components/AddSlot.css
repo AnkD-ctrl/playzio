@@ -751,3 +751,58 @@
     padding: 5px 8px;
       }
   }
+
+/* Notifications section */
+.notifications-section {
+  background: rgba(58, 58, 58, 0.3);
+  border: 1px solid rgba(212, 175, 140, 0.2);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.notification-option {
+  margin-top: 15px;
+}
+
+.notification-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.notification-checkbox:hover {
+  background: rgba(212, 175, 140, 0.1);
+  border-color: rgba(212, 175, 140, 0.3);
+}
+
+.notification-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #d4af8c;
+  cursor: pointer;
+  margin: 0;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.notification-label {
+  color: #e0e0e0;
+  font-weight: 500;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.notification-info {
+  margin: 8px 0 0 30px;
+  color: #b0b0b0;
+  font-size: 0.85rem;
+  font-style: italic;
+  line-height: 1.3;
+}
