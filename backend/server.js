@@ -1594,7 +1594,7 @@ app.post('/api/forgot-password', async (req, res) => {
     const resetUrl = `${frontendUrl}/?token=${resetToken}`
     
     console.log('Configuration email - SENDGRID_API_KEY présent:', !!process.env.SENDGRID_API_KEY)
-    console.log('FROM_EMAIL:', process.env.SENDGRID_FROM_EMAIL || 'playzio.fr@gmail.com')
+    console.log('FROM_EMAIL:', process.env.SENDGRID_FROM_EMAIL || 'contact@playzio.fr')
     console.log('FRONTEND_URL:', frontendUrl)
     
     // Si SendGrid n'est pas configuré, afficher le lien dans les logs
@@ -1752,7 +1752,7 @@ app.get('/api/email-config', async (req, res) => {
   try {
     const config = {
       hasApiKey: !!process.env.SENDGRID_API_KEY,
-      fromEmail: process.env.SENDGRID_FROM_EMAIL || 'playzio.fr@gmail.com',
+      fromEmail: process.env.SENDGRID_FROM_EMAIL || 'contact@playzio.fr',
       frontendUrl: process.env.FRONTEND_URL || 'https://playzio.fr',
       apiKeyLength: process.env.SENDGRID_API_KEY ? process.env.SENDGRID_API_KEY.length : 0
     }

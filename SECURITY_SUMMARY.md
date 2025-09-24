@@ -83,7 +83,7 @@ curl -X POST /api/forgot-password -d '{"email":"inexistant@example.com"}'
 ### **Variables d'environnement**
 ```bash
 SENDGRID_API_KEY=SG.your_api_key_here
-SENDGRID_FROM_EMAIL=playzio.fr@gmail.com
+SENDGRID_FROM_EMAIL=contact@playzio.fr
 FRONTEND_URL=https://playzio.fr
 DATABASE_URL=postgresql://...
 ```

@@ -42,7 +42,7 @@ function CookieBanner() {
             </a>
             <br/>
             <span style={{ fontSize: '0.9rem', color: '#b0b0b0' }}>
-              Contact : playzio.fr@gmail.com
+              Contact : contact@playzio.fr
             </span>
           </p>
         </div>

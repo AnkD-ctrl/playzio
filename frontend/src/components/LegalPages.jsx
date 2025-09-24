@@ -84,7 +84,7 @@ export const MentionsLegales = ({ onBack }) => {
         <section>
           <h2>7. Contact</h2>
           <p>
-            <strong>Email :</strong> playzio.fr@gmail.com<br/>
+            <strong>Email :</strong> contact@playzio.fr<br/>
             <strong>Adresse :</strong> TBD
           </p>
         </section>
@@ -181,7 +181,7 @@ export const PolitiqueConfidentialite = ({ onBack }) => {
             <li><strong>Droit de limitation :</strong> Limiter le traitement de vos données</li>
           </ul>
           <p>
-            Pour exercer ces droits, contactez-nous à : <strong>playzio.fr@gmail.com</strong>
+            Pour exercer ces droits, contactez-nous à : <strong>contact@playzio.fr</strong>
           </p>
         </section>
 
@@ -224,7 +224,7 @@ export const PolitiqueConfidentialite = ({ onBack }) => {
           <h2>10. Contact et réclamations</h2>
           <p>
             <strong>Responsable du traitement :</strong> TBD<br/>
-            <strong>Email :</strong> playzio.fr@gmail.com<br/>
+            <strong>Email :</strong> contact@playzio.fr<br/>
             <strong>Adresse :</strong> TBD
           </p>
           <p>
@@ -376,7 +376,7 @@ export const ConditionsUtilisation = ({ onBack }) => {
           <p>
             Pour toute question concernant ces conditions d'utilisation :
             <br/>
-            <strong>Email :</strong> playzio.fr@gmail.com
+            <strong>Email :</strong> contact@playzio.fr
           </p>
         </section>
       </div>
@@ -403,7 +403,7 @@ export const ContactPage = ({ onBack }) => {
           
           <div className="contact-info">
             <div className="contact-item">
-              <strong>📧 Email :</strong> playzio.fr@gmail.com
+              <strong>📧 Email :</strong> contact@playzio.fr
             </div>
             <div className="contact-item">
               <strong>🌐 Site web :</strong> https://www.playzio.fr
@@ -433,7 +433,7 @@ export const ContactPage = ({ onBack }) => {
             <li>Les conditions d'utilisation</li>
           </ul>
           <p>
-            Contactez-nous à l'adresse : <strong>playzio.fr@gmail.com</strong>
+            Contactez-nous à l'adresse : <strong>contact@playzio.fr</strong>
           </p>
         </section>
 
