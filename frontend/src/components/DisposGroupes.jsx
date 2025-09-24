@@ -143,7 +143,6 @@ function DisposGroupes({ currentUser, onBack }) {
   return (
     <div className="dispos-groupes-container">
       <div>
-        <h2>Disponibilités des Groupes</h2>
       </div>
 
       <div className="activity-container">

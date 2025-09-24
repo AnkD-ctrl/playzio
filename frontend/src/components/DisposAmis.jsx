@@ -136,7 +136,6 @@ function DisposAmis({ currentUser, onBack }) {
   return (
     <div className="dispos-amis-container">
       <div>
-        <h2>Disponibilités des Amis</h2>
       </div>
 
       <div className="activity-container">

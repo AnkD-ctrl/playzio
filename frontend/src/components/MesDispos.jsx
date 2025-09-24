@@ -138,7 +138,6 @@ function MesDispos({ currentUser, onBack }) {
   return (
     <div className="mes-dispos-container">
       <div>
-        <h2>Mes Disponibilités</h2>
       </div>
 
       <div className="activity-container">
