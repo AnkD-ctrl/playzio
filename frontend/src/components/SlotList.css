@@ -1004,38 +1004,54 @@
 
   .slot-item-header {
     padding: 10px 12px;
+    flex-wrap: nowrap;
   }
 
   .slot-item-main {
-    gap: 12px;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
   }
 
   .slot-item-date {
-    min-width: 70px;
+    min-width: 60px;
+    flex-shrink: 0;
   }
 
   .slot-item-date .date {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
   }
 
   .slot-item-date .time {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
   }
 
   .slot-item-activity {
-    font-size: 0.9rem;
-    width: 55px;
-    max-width: 55px;
+    font-size: 0.85rem;
+    width: 50px;
+    max-width: 50px;
+    flex-shrink: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .slot-item-participants {
-    font-size: 0.8rem;
-    min-width: 35px;
+    font-size: 0.75rem;
+    min-width: 30px;
+    flex-shrink: 0;
+  }
+
+  .slot-item-actions {
+    flex-shrink: 0;
+    margin-left: 8px;
   }
 
   .quick-action-btn {
     padding: 4px 8px;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
+    white-space: nowrap;
   }
 
   .slot-item-details {
