@@ -1891,7 +1891,13 @@ app.post('/api/slots/:id/notify-organizer', async (req, res) => {
             heureFin: slot.heureFin,
             type: slot.type,
             customActivity: slot.customActivity,
-            lieu: slot.lieu
+            lieu: slot.lieu,
+            participants: slot.participants,
+            maxParticipants: slot.maxParticipants,
+            description: slot.description,
+            visibleToAll: slot.visibleToAll,
+            visibleToFriends: slot.visibleToFriends,
+            visibleToGroups: slot.visibleToGroups
           }
         )
         console.log('✅ Notification email envoyée avec succès à:', organizer.email)

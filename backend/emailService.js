@@ -134,7 +134,7 @@ export async function sendSlotJoinNotification(organizerEmail, organizerName, pa
   const emailData = {
     personalizations: [{
       to: [{ email: organizerEmail }],
-      subject: `${participantName} a décidé de vous notifier`
+      subject: `${participantName} souhaite vous notifier concernant une de vos dispos`
     }],
     from: { email: FROM_EMAIL, name: 'Playzio' },
     content: [{
@@ -142,22 +142,25 @@ export async function sendSlotJoinNotification(organizerEmail, organizerName, pa
       value: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
           <div style="background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%); padding: 30px; text-align: center; border-radius: 12px 12px 0 0;">
-            <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">Notification</h1>
-            <p style="color: white; margin: 10px 0 0 0; font-size: 16px;">${participantName} a décidé de vous notifier</p>
+            <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">Playzio</h1>
+            <p style="color: white; margin: 10px 0 0 0; font-size: 16px;">vous avez recu une notifiaction de ${participantName}</p>
           </div>
           
           <div style="background: white; padding: 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
             <h2 style="color: #333; margin: 0 0 20px 0; font-size: 24px;">Bonjour ${organizerName} !</h2>
             
             <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #d4af8c;">
-              <p style="color: #666; font-size: 16px; margin: 0 0 10px 0;">
-                <strong>${participantName}</strong> :
+              <p style="color: #666; font-size: 16px; margin: 0 0 15px 0;">
+                <strong>${participantName}</strong> souhaite vous notifier concernant votre disponibilité ci-dessous :
               </p>
               <div style="color: #333; font-size: 16px; line-height: 1.6;">
-                <p style="margin: 5px 0;"><strong>Date :</strong> ${date}</p>
-                <p style="margin: 5px 0;"><strong>Heure :</strong> ${heureDebut} - ${heureFin}</p>
-                <p style="margin: 5px 0;"><strong>Activité :</strong> ${activityName}</p>
-                ${lieu ? `<p style="margin: 5px 0;"><strong>Lieu :</strong> ${lieu}</p>` : ''}
+                <p style="margin: 8px 0;"><strong>Date :</strong> ${date}</p>
+                <p style="margin: 8px 0;"><strong>Heure :</strong> ${heureDebut} - ${heureFin}</p>
+                <p style="margin: 8px 0;"><strong>Activité :</strong> ${activityName}</p>
+                ${lieu ? `<p style="margin: 8px 0;"><strong>Lieu :</strong> ${lieu}</p>` : ''}
+                <p style="margin: 8px 0;"><strong>Participants :</strong> ${slotDetails.participants ? slotDetails.participants.length : 0}${slotDetails.maxParticipants ? ` / ${slotDetails.maxParticipants}` : ''}</p>
+                ${slotDetails.description ? `<p style="margin: 8px 0;"><strong>Description :</strong> ${slotDetails.description}</p>` : ''}
+                <p style="margin: 8px 0;"><strong>Visibilité :</strong> ${slotDetails.visibleToAll ? 'Publique' : slotDetails.visibleToFriends ? 'Amis' : 'Groupes'}</p>
               </div>
             </div>
             
