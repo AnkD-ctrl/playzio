@@ -6,7 +6,7 @@ import SlotDiscussion from './SlotDiscussion'
 import ActivitySearchModal from './ActivitySearchModal'
 import NotificationPopup from './NotificationPopup'
 
-function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, onAddSlot, onJoinSlot, viewToggleContainer, customSlots }) {
+function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, onAddSlot, onJoinSlot, onLeaveSlot, viewToggleContainer, customSlots }) {
   const [slots, setSlots] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -211,7 +211,15 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
       if (response.ok) {
         trackSlotLeave(activity)
         alert('Vous avez quitté cette disponibilité')
-        fetchSlots()
+        
+        // Appeler onLeaveSlot si fourni pour mettre à jour les données des pages de navigation
+        if (onLeaveSlot) {
+          onLeaveSlot(slotId)
+        } else if (onJoinSlot) {
+          onJoinSlot(slotId)
+        } else {
+          fetchSlots()
+        }
       } else {
         const data = await response.json()
         alert(data.error || 'Erreur lors de la sortie')

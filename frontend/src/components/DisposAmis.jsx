@@ -109,6 +109,11 @@ function DisposAmis({ currentUser, onBack }) {
     console.log('Slot rejoint avec succès')
   }
 
+  const handleLeaveSlot = async (slotId) => {
+    setFilterVersion(prev => prev + 1)
+    console.log('Slot quitté avec succès')
+  }
+
   const handleDateSelect = (date) => {
     setSelectedDate(date)
     setSelectedType('list')
@@ -227,6 +232,7 @@ function DisposAmis({ currentUser, onBack }) {
               organizerFilter={organizerFilter}
               onAddSlot={() => setAddSlotPage(true)}
               onJoinSlot={handleJoinSlot}
+              onLeaveSlot={handleLeaveSlot}
               customSlots={slots}
             />
           )}
@@ -247,6 +253,7 @@ function DisposAmis({ currentUser, onBack }) {
                 setAddSlotPage(true)
               }}
               onJoinSlot={handleJoinSlot}
+              onLeaveSlot={handleLeaveSlot}
               customSlots={slots}
               pageType="dispos-amis"
             />

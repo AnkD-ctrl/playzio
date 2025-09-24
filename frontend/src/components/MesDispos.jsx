@@ -99,6 +99,11 @@ function MesDispos({ currentUser, onBack }) {
     console.log('Slot rejoint avec succès')
   }
 
+  const handleLeaveSlot = async (slotId) => {
+    setFilterVersion(prev => prev + 1)
+    console.log('Slot quitté avec succès')
+  }
+
   const handleDateSelect = (date) => {
     setSelectedDate(date)
     setSelectedType('list')
@@ -217,6 +222,7 @@ function MesDispos({ currentUser, onBack }) {
               organizerFilter={organizerFilter}
               onAddSlot={() => setAddSlotPage(true)}
               onJoinSlot={handleJoinSlot}
+              onLeaveSlot={handleLeaveSlot}
               customSlots={slots}
             />
           )}
@@ -237,6 +243,7 @@ function MesDispos({ currentUser, onBack }) {
                 setAddSlotPage(true)
               }}
               onJoinSlot={handleJoinSlot}
+              onLeaveSlot={handleLeaveSlot}
               customSlots={slots}
               pageType="mes-dispos"
             />
