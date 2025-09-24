@@ -26,7 +26,6 @@ function Sidebar({ isOpen, onClose, onNavigate, currentView }) {
               onClose()
             }}
           >
-            <span className="sidebar-icon">📅</span>
             <span>Mes dispos</span>
           </div>
           
@@ -37,7 +36,6 @@ function Sidebar({ isOpen, onClose, onNavigate, currentView }) {
               onClose()
             }}
           >
-            <span className="sidebar-icon">👥</span>
             <span>Dispos des amis</span>
           </div>
 
@@ -48,7 +46,6 @@ function Sidebar({ isOpen, onClose, onNavigate, currentView }) {
               onClose()
             }}
           >
-            <span className="sidebar-icon">🏢</span>
             <span>Dispos des groupes</span>
           </div>
 
@@ -59,7 +56,6 @@ function Sidebar({ isOpen, onClose, onNavigate, currentView }) {
               onClose()
             }}
           >
-            <span className="sidebar-icon">🌍</span>
             <span>Dispos publiques</span>
           </div>
         </div>
