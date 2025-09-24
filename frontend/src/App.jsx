@@ -156,17 +156,20 @@ function App() {
     if (currentUser && currentUser.prenom) {
       const shareUrl = `${window.location.origin}/#share/${currentUser.prenom}`
       
+      // Enregistrer le timestamp de création du lien (valable 24h)
+      localStorage.setItem(`shareLink_${currentUser.prenom}`, Date.now().toString())
+      
       if (navigator.share) {
         // Utiliser l'API Web Share si disponible
         navigator.share({
           title: `Disponibilités de ${currentUser.prenom}`,
-          text: `Découvrez les disponibilités de ${currentUser.prenom} sur Playzio`,
+          text: `Découvrez les disponibilités de ${currentUser.prenom} sur Playzio (lien valable 24h)`,
           url: shareUrl
         }).catch(console.error)
       } else {
         // Fallback: copier dans le presse-papiers
         navigator.clipboard.writeText(shareUrl).then(() => {
-          alert('Lien copié dans le presse-papiers !')
+          alert('Lien copié dans le presse-papiers ! (Valable 24h)')
         }).catch(() => {
           // Fallback si clipboard API n'est pas disponible
           const textArea = document.createElement('textarea')
@@ -175,7 +178,7 @@ function App() {
           textArea.select()
           document.execCommand('copy')
           document.body.removeChild(textArea)
-          alert('Lien copié dans le presse-papiers !')
+          alert('Lien copié dans le presse-papiers ! (Valable 24h)')
         })
       }
     }

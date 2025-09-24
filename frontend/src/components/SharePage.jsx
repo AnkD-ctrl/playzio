@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import SlotList from './SlotList'
 import Calendar from './Calendar'
 import '../App.css'
@@ -13,12 +13,36 @@ const SharePage = ({ username, onNavigateToRegister }) => {
   const [selectedDate, setSelectedDate] = useState('')
   const [filterVersion, setFilterVersion] = useState(0)
   const [currentView, setCurrentView] = useState('list') // 'list' ou 'calendar'
+  const [linkExpired, setLinkExpired] = useState(false)
   
   // Créer un objet utilisateur fictif pour SlotList
   const mockUser = {
     prenom: username,
     role: 'user'
   }
+
+  // Vérifier si le lien a expiré (24h)
+  useEffect(() => {
+    const checkLinkExpiry = () => {
+      // Récupérer le timestamp de création du lien depuis l'URL ou localStorage
+      const linkCreationTime = localStorage.getItem(`shareLink_${username}`)
+      
+      if (linkCreationTime) {
+        const creationTime = parseInt(linkCreationTime)
+        const now = Date.now()
+        const twentyFourHours = 24 * 60 * 60 * 1000 // 24h en millisecondes
+        
+        if (now - creationTime > twentyFourHours) {
+          setLinkExpired(true)
+        }
+      } else {
+        // Si pas de timestamp, considérer comme expiré
+        setLinkExpired(true)
+      }
+    }
+
+    checkLinkExpiry()
+  }, [username])
 
 
   const handleClearDate = () => {
@@ -28,6 +52,56 @@ const SharePage = ({ username, onNavigateToRegister }) => {
   const handleDateSelect = (date) => {
     setSelectedDate(date)
     setCurrentView('list') // Passer en vue liste quand on sélectionne une date
+  }
+
+  // Si le lien a expiré, afficher un message d'expiration
+  if (linkExpired) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
+        padding: '2rem'
+      }}>
+        <div>
+          <h1 style={{ 
+            fontSize: '2rem', 
+            marginBottom: '1rem',
+            background: 'linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text'
+          }}>
+            Playzio
+          </h1>
+          <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#e0e0e0' }}>
+            Lien expiré
+          </h2>
+          <p style={{ color: '#b0b0b0', marginBottom: '2rem', fontSize: '1.1rem' }}>
+            Ce lien de partage a expiré. Les liens de partage sont valables 24h seulement.
+          </p>
+          <button 
+            onClick={() => window.location.href = '/'}
+            style={{
+              background: 'linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%)',
+              color: 'white',
+              border: 'none',
+              padding: '12px 24px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '1rem',
+              fontWeight: '600',
+              boxShadow: '0 4px 12px rgba(212, 175, 140, 0.3)'
+            }}
+          >
+            Retour à l'accueil
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -57,6 +131,17 @@ const SharePage = ({ username, onNavigateToRegister }) => {
         <p style={{ color: '#b0b0b0', marginBottom: '1rem' }}>
           Découvrez les créneaux disponibles et rejoignez-les !
         </p>
+        <div style={{ 
+          backgroundColor: 'rgba(212, 175, 140, 0.1)', 
+          border: '1px solid rgba(212, 175, 140, 0.3)', 
+          borderRadius: '6px', 
+          padding: '0.5rem 1rem', 
+          marginBottom: '1rem',
+          fontSize: '0.9rem',
+          color: '#d4af8c'
+        }}>
+          ⏰ Ce lien de partage expire dans 24h
+        </div>
         <button 
           onClick={() => onNavigateToRegister && onNavigateToRegister()}
           style={{
@@ -137,71 +222,7 @@ const SharePage = ({ username, onNavigateToRegister }) => {
         />
       )}
 
-      {/* Footer */}
-      <div className="activity-switcher-footer">
-        <div className="footer-content">
-          <div className="view-toggle-container">
-            {/* Bouton filtre */}
-            <div className="footer-btn-wrapper">
-              <button 
-                className="view-toggle-btn filter-btn"
-                onClick={() => setShowFilterModal(true)}
-                title="Filtres"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-              <span className="btn-label">Filtre</span>
-            </div>
-            
-            {/* Bouton rafraîchir */}
-            <div className="footer-btn-wrapper">
-              <button 
-                className="view-toggle-btn refresh-btn"
-                onClick={() => window.location.reload()}
-                title="Rafraîchir la page"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M21 3v5h-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M3 21v-5h5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-              <span className="btn-label">Actualiser</span>
-            </div>
-            
-            {/* Bouton basculement vue liste/calendrier */}
-            <div className="footer-btn-wrapper">
-              <button 
-                className="view-toggle-btn"
-                onClick={() => setCurrentView(currentView === 'list' ? 'calendar' : 'list')}
-                title={currentView === 'list' ? 'Vue calendrier' : 'Vue liste'}
-              >
-                {currentView === 'list' ? (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
-                    <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor" strokeWidth="2"/>
-                    <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" strokeWidth="2"/>
-                    <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" strokeWidth="2"/>
-                  </svg>
-                ) : (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M8 6h13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M8 12h13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M8 18h13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M3 6h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M3 12h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M3 18h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                )}
-              </button>
-              <span className="btn-label">{currentView === 'list' ? 'Calendrier' : 'Liste'}</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Footer supprimé pour la page share */}
 
       {/* Modal de filtres */}
       {showFilterModal && (
