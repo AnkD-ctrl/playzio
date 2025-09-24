@@ -1,9 +1,6 @@
-// Configuration SMTP
-const SMTP_HOST = process.env.SMTP_HOST
-const SMTP_PORT = process.env.SMTP_PORT
-const SMTP_USER = process.env.SMTP_USER
-const SMTP_PASS = process.env.SMTP_PASS
-const FROM_EMAIL = 'contact@playzio.fr'
+// Configuration SendGrid
+const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY
+const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL || 'contact@playzio.fr'
 
 // Envoyer un email de réinitialisation de mot de passe
 export async function sendPasswordResetEmail(email, resetToken, frontendUrl) {
@@ -120,7 +117,7 @@ export async function testEmailConnection() {
   }
 }
 
-// Envoyer une notification d'inscription à un slot
+// Envoyer une notification d'inscription à un slot - MÊME LOGIQUE QUE sendPasswordResetEmail
 export async function sendSlotJoinNotification(organizerEmail, organizerName, participantName, slotDetails) {
   if (!SENDGRID_API_KEY) {
     throw new Error('SENDGRID_API_KEY non configurée')
@@ -169,7 +166,7 @@ export async function sendSlotJoinNotification(organizerEmail, organizerName, pa
             </p>
             
             <div style="text-align: center; margin: 30px 0;">
-              <a href="${frontendUrl || 'https://playzio.vercel.app'}" 
+              <a href="https://playzio.fr" 
                  style="background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%); 
                         color: white; 
                         text-decoration: none; 
