@@ -142,6 +142,32 @@ function DaySlotsModal({
     }
   }
 
+  const handleLeaveSlot = async (slotId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/slots/${slotId}/leave`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: currentUser.prenom })
+      })
+
+      if (response.ok) {
+        // Rafraîchir les slots après avoir quitté
+        fetchDaySlots()
+        if (onJoinSlot) {
+          onJoinSlot(slotId)
+        }
+      } else {
+        const errorData = await response.json()
+        alert(errorData.error || 'Erreur lors de la sortie')
+      }
+    } catch (error) {
+      console.error('Erreur lors de la sortie:', error)
+      alert('Erreur de connexion au serveur')
+    }
+  }
+
   const formatDate = (dateStr) => {
     const date = new Date(dateStr)
     const options = { 
@@ -199,6 +225,7 @@ function DaySlotsModal({
                 organizerFilter=""
                 onAddSlot={() => {}}
                 onJoinSlot={handleJoinSlot}
+                onLeaveSlot={handleLeaveSlot}
                 customSlots={slots}
               />
             </div>
