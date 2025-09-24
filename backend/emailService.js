@@ -133,7 +133,7 @@ export async function sendSlotJoinNotification(organizerEmail, organizerName, pa
   
   const emailData = {
     personalizations: [{
-      to: [{ email: organizerEmail, name: organizerName }],
+      to: [{ email: organizerEmail }],
       subject: `🎉 ${participantName} s'est inscrit à votre disponibilité !`
     }],
     from: { email: FROM_EMAIL, name: 'Playzio' },
@@ -191,6 +191,10 @@ export async function sendSlotJoinNotification(organizerEmail, organizerName, pa
   }
 
   try {
+    console.log('🔔 Envoi notification via SendGrid à:', organizerEmail)
+    console.log('📧 FROM_EMAIL:', FROM_EMAIL)
+    console.log('🔑 SENDGRID_API_KEY configurée:', !!SENDGRID_API_KEY)
+    
     const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
       method: 'POST',
       headers: {
@@ -200,15 +204,18 @@ export async function sendSlotJoinNotification(organizerEmail, organizerName, pa
       body: JSON.stringify(emailData)
     })
 
+    console.log('📡 Réponse SendGrid status:', response.status)
+    
     if (!response.ok) {
       const errorText = await response.text()
+      console.error('❌ Erreur SendGrid:', errorText)
       throw new Error(`SendGrid API error: ${response.status} - ${errorText}`)
     }
 
-    console.log(`Notification d'inscription envoyée à ${organizerEmail} via SendGrid`)
+    console.log(`✅ Notification d'inscription envoyée à ${organizerEmail} via SendGrid`)
     return { success: true, messageId: 'sendgrid' }
   } catch (error) {
-    console.error(`Erreur lors de l'envoi de la notification d'inscription à ${organizerEmail}:`, error)
+    console.error(`❌ Erreur lors de l'envoi de la notification d'inscription à ${organizerEmail}:`, error)
     throw error
   }
 }
