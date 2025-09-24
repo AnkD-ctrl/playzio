@@ -16,6 +16,7 @@ function DisposPubliques({ currentUser, onBack }) {
   const [organizerFilter, setOrganizerFilter] = useState('')
   const [filterVersion, setFilterVersion] = useState(0)
   const [showFilterModal, setShowFilterModal] = useState(false)
+  
   const [showAddSlot, setShowAddSlot] = useState(false)
   const [addSlotPage, setAddSlotPage] = useState(false)
   const [allSlots, setAllSlots] = useState([])
@@ -104,34 +105,15 @@ function DisposPubliques({ currentUser, onBack }) {
   }
 
   const handleJoinSlot = async (slotId) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/slots/${slotId}/join`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          participant: currentUser.prenom
-        }),
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        setFilterVersion(prev => prev + 1)
-        console.log('Slot rejoint avec succès')
-      } else {
-        console.error('Erreur lors de la jointure du slot:', data.error)
-      }
-    } catch (error) {
-      console.error('Erreur lors de la jointure du slot:', error)
-    }
+    setFilterVersion(prev => prev + 1)
+    console.log('Slot rejoint avec succès')
   }
 
   const handleDateSelect = (date) => {
     setSelectedDate(date)
     setSelectedType('list')
   }
+
 
   const handleSearchFilterChange = (filter) => {
     setSearchFilter(filter)
@@ -450,6 +432,7 @@ function DisposPubliques({ currentUser, onBack }) {
           </div>
         </div>
       )}
+
 
     </div>
   )

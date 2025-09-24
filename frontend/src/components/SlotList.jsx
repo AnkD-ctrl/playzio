@@ -4,6 +4,7 @@ import { API_BASE_URL } from '../config'
 import { trackSlotJoin, trackSlotLeave } from '../utils/analytics'
 import SlotDiscussion from './SlotDiscussion'
 import ActivitySearchModal from './ActivitySearchModal'
+import NotificationPopup from './NotificationPopup'
 
 function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, onAddSlot, onJoinSlot, viewToggleContainer, customSlots }) {
   const [slots, setSlots] = useState([])
@@ -18,6 +19,10 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   // Nouveaux filtres
   const [dateFilter, setDateFilter] = useState('')
   const [showActivityModal, setShowActivityModal] = useState(false)
+  
+  // État pour la popup de notification
+  const [showNotificationPopup, setShowNotificationPopup] = useState(false)
+  const [pendingNotification, setPendingNotification] = useState(null)
   const [showLieuModal, setShowLieuModal] = useState(false)
   const [showOrganizerModal, setShowOrganizerModal] = useState(false)
   const [activityInput, setActivityInput] = useState('')
@@ -153,9 +158,37 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
       })
 
       if (response.ok) {
+        const data = await response.json()
         trackSlotJoin(activity)
         alert('Vous avez rejoint cette disponibilité !')
-        fetchSlots()
+        
+        // Appeler onJoinSlot si fourni pour mettre à jour les données des pages de navigation
+        if (onJoinSlot) {
+          onJoinSlot(slotId)
+        } else {
+          fetchSlots()
+        }
+        
+        // Si le slot a les notifications activées, afficher la popup
+        if (data.shouldNotify) {
+          const slot = slots.find(s => s.id === slotId)
+          if (slot) {
+            setPendingNotification({
+              slotId,
+              organizerName: slot.createdBy,
+              slotDetails: {
+                date: slot.date,
+                heureDebut: slot.heureDebut,
+                heureFin: slot.heureFin,
+                type: slot.type,
+                customActivity: slot.customActivity,
+                lieu: slot.lieu
+              },
+              participantName: currentUser.prenom
+            })
+            setShowNotificationPopup(true)
+          }
+        }
       } else {
         const data = await response.json()
         alert(data.error || 'Erreur lors de la participation')
@@ -186,6 +219,37 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
     } catch (error) {
       alert('Erreur de connexion au serveur')
     }
+  }
+
+  const handleNotificationConfirm = async () => {
+    if (!pendingNotification) return
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/slots/${pendingNotification.slotId}/notify-organizer`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ participant: pendingNotification.participantName }),
+      })
+
+      if (response.ok) {
+        alert('L\'organisateur a été notifié par email !')
+      } else {
+        const data = await response.json()
+        alert(data.error || 'Erreur lors de l\'envoi de la notification')
+      }
+    } catch (error) {
+      alert('Erreur de connexion au serveur')
+    } finally {
+      setShowNotificationPopup(false)
+      setPendingNotification(null)
+    }
+  }
+
+  const handleNotificationCancel = () => {
+    setShowNotificationPopup(false)
+    setPendingNotification(null)
   }
 
   const handleDeleteSlot = async (slotId) => {
@@ -369,11 +433,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                           className="quick-action-btn join-btn"
                           onClick={(e) => {
                             e.stopPropagation()
-                            if (onJoinSlot) {
-                              onJoinSlot(slot.id)
-                            } else {
-                              handleJoinSlot(slot.id)
-                            }
+                            handleJoinSlot(slot.id)
                           }}
                           title="Rejoindre"
                         >
@@ -466,6 +526,18 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
           isOpen={showSearchModal}
           onClose={() => setShowSearchModal(false)}
           onSelectActivity={handleActivitySelect}
+        />
+      )}
+
+      {/* Popup de notification */}
+      {showNotificationPopup && pendingNotification && (
+        <NotificationPopup
+          isOpen={showNotificationPopup}
+          onClose={handleNotificationCancel}
+          onConfirm={handleNotificationConfirm}
+          organizerName={pendingNotification.organizerName}
+          slotDetails={pendingNotification.slotDetails}
+          participantName={pendingNotification.participantName}
         />
       )}
     </div>
