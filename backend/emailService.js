@@ -1,6 +1,9 @@
-// Configuration SendGrid
-const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY
-const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL || 'contact@playzio.fr'
+// Configuration SMTP
+const SMTP_HOST = process.env.SMTP_HOST
+const SMTP_PORT = process.env.SMTP_PORT
+const SMTP_USER = process.env.SMTP_USER
+const SMTP_PASS = process.env.SMTP_PASS
+const FROM_EMAIL = 'contact@playzio.fr'
 
 // Envoyer un email de réinitialisation de mot de passe
 export async function sendPasswordResetEmail(email, resetToken, frontendUrl) {
