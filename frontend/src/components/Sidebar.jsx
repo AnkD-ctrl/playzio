@@ -29,6 +29,17 @@ function Sidebar({ isOpen, onClose, onNavigate, currentView }) {
             <span className="sidebar-icon">📅</span>
             <span>Mes dispos</span>
           </div>
+          
+          <div 
+            className={`sidebar-item ${currentView === 'dispos-amis' ? 'active' : ''}`}
+            onClick={() => {
+              onNavigate('dispos-amis')
+              onClose()
+            }}
+          >
+            <span className="sidebar-icon">👥</span>
+            <span>Dispos des amis</span>
+          </div>
         </div>
       </div>
     </>

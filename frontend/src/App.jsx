@@ -13,6 +13,7 @@ import SharePage from './components/SharePage'
 import Groups from './components/Groups'
 import Sidebar from './components/Sidebar'
 import MesDispos from './components/MesDispos'
+import DisposAmis from './components/DisposAmis'
 import CookieBanner from './components/CookieBanner'
 import PWAInstaller from './components/PWAInstaller'
 import InstallGuide from './components/InstallGuide'
@@ -341,6 +342,13 @@ function App() {
 
       {currentView === 'mes-dispos' && (
         <MesDispos 
+          currentUser={currentUser} 
+          onBack={() => setCurrentView('activity')}
+        />
+      )}
+
+      {currentView === 'dispos-amis' && (
+        <DisposAmis 
           currentUser={currentUser} 
           onBack={() => setCurrentView('activity')}
         />
