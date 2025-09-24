@@ -575,9 +575,11 @@
   }
   
   .friend-item {
-    flex-direction: column;
-    gap: 12px;
-    text-align: center;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    text-align: left;
   }
   
   .request-actions {
