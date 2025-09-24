@@ -18,6 +18,8 @@ function DisposAmis({ currentUser, onBack }) {
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [showAddSlot, setShowAddSlot] = useState(false)
   const [addSlotPage, setAddSlotPage] = useState(false)
+  const [allSlots, setAllSlots] = useState([])
+  const [filtersApplied, setFiltersApplied] = useState(false)
 
   useEffect(() => {
     if (currentUser && currentUser.prenom) {
@@ -37,37 +39,15 @@ function DisposAmis({ currentUser, onBack }) {
         console.log('📥 Tous les slots reçus:', allSlots.length)
         
         // FILTRAGE RADICAL : Seulement visibleToFriends=true ET pas mes slots
-        let amisSlots = allSlots.filter(slot => {
+        const amisSlots = allSlots.filter(slot => {
           return slot.visibleToFriends === true && slot.createdBy !== currentUser.prenom
         })
         
-        // Appliquer les filtres côté frontend
-        if (searchFilter) {
-          amisSlots = amisSlots.filter(slot => 
-            slot.activity.toLowerCase().includes(searchFilter.toLowerCase())
-          )
-        }
-        
-        if (selectedDate) {
-          amisSlots = amisSlots.filter(slot => 
-            slot.date === selectedDate
-          )
-        }
-        
-        if (lieuFilter) {
-          amisSlots = amisSlots.filter(slot => 
-            slot.lieu && slot.lieu.toLowerCase().includes(lieuFilter.toLowerCase())
-          )
-        }
-        
-        if (organizerFilter) {
-          amisSlots = amisSlots.filter(slot => 
-            slot.createdBy && slot.createdBy.toLowerCase().includes(organizerFilter.toLowerCase())
-          )
-        }
-        
-        console.log('📥 Slots des amis après filtrage:', amisSlots.length)
+        // Stocker tous les slots et afficher sans filtres appliqués
+        setAllSlots(amisSlots)
         setSlots(amisSlots)
+        setFiltersApplied(false)
+        console.log('📥 Slots des amis:', amisSlots.length)
       } else {
         setError('Erreur lors du chargement des disponibilités des amis')
       }
@@ -76,6 +56,39 @@ function DisposAmis({ currentUser, onBack }) {
     } finally {
       setLoading(false)
     }
+  }
+
+  const applyFilters = () => {
+    let filteredSlots = [...allSlots]
+    
+    // Appliquer les filtres côté frontend
+    if (searchFilter) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.activity.toLowerCase().includes(searchFilter.toLowerCase())
+      )
+    }
+    
+    if (selectedDate) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.date === selectedDate
+      )
+    }
+    
+    if (lieuFilter) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.lieu && slot.lieu.toLowerCase().includes(lieuFilter.toLowerCase())
+      )
+    }
+    
+    if (organizerFilter) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.createdBy && slot.createdBy.toLowerCase().includes(organizerFilter.toLowerCase())
+      )
+    }
+    
+    console.log('📥 Slots des amis après filtrage:', filteredSlots.length)
+    setSlots(filteredSlots)
+    setFiltersApplied(true)
   }
 
   const handleJoinSlot = async (slotId) => {
@@ -379,7 +392,8 @@ function DisposAmis({ currentUser, onBack }) {
                   setSelectedDate(null)
                   setLieuFilter('')
                   setOrganizerFilter('')
-                  setFilterVersion(prev => prev + 1)
+                  setSlots(allSlots)
+                  setFiltersApplied(false)
                 }}
               >
                 Effacer
@@ -387,7 +401,7 @@ function DisposAmis({ currentUser, onBack }) {
               <button 
                 className="modal-btn btn-apply"
                 onClick={() => {
-                  setFilterVersion(prev => prev + 1)
+                  applyFilters()
                   setShowFilterModal(false)
                 }}
               >

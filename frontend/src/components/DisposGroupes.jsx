@@ -18,6 +18,8 @@ function DisposGroupes({ currentUser, onBack }) {
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [showAddSlot, setShowAddSlot] = useState(false)
   const [addSlotPage, setAddSlotPage] = useState(false)
+  const [allSlots, setAllSlots] = useState([])
+  const [filtersApplied, setFiltersApplied] = useState(false)
 
   useEffect(() => {
     if (currentUser && currentUser.prenom) {
@@ -39,37 +41,15 @@ function DisposGroupes({ currentUser, onBack }) {
         console.log('📥 Tous les slots reçus:', allSlots.length)
         
         // FILTRAGE : Seulement visibleToGroups=true ET pas mes slots
-        let groupSlots = allSlots.filter(slot => {
+        const groupSlots = allSlots.filter(slot => {
           return slot.visibleToGroups === true && slot.createdBy !== currentUser.prenom
         })
         
-        // Appliquer les filtres côté frontend
-        if (searchFilter) {
-          groupSlots = groupSlots.filter(slot => 
-            slot.activity.toLowerCase().includes(searchFilter.toLowerCase())
-          )
-        }
-        
-        if (selectedDate) {
-          groupSlots = groupSlots.filter(slot => 
-            slot.date === selectedDate
-          )
-        }
-        
-        if (lieuFilter) {
-          groupSlots = groupSlots.filter(slot => 
-            slot.lieu && slot.lieu.toLowerCase().includes(lieuFilter.toLowerCase())
-          )
-        }
-        
-        if (organizerFilter) {
-          groupSlots = groupSlots.filter(slot => 
-            slot.createdBy && slot.createdBy.toLowerCase().includes(organizerFilter.toLowerCase())
-          )
-        }
-        
-        console.log('📥 Slots des groupes après filtrage:', groupSlots.length)
+        // Stocker tous les slots et afficher sans filtres appliqués
+        setAllSlots(groupSlots)
         setSlots(groupSlots)
+        setFiltersApplied(false)
+        console.log('📥 Slots des groupes:', groupSlots.length)
       } else {
         console.log('❌ Erreur API:', response.status, response.statusText)
         setError('Erreur lors du chargement des disponibilités des groupes')
@@ -80,6 +60,39 @@ function DisposGroupes({ currentUser, onBack }) {
     } finally {
       setLoading(false)
     }
+  }
+
+  const applyFilters = () => {
+    let filteredSlots = [...allSlots]
+    
+    // Appliquer les filtres côté frontend
+    if (searchFilter) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.activity.toLowerCase().includes(searchFilter.toLowerCase())
+      )
+    }
+    
+    if (selectedDate) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.date === selectedDate
+      )
+    }
+    
+    if (lieuFilter) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.lieu && slot.lieu.toLowerCase().includes(lieuFilter.toLowerCase())
+      )
+    }
+    
+    if (organizerFilter) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.createdBy && slot.createdBy.toLowerCase().includes(organizerFilter.toLowerCase())
+      )
+    }
+    
+    console.log('📥 Slots des groupes après filtrage:', filteredSlots.length)
+    setSlots(filteredSlots)
+    setFiltersApplied(true)
   }
 
   const handleJoinSlot = async (slotId) => {
@@ -383,7 +396,8 @@ function DisposGroupes({ currentUser, onBack }) {
                   setSelectedDate(null)
                   setLieuFilter('')
                   setOrganizerFilter('')
-                  setFilterVersion(prev => prev + 1)
+                  setSlots(allSlots)
+                  setFiltersApplied(false)
                 }}
               >
                 Effacer
@@ -391,7 +405,7 @@ function DisposGroupes({ currentUser, onBack }) {
               <button 
                 className="modal-btn btn-apply"
                 onClick={() => {
-                  setFilterVersion(prev => prev + 1)
+                  applyFilters()
                   setShowFilterModal(false)
                 }}
               >

@@ -18,6 +18,8 @@ function DisposPubliques({ currentUser, onBack }) {
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [showAddSlot, setShowAddSlot] = useState(false)
   const [addSlotPage, setAddSlotPage] = useState(false)
+  const [allSlots, setAllSlots] = useState([])
+  const [filtersApplied, setFiltersApplied] = useState(false)
 
   useEffect(() => {
     if (currentUser && currentUser.prenom) {
@@ -39,37 +41,15 @@ function DisposPubliques({ currentUser, onBack }) {
         console.log('📥 Tous les slots reçus:', allSlots.length)
         
         // FILTRAGE : Seulement visibleToEveryone=true
-        let publicSlots = allSlots.filter(slot => {
+        const publicSlots = allSlots.filter(slot => {
           return slot.visibleToEveryone === true
         })
         
-        // Appliquer les filtres côté frontend
-        if (searchFilter) {
-          publicSlots = publicSlots.filter(slot => 
-            slot.activity.toLowerCase().includes(searchFilter.toLowerCase())
-          )
-        }
-        
-        if (selectedDate) {
-          publicSlots = publicSlots.filter(slot => 
-            slot.date === selectedDate
-          )
-        }
-        
-        if (lieuFilter) {
-          publicSlots = publicSlots.filter(slot => 
-            slot.lieu && slot.lieu.toLowerCase().includes(lieuFilter.toLowerCase())
-          )
-        }
-        
-        if (organizerFilter) {
-          publicSlots = publicSlots.filter(slot => 
-            slot.createdBy && slot.createdBy.toLowerCase().includes(organizerFilter.toLowerCase())
-          )
-        }
-        
-        console.log('📥 Slots publics après filtrage:', publicSlots.length)
+        // Stocker tous les slots et afficher sans filtres appliqués
+        setAllSlots(publicSlots)
         setSlots(publicSlots)
+        setFiltersApplied(false)
+        console.log('📥 Slots publics:', publicSlots.length)
       } else {
         console.log('❌ Erreur API:', response.status, response.statusText)
         setError('Erreur lors du chargement des disponibilités publiques')
@@ -80,6 +60,39 @@ function DisposPubliques({ currentUser, onBack }) {
     } finally {
       setLoading(false)
     }
+  }
+
+  const applyFilters = () => {
+    let filteredSlots = [...allSlots]
+    
+    // Appliquer les filtres côté frontend
+    if (searchFilter) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.activity.toLowerCase().includes(searchFilter.toLowerCase())
+      )
+    }
+    
+    if (selectedDate) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.date === selectedDate
+      )
+    }
+    
+    if (lieuFilter) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.lieu && slot.lieu.toLowerCase().includes(lieuFilter.toLowerCase())
+      )
+    }
+    
+    if (organizerFilter) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.createdBy && slot.createdBy.toLowerCase().includes(organizerFilter.toLowerCase())
+      )
+    }
+    
+    console.log('📥 Slots publics après filtrage:', filteredSlots.length)
+    setSlots(filteredSlots)
+    setFiltersApplied(true)
   }
 
   const handleJoinSlot = async (slotId) => {
@@ -383,7 +396,8 @@ function DisposPubliques({ currentUser, onBack }) {
                   setSelectedDate(null)
                   setLieuFilter('')
                   setOrganizerFilter('')
-                  setFilterVersion(prev => prev + 1)
+                  setSlots(allSlots)
+                  setFiltersApplied(false)
                 }}
               >
                 Effacer
@@ -391,7 +405,7 @@ function DisposPubliques({ currentUser, onBack }) {
               <button 
                 className="modal-btn btn-apply"
                 onClick={() => {
-                  setFilterVersion(prev => prev + 1)
+                  applyFilters()
                   setShowFilterModal(false)
                 }}
               >

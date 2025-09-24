@@ -18,6 +18,8 @@ function MesDispos({ currentUser, onBack }) {
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [showAddSlot, setShowAddSlot] = useState(false)
   const [addSlotPage, setAddSlotPage] = useState(false)
+  const [allSlots, setAllSlots] = useState([])
+  const [filtersApplied, setFiltersApplied] = useState(false)
 
   useEffect(() => {
     if (currentUser && currentUser.prenom) {
@@ -30,45 +32,22 @@ function MesDispos({ currentUser, onBack }) {
       setLoading(true)
       console.log('🔍 Récupération des slots de:', currentUser.prenom)
       
-      // LOGIQUE SIMPLE : Récupérer TOUS les slots et filtrer côté frontend
+      // Récupérer TOUS les slots
       const url = `${API_BASE_URL}/api/slots`
       const response = await fetch(url)
       
       if (response.ok) {
-        const allSlots = await response.json()
-        console.log('📥 Tous les slots reçus:', allSlots.length)
+        const allSlotsData = await response.json()
+        console.log('📥 Tous les slots reçus:', allSlotsData.length)
         
         // FILTRAGE SIMPLE : Seulement les slots créés par l'utilisateur
-        let mySlots = allSlots.filter(slot => slot.createdBy === currentUser.prenom)
+        const mySlots = allSlotsData.filter(slot => slot.createdBy === currentUser.prenom)
         console.log('📥 Mes slots filtrés:', mySlots.length)
         
-        // Appliquer les filtres côté frontend
-        if (searchFilter) {
-          mySlots = mySlots.filter(slot => 
-            slot.activity.toLowerCase().includes(searchFilter.toLowerCase())
-          )
-        }
-        
-        if (selectedDate) {
-          mySlots = mySlots.filter(slot => 
-            slot.date === selectedDate
-          )
-        }
-        
-        if (lieuFilter) {
-          mySlots = mySlots.filter(slot => 
-            slot.lieu && slot.lieu.toLowerCase().includes(lieuFilter.toLowerCase())
-          )
-        }
-        
-        if (organizerFilter) {
-          mySlots = mySlots.filter(slot => 
-            slot.createdBy && slot.createdBy.toLowerCase().includes(organizerFilter.toLowerCase())
-          )
-        }
-        
-        console.log('📥 Slots après filtrage:', mySlots.length)
+        // Stocker tous les slots et afficher sans filtres appliqués
+        setAllSlots(mySlots)
         setSlots(mySlots)
+        setFiltersApplied(false)
       } else {
         console.log('❌ Erreur API:', response.status, response.statusText)
         setError('Erreur lors du chargement de vos disponibilités')
@@ -79,6 +58,39 @@ function MesDispos({ currentUser, onBack }) {
     } finally {
       setLoading(false)
     }
+  }
+
+  const applyFilters = () => {
+    let filteredSlots = [...allSlots]
+    
+    // Appliquer les filtres côté frontend
+    if (searchFilter) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.activity.toLowerCase().includes(searchFilter.toLowerCase())
+      )
+    }
+    
+    if (selectedDate) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.date === selectedDate
+      )
+    }
+    
+    if (lieuFilter) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.lieu && slot.lieu.toLowerCase().includes(lieuFilter.toLowerCase())
+      )
+    }
+    
+    if (organizerFilter) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.createdBy && slot.createdBy.toLowerCase().includes(organizerFilter.toLowerCase())
+      )
+    }
+    
+    console.log('📥 Slots après filtrage:', filteredSlots.length)
+    setSlots(filteredSlots)
+    setFiltersApplied(true)
   }
 
   const handleJoinSlot = async (slotId) => {
@@ -382,7 +394,8 @@ function MesDispos({ currentUser, onBack }) {
                   setSelectedDate(null)
                   setLieuFilter('')
                   setOrganizerFilter('')
-                  setFilterVersion(prev => prev + 1)
+                  setSlots(allSlots)
+                  setFiltersApplied(false)
                 }}
               >
                 Effacer
@@ -390,7 +403,7 @@ function MesDispos({ currentUser, onBack }) {
               <button 
                 className="modal-btn btn-apply"
                 onClick={() => {
-                  setFilterVersion(prev => prev + 1)
+                  applyFilters()
                   setShowFilterModal(false)
                 }}
               >
