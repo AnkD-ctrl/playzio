@@ -68,8 +68,10 @@
 }
 
 .sidebar-item.active {
-  background-color: #3498db;
-  border-left-color: #2980b9;
+  background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+  border-left-color: #8a2be2;
+  color: white;
+  font-weight: 600;
 }
 
 .sidebar-icon {
