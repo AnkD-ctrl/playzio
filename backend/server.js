@@ -1023,7 +1023,8 @@ app.post('/api/share/generate-token', async (req, res) => {
     }
     
     // Générer un token unique
-    const token = require('crypto').randomBytes(32).toString('hex')
+    const crypto = await import('crypto')
+    const token = crypto.randomBytes(32).toString('hex')
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24h
     
     // Stocker le token dans la base de données
