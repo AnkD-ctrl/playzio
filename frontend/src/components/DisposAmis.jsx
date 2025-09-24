@@ -30,18 +30,28 @@ function DisposAmis({ currentUser, onBack }) {
   const fetchFriendsSlots = async () => {
     try {
       setLoading(true)
-      console.log('🔍 RÉCUPÉRATION RADICALE pour:', currentUser.prenom)
+      console.log('🔍 Récupération des slots des amis pour:', currentUser.prenom)
       
-      // MÉTHODE RADICALE : Récupérer TOUS les slots avec visibleToFriends=true
-      const slotsResponse = await fetch(`${API_BASE_URL}/api/slots`)
-      if (slotsResponse.ok) {
-        const allSlots = await slotsResponse.json()
-        console.log('📥 Tous les slots reçus:', allSlots.length)
-        
-        // FILTRAGE RADICAL : Seulement visibleToFriends=true ET pas mes slots
-        const amisSlots = allSlots.filter(slot => {
-          return slot.visibleToFriends === true && slot.createdBy !== currentUser.prenom
-        })
+      // Utiliser l'endpoint backend spécialisé pour les amis
+      const response = await fetch(`${API_BASE_URL}/api/slots/friends-slots`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: currentUser.prenom,
+          activity: null,
+          date: null,
+          search: null,
+          lieu: null,
+          organizer: null
+        }),
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        const amisSlots = data.slots || []
+        console.log('📥 Slots des amis reçus:', amisSlots.length)
         
         // Stocker tous les slots et afficher sans filtres appliqués
         setAllSlots(amisSlots)
@@ -49,9 +59,11 @@ function DisposAmis({ currentUser, onBack }) {
         setFiltersApplied(false)
         console.log('📥 Slots des amis:', amisSlots.length)
       } else {
+        console.log('❌ Erreur API:', response.status, response.statusText)
         setError('Erreur lors du chargement des disponibilités des amis')
       }
     } catch (error) {
+      console.log('❌ Erreur catch:', error)
       setError('Erreur de connexion au serveur')
     } finally {
       setLoading(false)

@@ -811,6 +811,80 @@ app.post('/api/slots/public-slots', async (req, res) => {
   }
 })
 
+// Endpoint pour les slots des amis
+app.post('/api/slots/friends-slots', async (req, res) => {
+  try {
+    const { userId, activity, date, search, lieu, organizer } = req.body
+    
+    if (!userId) {
+      return res.status(400).json({ error: 'ID utilisateur requis' })
+    }
+    
+    // Récupérer l'utilisateur pour obtenir ses amis
+    const user = await getUserByPrenom(userId)
+    if (!user) {
+      return res.status(404).json({ error: 'Utilisateur non trouvé' })
+    }
+    
+    // Récupérer tous les slots
+    let slots = await getAllSlots()
+    
+    // Filtrer les disponibilités passées
+    slots = slots.filter(slot => isSlotStillValid(slot))
+    
+    // Récupérer la liste des amis de l'utilisateur
+    const userFriends = user.friends || []
+    
+    // Filtrer les slots des amis : créés par des amis ET visible par les amis
+    const friendsSlots = slots.filter(slot => {
+      // Ne pas inclure les slots de l'utilisateur connecté
+      if (slot.createdBy === userId) return false
+      
+      // Vérifier que le créateur est un ami
+      if (!userFriends.includes(slot.createdBy)) return false
+      
+      // Vérifier que le slot est visible par les amis
+      if (slot.visibleToFriends !== true) return false
+      
+      return true
+    })
+    
+    // Appliquer les filtres supplémentaires
+    let filteredSlots = friendsSlots
+    
+    if (activity) {
+      filteredSlots = filteredSlots.filter(slot => slot.activity === activity)
+    }
+    
+    if (date) {
+      filteredSlots = filteredSlots.filter(slot => slot.date === date)
+    }
+    
+    if (search) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.activity.toLowerCase().includes(search.toLowerCase())
+      )
+    }
+    
+    if (lieu) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.lieu.toLowerCase().includes(lieu.toLowerCase())
+      )
+    }
+    
+    if (organizer) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.createdBy.toLowerCase().includes(organizer.toLowerCase())
+      )
+    }
+    
+    res.json({ slots: filteredSlots })
+  } catch (error) {
+    console.error('Get friends slots error:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
 // Gestion des amis
 app.post('/api/friends/request', async (req, res) => {
   try {
