@@ -656,12 +656,15 @@
     align-items: center;
     gap: 8px;
     text-align: left;
+    min-height: 44px;
   }
   
   .request-actions {
+    display: flex;
     justify-content: flex-end;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
+    flex-shrink: 0;
   }
   
   .accept-btn-icon,
@@ -669,7 +672,8 @@
     width: 28px;
     height: 28px;
     font-size: 14px;
-    margin-left: 2px;
+    margin-left: 0;
+    flex-shrink: 0;
   }
 }
 
