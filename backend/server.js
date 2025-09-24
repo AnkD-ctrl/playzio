@@ -520,46 +520,18 @@ app.post('/api/slots/:id/join', async (req, res) => {
       slot.participants.push(userToAdd)
       const updatedSlot = await updateSlotParticipants(id, slot.participants)
       
-      // Envoyer une notification email si activée et si l'organisateur a un email
+      // Vérifier si les notifications email sont activées pour afficher la popup
       console.log('🔔 Vérification notification email:', {
         slotId: slot.id,
         emailNotifications: slot.emailNotifications,
         createdBy: slot.createdBy
       })
       
-      if ((slot.emailNotifications === true || slot.emailNotifications === 'true') && slot.createdBy) {
-        console.log('📧 Envoi de la notification email...')
-        try {
-          const organizer = await getUserByPrenom(slot.createdBy)
-          if (organizer && organizer.email) {
-            await sendSlotJoinNotification(
-              organizer.email,
-              organizer.prenom,
-              userToAdd,
-              {
-                date: slot.date,
-                heureDebut: slot.heureDebut,
-                heureFin: slot.heureFin,
-                type: slot.type,
-                customActivity: slot.customActivity,
-                lieu: slot.lieu
-              }
-            )
-            console.log(`Notification email envoyée à ${organizer.email} pour l'inscription de ${userToAdd}`)
-          }
-        } catch (emailError) {
-          console.error('Erreur lors de l\'envoi de la notification email:', emailError)
-          // Ne pas faire échouer la jointure si l'email échoue
-        }
-      } else {
-        console.log('📧 Notification email non envoyée:', {
-          emailNotifications: slot.emailNotifications,
-          hasCreatedBy: !!slot.createdBy,
-          reason: slot.emailNotifications !== true ? 'emailNotifications not true' : 'no createdBy'
-        })
-      }
-      
-      res.json({ success: true, slot: updatedSlot })
+      res.json({ 
+        success: true, 
+        slot: updatedSlot,
+        shouldNotify: (slot.emailNotifications === true || slot.emailNotifications === 'true') && !!slot.createdBy
+      })
     } else {
       res.json({ success: true, slot })
     }
@@ -1852,6 +1824,50 @@ app.post('/api/test-send-email', async (req, res) => {
   } catch (error) {
     console.error('Erreur envoi email test:', error)
     res.status(500).json({ error: 'Erreur envoi email: ' + error.message })
+  }
+})
+
+// Endpoint pour envoyer une notification de join
+app.post('/api/slots/:id/notify-organizer', async (req, res) => {
+  try {
+    const { id } = req.params
+    const { participant } = req.body
+    
+    const slot = await getSlotById(id)
+    if (!slot) {
+      return res.status(404).json({ error: 'Créneau non trouvé' })
+    }
+    
+    if (!slot.createdBy) {
+      return res.status(400).json({ error: 'Organisateur non trouvé' })
+    }
+    
+    const organizer = await getUserByPrenom(slot.createdBy)
+    if (!organizer || !organizer.email) {
+      return res.status(400).json({ error: 'Email de l\'organisateur non trouvé' })
+    }
+    
+    // Envoyer la notification email
+    await sendSlotJoinNotification(
+      organizer.email,
+      organizer.prenom,
+      participant,
+      {
+        date: slot.date,
+        heureDebut: slot.heureDebut,
+        heureFin: slot.heureFin,
+        type: slot.type,
+        customActivity: slot.customActivity,
+        lieu: slot.lieu
+      }
+    )
+    
+    console.log(`✅ Notification email envoyée à ${organizer.email} pour l'inscription de ${participant}`)
+    res.json({ success: true, message: 'Notification envoyée' })
+    
+  } catch (error) {
+    console.error('Erreur lors de l\'envoi de la notification:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
   }
 })
 
