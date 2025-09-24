@@ -136,9 +136,6 @@ function DisposAmis({ currentUser, onBack }) {
   return (
     <div className="dispos-amis-container">
       <div>
-        <button className="back-btn" onClick={onBack}>
-          ← Retour
-        </button>
         <h2>Disponibilités des Amis</h2>
       </div>
 

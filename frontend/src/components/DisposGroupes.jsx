@@ -143,9 +143,6 @@ function DisposGroupes({ currentUser, onBack }) {
   return (
     <div className="dispos-groupes-container">
       <div>
-        <button className="back-btn" onClick={onBack}>
-          ← Retour
-        </button>
         <h2>Disponibilités des Groupes</h2>
       </div>
 

@@ -86,7 +86,7 @@ function App() {
         const user = JSON.parse(savedUser)
         setCurrentUser(user)
         setIsLoggedIn(true)
-        setCurrentView('activity')
+        setCurrentView('mes-dispos')
         setSelectedActivity('Tous')
         console.log('Session restaurée:', user.prenom)
       } catch (error) {
@@ -112,8 +112,8 @@ function App() {
   useEffect(() => {
     if (currentView === 'groups') {
       trackPageView('Groups Page')
-    } else if (currentView === 'activity') {
-      trackPageView(`Activity: ${selectedActivity}`)
+    } else if (currentView === 'mes-dispos') {
+      trackPageView('Mes Dispos')
     }
   }, [currentView, selectedActivity])
 
@@ -122,7 +122,7 @@ function App() {
     setIsLoggedIn(true)
     setSelectedActivity('Tous') // Aller directement à l'activité "Tous"
     setSelectedType('list') // Aller directement sur la vue liste
-    setCurrentView('activity')
+    setCurrentView('mes-dispos')
     
     // Sauvegarder la session dans localStorage seulement si les cookies sont acceptés
     const cookieConsent = localStorage.getItem('playzio_cookie_consent')
@@ -345,35 +345,35 @@ function App() {
       {currentView === 'mes-dispos' && (
         <MesDispos 
           currentUser={currentUser} 
-          onBack={() => setCurrentView('activity')}
+          onBack={() => setCurrentView('mes-dispos')}
         />
       )}
 
       {currentView === 'dispos-amis' && (
         <DisposAmis 
           currentUser={currentUser} 
-          onBack={() => setCurrentView('activity')}
+          onBack={() => setCurrentView('mes-dispos')}
         />
       )}
 
       {currentView === 'dispos-groupes' && (
         <DisposGroupes 
           currentUser={currentUser} 
-          onBack={() => setCurrentView('activity')}
+          onBack={() => setCurrentView('mes-dispos')}
         />
       )}
 
       {currentView === 'dispos-publiques' && (
         <DisposPubliques 
           currentUser={currentUser} 
-          onBack={() => setCurrentView('activity')}
+          onBack={() => setCurrentView('mes-dispos')}
         />
       )}
 
       {currentView === 'groups' && (
         <Groups 
           currentUser={currentUser} 
-          onBack={() => setCurrentView('activity')}
+          onBack={() => setCurrentView('mes-dispos')}
         />
       )}
 
@@ -385,163 +385,7 @@ function App() {
         currentView={currentView}
       />
 
-      {currentView === 'activity' && selectedActivity && (
-        <div className="activity-container">
-          <div className="activity-content">
-            {/* Vue liste - TOUS les slots accessibles */}
-            {selectedType === 'list' && (
-              <SlotList 
-                key={`all-slots-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
-                activity={selectedActivity}
-                currentUser={currentUser}
-                selectedDate={selectedDate}
-                onClearDate={() => setSelectedDate(null)}
-                searchFilter={searchFilter}
-                onSearchFilterChange={handleSearchFilterChange}
-                lieuFilter={lieuFilter}
-                organizerFilter={organizerFilter}
-                onAddSlot={() => setSelectedType('add')}
-                onJoinSlot={handleJoinSlot}
-              />
-            )}
-            
-            {/* Vue calendrier - TOUS les slots accessibles */}
-            {selectedType === 'calendar' && (
-              <Calendar 
-                key={`all-slots-calendar-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
-                activity={selectedActivity}
-                currentUser={currentUser}
-                onDateSelect={handleDateSelect}
-                searchFilter={searchFilter}
-                onSearchFilterChange={handleSearchFilterChange}
-                lieuFilter={lieuFilter}
-                organizerFilter={organizerFilter}
-                onAddSlot={(date) => {
-                  setSelectedDate(date)
-                  setSelectedType('add')
-                }}
-                onJoinSlot={handleJoinSlot}
-              />
-            )}
-            
-            {/* Ajouter une dispo */}
-            {selectedType === 'add' && (
-              <AddSlot 
-                activity={selectedActivity}
-                currentUser={currentUser}
-                onSlotAdded={() => setSelectedType('list')}
-                preSelectedDate={selectedDate}
-                onClearDate={() => setSelectedDate(null)}
-              />
-            )}
-          </div>
-        </div>
-      )}
 
-      {currentView === 'activity' && selectedActivity && (
-        <div className="activity-switcher-footer">
-          <div className="footer-content">
-            {/* Boutons de filtre, ajout et basculement vue liste/calendrier */}
-            <div className="view-toggle-container">
-              {/* Bouton filtre */}
-              <div className="footer-btn-wrapper">
-                <button 
-                  className="view-toggle-btn filter-btn"
-                  onClick={() => setShowFilterModal(true)}
-                  title="Filtres"
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </button>
-                <span className="btn-label">Filtre</span>
-              </div>
-              
-              {/* Bouton rafraîchir */}
-              <div className="footer-btn-wrapper">
-                <button 
-                  className="view-toggle-btn refresh-btn"
-                  onClick={() => window.location.reload()}
-                  title="Rafraîchir la page"
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M21 3v5h-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M3 21v-5h5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </button>
-                <span className="btn-label">Actualiser</span>
-              </div>
-              
-              {/* Bouton partager */}
-              {currentUser && (
-                <div className="footer-btn-wrapper">
-                  <button 
-                    className="view-toggle-btn share-btn"
-                    onClick={() => handleShareUserDispo()}
-                    title="Partager mes disponibilités"
-                  >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <polyline points="16,6 12,2 8,6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <line x1="12" y1="2" x2="12" y2="15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </button>
-                  <span className="btn-label">Partager</span>
-                </div>
-              )}
-              
-              {/* Bouton + pour ajouter une dispo */}
-              <div className="footer-btn-wrapper">
-                <button 
-                  className="view-toggle-btn add-btn"
-                  onClick={() => setSelectedType('add')}
-                  title="Ajouter une disponibilité"
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </button>
-                <span className="btn-label">Ajouter</span>
-              </div>
-              
-              <div className="footer-btn-wrapper">
-                <button 
-                  className="view-toggle-btn"
-                  onClick={() => {
-                    if (selectedType === 'calendar') {
-                      setSelectedType('list')
-                    } else {
-                      setSelectedType('calendar')
-                    }
-                  }}
-                  title={selectedType === 'calendar' ? 'Vue liste' : 'Vue calendrier'}
-                >
-                  {selectedType === 'calendar' ? (
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M8 6h13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M8 12h13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M8 18h13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M3 6h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M3 12h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M3 18h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  ) : (
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
-                      <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor" strokeWidth="2"/>
-                      <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" strokeWidth="2"/>
-                      <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" strokeWidth="2"/>
-                    </svg>
-                  )}
-                </button>
-                <span className="btn-label">{selectedType === 'calendar' ? 'Liste' : 'Calendrier'}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {showUserProfile && (
         <UserProfile 

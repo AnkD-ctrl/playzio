@@ -138,9 +138,6 @@ function MesDispos({ currentUser, onBack }) {
   return (
     <div className="mes-dispos-container">
       <div>
-        <button className="back-btn" onClick={onBack}>
-          ← Retour
-        </button>
         <h2>Mes Disponibilités</h2>
       </div>
 

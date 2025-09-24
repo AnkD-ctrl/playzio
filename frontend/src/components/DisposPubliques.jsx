@@ -143,9 +143,6 @@ function DisposPubliques({ currentUser, onBack }) {
   return (
     <div className="dispos-publiques-container">
       <div>
-        <button className="back-btn" onClick={onBack}>
-          ← Retour
-        </button>
         <h2>Disponibilités Publiques</h2>
       </div>
 
