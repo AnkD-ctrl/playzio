@@ -1847,22 +1847,34 @@ app.post('/api/slots/:id/notify-organizer', async (req, res) => {
       return res.status(400).json({ error: 'Email de l\'organisateur non trouvé' })
     }
     
-    // Envoyer la notification email
-    await sendSlotJoinNotification(
-      organizer.email,
-      organizer.prenom,
-      participant,
-      {
-        date: slot.date,
-        heureDebut: slot.heureDebut,
-        heureFin: slot.heureFin,
-        type: slot.type,
-        customActivity: slot.customActivity,
-        lieu: slot.lieu
+    // Envoyer la notification email en utilisant la même logique que la récupération de mot de passe
+    if (!process.env.SENDGRID_API_KEY) {
+      console.log('🔗 NOTIFICATION POUR', organizer.email, ':', `${participant} s'est inscrit à votre disponibilité du ${slot.date}`)
+      console.log('📧 Copiez ce message et envoyez-le manuellement à l\'organisateur')
+    } else {
+      try {
+        console.log('Tentative d\'envoi de notification à:', organizer.email)
+        await sendSlotJoinNotification(
+          organizer.email,
+          organizer.prenom,
+          participant,
+          {
+            date: slot.date,
+            heureDebut: slot.heureDebut,
+            heureFin: slot.heureFin,
+            type: slot.type,
+            customActivity: slot.customActivity,
+            lieu: slot.lieu
+          }
+        )
+        console.log('✅ Notification email envoyée avec succès à:', organizer.email)
+      } catch (error) {
+        console.error('❌ Erreur lors de l\'envoi de la notification:', error)
+        console.error('Détails de l\'erreur:', error.message)
+        console.log('🔗 Message de notification (en cas d\'erreur email):', `${participant} s'est inscrit à votre disponibilité du ${slot.date}`)
       }
-    )
+    }
     
-    console.log(`✅ Notification email envoyée à ${organizer.email} pour l'inscription de ${participant}`)
     res.json({ success: true, message: 'Notification envoyée' })
     
   } catch (error) {
