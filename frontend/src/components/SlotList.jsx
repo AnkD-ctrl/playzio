@@ -178,8 +178,9 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         })
         
         if (data.shouldNotify) {
-          const slot = slots.find(s => s.id === slotId)
-          console.log('🔍 Slot trouvé pour popup:', slot)
+          // Utiliser les données du slot retourné par l'API au lieu de chercher dans slots
+          const slot = data.slot
+          console.log('🔍 Slot pour popup (depuis API):', slot)
           
           if (slot) {
             setPendingNotification({
