@@ -164,7 +164,7 @@ export async function getSlotById(id) {
 
 export async function createSlot(slotData) {
   try {
-    const { id, date, heureDebut, heureFin, type, customActivity = null, description = '', lieu = '', maxParticipants = null, createdBy = null, visibleToGroups = [], visibleToAll = true, visibleToFriends = false, participants = [], emailNotifications = true } = slotData
+    const { id, date, heureDebut, heureFin, type, customActivity = null, description = '', lieu = '', maxParticipants = null, createdBy = null, visibleToGroups = [], visibleToAll = true, visibleToFriends = false, participants = [], emailNotifications = false } = slotData
     
     const typeValue = Array.isArray(type) ? JSON.stringify(type) : type
     

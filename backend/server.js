@@ -477,7 +477,7 @@ app.post('/api/slots', async (req, res) => {
       visibleToAll: visibleToAll !== undefined ? visibleToAll : true,
       visibleToFriends: visibleToFriends !== undefined ? visibleToFriends : false,
       participants: participants || [],
-      emailNotifications: emailNotifications !== undefined ? emailNotifications : true
+      emailNotifications: emailNotifications !== undefined ? emailNotifications : false
     })
     
     res.json({ success: true, slot: newSlot })
