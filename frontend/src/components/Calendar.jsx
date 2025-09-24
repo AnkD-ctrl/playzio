@@ -8,6 +8,7 @@ import DaySlotsModal from './DaySlotsModal'
 function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, onAddSlot, onJoinSlot, selectedDate, onClearDate, customSlots, pageType }) {
   const [slots, setSlots] = useState([])
   const [currentDate, setCurrentDate] = useState(new Date())
+  const [preservedMonth, setPreservedMonth] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [showSearchModal, setShowSearchModal] = useState(false)
@@ -92,10 +93,15 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
       setSlots(customSlots)
       setLoading(false)
       setError('')
+      
+      // Préserver le mois affiché si on en a un
+      if (preservedMonth) {
+        setCurrentDate(preservedMonth)
+      }
     } else {
       fetchSlots()
     }
-  }, [activity, searchFilter, lieuFilter, organizerFilter, selectedDate, customSlots])
+  }, [activity, searchFilter, lieuFilter, organizerFilter, selectedDate, customSlots, preservedMonth])
 
   // Fermer le menu déroulant quand on clique ailleurs
   useEffect(() => {
@@ -224,16 +230,27 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
     return slots.filter(slot => slot.date === dateStr)
   }
 
-  const handleDateClick = (date) => {
+  const handleDateClick = (date, event) => {
     if (date) {
       const year = date.getFullYear()
       const month = String(date.getMonth() + 1).padStart(2, '0')
       const day = String(date.getDate()).padStart(2, '0')
       const dateStr = `${year}-${month}-${day}`
       
-      // Ouvrir le modal avec les slots de la journée
-      setModalSelectedDate(dateStr)
-      setShowDayModal(true)
+      // Vérifier si on a cliqué sur une zone vide (pas sur un slot)
+      const isClickOnEmptyArea = event && event.target.classList.contains('calendar-day') && 
+                                 !event.target.querySelector('.slot-indicator')
+      
+      if (isClickOnEmptyArea) {
+        // Clic sur zone vide : créer une nouvelle dispo
+        if (onAddSlot) {
+          onAddSlot(dateStr)
+        }
+      } else {
+        // Clic sur une date avec des slots : ouvrir le modal
+        setModalSelectedDate(dateStr)
+        setShowDayModal(true)
+      }
     }
   }
 
@@ -322,6 +339,8 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
     setCurrentDate(prev => {
       const newDate = new Date(prev)
       newDate.setMonth(prev.getMonth() + direction)
+      // Sauvegarder le mois pour le préserver lors des re-renders
+      setPreservedMonth(newDate)
       return newDate
     })
   }
@@ -382,7 +401,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
               <div 
                 key={index} 
                 className={`calendar-day ${!day ? 'empty' : ''} ${isToday ? 'today' : ''} ${day ? 'clickable' : ''}`}
-                onClick={() => handleDateClick(day)}
+                onClick={(e) => handleDateClick(day, e)}
               >
                 {day && (
                   <>
