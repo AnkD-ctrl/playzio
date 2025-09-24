@@ -2,6 +2,9 @@
   padding: 20px;
   max-width: 800px;
   margin: 0 auto;
+  background: #2c2c2c;
+  min-height: 100vh;
+  color: #e0e0e0;
 }
 
 .mes-dispos-header {
@@ -28,20 +31,20 @@
 
 .mes-dispos-header h2 {
   margin: 0;
-  color: #2c3e50;
+  color: #e0e0e0;
   font-size: 1.8rem;
 }
 
 .mes-dispos-header p {
   margin: 0;
-  color: #7f8c8d;
+  color: #b0b0b0;
   font-size: 1rem;
 }
 
 .no-slots {
   text-align: center;
   padding: 40px 20px;
-  color: #7f8c8d;
+  color: #b0b0b0;
 }
 
 .no-slots p {
