@@ -27,43 +27,53 @@ function DaySlotsModal({
       setLoading(true)
       setError('')
       
-      let url = ''
-      let body = {}
-      
-      // Déterminer l'endpoint selon le type de page
-      switch (pageType) {
-        case 'mes-dispos':
-          url = `${API_BASE_URL}/api/slots/my-slots`
-          body = { userId: currentUser.prenom }
-          break
-        case 'dispos-amis':
-          url = `${API_BASE_URL}/api/slots/friends-slots`
-          body = { userId: currentUser.prenom }
-          break
-        case 'dispos-groupes':
-          url = `${API_BASE_URL}/api/slots/group-slots`
-          body = { userId: currentUser.prenom }
-          break
-        case 'dispos-publiques':
-          url = `${API_BASE_URL}/api/slots/public-slots`
-          body = { userId: currentUser.prenom }
-          break
-        default:
-          throw new Error('Type de page non reconnu')
-      }
-      
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body)
-      })
+      // Récupérer TOUS les slots depuis l'API
+      const url = `${API_BASE_URL}/api/slots`
+      const response = await fetch(url)
       
       if (response.ok) {
         const allSlots = await response.json()
+        console.log('📥 Tous les slots reçus:', allSlots.length)
+        
+        // Filtrer selon le type de page
+        let filteredSlots = []
+        
+        switch (pageType) {
+          case 'mes-dispos':
+            // Mes propres slots
+            filteredSlots = allSlots.filter(slot => slot.createdBy === currentUser.prenom)
+            break
+          case 'dispos-amis':
+            // Slots des amis (visibleToFriends = true ET organisateur dans mes amis)
+            const userFriends = await getUserFriends()
+            filteredSlots = allSlots.filter(slot => 
+              slot.visibleToFriends === true && 
+              userFriends.includes(slot.createdBy) &&
+              slot.createdBy !== currentUser.prenom
+            )
+            break
+          case 'dispos-groupes':
+            // Slots des groupes (visibleToGroups contient un groupe dont je fais partie)
+            const userGroups = await getUserGroups()
+            const userGroupIds = userGroups.map(group => group.id)
+            filteredSlots = allSlots.filter(slot => 
+              slot.visibleToGroups && 
+              slot.visibleToGroups.length > 0 &&
+              slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId)) &&
+              slot.createdBy !== currentUser.prenom
+            )
+            break
+          case 'dispos-publiques':
+            // Slots publics (visibleToAll = true)
+            filteredSlots = allSlots.filter(slot => slot.visibleToAll === true)
+            break
+          default:
+            filteredSlots = allSlots
+        }
+        
         // Filtrer par date sélectionnée
-        const daySlots = allSlots.filter(slot => slot.date === selectedDate)
+        const daySlots = filteredSlots.filter(slot => slot.date === selectedDate)
+        console.log(`✅ Slots du jour (${pageType}):`, daySlots.length)
         setSlots(daySlots)
       } else {
         setError('Erreur lors du chargement des disponibilités')
@@ -73,6 +83,36 @@ function DaySlotsModal({
       setError('Erreur de connexion au serveur')
     } finally {
       setLoading(false)
+    }
+  }
+
+  // Fonction pour récupérer les amis de l'utilisateur
+  const getUserFriends = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/friends/${currentUser.prenom}`)
+      if (response.ok) {
+        const data = await response.json()
+        return data.friends || []
+      }
+      return []
+    } catch (error) {
+      console.error('Erreur lors de la récupération des amis:', error)
+      return []
+    }
+  }
+
+  // Fonction pour récupérer les groupes de l'utilisateur
+  const getUserGroups = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/groups/user/${currentUser.prenom}`)
+      if (response.ok) {
+        const data = await response.json()
+        return data.groups || []
+      }
+      return []
+    } catch (error) {
+      console.error('Erreur lors de la récupération des groupes:', error)
+      return []
     }
   }
 
