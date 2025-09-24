@@ -29,28 +29,6 @@ function Sidebar({ isOpen, onClose, onNavigate, currentView }) {
             <span className="sidebar-icon">📅</span>
             <span>Mes dispos</span>
           </div>
-          
-          <div 
-            className={`sidebar-item ${currentView === 'activity' ? 'active' : ''}`}
-            onClick={() => {
-              onNavigate('activity')
-              onClose()
-            }}
-          >
-            <span className="sidebar-icon">🏃</span>
-            <span>Toutes les dispos</span>
-          </div>
-          
-          <div 
-            className={`sidebar-item ${currentView === 'groups' ? 'active' : ''}`}
-            onClick={() => {
-              onNavigate('groups')
-              onClose()
-            }}
-          >
-            <span className="sidebar-icon">👥</span>
-            <span>Groupes</span>
-          </div>
         </div>
       </div>
     </>

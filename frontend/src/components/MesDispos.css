@@ -56,22 +56,23 @@
 }
 
 .slot-item {
-  background: white;
-  border: 1px solid #e0e0e0;
+  background: #3a3a3a;
+  border: 1px solid #4a4a4a;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
   transition: all 0.2s ease;
   cursor: pointer;
+  color: #e0e0e0;
 }
 
 .slot-item:hover {
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.4);
   transform: translateY(-1px);
 }
 
 .slot-item.expanded {
   border-color: #3498db;
-  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
 }
 
 .slot-item-header {
@@ -96,36 +97,36 @@
 
 .date {
   font-weight: bold;
-  color: #2c3e50;
+  color: #e0e0e0;
   font-size: 1rem;
 }
 
 .time {
-  color: #7f8c8d;
+  color: #b0b0b0;
   font-size: 0.9rem;
 }
 
 .slot-item-activity {
-  background: #ecf0f1;
+  background: #4a4a4a;
   padding: 5px 10px;
   border-radius: 15px;
   font-size: 0.9rem;
-  color: #2c3e50;
+  color: #e0e0e0;
   font-weight: 500;
 }
 
 .slot-item-participants {
-  color: #7f8c8d;
+  color: #b0b0b0;
   font-size: 0.9rem;
 }
 
 .expand-icon-bottom {
   text-align: center;
   padding: 10px;
-  color: #7f8c8d;
+  color: #b0b0b0;
   font-size: 1.2rem;
   cursor: pointer;
-  border-top: 1px solid #ecf0f1;
+  border-top: 1px solid #4a4a4a;
   transition: color 0.2s;
 }
 
@@ -135,8 +136,8 @@
 
 .slot-item-details {
   padding: 20px;
-  border-top: 1px solid #ecf0f1;
-  background: #f8f9fa;
+  border-top: 1px solid #4a4a4a;
+  background: #2c2c2c;
 }
 
 .slot-activity-detail,
@@ -152,13 +153,13 @@
 .slot-lieu strong,
 .slot-participants-detail strong,
 .slot-visibility strong {
-  color: #2c3e50;
+  color: #e0e0e0;
   margin-right: 8px;
 }
 
 .participants-list {
   margin-top: 5px;
-  color: #7f8c8d;
+  color: #b0b0b0;
 }
 
 .visibility-tags {
@@ -200,7 +201,7 @@
   gap: 10px;
   margin-top: 20px;
   padding-top: 15px;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid #4a4a4a;
 }
 
 .action-btn {
@@ -237,7 +238,7 @@
 }
 
 .loading {
-  color: #7f8c8d;
+  color: #b0b0b0;
 }
 
 .error {
