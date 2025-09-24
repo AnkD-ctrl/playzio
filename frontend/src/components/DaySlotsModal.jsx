@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import './DaySlotsModal.css'
+import './SlotList.css'
 import { API_BASE_URL } from '../config'
+import SlotList from './SlotList'
 
 function DaySlotsModal({ 
   isOpen, 
@@ -13,8 +15,6 @@ function DaySlotsModal({
   const [slots, setSlots] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [expandedSlots, setExpandedSlots] = useState(new Set())
-  const [selectedSlot, setSelectedSlot] = useState(null)
 
   useEffect(() => {
     if (isOpen && selectedDate) {
@@ -116,18 +116,6 @@ function DaySlotsModal({
     }
   }
 
-  const toggleSlotExpansion = (slotId) => {
-    setExpandedSlots(prev => {
-      const newSet = new Set(prev)
-      if (newSet.has(slotId)) {
-        newSet.delete(slotId)
-      } else {
-        newSet.add(slotId)
-      }
-      return newSet
-    })
-  }
-
   const handleJoinSlot = async (slotId) => {
     try {
       const response = await fetch(`${API_BASE_URL}/api/slots/${slotId}/join`, {
@@ -150,29 +138,6 @@ function DaySlotsModal({
       }
     } catch (error) {
       console.error('Erreur lors de la participation:', error)
-      alert('Erreur de connexion au serveur')
-    }
-  }
-
-  const handleLeaveSlot = async (slotId) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/slots/${slotId}/leave`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId: currentUser.prenom })
-      })
-
-      if (response.ok) {
-        // Rafraîchir les slots après avoir quitté
-        fetchDaySlots()
-      } else {
-        const errorData = await response.json()
-        alert(errorData.error || 'Erreur lors de la sortie')
-      }
-    } catch (error) {
-      console.error('Erreur lors de la sortie:', error)
       alert('Erreur de connexion au serveur')
     }
   }
@@ -222,98 +187,20 @@ function DaySlotsModal({
               <p>Aucune disponibilité pour cette date</p>
             </div>
           ) : (
-            <div className="day-slots-list">
-              {slots.map(slot => {
-                const isParticipant = slot.participants && slot.participants.includes(currentUser.prenom)
-                const isOwner = slot.createdBy === currentUser.prenom
-                const isExpanded = expandedSlots.has(slot.id)
-                
-                return (
-                  <div key={slot.id} className={`day-slot-item ${isExpanded ? 'expanded' : ''}`}>
-                    <div className="day-slot-header" onClick={() => toggleSlotExpansion(slot.id)}>
-                      <div className="day-slot-main">
-                        <div className="day-slot-time">
-                          <span className="time">{slot.heureDebut} - {slot.heureFin}</span>
-                        </div>
-                        <div className="day-slot-activity">
-                          {slot.customActivity || (Array.isArray(slot.type) ? slot.type.join(', ') : slot.type)}
-                        </div>
-                        <div className="day-slot-participants">
-                          👥 {slot.participants ? slot.participants.length : 0}
-                        </div>
-                      </div>
-                      
-                      {!isOwner && (
-                        <div className="day-slot-actions">
-                          {isParticipant ? (
-                            <button 
-                              className="quick-action-btn leave-btn"
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                handleLeaveSlot(slot.id)
-                              }}
-                              title="Quitter"
-                            >
-                              Quitter
-                            </button>
-                          ) : (
-                            <button 
-                              className="quick-action-btn join-btn"
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                handleJoinSlot(slot.id)
-                              }}
-                              title="Rejoindre"
-                            >
-                              Rejoindre
-                            </button>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="expand-icon" onClick={(e) => {
-                      e.stopPropagation()
-                      toggleSlotExpansion(slot.id)
-                    }}>
-                      {isExpanded ? '▲' : '▼'}
-                    </div>
-
-                    {isExpanded && (
-                      <div className="day-slot-details">
-                        <div className="slot-activity-detail">
-                          <strong>Activité:</strong> {slot.customActivity || (Array.isArray(slot.type) ? slot.type.join(', ') : slot.type)}
-                        </div>
-
-                        <div className="slot-description">
-                          <strong>Description:</strong> {slot.description || 'Aucune description'}
-                        </div>
-
-                        {slot.lieu && (
-                          <div className="slot-lieu">
-                            <strong>Lieu:</strong> {slot.lieu}
-                          </div>
-                        )}
-
-                        <div className="slot-participants-detail">
-                          <strong>Participants ({slot.participants ? slot.participants.length : 0}):</strong>
-                          {slot.participants && slot.participants.length > 0 ? (
-                            <div className="participants-list">
-                              {slot.participants.join(', ')}
-                            </div>
-                          ) : (
-                            <span>Aucun participant pour le moment</span>
-                          )}
-                        </div>
-
-                        <div className="slot-organizer">
-                          <strong>Organisateur:</strong> {slot.createdBy}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
+            <div className="day-slots-list-container">
+              <SlotList 
+                activity="Tous"
+                currentUser={currentUser}
+                selectedDate={selectedDate}
+                onClearDate={() => {}}
+                searchFilter=""
+                onSearchFilterChange={() => {}}
+                lieuFilter=""
+                organizerFilter=""
+                onAddSlot={() => {}}
+                onJoinSlot={handleJoinSlot}
+                customSlots={slots}
+              />
             </div>
           )}
         </div>

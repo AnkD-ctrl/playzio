@@ -61,6 +61,11 @@
   padding: 16px 24px 20px 24px;
 }
 
+.day-slots-list-container {
+  /* Supprimer le padding du SlotList dans le modal */
+  margin: -20px -24px -20px -24px;
+}
+
 .loading, .error, .no-slots {
   text-align: center;
   padding: 40px 20px;
