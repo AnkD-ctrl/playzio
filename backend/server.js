@@ -1833,19 +1833,33 @@ app.post('/api/slots/:id/notify-organizer', async (req, res) => {
     const { id } = req.params
     const { participant } = req.body
     
+    console.log('🔔 Notification demandée pour slot:', id, 'participant:', participant)
+    
     const slot = await getSlotById(id)
     if (!slot) {
+      console.log('❌ Slot non trouvé:', id)
       return res.status(404).json({ error: 'Créneau non trouvé' })
     }
     
+    console.log('✅ Slot trouvé:', slot.id, 'créé par:', slot.createdBy)
+    
     if (!slot.createdBy) {
+      console.log('❌ Pas d\'organisateur pour le slot')
       return res.status(400).json({ error: 'Organisateur non trouvé' })
     }
     
     const organizer = await getUserByPrenom(slot.createdBy)
-    if (!organizer || !organizer.email) {
+    if (!organizer) {
+      console.log('❌ Organisateur non trouvé:', slot.createdBy)
+      return res.status(400).json({ error: 'Organisateur non trouvé' })
+    }
+    
+    if (!organizer.email) {
+      console.log('❌ Pas d\'email pour l\'organisateur:', organizer.prenom)
       return res.status(400).json({ error: 'Email de l\'organisateur non trouvé' })
     }
+    
+    console.log('✅ Organisateur trouvé:', organizer.prenom, 'email:', organizer.email)
     
     // Envoyer la notification email en utilisant la même logique que la récupération de mot de passe
     if (!process.env.SENDGRID_API_KEY) {
@@ -1878,8 +1892,9 @@ app.post('/api/slots/:id/notify-organizer', async (req, res) => {
     res.json({ success: true, message: 'Notification envoyée' })
     
   } catch (error) {
-    console.error('Erreur lors de l\'envoi de la notification:', error)
-    res.status(500).json({ error: 'Erreur serveur' })
+    console.error('❌ Erreur lors de l\'envoi de la notification:', error)
+    console.error('Détails de l\'erreur:', error.message)
+    res.status(500).json({ error: 'Erreur serveur: ' + error.message })
   }
 })
 
