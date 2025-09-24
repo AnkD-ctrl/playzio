@@ -3,6 +3,7 @@ import './MesDispos.css'
 import { API_BASE_URL } from '../config'
 import SlotList from './SlotList'
 import Calendar from './Calendar'
+import AddSlot from './AddSlot'
 
 function MesDispos({ currentUser, onBack }) {
   const [slots, setSlots] = useState([])
@@ -15,6 +16,7 @@ function MesDispos({ currentUser, onBack }) {
   const [organizerFilter, setOrganizerFilter] = useState('')
   const [filterVersion, setFilterVersion] = useState(0)
   const [showFilterModal, setShowFilterModal] = useState(false)
+  const [showAddSlot, setShowAddSlot] = useState(false)
 
   useEffect(() => {
     if (currentUser && currentUser.prenom) {
@@ -154,7 +156,7 @@ function MesDispos({ currentUser, onBack }) {
               onSearchFilterChange={handleSearchFilterChange}
               lieuFilter={lieuFilter}
               organizerFilter={organizerFilter}
-              onAddSlot={() => setSelectedType('add')}
+              onAddSlot={() => setShowAddSlot(true)}
               onJoinSlot={handleJoinSlot}
               customSlots={slots}
             />
@@ -173,7 +175,7 @@ function MesDispos({ currentUser, onBack }) {
               organizerFilter={organizerFilter}
               onAddSlot={(date) => {
                 setSelectedDate(date)
-                setSelectedType('add')
+                setShowAddSlot(true)
               }}
               onJoinSlot={handleJoinSlot}
               customSlots={slots}
@@ -239,7 +241,7 @@ function MesDispos({ currentUser, onBack }) {
             <div className="footer-btn-wrapper">
               <button 
                 className="view-toggle-btn add-btn"
-                onClick={() => setSelectedType('add')}
+                onClick={() => setShowAddSlot(true)}
                 title="Ajouter une disponibilité"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -358,6 +360,20 @@ function MesDispos({ currentUser, onBack }) {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Ajouter une dispo */}
+      {showAddSlot && (
+        <AddSlot 
+          activity="Tous"
+          currentUser={currentUser}
+          onSlotAdded={() => {
+            setShowAddSlot(false)
+            setFilterVersion(prev => prev + 1)
+          }}
+          preSelectedDate={selectedDate}
+          onClearDate={() => setSelectedDate(null)}
+        />
       )}
     </div>
   )
