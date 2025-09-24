@@ -465,14 +465,16 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                           Discussion
                         </button>
                         
-                        {/* Bouton pour notifier l'organisateur */}
-                        <button 
-                          className="action-btn notify-btn"
-                          onClick={() => handleNotifyOrganizer(slot)}
-                          title="Notifier l'organisateur par email"
-                        >
-                          Notifier
-                        </button>
+                        {/* Bouton pour notifier l'organisateur - seulement si l'utilisateur est participant */}
+                        {slot.participants && slot.participants.includes(currentUser.prenom) && (
+                          <button 
+                            className="action-btn notify-btn"
+                            onClick={() => handleNotifyOrganizer(slot)}
+                            title="Notifier l'organisateur par email"
+                          >
+                            Notifier
+                          </button>
+                        )}
 
                         {(isAdmin || isOwner) && (
                           <button 
