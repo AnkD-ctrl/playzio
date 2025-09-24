@@ -24,11 +24,12 @@ const SharePage = ({ username, onNavigateToRegister }) => {
   // Vérifier si le lien a expiré (24h)
   useEffect(() => {
     const checkLinkExpiry = () => {
-      // Récupérer le timestamp de création du lien depuis l'URL ou localStorage
-      const linkCreationTime = localStorage.getItem(`shareLink_${username}`)
+      // Récupérer le timestamp de création du lien depuis l'URL
+      const urlParams = new URLSearchParams(window.location.hash.split('?')[1])
+      const timestamp = urlParams.get('t')
       
-      if (linkCreationTime) {
-        const creationTime = parseInt(linkCreationTime)
+      if (timestamp) {
+        const creationTime = parseInt(timestamp)
         const now = Date.now()
         const twentyFourHours = 24 * 60 * 60 * 1000 // 24h en millisecondes
         
@@ -36,7 +37,7 @@ const SharePage = ({ username, onNavigateToRegister }) => {
           setLinkExpired(true)
         }
       } else {
-        // Si pas de timestamp, considérer comme expiré
+        // Si pas de timestamp dans l'URL, considérer comme expiré
         setLinkExpired(true)
       }
     }

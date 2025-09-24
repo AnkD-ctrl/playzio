@@ -66,7 +66,8 @@ function App() {
     
     // Vérifier le hash pour #share/
     if (window.location.hash.startsWith('#share/')) {
-      const username = window.location.hash.split('#share/')[1]
+      const hashContent = window.location.hash.split('#share/')[1]
+      const [username, queryString] = hashContent.split('?')
       if (username) {
         setShareUsername(username)
         setCurrentView('share')
@@ -154,10 +155,8 @@ function App() {
 
   const handleShareUserDispo = () => {
     if (currentUser && currentUser.prenom) {
-      const shareUrl = `${window.location.origin}/#share/${currentUser.prenom}`
-      
-      // Enregistrer le timestamp de création du lien (valable 24h)
-      localStorage.setItem(`shareLink_${currentUser.prenom}`, Date.now().toString())
+      const timestamp = Date.now()
+      const shareUrl = `${window.location.origin}/#share/${currentUser.prenom}?t=${timestamp}`
       
       if (navigator.share) {
         // Utiliser l'API Web Share si disponible
