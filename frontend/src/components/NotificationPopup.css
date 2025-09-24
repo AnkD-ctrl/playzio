@@ -1,0 +1,171 @@
+.notification-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 20px;
+}
+
+.notification-popup {
+  background: #2c2c2c;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  border: 1px solid #4a4a4a;
+  overflow: hidden;
+}
+
+.notification-popup-header {
+  background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notification-popup-header h3 {
+  color: white;
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.notification-popup-content {
+  padding: 24px;
+}
+
+.notification-popup-content p {
+  color: #e0e0e0;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0 0 20px 0;
+}
+
+.slot-details {
+  background: #3a3a3a;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.slot-detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #4a4a4a;
+}
+
+.slot-detail:last-child {
+  border-bottom: none;
+}
+
+.slot-detail .label {
+  color: #b0b0b0;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.slot-detail .value {
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.notification-popup-actions {
+  padding: 20px 24px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  background: #3a3a3a;
+  border-top: 1px solid #4a4a4a;
+}
+
+.btn-cancel,
+.btn-confirm {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 100px;
+}
+
+.btn-cancel {
+  background: #5a5a5a;
+  color: #e0e0e0;
+}
+
+.btn-cancel:hover {
+  background: #6a6a6a;
+  color: #ffffff;
+}
+
+.btn-confirm {
+  background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+  color: #ffffff;
+}
+
+.btn-confirm:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 175, 140, 0.3);
+}
+
+@media (max-width: 768px) {
+  .notification-popup {
+    margin: 20px;
+    max-width: none;
+  }
+  
+  .notification-popup-header {
+    padding: 16px;
+  }
+  
+  .notification-popup-header h3 {
+    font-size: 1.1rem;
+  }
+  
+  .notification-popup-content {
+    padding: 20px;
+  }
+  
+  .notification-popup-actions {
+    padding: 16px 20px;
+    flex-direction: column;
+  }
+  
+  .btn-cancel,
+  .btn-confirm {
+    width: 100%;
+    padding: 14px 24px;
+  }
+}
