@@ -40,6 +40,28 @@ function Sidebar({ isOpen, onClose, onNavigate, currentView }) {
             <span className="sidebar-icon">👥</span>
             <span>Dispos des amis</span>
           </div>
+
+          <div 
+            className={`sidebar-item ${currentView === 'dispos-groupes' ? 'active' : ''}`}
+            onClick={() => {
+              onNavigate('dispos-groupes')
+              onClose()
+            }}
+          >
+            <span className="sidebar-icon">🏢</span>
+            <span>Dispos des groupes</span>
+          </div>
+
+          <div 
+            className={`sidebar-item ${currentView === 'dispos-publiques' ? 'active' : ''}`}
+            onClick={() => {
+              onNavigate('dispos-publiques')
+              onClose()
+            }}
+          >
+            <span className="sidebar-icon">🌍</span>
+            <span>Dispos publiques</span>
+          </div>
         </div>
       </div>
     </>

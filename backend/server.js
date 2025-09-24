@@ -682,6 +682,135 @@ app.get('/api/slots/user/:username', async (req, res) => {
   }
 })
 
+// Endpoint pour les slots des groupes
+app.post('/api/slots/group-slots', async (req, res) => {
+  try {
+    const { userId, activity, date, search, lieu, organizer } = req.body
+    
+    if (!userId) {
+      return res.status(400).json({ error: 'ID utilisateur requis' })
+    }
+    
+    // Récupérer l'utilisateur pour obtenir ses groupes
+    const user = await getUserByPrenom(userId)
+    if (!user) {
+      return res.status(404).json({ error: 'Utilisateur non trouvé' })
+    }
+    
+    // Récupérer tous les slots
+    let slots = await getAllSlots()
+    
+    // Filtrer les disponibilités passées
+    slots = slots.filter(slot => isSlotStillValid(slot))
+    
+    // Récupérer les groupes de l'utilisateur
+    const userGroups = await getGroupsByUser(userId)
+    const userGroupIds = userGroups.map(group => group.id)
+    
+    // Filtrer les slots des groupes : créés par des utilisateurs du même groupe ET visible par au moins un groupe en commun
+    const groupSlots = slots.filter(slot => {
+      // Ne pas inclure les slots de l'utilisateur connecté
+      if (slot.createdBy === userId) return false
+      
+      // Vérifier si le slot est visible par au moins un groupe en commun
+      if (slot.visibleToGroups && Array.isArray(slot.visibleToGroups)) {
+        const hasCommonGroup = slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId))
+        if (hasCommonGroup) return true
+      }
+      
+      return false
+    })
+    
+    // Appliquer les filtres supplémentaires
+    let filteredSlots = groupSlots
+    
+    if (activity) {
+      filteredSlots = filteredSlots.filter(slot => slot.activity === activity)
+    }
+    
+    if (date) {
+      filteredSlots = filteredSlots.filter(slot => slot.date === date)
+    }
+    
+    if (search) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.activity.toLowerCase().includes(search.toLowerCase())
+      )
+    }
+    
+    if (lieu) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.lieu.toLowerCase().includes(lieu.toLowerCase())
+      )
+    }
+    
+    if (organizer) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.organizer.toLowerCase().includes(organizer.toLowerCase())
+      )
+    }
+    
+    res.json({ slots: filteredSlots })
+  } catch (error) {
+    console.error('Get group slots error:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
+// Endpoint pour les slots publiques
+app.post('/api/slots/public-slots', async (req, res) => {
+  try {
+    const { userId, activity, date, search, lieu, organizer } = req.body
+    
+    if (!userId) {
+      return res.status(400).json({ error: 'ID utilisateur requis' })
+    }
+    
+    // Récupérer tous les slots
+    let slots = await getAllSlots()
+    
+    // Filtrer les disponibilités passées
+    slots = slots.filter(slot => isSlotStillValid(slot))
+    
+    // Filtrer les slots publiques : visible par tout le monde
+    const publicSlots = slots.filter(slot => slot.visibleToAll === true)
+    
+    // Appliquer les filtres supplémentaires
+    let filteredSlots = publicSlots
+    
+    if (activity) {
+      filteredSlots = filteredSlots.filter(slot => slot.activity === activity)
+    }
+    
+    if (date) {
+      filteredSlots = filteredSlots.filter(slot => slot.date === date)
+    }
+    
+    if (search) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.activity.toLowerCase().includes(search.toLowerCase())
+      )
+    }
+    
+    if (lieu) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.lieu.toLowerCase().includes(lieu.toLowerCase())
+      )
+    }
+    
+    if (organizer) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.organizer.toLowerCase().includes(organizer.toLowerCase())
+      )
+    }
+    
+    res.json({ slots: filteredSlots })
+  } catch (error) {
+    console.error('Get public slots error:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
 // Gestion des amis
 app.post('/api/friends/request', async (req, res) => {
   try {

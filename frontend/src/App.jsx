@@ -14,6 +14,8 @@ import Groups from './components/Groups'
 import Sidebar from './components/Sidebar'
 import MesDispos from './components/MesDispos'
 import DisposAmis from './components/DisposAmis'
+import DisposGroupes from './components/DisposGroupes'
+import DisposPubliques from './components/DisposPubliques'
 import CookieBanner from './components/CookieBanner'
 import PWAInstaller from './components/PWAInstaller'
 import InstallGuide from './components/InstallGuide'
@@ -349,6 +351,20 @@ function App() {
 
       {currentView === 'dispos-amis' && (
         <DisposAmis 
+          currentUser={currentUser} 
+          onBack={() => setCurrentView('activity')}
+        />
+      )}
+
+      {currentView === 'dispos-groupes' && (
+        <DisposGroupes 
+          currentUser={currentUser} 
+          onBack={() => setCurrentView('activity')}
+        />
+      )}
+
+      {currentView === 'dispos-publiques' && (
+        <DisposPubliques 
           currentUser={currentUser} 
           onBack={() => setCurrentView('activity')}
         />
