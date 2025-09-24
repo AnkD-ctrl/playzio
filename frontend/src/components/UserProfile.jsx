@@ -174,6 +174,29 @@ function UserProfile({ user, onClose, onUserUpdate }) {
     }
   }
 
+  const handleRemoveFriend = async (friendPrenom) => {
+    if (!window.confirm(`Êtes-vous sûr de vouloir supprimer ${friendPrenom} de vos amis ?`)) {
+      return
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/friends/${user.prenom}/${friendPrenom}`, {
+        method: 'DELETE',
+      })
+
+      if (response.ok) {
+        setMessage(`${friendPrenom} a été supprimé de vos amis`)
+        fetchUserFriends() // Recharger la liste
+      } else {
+        const errorData = await response.json()
+        setMessage(errorData.error || 'Erreur lors de la suppression')
+      }
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error)
+      setMessage('Erreur lors de la suppression')
+    }
+  }
+
 
 
 
@@ -489,6 +512,13 @@ function UserProfile({ user, onClose, onUserUpdate }) {
                           {userFriends.map((friend, index) => (
                             <li key={index} className="friend-item">
                               <span>{friend}</span>
+                              <button 
+                                className="remove-friend-btn"
+                                onClick={() => handleRemoveFriend(friend)}
+                                title="Supprimer cet ami"
+                              >
+                                ✕
+                              </button>
                             </li>
                           ))}
                         </ul>
