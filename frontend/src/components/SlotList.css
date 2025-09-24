@@ -759,13 +759,14 @@
 }
 
 .action-btn.notify-btn {
-  background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
-  color: white;
+  background: #2c2c2c;
+  color: #e0e0e0;
+  border: 1px solid #4a4a4a;
 }
 
 .action-btn.notify-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(212, 175, 140, 0.3);
+  background: #3a3a3a;
+  color: #ffffff;
 }
 
 .owner-badge {

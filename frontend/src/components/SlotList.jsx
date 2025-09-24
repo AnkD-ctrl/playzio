@@ -471,7 +471,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                           onClick={() => handleNotifyOrganizer(slot)}
                           title="Notifier l'organisateur par email"
                         >
-                          📧 Notifier
+                          Notifier
                         </button>
 
                         {(isAdmin || isOwner) && (
