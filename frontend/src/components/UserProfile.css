@@ -498,6 +498,33 @@
   box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
 }
 
+/* Styles pour les pseudos cliquables dans la recherche d'amis */
+.clickable-friend {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clickable-friend:hover {
+  background: rgba(212, 175, 140, 0.15);
+  border-color: rgba(212, 175, 140, 0.4);
+  transform: translateX(4px);
+}
+
+.clickable-username {
+  color: #d4af8c;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: block;
+  width: 100%;
+  padding: 8px 0;
+}
+
+.clickable-username:hover {
+  color: #e6c896;
+  text-shadow: 0 0 8px rgba(212, 175, 140, 0.3);
+}
+
 .request-actions {
   display: flex;
   gap: 8px;

@@ -612,14 +612,14 @@ function UserProfile({ user, onClose, onUserUpdate }) {
                       <h5>Résultats de recherche :</h5>
                       <ul className="friends-list">
                         {searchResults.map((user) => (
-                          <li key={user.prenom} className="friend-item">
-                            <span>{user.prenom}</span>
-                            <button 
-                              className="action-btn primary"
+                          <li key={user.prenom} className="friend-item clickable-friend">
+                            <span 
+                              className="clickable-username"
                               onClick={() => handleSendFriendRequest(user.prenom)}
+                              title="Cliquer pour envoyer une demande d'ami"
                             >
-                              Envoyer demande
-                            </button>
+                              {user.prenom}
+                            </span>
                           </li>
                         ))}
                       </ul>
