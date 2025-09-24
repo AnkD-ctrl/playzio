@@ -400,7 +400,7 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
 
           {/* Notifications email */}
           <div className="notifications-section">
-            <h3 className="section-title">📧 Notifications</h3>
+            <h3>📧 Notifications</h3>
             <div className="notification-option">
               <label className="notification-checkbox">
                 <input
