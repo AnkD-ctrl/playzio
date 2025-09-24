@@ -1861,8 +1861,9 @@ app.post('/api/slots/:id/notify-organizer', async (req, res) => {
     
     console.log('✅ Organisateur trouvé:', organizer.prenom, 'email:', organizer.email)
     
-    // Envoyer la notification email en utilisant la même logique que la récupération de mot de passe
+    // Envoyer la notification email en utilisant EXACTEMENT la même logique que la récupération de mot de passe
     if (!process.env.SENDGRID_API_KEY) {
+      console.log('⚠️  SendGrid non configuré - Notification affichée dans les logs')
       console.log('🔗 NOTIFICATION POUR', organizer.email, ':', `${participant} s'est inscrit à votre disponibilité du ${slot.date}`)
       console.log('📧 Copiez ce message et envoyez-le manuellement à l\'organisateur')
     } else {
