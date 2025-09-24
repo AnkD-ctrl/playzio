@@ -14,9 +14,6 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
   const [showSearchModal, setShowSearchModal] = useState(false)
   const [searchInput, setSearchInput] = useState('')
   const [searchTimeout, setSearchTimeout] = useState(null)
-  const [showDayPopup, setShowDayPopup] = useState(false)
-  const [selectedDaySlots, setSelectedDaySlots] = useState([])
-  const [selectedDay, setSelectedDay] = useState(null)
   const [expandedSlots, setExpandedSlots] = useState(new Set())
   const [selectedSlot, setSelectedSlot] = useState(null)
   const [showDayModal, setShowDayModal] = useState(false)
@@ -237,34 +234,38 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
       const day = String(date.getDate()).padStart(2, '0')
       const dateStr = `${year}-${month}-${day}`
       
-      // Vérifier si on a cliqué sur une zone vide (pas sur un slot)
-      const isClickOnEmptyArea = event && event.target.classList.contains('calendar-day') && 
-                                 !event.target.querySelector('.slot-indicator')
+      // Vérifier si on a cliqué sur un slot
+      const isClickOnSlot = event && (
+        event.target.classList.contains('slot-indicator') ||
+        event.target.classList.contains('clickable-slot') ||
+        event.target.classList.contains('more-slots')
+      )
       
-      if (isClickOnEmptyArea) {
-        // Clic sur zone vide : créer une nouvelle dispo
-        if (onAddSlot) {
-          onAddSlot(dateStr)
-        }
+      if (isClickOnSlot) {
+        // Clic sur un slot : ne rien faire ici, c'est géré par handleSlotClick
+        return
       } else {
-        // Clic sur une date avec des slots : ouvrir le modal
-        setModalSelectedDate(dateStr)
-        setShowDayModal(true)
+        // Clic sur la date : vérifier s'il y a des slots
+        const daySlots = getSlotsForDate(date)
+        
+        if (daySlots.length > 0) {
+          // Il y a des slots : ouvrir le modal
+          setModalSelectedDate(dateStr)
+          setShowDayModal(true)
+        } else {
+          // Pas de slots : créer une nouvelle dispo
+          if (onAddSlot) {
+            onAddSlot(dateStr)
+          }
+        }
       }
     }
   }
 
   const handleSlotClick = (slot) => {
-    // Si onJoinSlot est fourni (mode partage), rediriger vers l'inscription
-    if (onJoinSlot) {
-      onJoinSlot(slot.id)
-    } else {
-      // Mode normal - ouvrir popup avec les disponibilités du jour
-      const daySlots = slots.filter(s => s.date === slot.date)
-      setSelectedDaySlots(daySlots)
-      setSelectedDay(slot.date)
-      setShowDayPopup(true)
-    }
+    // Ouvrir le modal avec les slots de la journée
+    setModalSelectedDate(slot.date)
+    setShowDayModal(true)
   }
 
   const toggleSlotExpansion = (slotId) => {
@@ -459,8 +460,8 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
         />
       )}
 
-      {/* Popup des disponibilités du jour */}
-      {showDayPopup && (
+      {/* Ancienne popup supprimée - remplacée par DaySlotsModal */}
+      {false && (
         <div className="modal-overlay" onClick={() => setShowDayPopup(false)}>
           <div className="day-popup" onClick={(e) => e.stopPropagation()}>
             <div className="popup-header">
