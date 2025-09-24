@@ -1036,7 +1036,7 @@ app.post('/api/share/generate-token', async (req, res) => {
     res.json({ 
       token, 
       expiresAt: expiresAt.toISOString(),
-      shareUrl: `https://playzio.vercel.app/#share/${username}?token=${token}`
+      shareUrl: `https://playzio.fr/#share/${username}?token=${token}`
     })
   } catch (error) {
     console.error('Generate share token error:', error)
