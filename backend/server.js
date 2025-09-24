@@ -1861,6 +1861,18 @@ app.post('/api/slots/:id/notify-organizer', async (req, res) => {
     
     console.log('✅ Organisateur trouvé:', organizer.prenom, 'email:', organizer.email)
     
+    // Vérifier si une notification a déjà été envoyée aujourd'hui par ce participant pour ce slot
+    const today = new Date().toISOString().split('T')[0] // Format YYYY-MM-DD
+    const notificationCheck = await pool.query(
+      'SELECT id FROM slot_notifications WHERE slot_id = $1 AND participant = $2 AND DATE(created_at) = $3',
+      [id, participant, today]
+    )
+    
+    if (notificationCheck.rows.length > 0) {
+      console.log('⚠️ Notification déjà envoyée aujourd\'hui par', participant, 'pour le slot', id)
+      return res.status(429).json({ error: 'Vous avez déjà envoyé une notification pour ce créneau aujourd\'hui' })
+    }
+    
     // Envoyer la notification email en utilisant EXACTEMENT la même logique que la récupération de mot de passe
     if (!process.env.SENDGRID_API_KEY) {
       console.log('⚠️  SendGrid non configuré - Notification affichée dans les logs')
@@ -1889,6 +1901,13 @@ app.post('/api/slots/:id/notify-organizer', async (req, res) => {
         console.log('🔗 Message de notification (en cas d\'erreur email):', `${participant} s'est inscrit à votre disponibilité du ${slot.date}`)
       }
     }
+    
+    // Enregistrer la notification pour éviter les doublons
+    await pool.query(
+      'INSERT INTO slot_notifications (slot_id, participant, organizer_email, created_at) VALUES ($1, $2, $3, NOW())',
+      [id, participant, organizer.email]
+    )
+    console.log('✅ Notification enregistrée dans la base de données')
     
     res.json({ success: true, message: 'Notification envoyée' })
     

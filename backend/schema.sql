@@ -214,3 +214,16 @@ CREATE TABLE IF NOT EXISTS share_tokens (
 CREATE INDEX IF NOT EXISTS idx_share_tokens_token ON share_tokens(token);
 CREATE INDEX IF NOT EXISTS idx_share_tokens_username ON share_tokens(username);
 CREATE INDEX IF NOT EXISTS idx_share_tokens_expires ON share_tokens(expires_at);
+
+-- Slot notifications table to track and limit notifications
+CREATE TABLE IF NOT EXISTS slot_notifications (
+    id SERIAL PRIMARY KEY,
+    slot_id VARCHAR(50) NOT NULL,
+    participant VARCHAR(100) NOT NULL,
+    organizer_email VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Indexes for slot notifications
+CREATE INDEX IF NOT EXISTS idx_slot_notifications_slot_participant ON slot_notifications(slot_id, participant);
+CREATE INDEX IF NOT EXISTS idx_slot_notifications_created_at ON slot_notifications(created_at);
