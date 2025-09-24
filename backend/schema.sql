@@ -84,6 +84,15 @@ BEGIN
     END IF;
 END $$;
 
+-- Migration: Add visible_to_friends column if it doesn't exist
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'slots' AND column_name = 'visible_to_friends') THEN
+        ALTER TABLE slots ADD COLUMN visible_to_friends BOOLEAN DEFAULT FALSE;
+    END IF;
+END $$;
+
 -- Migration: Add email column if it doesn't exist
 DO $$ 
 BEGIN
@@ -111,6 +120,15 @@ BEGIN
     END IF;
 END $$;
 
+-- Migration: Add email_notifications column if it doesn't exist
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'slots' AND column_name = 'email_notifications') THEN
+        ALTER TABLE slots ADD COLUMN email_notifications BOOLEAN DEFAULT FALSE;
+    END IF;
+END $$;
+
 -- Migration: Ensure email column allows NULL values
 DO $$ 
 BEGIN
@@ -132,10 +150,45 @@ CREATE TABLE IF NOT EXISTS password_reset_tokens (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Friends tables
+CREATE TABLE IF NOT EXISTS friend_requests (
+    id VARCHAR(50) PRIMARY KEY,
+    from_user VARCHAR(255) NOT NULL,
+    to_user VARCHAR(255) NOT NULL,
+    status VARCHAR(20) DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(from_user, to_user)
+);
+
+CREATE TABLE IF NOT EXISTS friends (
+    id VARCHAR(50) PRIMARY KEY,
+    user1 VARCHAR(255) NOT NULL,
+    user2 VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user1, user2),
+    CHECK(user1 < user2)
+);
+
+-- Migration: Add friends column to users table if it doesn't exist
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'users' AND column_name = 'friends') THEN
+        ALTER TABLE users ADD COLUMN friends TEXT DEFAULT '[]';
+    END IF;
+END $$;
+
 -- Index for faster lookups
 CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_email ON password_reset_tokens(user_email);
 CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_token ON password_reset_tokens(token);
 CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_expires ON password_reset_tokens(expires_at);
+
+-- Friends indexes
+CREATE INDEX IF NOT EXISTS idx_friend_requests_from_user ON friend_requests(from_user);
+CREATE INDEX IF NOT EXISTS idx_friend_requests_to_user ON friend_requests(to_user);
+CREATE INDEX IF NOT EXISTS idx_friend_requests_status ON friend_requests(status);
+CREATE INDEX IF NOT EXISTS idx_friends_user1 ON friends(user1);
+CREATE INDEX IF NOT EXISTS idx_friends_user2 ON friends(user2);
 
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_users_prenom ON users(prenom);

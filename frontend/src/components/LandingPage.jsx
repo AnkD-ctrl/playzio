@@ -44,10 +44,10 @@ const LandingPage = ({ onLogin, onRegister }) => {
         <div className="hero-content">
           <div className="hero-text">
             <h1 className="hero-title">
-              <span className="highlight">Transformer ses dispo perdues en moments vécus.</span>
+              <span className="highlight">Transformer ses dispos perdues en moments vécus.</span>
             </h1>
             <p className="hero-subtitle">
-              Tu étais dispo et tes amis aussi, et pourtant vous ne vous êtes pas vu? Playzio est un outil gratuit et simple qui donne enfin une chance à ces moments d'être vécus. Partage tes dispo, découvre qui est libre, et rejoignez-vous simplement!
+              Tu étais dispo et tes amis aussi, et pourtant vous ne vous êtes pas vu? Playzio est un outil gratuit et simple qui donne enfin une chance à ces moments d'être vécus. Partage tes dispos, découvre qui est libre, et rejoignez-vous simplement!
             </p>
             <div className="hero-cta">
               <button 
@@ -58,7 +58,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
               </button>
               <DownloadButton />
               <p className="cta-note">
-                ⭐⭐⭐⭐⭐ Rajoute tes dispo facilement
+                ⭐⭐⭐⭐⭐ Rajoute tes dispos facilement
               </p>
               <div className="social-proof">
                 <div className="user-avatars">
@@ -75,7 +75,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
                     <img src="/images/IA/openart-image_ho5cyNSy_1757788947800_raw.jpg" alt="Utilisateur 4" />
                   </div>
                 </div>
-                <p className="social-text">Rejoignez +500 utilisateurs qui affichent déjà leurs dispo</p>
+                <p className="social-text">Rejoignez +500 utilisateurs qui affichent déjà leurs dispos</p>
               </div>
             </div>
           </div>
@@ -290,7 +290,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
       {/* CTA Section */}
       <section className="final-cta-section">
         <div className="cta-content">
-          <h2>Prêt à saisir tes dispo ?</h2>
+          <h2>Prêt à saisir tes dispos ?</h2>
           <p>Rejoignez les utilisateurs et profitez de toutes les fonctionnalités gratuitement</p>
           <div className="cta-buttons">
             <button 
@@ -306,6 +306,35 @@ const LandingPage = ({ onLogin, onRegister }) => {
       {/* Footer */}
       <footer className="landing-footer">
         <div className="footer-content">
+          <div className="footer-links">
+            <button 
+              className="footer-link"
+              onClick={() => window.location.href = '/legal'}
+            >
+              Mentions légales
+            </button>
+            <button 
+              className="footer-link"
+              onClick={() => window.location.href = '/legal'}
+            >
+              Politique de confidentialité
+            </button>
+            <button 
+              className="footer-link"
+              onClick={() => window.location.href = '/legal'}
+            >
+              Conditions d'utilisation
+            </button>
+            <button 
+              className="footer-link"
+              onClick={() => window.location.href = '/legal'}
+            >
+              Contact
+            </button>
+          </div>
+        </div>
+        <div className="footer-copyright">
+          <p>&copy; 2025 Playzio. Tous droits réservés.</p>
         </div>
       </footer>
 

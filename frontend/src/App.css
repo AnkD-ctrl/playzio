@@ -38,9 +38,10 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
 }
+
 
 .header-actions {
   display: flex;
@@ -92,6 +93,7 @@ body {
   color: #ff6666;
 }
 
+
 /* Content - app-content supprimé car inutile */
 
 /* Activity Container */
@@ -100,6 +102,22 @@ body {
   margin: 0 auto;
   padding: 20px 20px 0 20px;
   position: relative;
+}
+
+/* Background pour toutes les pages après connexion */
+.app::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/images/people playzio bara.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.3;
+  z-index: -1;
 }
 
 .activity-header {
@@ -247,21 +265,27 @@ body {
 }
 
 .btn-apply {
-  background: linear-gradient(45deg, #d4af8c, #8a2be2);
+  background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
   color: #ffffff;
 }
 
 .btn-apply:hover {
-  background: linear-gradient(45deg, #e0c499, #9d4edd);
+  background: linear-gradient(135deg, #e6c199 0%, #d9b37e 25%, #c99a1b 50%, #a366eb 75%, #9a42f2 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 175, 140, 0.3);
 }
 
 .btn-close {
-  background: #5a5a5a;
+  background: linear-gradient(135deg, #666666 0%, #555555 100%);
   color: #e0e0e0;
+  border: 1px solid #777777;
 }
 
 .btn-close:hover {
-  background: #6a6a6a;
+  background: linear-gradient(135deg, #777777 0%, #666666 100%);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .main-tab:hover {
@@ -308,6 +332,7 @@ body {
   margin-top: 0; /* Plus besoin d'espace car view-toggle-container est en position relative */
   position: relative;
   overflow: hidden;
+  z-index: 1;
 }
 
 .activity-content > * {

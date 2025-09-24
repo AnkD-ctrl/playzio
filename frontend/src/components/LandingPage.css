@@ -1237,6 +1237,44 @@
   margin: 0 auto;
 }
 
+.footer-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.footer-link {
+  background: none;
+  border: none;
+  color: #b0b0b0;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  padding: 5px 0;
+}
+
+.footer-link:hover {
+  color: #d4af8c;
+  text-decoration-color: #d4af8c;
+}
+
+.footer-copyright {
+  color: #888;
+  font-size: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 20px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.footer-copyright p {
+  margin: 0;
+}
+
 
 
 

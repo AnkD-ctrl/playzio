@@ -14,15 +14,18 @@ import Groups from './components/Groups'
 import CookieBanner from './components/CookieBanner'
 import PWAInstaller from './components/PWAInstaller'
 import InstallGuide from './components/InstallGuide'
+import LegalHub from './components/LegalHub'
 import { trackPageView, trackLogin, trackLogout, trackActivitySelect, trackNavigation } from './utils/analytics'
 import { testAnalyticsExclusion } from './utils/testAnalytics'
+import { API_BASE_URL } from './config'
 
 function App() {
+  // Force redeploy - hamburger menu removed successfully
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [currentUser, setCurrentUser] = useState(null)
   const [currentView, setCurrentView] = useState('landing') // Commencer par la landing page
   const [selectedActivity, setSelectedActivity] = useState(null)
-  const [selectedType, setSelectedType] = useState('mes-dispo')
+  const [selectedType, setSelectedType] = useState('list')
   const [selectedDate, setSelectedDate] = useState(null)
   const [showUserProfile, setShowUserProfile] = useState(false)
   const [showFilterModal, setShowFilterModal] = useState(false)
@@ -48,6 +51,11 @@ function App() {
     // Vérifier le pathname pour /install-guide
     if (window.location.pathname === '/install-guide') {
       setCurrentView('install-guide')
+    }
+    
+    // Vérifier le pathname pour /legal
+    if (window.location.pathname === '/legal') {
+      setCurrentView('legal')
     }
     
     // Vérifier le hash pour #share/
@@ -107,7 +115,7 @@ function App() {
     setCurrentUser(user)
     setIsLoggedIn(true)
     setSelectedActivity('Tous') // Aller directement à l'activité "Tous"
-    setSelectedType('mes-dispo') // Aller directement sur "Mes dispo"
+    setSelectedType('list') // Aller directement sur la vue liste
     setCurrentView('activity')
     
     // Sauvegarder la session dans localStorage seulement si les cookies sont acceptés
@@ -194,6 +202,32 @@ function App() {
     setSelectedType('list')
   }
 
+  const handleJoinSlot = async (slotId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/slots/${slotId}/join`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          participant: currentUser.prenom
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        // Rafraîchir la liste des slots
+        setFilterVersion(prev => prev + 1)
+        console.log('Slot rejoint avec succès')
+      } else {
+        console.error('Erreur lors de la jointure du slot:', data.error)
+      }
+    } catch (error) {
+      console.error('Erreur lors de la jointure du slot:', error)
+    }
+  }
+
   const handleViewChange = (view) => {
     trackNavigation(currentView, view)
     setCurrentView(view)
@@ -217,6 +251,7 @@ function App() {
       {currentView !== 'landing' && currentView !== 'login' && currentView !== 'register' && isLoggedIn && (
         <div className="app-header">
           <div className="header-content">
+            
             <div className="header-actions">
               <button 
                 className="groups-btn"
@@ -252,6 +287,7 @@ function App() {
         </div>
       )}
 
+
       {currentView === 'landing' && (
         <>
           {console.log('Rendering LandingPage')}
@@ -271,7 +307,10 @@ function App() {
       )}
 
       {currentView === 'share' && shareUsername && (
-        <SharePage username={shareUsername} />
+        <SharePage 
+          username={shareUsername} 
+          onNavigateToRegister={() => setCurrentView('register')}
+        />
       )}
 
       {currentView === 'register' && (
@@ -291,33 +330,11 @@ function App() {
 
       {currentView === 'activity' && selectedActivity && (
         <div className="activity-container">
-          <div className="main-tabs">
-            <div 
-              className={`main-tab ${selectedType === 'mes-dispo' || selectedType === 'mes-dispo-calendar' ? 'active' : ''}`}
-              onClick={() => setSelectedType('mes-dispo')}
-            >
-              Mes dispo
-            </div>
-            <div 
-              className={`main-tab ${selectedType === 'communaute' || selectedType === 'communaute-calendar' ? 'active' : ''}`}
-              onClick={() => setSelectedType('communaute')}
-            >
-              Dispo des groupes
-            </div>
-            <div 
-              className={`main-tab ${selectedType === 'publiques' || selectedType === 'publiques-calendar' ? 'active' : ''}`}
-              onClick={() => setSelectedType('publiques')}
-            >
-              Publiques
-            </div>
-          </div>
-
-
           <div className="activity-content">
-            {/* Mes dispo - Vue liste */}
-            {selectedType === 'mes-dispo' && (
+            {/* Vue liste - TOUS les slots accessibles */}
+            {selectedType === 'list' && (
               <SlotList 
-                key={`mes-dispo-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
+                key={`all-slots-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
                 activity={selectedActivity}
                 currentUser={currentUser}
                 selectedDate={selectedDate}
@@ -326,15 +343,15 @@ function App() {
                 onSearchFilterChange={handleSearchFilterChange}
                 lieuFilter={lieuFilter}
                 organizerFilter={organizerFilter}
-                filterType="mes-dispo"
                 onAddSlot={() => setSelectedType('add')}
+                onJoinSlot={handleJoinSlot}
               />
             )}
             
-            {/* Mes dispo - Vue calendrier */}
-            {selectedType === 'mes-dispo-calendar' && (
+            {/* Vue calendrier - TOUS les slots accessibles */}
+            {selectedType === 'calendar' && (
               <Calendar 
-                key={`mes-dispo-calendar-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
+                key={`all-slots-calendar-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
                 activity={selectedActivity}
                 currentUser={currentUser}
                 onDateSelect={handleDateSelect}
@@ -342,81 +359,11 @@ function App() {
                 onSearchFilterChange={handleSearchFilterChange}
                 lieuFilter={lieuFilter}
                 organizerFilter={organizerFilter}
-                filterType="mes-dispo"
                 onAddSlot={(date) => {
                   setSelectedDate(date)
                   setSelectedType('add')
                 }}
-              />
-            )}
-            
-            {/* Dispo de ma communauté - Vue liste */}
-            {selectedType === 'communaute' && (
-              <SlotList 
-                key={`communaute-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
-                activity={selectedActivity}
-                currentUser={currentUser}
-                selectedDate={selectedDate}
-                onClearDate={() => setSelectedDate(null)}
-                searchFilter={searchFilter}
-                onSearchFilterChange={handleSearchFilterChange}
-                lieuFilter={lieuFilter}
-                organizerFilter={organizerFilter}
-                filterType="communaute"
-              />
-            )}
-            
-            {/* Dispo de ma communauté - Vue calendrier */}
-            {selectedType === 'communaute-calendar' && (
-              <Calendar 
-                key={`communaute-calendar-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
-                activity={selectedActivity}
-                currentUser={currentUser}
-                onDateSelect={handleDateSelect}
-                searchFilter={searchFilter}
-                onSearchFilterChange={handleSearchFilterChange}
-                lieuFilter={lieuFilter}
-                organizerFilter={organizerFilter}
-                filterType="communaute"
-                onAddSlot={(date) => {
-                  setSelectedDate(date)
-                  setSelectedType('add')
-                }}
-              />
-            )}
-            
-            {/* Publiques - Vue liste */}
-            {selectedType === 'publiques' && (
-              <SlotList 
-                key={`publiques-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
-                activity={selectedActivity}
-                currentUser={currentUser}
-                selectedDate={selectedDate}
-                onClearDate={() => setSelectedDate(null)}
-                searchFilter={searchFilter}
-                onSearchFilterChange={handleSearchFilterChange}
-                lieuFilter={lieuFilter}
-                organizerFilter={organizerFilter}
-                filterType="publiques"
-              />
-            )}
-            
-            {/* Publiques - Vue calendrier */}
-            {selectedType === 'publiques-calendar' && (
-              <Calendar 
-                key={`publiques-calendar-${selectedActivity}-${selectedDate || 'all'}-${lieuFilter}-${organizerFilter}-${filterVersion}`}
-                activity={selectedActivity}
-                currentUser={currentUser}
-                onDateSelect={handleDateSelect}
-                searchFilter={searchFilter}
-                onSearchFilterChange={handleSearchFilterChange}
-                lieuFilter={lieuFilter}
-                organizerFilter={organizerFilter}
-                filterType="publiques"
-                onAddSlot={(date) => {
-                  setSelectedDate(date)
-                  setSelectedType('add')
-                }}
+                onJoinSlot={handleJoinSlot}
               />
             )}
             
@@ -425,8 +372,9 @@ function App() {
               <AddSlot 
                 activity={selectedActivity}
                 currentUser={currentUser}
-                onSlotAdded={() => setSelectedType('mes-dispo')}
+                onSlotAdded={() => setSelectedType('list')}
                 preSelectedDate={selectedDate}
+                onClearDate={() => setSelectedDate(null)}
               />
             )}
           </div>
@@ -470,7 +418,7 @@ function App() {
               </div>
               
               {/* Bouton partager */}
-              {selectedType === 'mes-dispo' && currentUser && (
+              {currentUser && (
                 <div className="footer-btn-wrapper">
                   <button 
                     className="view-toggle-btn share-btn"
@@ -505,18 +453,15 @@ function App() {
                 <button 
                   className="view-toggle-btn"
                   onClick={() => {
-                    if (selectedType.includes('-calendar')) {
-                      // Passer de calendrier à liste
-                      const baseType = selectedType.replace('-calendar', '')
-                      setSelectedType(baseType)
+                    if (selectedType === 'calendar') {
+                      setSelectedType('list')
                     } else {
-                      // Passer de liste à calendrier
-                      setSelectedType(`${selectedType}-calendar`)
+                      setSelectedType('calendar')
                     }
                   }}
-                  title={selectedType.includes('-calendar') ? 'Vue liste' : 'Vue calendrier'}
+                  title={selectedType === 'calendar' ? 'Vue liste' : 'Vue calendrier'}
                 >
-                  {selectedType.includes('-calendar') ? (
+                  {selectedType === 'calendar' ? (
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M8 6h13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                       <path d="M8 12h13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -534,7 +479,7 @@ function App() {
                     </svg>
                   )}
                 </button>
-                <span className="btn-label">{selectedType.includes('-calendar') ? 'Liste' : 'Calendrier'}</span>
+                <span className="btn-label">{selectedType === 'calendar' ? 'Liste' : 'Calendrier'}</span>
               </div>
             </div>
           </div>
@@ -559,6 +504,11 @@ function App() {
       {/* Page de guide d'installation */}
       {currentView === 'install-guide' && (
         <InstallGuide />
+      )}
+
+      {/* Pages légales */}
+      {currentView === 'legal' && (
+        <LegalHub onBack={() => setCurrentView('landing')} />
       )}
 
 

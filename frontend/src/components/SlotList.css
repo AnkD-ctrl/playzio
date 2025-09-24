@@ -156,13 +156,13 @@
 }
 
 .modal-btn.primary {
-  background: linear-gradient(45deg, #d4af8c, #8a2be2);
+  background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
   color: #ffffff;
   border: 1px solid #d4af8c;
 }
 
 .modal-btn.primary:hover {
-  background: linear-gradient(45deg, #e0c499, #9d4edd);
+  background: linear-gradient(135deg, #e6c199 0%, #d9b37e 25%, #c99a1b 50%, #a366eb 75%, #9a42f2 100%);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(212, 175, 140, 0.3);
 }
@@ -301,12 +301,16 @@
 }
 
 .btn-close {
-  background: linear-gradient(45deg, #d4af8c, #8a2be2);
-  color: #ffffff;
+  background: linear-gradient(135deg, #666666 0%, #555555 100%);
+  color: #e0e0e0;
+  border: 1px solid #777777;
 }
 
 .btn-close:hover {
-  background: linear-gradient(45deg, #e0c499, #9d4edd);
+  background: linear-gradient(135deg, #777777 0%, #666666 100%);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 
@@ -518,6 +522,7 @@
   overflow: hidden;
 }
 
+
 .slot-item:hover {
   border-color: #5a5a5a;
   transform: translateY(-1px);
@@ -536,6 +541,8 @@
   padding: 12px 16px;
   cursor: pointer;
   transition: all 0.2s ease;
+  position: relative;
+  z-index: 1;
 }
 
 .slot-item-header:hover {
@@ -640,6 +647,8 @@
   transition: transform 0.2s ease;
   border-top: 1px solid #4a4a4a;
   background: rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 2;
 }
 
 .expand-icon-bottom:hover {
@@ -656,6 +665,8 @@
   background: rgba(0, 0, 0, 0.2);
   border-top: 1px solid #4a4a4a;
   animation: slideDown 0.3s ease-out;
+  position: relative;
+  z-index: 1;
 }
 
 @keyframes slideDown {
