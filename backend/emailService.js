@@ -134,7 +134,7 @@ export async function sendSlotJoinNotification(organizerEmail, organizerName, pa
   const emailData = {
     personalizations: [{
       to: [{ email: organizerEmail }],
-      subject: `🎉 ${participantName} s'est inscrit à votre disponibilité !`
+      subject: `${participantName} a décidé de vous notifier`
     }],
     from: { email: FROM_EMAIL, name: 'Playzio' },
     content: [{
@@ -142,8 +142,8 @@ export async function sendSlotJoinNotification(organizerEmail, organizerName, pa
       value: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
           <div style="background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%); padding: 30px; text-align: center; border-radius: 12px 12px 0 0;">
-            <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">🎉 Nouvelle inscription !</h1>
-            <p style="color: white; margin: 10px 0 0 0; font-size: 16px;">Quelqu'un s'est inscrit à votre disponibilité</p>
+            <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">Notification</h1>
+            <p style="color: white; margin: 10px 0 0 0; font-size: 16px;">${participantName} a décidé de vous notifier</p>
           </div>
           
           <div style="background: white; padding: 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
@@ -154,10 +154,10 @@ export async function sendSlotJoinNotification(organizerEmail, organizerName, pa
                 <strong>${participantName}</strong> s'est inscrit à votre disponibilité :
               </p>
               <div style="color: #333; font-size: 16px; line-height: 1.6;">
-                <p style="margin: 5px 0;"><strong>📅 Date :</strong> ${date}</p>
-                <p style="margin: 5px 0;"><strong>🕐 Heure :</strong> ${heureDebut} - ${heureFin}</p>
-                <p style="margin: 5px 0;"><strong>🎯 Activité :</strong> ${activityName}</p>
-                ${lieu ? `<p style="margin: 5px 0;"><strong>📍 Lieu :</strong> ${lieu}</p>` : ''}
+                <p style="margin: 5px 0;"><strong>Date :</strong> ${date}</p>
+                <p style="margin: 5px 0;"><strong>Heure :</strong> ${heureDebut} - ${heureFin}</p>
+                <p style="margin: 5px 0;"><strong>Activité :</strong> ${activityName}</p>
+                ${lieu ? `<p style="margin: 5px 0;"><strong>Lieu :</strong> ${lieu}</p>` : ''}
               </div>
             </div>
             
