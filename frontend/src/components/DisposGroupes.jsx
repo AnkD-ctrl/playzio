@@ -246,6 +246,7 @@ function DisposGroupes({ currentUser, onBack }) {
               }}
               onJoinSlot={handleJoinSlot}
               customSlots={slots}
+              pageType="dispos-groupes"
             />
           )}
         </div>

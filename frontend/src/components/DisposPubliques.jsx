@@ -246,6 +246,7 @@ function DisposPubliques({ currentUser, onBack }) {
               }}
               onJoinSlot={handleJoinSlot}
               customSlots={slots}
+              pageType="dispos-publiques"
             />
           )}
         </div>

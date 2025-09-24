@@ -3,8 +3,9 @@ import './Calendar.css'
 import './SlotList.css'
 import { API_BASE_URL } from '../config'
 import ActivitySearchModal from './ActivitySearchModal'
+import DaySlotsModal from './DaySlotsModal'
 
-function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, onAddSlot, onJoinSlot, selectedDate, onClearDate, customSlots }) {
+function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, onAddSlot, onJoinSlot, selectedDate, onClearDate, customSlots, pageType }) {
   const [slots, setSlots] = useState([])
   const [currentDate, setCurrentDate] = useState(new Date())
   const [loading, setLoading] = useState(true)
@@ -17,6 +18,8 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
   const [selectedDay, setSelectedDay] = useState(null)
   const [expandedSlots, setExpandedSlots] = useState(new Set())
   const [selectedSlot, setSelectedSlot] = useState(null)
+  const [showDayModal, setShowDayModal] = useState(false)
+  const [modalSelectedDate, setModalSelectedDate] = useState(null)
 
   
   // Nouveaux filtres
@@ -228,20 +231,9 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
       const day = String(date.getDate()).padStart(2, '0')
       const dateStr = `${year}-${month}-${day}`
       
-      // Vérifier s'il y a des créneaux pour cette date
-      const daySlots = getSlotsForDate(date)
-      
-      if (daySlots.length > 0) {
-        // S'il y a des créneaux, utiliser onDateSelect (comportement existant)
-        if (onDateSelect) {
-          onDateSelect(dateStr)
-        }
-      } else {
-        // S'il n'y a pas de créneaux, utiliser onAddSlot pour créer une nouvelle dispo
-        if (onAddSlot) {
-          onAddSlot(dateStr)
-        }
-      }
+      // Ouvrir le modal avec les slots de la journée
+      setModalSelectedDate(dateStr)
+      setShowDayModal(true)
     }
   }
 
@@ -601,6 +593,16 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
           </div>
         </div>
       )}
+
+      {/* Modal pour afficher les slots d'une journée */}
+      <DaySlotsModal
+        isOpen={showDayModal}
+        onClose={() => setShowDayModal(false)}
+        selectedDate={modalSelectedDate}
+        currentUser={currentUser}
+        pageType={pageType}
+        onJoinSlot={onJoinSlot}
+      />
     </div>
   )
 }

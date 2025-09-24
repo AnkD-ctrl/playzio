@@ -246,6 +246,7 @@ function DisposAmis({ currentUser, onBack }) {
               }}
               onJoinSlot={handleJoinSlot}
               customSlots={slots}
+              pageType="dispos-amis"
             />
           )}
         </div>

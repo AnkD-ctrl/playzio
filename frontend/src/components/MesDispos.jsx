@@ -236,6 +236,7 @@ function MesDispos({ currentUser, onBack }) {
               }}
               onJoinSlot={handleJoinSlot}
               customSlots={slots}
+              pageType="mes-dispos"
             />
           )}
         </div>
