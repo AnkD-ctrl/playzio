@@ -109,16 +109,16 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
             return true
           }
           
-          // 3. Slots des amis (visibleToFriends = true) - seulement si on a des amis
+          // 3. Slots des amis (visibleToFriends = true) - TEMPORAIREMENT TOUS VISIBLES
           if (slot.visibleToFriends === true) {
-            console.log('⚠️ Slot amis (non implémenté):', slot.id)
-            return false // Temporairement désactivé
+            console.log('✅ Slot amis (temporairement visible):', slot.id)
+            return true
           }
           
-          // 4. Slots des groupes (visibleToGroups contient des groupes) - seulement si on est dans le groupe
+          // 4. Slots des groupes (visibleToGroups contient des groupes) - TEMPORAIREMENT TOUS VISIBLES
           if (slot.visibleToGroups && slot.visibleToGroups.length > 0) {
-            console.log('⚠️ Slot groupes (non implémenté):', slot.id)
-            return false // Temporairement désactivé
+            console.log('✅ Slot groupes (temporairement visible):', slot.id)
+            return true
           }
           
           // 5. Si aucun des critères ci-dessus n'est rempli, ne pas afficher
