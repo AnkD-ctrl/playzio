@@ -17,6 +17,7 @@ function DisposAmis({ currentUser, onBack }) {
   const [filterVersion, setFilterVersion] = useState(0)
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [showAddSlot, setShowAddSlot] = useState(false)
+  const [addSlotPage, setAddSlotPage] = useState(false)
 
   useEffect(() => {
     if (currentUser && currentUser.prenom) {
@@ -135,6 +136,24 @@ function DisposAmis({ currentUser, onBack }) {
     )
   }
 
+  // Si on est sur la page d'ajout, afficher AddSlot
+  if (addSlotPage) {
+    return (
+      <div className="dispos-amis-container">
+        <AddSlot 
+          activity="Tous"
+          currentUser={currentUser}
+          onSlotAdded={() => {
+            setAddSlotPage(false)
+            setFilterVersion(prev => prev + 1)
+          }}
+          preSelectedDate={selectedDate}
+          onClearDate={() => setSelectedDate(null)}
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="dispos-amis-container">
       <div>
@@ -154,7 +173,7 @@ function DisposAmis({ currentUser, onBack }) {
               onSearchFilterChange={handleSearchFilterChange}
               lieuFilter={lieuFilter}
               organizerFilter={organizerFilter}
-              onAddSlot={() => setShowAddSlot(true)}
+              onAddSlot={() => setAddSlotPage(true)}
               onJoinSlot={handleJoinSlot}
               customSlots={slots}
             />
@@ -173,7 +192,7 @@ function DisposAmis({ currentUser, onBack }) {
               organizerFilter={organizerFilter}
               onAddSlot={(date) => {
                 setSelectedDate(date)
-                setShowAddSlot(true)
+                setAddSlotPage(true)
               }}
               onJoinSlot={handleJoinSlot}
               customSlots={slots}
@@ -239,7 +258,7 @@ function DisposAmis({ currentUser, onBack }) {
             <div className="footer-btn-wrapper">
               <button 
                 className="view-toggle-btn add-btn"
-                onClick={() => setShowAddSlot(true)}
+                onClick={() => setAddSlotPage(true)}
                 title="Ajouter une disponibilité"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -360,19 +379,6 @@ function DisposAmis({ currentUser, onBack }) {
         </div>
       )}
 
-      {/* Ajouter une dispo */}
-      {showAddSlot && (
-        <AddSlot 
-          activity="Tous"
-          currentUser={currentUser}
-          onSlotAdded={() => {
-            setShowAddSlot(false)
-            setFilterVersion(prev => prev + 1)
-          }}
-          preSelectedDate={selectedDate}
-          onClearDate={() => setSelectedDate(null)}
-        />
-      )}
     </div>
   )
 }
