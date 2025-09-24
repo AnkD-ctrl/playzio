@@ -135,7 +135,7 @@ function DisposAmis({ currentUser, onBack }) {
 
   return (
     <div className="dispos-amis-container">
-      <div className="dispos-amis-header">
+      <div>
         <button className="back-btn" onClick={onBack}>
           ← Retour
         </button>
