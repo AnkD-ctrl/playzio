@@ -1029,6 +1029,59 @@ app.delete('/api/friends/requests/:requestId', async (req, res) => {
   }
 })
 
+// Supprimer un ami
+app.delete('/api/friends/:userId/:friendId', async (req, res) => {
+  try {
+    const { userId, friendId } = req.params
+    
+    if (!userId || !friendId) {
+      return res.status(400).json({ error: 'ID utilisateur et ID ami requis' })
+    }
+    
+    // Vérifier que les utilisateurs existent
+    const user = await getUserByPrenom(userId)
+    const friend = await getUserByPrenom(friendId)
+    
+    if (!user) {
+      return res.status(404).json({ error: 'Utilisateur non trouvé' })
+    }
+    
+    if (!friend) {
+      return res.status(404).json({ error: 'Ami non trouvé' })
+    }
+    
+    // Supprimer la relation d'amitié (dans les deux sens)
+    const result = await pool.query(
+      'DELETE FROM friends WHERE (user1 = $1 AND user2 = $2) OR (user1 = $2 AND user2 = $1)',
+      [userId, friendId]
+    )
+    
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Relation d\'amitié non trouvée' })
+    }
+    
+    // Mettre à jour le champ friends des deux utilisateurs
+    const userFriends = await pool.query(
+      'SELECT user2 as friend FROM friends WHERE user1 = $1 UNION SELECT user1 as friend FROM friends WHERE user2 = $1',
+      [userId]
+    )
+    const userFriendsList = userFriends.rows.map(row => row.friend)
+    await pool.query('UPDATE users SET friends = $1 WHERE prenom = $2', [userFriendsList, userId])
+    
+    const friendFriends = await pool.query(
+      'SELECT user2 as friend FROM friends WHERE user1 = $1 UNION SELECT user1 as friend FROM friends WHERE user2 = $1',
+      [friendId]
+    )
+    const friendFriendsList = friendFriends.rows.map(row => row.friend)
+    await pool.query('UPDATE users SET friends = $1 WHERE prenom = $2', [friendFriendsList, friendId])
+    
+    res.json({ success: true, message: 'Ami supprimé avec succès' })
+  } catch (error) {
+    console.error('Delete friend error:', error)
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
+
 // Routes pour les groupes
 
 // Créer un groupe
