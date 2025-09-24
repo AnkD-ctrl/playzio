@@ -660,11 +660,13 @@
   }
   
   .request-actions {
-    display: flex;
+    display: flex !important;
+    flex-direction: row !important;
     justify-content: flex-end;
     align-items: center;
     gap: 6px;
     flex-shrink: 0;
+    margin-left: 8px;
   }
   
   .accept-btn-icon,
