@@ -505,16 +505,18 @@ function UserProfile({ user, onClose, onUserUpdate }) {
                 </div>
 
                 <div className="friends-content">
+                  {/* Bouton ajouter un ami - visible sur tous les onglets */}
+                  <div className="add-friend-btn-container">
+                    <button 
+                      className="action-btn primary"
+                      onClick={() => setShowAddFriendModal(true)}
+                    >
+                      Ajouter un ami
+                    </button>
+                  </div>
+
                   {friendsTab === 'friends' && (
                     <div>
-                      <div className="add-friend-btn-container">
-                        <button 
-                          className="action-btn primary"
-                          onClick={() => setShowAddFriendModal(true)}
-                        >
-                          Ajouter un ami
-                        </button>
-                      </div>
                       {userFriends.length === 0 ? (
                         <p className="no-friends-message">Aucun ami pour le moment</p>
                       ) : (
