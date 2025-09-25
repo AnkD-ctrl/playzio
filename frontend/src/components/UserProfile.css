@@ -9,7 +9,7 @@
 .friends-tabs {
   display: flex;
   border-bottom: 1px solid #4a4a4a;
-  margin-bottom: 16px;
+  margin: 0 20px 16px 20px;
 }
 
 .friends-tab {
@@ -38,6 +38,7 @@
 
 .friends-tab-content {
   min-height: 200px;
+  padding: 0 20px;
 }
 
 .request-actions {
@@ -130,7 +131,7 @@
 }
 
 .user-profile-modal {
-  background: #2a2a2a;
+  background: #2c2c2c;
   border: 1px solid #404040;
   border-radius: 16px;
   width: 100%;
@@ -163,13 +164,14 @@
   align-items: center;
   padding: 24px 28px;
   border-bottom: 1px solid #404040;
-  background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
+  background: #2c2c2c;
   border-radius: 16px 16px 0 0;
 }
 
 .modal-content {
   width: 100%;
   max-width: 100%;
+  padding: 0 20px 20px 20px;
 }
 
 .modal-header h3 {
@@ -264,28 +266,27 @@
 }
 
 .founder-badge {
-  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
-  color: #8b4513;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 700;
+  background: none;
+  color: #d4af8c;
+  padding: 0;
+  border-radius: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 6px;
-  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
-  border: 1px solid rgba(255, 215, 0, 0.6);
+  gap: 0;
+  box-shadow: none;
+  border: none;
 }
 
 .founder-crown {
-  font-size: 0.9rem;
-  filter: drop-shadow(0 1px 2px rgba(139, 69, 19, 0.3));
+  display: none;
 }
 
 .founder-text {
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.3px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0;
 }
 
 
@@ -347,7 +348,26 @@
 }
 
 .friends-tab-content .action-btn.primary {
-  max-width: 200px;
+  max-width: 150px !important;
+  padding: 8px 16px !important;
+  font-size: 0.8rem !important;
+  min-width: 120px !important;
+  flex: none !important;
+  width: auto !important;
+}
+
+.add-friend-btn-container .action-btn.primary {
+  max-width: 150px !important;
+  width: auto !important;
+  flex: none !important;
+  display: inline-block !important;
+}
+
+.no-friends-message {
+  text-align: center;
+  color: #b0b0b0;
+  margin: 20px;
+  font-style: italic;
 }
 
 /* Styles pour les messages d'erreur */
@@ -450,7 +470,7 @@
 .friends-list {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 0 20px;
 }
 
 .friend-item {
@@ -891,7 +911,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 16px;
+  margin: 0 20px 16px 20px;
 }
 
 .friend-item {

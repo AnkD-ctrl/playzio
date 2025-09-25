@@ -2,6 +2,33 @@
   padding: 20px;
   max-width: 800px;
   margin: 0 auto;
+  position: relative;
+}
+
+.back-btn-independent {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: #6b7280;
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.back-btn-independent:hover {
+  transform: scale(1.1);
+  background: #9ca3af;
+  box-shadow: 0 4px 12px rgba(107, 114, 128, 0.4);
 }
 
 .groups-header {
@@ -13,20 +40,48 @@
   flex-wrap: nowrap;
 }
 
-.groups-header-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
 
 .groups-header h2 {
-  background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #d4af8c;
   font-size: 2rem;
   font-weight: 800;
   margin: 0;
+}
+
+.create-group-section {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.create-group-btn-with-text {
+  background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+  color: white;
+  border: 1px solid #d4af8c;
+  border-radius: 6px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.create-group-btn-with-text:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, #e6c47a 0%, #d4af8c 25%, #c9a96e 50%, #a569bd 75%, #9b59b6 100%);
+  box-shadow: 0 4px 12px rgba(212, 175, 140, 0.4);
+}
+
+.create-group-icon {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.create-group-text {
+  font-size: 14px;
 }
 
 .create-group-btn {
@@ -47,11 +102,11 @@
 .create-group-btn-icon {
   background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
   color: white;
-  border: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  font-size: 20px;
+  border: 1px solid #d4af8c;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  font-size: 12px;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -62,6 +117,7 @@
 
 .create-group-btn-icon:hover {
   transform: scale(1.1);
+  background: linear-gradient(135deg, #e6c47a 0%, #d4af8c 25%, #c9a96e 50%, #a569bd 75%, #9b59b6 100%);
   box-shadow: 0 4px 12px rgba(212, 175, 140, 0.4);
 }
 
@@ -443,15 +499,6 @@
   gap: 12px;
 }
 
-.expand-icon {
-  color: #d4af8c;
-  font-size: 0.8rem;
-  transition: transform 0.2s ease;
-}
-
-.group-item.expanded .expand-icon {
-  transform: rotate(0deg);
-}
 
 .group-item-details {
   padding: 16px;
@@ -621,9 +668,30 @@
   }
   
   .create-group-btn-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+  
+  .back-btn-independent {
     width: 36px;
     height: 36px;
     font-size: 18px;
-    flex-shrink: 0;
+    top: 15px;
+    left: 15px;
+  }
+  
+  .create-group-btn-with-text {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  
+  .create-group-icon {
+    font-size: 14px;
+  }
+  
+  .create-group-text {
+    font-size: 12px;
   }
 }

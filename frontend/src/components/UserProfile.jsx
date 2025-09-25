@@ -349,12 +349,6 @@ function UserProfile({ user, onClose, onUserUpdate }) {
               
               <div className="user-badges">
                 <span className="role-badge">{user.role}</span>
-                {user.isFounder && (
-                  <span className="founder-badge">
-                    <span className="founder-crown">👑</span>
-                    <span className="founder-text">Membre premium</span>
-                  </span>
-                )}
               </div>
             </div>
           </div>
@@ -458,10 +452,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
                       required
                     />
                     <p className="form-help">
-                      {user.email 
-                        ? "Modifiez votre adresse email pour la récupération de mot de passe."
-                        : "Cet email vous permettra de récupérer votre compte en cas d'oubli de mot de passe."
-                      }
+                      L'adresse email est utilisée pour récupérer un mot de passe perdu et recevoir des notifications liées à tes dispos.
                     </p>
                   </div>
                   {message && <div className={`message ${message.includes('succès') ? 'success' : 'error'}`}>{message}</div>}
@@ -503,13 +494,13 @@ function UserProfile({ user, onClose, onUserUpdate }) {
                     className={`friends-tab ${friendsTab === 'received' ? 'active' : ''}`}
                     onClick={() => setFriendsTab('received')}
                   >
-                    Demandes reçues ({friendRequests.length})
+                    Reçues ({friendRequests.length})
                   </button>
                   <button 
                     className={`friends-tab ${friendsTab === 'sent' ? 'active' : ''}`}
                     onClick={() => setFriendsTab('sent')}
                   >
-                    Demandes envoyées ({sentFriendRequests.length})
+                    Envoyées ({sentFriendRequests.length})
                   </button>
                 </div>
 
@@ -525,7 +516,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
                         </button>
                       </div>
                       {userFriends.length === 0 ? (
-                        <p>Aucun ami pour le moment</p>
+                        <p className="no-friends-message">Aucun ami pour le moment</p>
                       ) : (
                         <ul className="friends-list">
                           {userFriends.map((friend, index) => (

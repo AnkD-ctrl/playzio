@@ -182,15 +182,15 @@ const Groups = ({ currentUser, onBack }) => {
 
   return (
     <div className="groups-container">
+      <button 
+        className="back-btn-independent"
+        onClick={onBack}
+        title="Retour"
+      >
+        ←
+      </button>
       <div className="groups-header">
         <h2>Mes Groupes</h2>
-        <button 
-          className="create-group-btn-icon"
-          onClick={() => setShowCreateForm(true)}
-          title="Créer un nouveau groupe"
-        >
-          +
-        </button>
       </div>
 
       {showCreateForm && (
@@ -226,6 +226,17 @@ const Groups = ({ currentUser, onBack }) => {
         </div>
       )}
 
+      <div className="create-group-section">
+        <button 
+          className="create-group-btn-with-text"
+          onClick={() => setShowCreateForm(true)}
+          title="Créer un nouveau groupe"
+        >
+          <span className="create-group-icon">+</span>
+          <span className="create-group-text">Créer un groupe</span>
+        </button>
+      </div>
+
       <div className="groups-list">
         {groups.length === 0 ? (
           <p className="no-groups">Vous n'êtes membre d'aucun groupe pour le moment.</p>
@@ -250,9 +261,6 @@ const Groups = ({ currentUser, onBack }) => {
                       </div>
                     </div>
                     <div className="group-item-actions">
-                      <div className="expand-icon">
-                        {isExpanded ? '▼' : '▶'}
-                      </div>
                     </div>
                   </div>
 
