@@ -72,6 +72,11 @@ function DisposGroupes({ currentUser, onBack }) {
   }
 
   const applyFilters = () => {
+    if (!allSlots || allSlots.length === 0) {
+      console.log('⚠️ Aucun slot à filtrer')
+      return
+    }
+    
     let filteredSlots = [...allSlots]
     
     // Appliquer les filtres côté frontend

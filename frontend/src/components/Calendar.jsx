@@ -134,18 +134,18 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
             return true
           }
           
-          // 2. Slots publics (visibleToAll = true)
-          if (slot.visibleToAll === true) {
+          // 2. Slots publics (visibleToAll = true) créés par d'autres
+          if (slot.visibleToAll === true && slot.createdBy !== currentUser.prenom) {
             return true
           }
           
-          // 3. Slots des amis (visibleToFriends = true ET organisateur dans mes amis)
-          if (slot.visibleToFriends === true && userFriends.includes(slot.createdBy)) {
+          // 3. Slots des amis (visibleToFriends = true ET organisateur dans mes amis ET pas créé par moi)
+          if (slot.visibleToFriends === true && userFriends.includes(slot.createdBy) && slot.createdBy !== currentUser.prenom) {
             return true
           }
           
-          // 4. Slots des groupes (visibleToGroups contient un groupe dont je fais partie)
-          if (slot.visibleToGroups && slot.visibleToGroups.length > 0) {
+          // 4. Slots des groupes (visibleToGroups contient un groupe dont je fais partie ET pas créé par moi)
+          if (slot.visibleToGroups && slot.visibleToGroups.length > 0 && slot.createdBy !== currentUser.prenom) {
             const userGroupIds = userGroups.map(group => group.id)
             const hasCommonGroup = slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId))
             if (hasCommonGroup) {
@@ -622,6 +622,7 @@ function Calendar({ activity, currentUser, onDateSelect, searchFilter, onSearchF
         currentUser={currentUser}
         pageType={pageType}
         onJoinSlot={onJoinSlot}
+        customSlots={customSlots}
       />
     </div>
   )

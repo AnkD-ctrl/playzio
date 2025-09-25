@@ -8,7 +8,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
+  z-index: 1000;
   backdrop-filter: blur(4px);
 }
 
@@ -16,17 +16,20 @@
   background: #3a3a3a;
   border: 1px solid #5a5a5a;
   border-radius: 12px;
-  max-width: 600px;
-  width: 90%;
-  max-height: 80vh;
+  max-width: 500px;
+  width: 85%;
+  max-height: 60vh;
+  min-height: 200px;
   display: flex;
   flex-direction: column;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  position: relative;
+  z-index: 1001;
 }
 
 .day-slots-header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
   border-bottom: none;
@@ -55,10 +58,56 @@
   transform: scale(1.1);
 }
 
+.add-slot-btn {
+  background: linear-gradient(135deg, #d4af8c 0%, #c9a96e 25%, #b8860b 50%, #9370db 75%, #8a2be2 100%);
+  border: 1px solid #d4af8c;
+  color: white;
+  font-size: 18px;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(212, 175, 140, 0.3);
+}
+
+.add-slot-btn:hover {
+  background: linear-gradient(135deg, #e6c199 0%, #d9b37e 25%, #c99a1b 50%, #a366eb 75%, #9a42f2 100%);
+  border-color: #e6c199;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(212, 175, 140, 0.4);
+}
+
 .day-slots-content {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 16px 24px 20px 24px;
+  min-height: 0; /* Important pour le flexbox */
+  max-height: calc(60vh - 60px); /* Hauteur max moins le header de la modal */
+}
+
+/* Style de la scrollbar */
+.day-slots-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.day-slots-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.day-slots-content::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 140, 0.6);
+  border-radius: 4px;
+}
+
+.day-slots-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 175, 140, 0.8);
 }
 
 .day-slots-list-container {

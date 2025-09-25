@@ -197,10 +197,18 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         trackSlotJoin(activity)
         alert('Vous avez rejoint cette disponibilité !')
         
-        // Appeler onJoinSlot si fourni pour mettre à jour les données des pages de navigation
-        if (onJoinSlot) {
-          onJoinSlot(slotId)
+        // Mettre à jour localement le slot modifié
+        if (customSlots) {
+          // Si on utilise customSlots, mettre à jour localement
+          setSlots(prevSlots => 
+            prevSlots.map(slot => 
+              slot.id === slotId 
+                ? { ...slot, participants: [...(slot.participants || []), currentUser.prenom] }
+                : slot
+            )
+          )
         } else {
+          // Sinon, rafraîchir depuis l'API
           fetchSlots()
         }
         
@@ -228,12 +236,18 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         trackSlotLeave(activity)
         alert('Vous avez quitté cette disponibilité')
         
-        // Appeler onLeaveSlot si fourni pour mettre à jour les données des pages de navigation
-        if (onLeaveSlot) {
-          onLeaveSlot(slotId)
-        } else if (onJoinSlot) {
-          onJoinSlot(slotId)
+        // Mettre à jour localement le slot modifié
+        if (customSlots) {
+          // Si on utilise customSlots, mettre à jour localement
+          setSlots(prevSlots => 
+            prevSlots.map(slot => 
+              slot.id === slotId 
+                ? { ...slot, participants: (slot.participants || []).filter(p => p !== currentUser.prenom) }
+                : slot
+            )
+          )
         } else {
+          // Sinon, rafraîchir depuis l'API
           fetchSlots()
         }
       } else {

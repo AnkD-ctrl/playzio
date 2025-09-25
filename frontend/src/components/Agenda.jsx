@@ -42,12 +42,20 @@ function Agenda({ activity, currentUser }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userId: currentUser.id }),
+        body: JSON.stringify({ participant: currentUser.prenom }),
       })
 
       if (response.ok) {
         alert('Vous avez rejoint cette disponibilité !')
-        fetchSlots()
+        
+        // Mettre à jour localement le slot modifié
+        setSlots(prevSlots => 
+          prevSlots.map(slot => 
+            slot.id === slotId 
+              ? { ...slot, participants: [...(slot.participants || []), currentUser.prenom] }
+              : slot
+          )
+        )
       } else {
         const data = await response.json()
         alert(data.error || 'Erreur lors de la participation')
@@ -64,12 +72,20 @@ function Agenda({ activity, currentUser }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userId: currentUser.id }),
+        body: JSON.stringify({ participant: currentUser.prenom }),
       })
 
       if (response.ok) {
         alert('Vous avez quitté cette disponibilité')
-        fetchSlots()
+        
+        // Mettre à jour localement le slot modifié
+        setSlots(prevSlots => 
+          prevSlots.map(slot => 
+            slot.id === slotId 
+              ? { ...slot, participants: (slot.participants || []).filter(p => p !== currentUser.prenom) }
+              : slot
+          )
+        )
       } else {
         const data = await response.json()
         alert(data.error || 'Erreur lors de la sortie')

@@ -3,6 +3,7 @@ import './DaySlotsModal.css'
 import './SlotList.css'
 import { API_BASE_URL } from '../config'
 import SlotList from './SlotList'
+import AddSlot from './AddSlot'
 
 function DaySlotsModal({ 
   isOpen, 
@@ -10,74 +11,86 @@ function DaySlotsModal({
   selectedDate, 
   currentUser, 
   pageType, // 'mes-dispos', 'dispos-amis', 'dispos-groupes', 'dispos-publiques'
-  onJoinSlot 
+  onJoinSlot,
+  customSlots
 }) {
   const [slots, setSlots] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showAddSlot, setShowAddSlot] = useState(false)
 
   useEffect(() => {
     if (isOpen && selectedDate) {
       fetchDaySlots()
     }
-  }, [isOpen, selectedDate, pageType])
+  }, [isOpen, selectedDate, pageType, customSlots])
 
   const fetchDaySlots = async () => {
     try {
       setLoading(true)
       setError('')
       
-      // Récupérer TOUS les slots depuis l'API
-      const url = `${API_BASE_URL}/api/slots`
-      const response = await fetch(url)
+      let filteredSlots = []
       
-      if (response.ok) {
-        const allSlots = await response.json()
-        console.log('📥 Tous les slots reçus:', allSlots.length)
-        
-        // Filtrer selon le type de page
-        let filteredSlots = []
-        
-        switch (pageType) {
-          case 'mes-dispos':
-            // Mes propres slots
-            filteredSlots = allSlots.filter(slot => slot.createdBy === currentUser.prenom)
-            break
-          case 'dispos-amis':
-            // Slots des amis (visibleToFriends = true ET organisateur dans mes amis)
-            const userFriends = await getUserFriends()
-            filteredSlots = allSlots.filter(slot => 
-              slot.visibleToFriends === true && 
-              userFriends.includes(slot.createdBy) &&
-              slot.createdBy !== currentUser.prenom
-            )
-            break
-          case 'dispos-groupes':
-            // Slots des groupes (visibleToGroups contient un groupe dont je fais partie)
-            const userGroups = await getUserGroups()
-            const userGroupIds = userGroups.map(group => group.id)
-            filteredSlots = allSlots.filter(slot => 
-              slot.visibleToGroups && 
-              slot.visibleToGroups.length > 0 &&
-              slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId)) &&
-              slot.createdBy !== currentUser.prenom
-            )
-            break
-          case 'dispos-publiques':
-            // Slots publics (visibleToAll = true)
-            filteredSlots = allSlots.filter(slot => slot.visibleToAll === true)
-            break
-          default:
-            filteredSlots = allSlots
-        }
-        
-        // Filtrer par date sélectionnée
-        const daySlots = filteredSlots.filter(slot => slot.date === selectedDate)
-        console.log(`✅ Slots du jour (${pageType}):`, daySlots.length)
-        setSlots(daySlots)
+      if (customSlots && customSlots.length > 0) {
+        // Utiliser les slots déjà filtrés par le composant parent
+        console.log('📥 Utilisation des customSlots:', customSlots.length)
+        filteredSlots = customSlots
       } else {
-        setError('Erreur lors du chargement des disponibilités')
+        // Récupérer TOUS les slots depuis l'API
+        const url = `${API_BASE_URL}/api/slots`
+        const response = await fetch(url)
+        
+        if (response.ok) {
+          const allSlots = await response.json()
+          console.log('📥 Tous les slots reçus:', allSlots.length)
+          
+          // Filtrer selon le type de page
+          switch (pageType) {
+            case 'mes-dispos':
+              // Mes propres slots
+              filteredSlots = allSlots.filter(slot => slot.createdBy === currentUser.prenom)
+              break
+            case 'dispos-amis':
+              // Slots des amis (visibleToFriends = true ET organisateur dans mes amis)
+              const userFriends = await getUserFriends()
+              filteredSlots = allSlots.filter(slot => 
+                slot.visibleToFriends === true && 
+                userFriends.includes(slot.createdBy) &&
+                slot.createdBy !== currentUser.prenom
+              )
+              break
+            case 'dispos-groupes':
+              // Slots des groupes (visibleToGroups contient un groupe dont je fais partie)
+              const userGroups = await getUserGroups()
+              const userGroupIds = userGroups.map(group => group.id)
+              filteredSlots = allSlots.filter(slot => 
+                slot.visibleToGroups && 
+                slot.visibleToGroups.length > 0 &&
+                slot.visibleToGroups.some(groupId => userGroupIds.includes(groupId)) &&
+                slot.createdBy !== currentUser.prenom
+              )
+              break
+            case 'dispos-publiques':
+              // Slots publics (visibleToAll = true) créés par d'autres
+              filteredSlots = allSlots.filter(slot => 
+                slot.visibleToAll === true && 
+                slot.createdBy !== currentUser.prenom
+              )
+              break
+            default:
+              filteredSlots = allSlots
+          }
+        } else {
+          setError('Erreur lors du chargement des disponibilités')
+          return
+        }
       }
+      
+      // Filtrer par date sélectionnée
+      const daySlots = filteredSlots.filter(slot => slot.date === selectedDate)
+      console.log(`✅ Slots du jour (${pageType}):`, daySlots.length)
+      setSlots(daySlots)
     } catch (error) {
       console.error('Erreur lors du chargement des slots:', error)
       setError('Erreur de connexion au serveur')
@@ -123,15 +136,18 @@ function DaySlotsModal({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userId: currentUser.prenom })
+        body: JSON.stringify({ participant: currentUser.prenom })
       })
 
       if (response.ok) {
-        // Rafraîchir les slots après avoir rejoint
-        fetchDaySlots()
-        if (onJoinSlot) {
-          onJoinSlot(slotId)
-        }
+        // Mettre à jour localement le slot modifié
+        setSlots(prevSlots => 
+          prevSlots.map(slot => 
+            slot.id === slotId 
+              ? { ...slot, participants: [...(slot.participants || []), currentUser.prenom] }
+              : slot
+          )
+        )
       } else {
         const errorData = await response.json()
         alert(errorData.error || 'Erreur lors de la participation')
@@ -149,15 +165,18 @@ function DaySlotsModal({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userId: currentUser.prenom })
+        body: JSON.stringify({ participant: currentUser.prenom })
       })
 
       if (response.ok) {
-        // Rafraîchir les slots après avoir quitté
-        fetchDaySlots()
-        if (onJoinSlot) {
-          onJoinSlot(slotId)
-        }
+        // Mettre à jour localement le slot modifié
+        setSlots(prevSlots => 
+          prevSlots.map(slot => 
+            slot.id === slotId 
+              ? { ...slot, participants: (slot.participants || []).filter(p => p !== currentUser.prenom) }
+              : slot
+          )
+        )
       } else {
         const errorData = await response.json()
         alert(errorData.error || 'Erreur lors de la sortie')
@@ -166,6 +185,15 @@ function DaySlotsModal({
       console.error('Erreur lors de la sortie:', error)
       alert('Erreur de connexion au serveur')
     }
+  }
+
+  const handleAddSlot = () => {
+    setShowAddSlot(true)
+  }
+
+  const handleSlotAdded = () => {
+    setShowAddSlot(false)
+    fetchDaySlots() // Rafraîchir la liste des slots
   }
 
   const formatDate = (dateStr) => {
@@ -196,10 +224,34 @@ function DaySlotsModal({
 
   if (!isOpen) return null
 
+  if (showAddSlot) {
+    return (
+      <div className="day-slots-modal-overlay" onClick={() => setShowAddSlot(false)}>
+        <div className="day-slots-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="day-slots-header">
+            <button className="close-btn" onClick={() => setShowAddSlot(false)}>×</button>
+          </div>
+          <div className="day-slots-content">
+            <AddSlot 
+              activity="Tous"
+              currentUser={currentUser}
+              onSlotAdded={handleSlotAdded}
+              preSelectedDate={selectedDate}
+              onClearDate={() => setShowAddSlot(false)}
+            />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="day-slots-modal-overlay" onClick={onClose}>
       <div className="day-slots-modal" onClick={(e) => e.stopPropagation()}>
         <div className="day-slots-header">
+          <button className="add-slot-btn" onClick={handleAddSlot} title="Ajouter une disponibilité">
+            +
+          </button>
           <button className="close-btn" onClick={onClose}>×</button>
         </div>
         
