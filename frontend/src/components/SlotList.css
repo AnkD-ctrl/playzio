@@ -522,6 +522,11 @@
   overflow: hidden;
 }
 
+.owner-slot {
+  border: 2px solid #d4af8c !important;
+  box-shadow: 0 0 10px rgba(212, 175, 140, 0.3);
+}
+
 
 .slot-item:hover {
   border-color: #5a5a5a;
@@ -554,6 +559,49 @@
   align-items: center;
   gap: 16px;
   flex: 1;
+}
+
+.slot-item-visibility {
+  display: flex;
+  align-items: center;
+  font-size: 1.2rem;
+}
+
+.visibility-multiple {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.visibility-public,
+.visibility-friends,
+.visibility-groups,
+.visibility-private {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: help;
+}
+
+.visibility-public {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+
+.visibility-friends {
+  background: rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+}
+
+.visibility-groups {
+  background: rgba(168, 85, 247, 0.2);
+  color: #a855f7;
+}
+
+.visibility-private {
+  background: rgba(107, 114, 128, 0.2);
+  color: #6b7280;
 }
 
 .slot-item-date {
@@ -717,10 +765,111 @@
   font-size: 0.9rem;
 }
 
+.slot-visibility-detail {
+  margin-bottom: 16px;
+  color: #d4af8c;
+  font-size: 0.9rem;
+}
+
+.visibility-text {
+  color: white;
+}
+
+.visibility-detail-multiple {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-left: 8px;
+}
+
+.visibility-info-public,
+.visibility-info-friends,
+.visibility-info-groups,
+.visibility-info-private {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-left: 0;
+}
+
+.visibility-info-public {
+  background: none !important;
+  color: #e0e0e0 !important;
+  border: none !important;
+}
+
+.visibility-info-friends {
+  background: none !important;
+  color: #e0e0e0 !important;
+  border: none !important;
+}
+
+.visibility-info-groups {
+  background: none !important;
+  color: #e0e0e0 !important;
+  border: none !important;
+}
+
+.visibility-info-private {
+  background: none !important;
+  color: #e0e0e0 !important;
+  border: none !important;
+}
+
+/* Forcer la couleur identique au lieu pour tous les éléments de visibilité */
+.slot-visibility-detail .visibility-info-public,
+.slot-visibility-detail .visibility-info-friends,
+.slot-visibility-detail .visibility-info-groups,
+.slot-visibility-detail .visibility-info-private,
+.slot-visibility-detail .visibility-detail-multiple .visibility-info-public,
+.slot-visibility-detail .visibility-detail-multiple .visibility-info-friends,
+.slot-visibility-detail .visibility-detail-multiple .visibility-info-groups,
+.slot-visibility-detail .visibility-detail-multiple .visibility-info-private {
+  color: #e0e0e0 !important;
+  background: none !important;
+  border: none !important;
+}
+
 .participants-list {
   margin-top: 4px;
   color: #b0b0b0;
   font-size: 0.85rem;
+}
+
+.no-participants {
+  margin-left: 8px;
+  color: #b0b0b0;
+  font-size: 0.85rem;
+}
+
+.max-participants-info {
+  margin-top: 8px;
+  font-size: 0.85rem;
+}
+
+.max-reached {
+  color: #ef4444;
+  font-weight: 500;
+}
+
+.max-available {
+  color: #22c55e;
+  font-weight: 500;
+}
+
+.disabled-btn {
+  background: #6b7280 !important;
+  color: #9ca3af !important;
+  cursor: not-allowed !important;
+  opacity: 0.6 !important;
+}
+
+.disabled-btn:hover {
+  background: #6b7280 !important;
+  color: #9ca3af !important;
+  transform: none !important;
 }
 
 .slot-item-actions-detail {

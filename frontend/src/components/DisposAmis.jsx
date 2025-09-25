@@ -72,13 +72,22 @@ function DisposAmis({ currentUser, onBack }) {
   }
 
   const applyFilters = () => {
+    if (!allSlots || allSlots.length === 0) {
+      console.log('⚠️ Aucun slot à filtrer')
+      return
+    }
+    
     let filteredSlots = [...allSlots]
     
     // Appliquer les filtres côté frontend
     if (searchFilter) {
-      filteredSlots = filteredSlots.filter(slot => 
-        slot.activity.toLowerCase().includes(searchFilter.toLowerCase())
-      )
+      filteredSlots = filteredSlots.filter(slot => {
+        if (!slot) return false
+        const activityMatch = slot.activity && slot.activity.toLowerCase().includes(searchFilter.toLowerCase())
+        const customActivityMatch = slot.customActivity && slot.customActivity.toLowerCase().includes(searchFilter.toLowerCase())
+        const typeMatch = slot.type && slot.type.some(t => t && t.toLowerCase().includes(searchFilter.toLowerCase()))
+        return activityMatch || customActivityMatch || typeMatch
+      })
     }
     
     if (selectedDate) {
@@ -100,6 +109,8 @@ function DisposAmis({ currentUser, onBack }) {
     }
     
     console.log('📥 Slots des amis après filtrage:', filteredSlots.length)
+    console.log('🔍 Recherche pour:', searchFilter)
+    console.log('📋 Premier slot pour debug:', allSlots[0])
     setSlots(filteredSlots)
     setFiltersApplied(true)
   }

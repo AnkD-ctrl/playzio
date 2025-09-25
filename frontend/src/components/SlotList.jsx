@@ -14,6 +14,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   const [searchInput, setSearchInput] = useState('')
   const [searchTimeout, setSearchTimeout] = useState(null)
   const [expandedSlots, setExpandedSlots] = useState(new Set())
+  const [userGroups, setUserGroups] = useState([])
   
   // Nouveaux filtres
   const [dateFilter, setDateFilter] = useState('')
@@ -24,6 +25,10 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   const [activityInput, setActivityInput] = useState('')
   const [lieuInput, setLieuInput] = useState('')
   const [organizerInput, setOrganizerInput] = useState('')
+  const [localLieuFilter, setLocalLieuFilter] = useState('')
+  const [localOrganizerFilter, setLocalOrganizerFilter] = useState('')
+  const [localSearchFilter, setLocalSearchFilter] = useState('')
+  const [allSlots, setAllSlots] = useState([])
   
   
 
@@ -34,18 +39,59 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
 
   // Handlers pour les nouveaux filtres
   const handleActivityConfirm = () => {
-    onSearchFilterChange(activityInput)
+    setLocalSearchFilter(activityInput)
     setShowActivityModal(false)
+    applyFilters()
+  }
+
+  const applyFilters = (slotsToFilter = allSlots) => {
+    let filteredSlots = [...slotsToFilter]
+    
+    // Filtrer par date si sélectionnée
+    if (selectedDate) {
+      filteredSlots = filteredSlots.filter(slot => slot.date === selectedDate)
+    }
+    
+    // Filtrer par recherche
+    if (localSearchFilter) {
+      filteredSlots = filteredSlots.filter(slot => {
+        const activityMatch = slot.customActivity && slot.customActivity.toLowerCase().includes(localSearchFilter.toLowerCase())
+        const typeMatch = slot.type && slot.type.some(t => t.toLowerCase().includes(localSearchFilter.toLowerCase()))
+        const activityFieldMatch = slot.activity && slot.activity.toLowerCase().includes(localSearchFilter.toLowerCase())
+        return activityMatch || typeMatch || activityFieldMatch
+      })
+    }
+    
+    // Filtrer par lieu
+    if (localLieuFilter) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.lieu && slot.lieu.toLowerCase().includes(localLieuFilter.toLowerCase())
+      )
+    }
+    
+    // Filtrer par organisateur
+    if (localOrganizerFilter) {
+      filteredSlots = filteredSlots.filter(slot => 
+        slot.createdBy && slot.createdBy.toLowerCase().includes(localOrganizerFilter.toLowerCase())
+      )
+    }
+    
+    console.log(`✅ Slots après filtrage: ${filteredSlots.length}`)
+    console.log('🔍 Recherche pour:', localSearchFilter)
+    console.log('📋 Premier slot pour debug:', allSlots[0])
+    setSlots(filteredSlots)
   }
 
   const handleLieuConfirm = () => {
-    setLieuFilter(lieuInput)
+    setLocalLieuFilter(lieuInput)
     setShowLieuModal(false)
+    applyFilters()
   }
 
   const handleOrganizerConfirm = () => {
-    setOrganizerFilter(organizerInput)
+    setLocalOrganizerFilter(organizerInput)
     setShowOrganizerModal(false)
+    applyFilters()
   }
 
 
@@ -72,8 +118,17 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
       setError('')
     } else if (currentUser && currentUser.prenom) {
       fetchSlots()
+      fetchUserGroups()
     }
-  }, [currentUser, activity, selectedDate, searchFilter, lieuFilter, organizerFilter, customSlots])
+  }, [currentUser, activity, selectedDate, customSlots])
+
+  // Synchroniser le filtre de recherche local avec le filtre passé en props
+  useEffect(() => {
+    if (searchFilter !== localSearchFilter) {
+      setLocalSearchFilter(searchFilter || '')
+      applyFilters()
+    }
+  }, [searchFilter])
 
 
 
@@ -99,38 +154,9 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
         const allSlots = await response.json()
         console.log('📥 Tous les slots reçus:', allSlots.length)
         
-        // LOGIQUE SIMPLE : Afficher TOUS les slots (filtrage fait côté backend)
-        let filteredSlots = allSlots
-        
-        // Filtrer par date si sélectionnée
-        if (selectedDate) {
-          filteredSlots = filteredSlots.filter(slot => slot.date === selectedDate)
-        }
-        
-        // Filtrer par recherche
-        if (searchFilter) {
-          filteredSlots = filteredSlots.filter(slot => 
-            slot.customActivity && slot.customActivity.toLowerCase().includes(searchFilter.toLowerCase())
-          )
-        }
-        
-        // Filtrer par lieu
-        if (lieuFilter) {
-          filteredSlots = filteredSlots.filter(slot => 
-            slot.lieu && slot.lieu.toLowerCase().includes(lieuFilter.toLowerCase())
-          )
-        }
-        
-        // Filtrer par organisateur
-        if (organizerFilter) {
-          filteredSlots = filteredSlots.filter(slot => 
-            slot.createdBy && slot.createdBy.toLowerCase().includes(organizerFilter.toLowerCase())
-          )
-        }
-        
-        console.log(`✅ Slots accessibles affichés: ${filteredSlots.length}`)
-        console.log('📋 Slots finaux:', filteredSlots)
-        setSlots(filteredSlots)
+        // Stocker tous les slots et appliquer les filtres
+        setAllSlots(allSlots)
+        applyFilters(allSlots)
       } else {
         console.log('❌ Erreur API:', response.status, response.statusText)
         setError('Erreur lors du chargement des disponibilités')
@@ -140,6 +166,18 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
       setError('Erreur de connexion au serveur')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchUserGroups = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/groups?user=${currentUser.prenom}`)
+      if (response.ok) {
+        const groups = await response.json()
+        setUserGroups(groups)
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des groupes:', error)
     }
   }
 
@@ -373,9 +411,11 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
             const isOwner = slot.createdBy === currentUser.prenom
             const isAdmin = currentUser.role === 'admin'
             const isExpanded = expandedSlots.has(slot.id)
+            const currentParticipants = slot.participants ? slot.participants.length : 0
+            const isMaxParticipantsReached = slot.maxParticipants && slot.maxParticipants > 0 && currentParticipants >= slot.maxParticipants
             
             return (
-              <div key={slot.id} className={`slot-item ${isExpanded ? 'expanded' : ''}`}>
+              <div key={slot.id} className={`slot-item ${isExpanded ? 'expanded' : ''} ${isOwner ? 'owner-slot' : ''}`}>
                 <div className="slot-item-header" onClick={() => toggleSlotExpansion(slot.id)}>
                   <div className="slot-item-main">
                     <div className="slot-item-date">
@@ -389,7 +429,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                       }
                     </div>
                     <div className="slot-item-participants">
-                      👥 {slot.participants ? slot.participants.length : 0}
+                      👥 {slot.participants ? slot.participants.length : 0}{slot.maxParticipants && slot.maxParticipants > 0 ? `/${slot.maxParticipants}` : ''}
                     </div>
                   </div>
                   {onJoinSlot && (
@@ -404,6 +444,14 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                           title="Quitter"
                         >
                           Quitter
+                        </button>
+                      ) : isMaxParticipantsReached ? (
+                        <button 
+                          className="quick-action-btn disabled-btn"
+                          disabled
+                          title={`Nombre maximum de participants atteint (${slot.maxParticipants})`}
+                        >
+                          Complet
                         </button>
                       ) : (
                         <button 
@@ -445,15 +493,23 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                     )}
 
                     <div className="slot-participants-detail">
-                      <strong>Participants ({slot.participants ? slot.participants.length : 0}):</strong>
+                      <strong>Participants ({currentParticipants}{slot.maxParticipants && slot.maxParticipants > 0 ? `/${slot.maxParticipants}` : ''}):</strong>
                       {slot.participants && slot.participants.length > 0 ? (
                         <div className="participants-list">
                           {slot.participants.join(', ')}
                         </div>
                       ) : (
-                        <span>Aucun participant pour le moment</span>
+                        <span className="no-participants">Aucun participant pour le moment</span>
                       )}
                     </div>
+
+        <div className="slot-visibility-detail">
+          <strong>Visibilité:</strong> <span className="visibility-text">{slot.visibleToAll ? 'Publique' : [
+            slot.visibleToFriends && 'Amis',
+            slot.visibleToGroups && slot.visibleToGroups.length > 0 && 'Groupes',
+            !slot.visibleToFriends && (!slot.visibleToGroups || slot.visibleToGroups.length === 0) && 'Visibilité privée'
+          ].filter(Boolean).join(', ')}</span>
+        </div>
 
                     {onJoinSlot && (
                       <div className="slot-item-actions-detail">
@@ -486,9 +542,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
                           </button>
                         )}
                         
-                        {isOwner && (
-                          <span className="owner-badge">Vous êtes l'organisateur</span>
-                        )}
+                        <span className="owner-badge">Organisateur: {slot.createdBy}</span>
                       </div>
                     )}
                   </div>

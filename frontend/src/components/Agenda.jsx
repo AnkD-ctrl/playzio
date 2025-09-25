@@ -156,9 +156,11 @@ function Agenda({ activity, currentUser }) {
                 {groupedSlots[date].map(slot => {
                   const isParticipant = slot.participants && slot.participants.includes(currentUser.id)
                   const isOwner = slot.userId === currentUser.id
+                  const currentParticipants = slot.participants ? slot.participants.length : 0
+                  const isMaxParticipantsReached = slot.maxParticipants && slot.maxParticipants > 0 && currentParticipants >= slot.maxParticipants
                   
                   return (
-                    <div key={slot.id} className="agenda-slot">
+                    <div key={slot.id} className={`agenda-slot ${isOwner ? 'owner-slot' : ''}`}>
                       <div className="slot-time">
                         <span className="time">{slot.time}</span>
                       </div>
@@ -178,20 +180,27 @@ function Agenda({ activity, currentUser }) {
                           <div className="slot-meta">
                             <span className="organizer">👤 {slot.user}</span>
                             <span className="participants">
-                              👥 {slot.participants ? slot.participants.length : 0} participant{(slot.participants ? slot.participants.length : 0) !== 1 ? 's' : ''}
+                              👥 {slot.participants ? slot.participants.length : 0}{slot.maxParticipants && slot.maxParticipants > 0 ? `/${slot.maxParticipants}` : ''} participant{(slot.participants ? slot.participants.length : 0) !== 1 ? 's' : ''}
                             </span>
                           </div>
                         </div>
                         
                         <div className="slot-action">
-                          {isOwner ? (
-                            <span className="owner-badge">Organisateur</span>
-                          ) : isParticipant ? (
+                          <span className="owner-badge">Organisateur: {slot.user}</span>
+                          {!isOwner && isParticipant ? (
                             <button 
                               className="leave-btn"
                               onClick={() => handleLeaveSlot(slot.id)}
                             >
                               Quitter
+                            </button>
+                          ) : isMaxParticipantsReached ? (
+                            <button 
+                              className="disabled-btn"
+                              disabled
+                              title={`Nombre maximum de participants atteint (${slot.maxParticipants})`}
+                            >
+                              Complet
                             </button>
                           ) : (
                             <button 

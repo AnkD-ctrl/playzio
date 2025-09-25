@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import './AddSlot.css'
 import { API_BASE_URL } from '../config'
 import { trackSlotCreate } from '../utils/analytics'
-import CustomActivityModal from './CustomActivityModal'
 
 function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearDate }) {
   const [formData, setFormData] = useState({
@@ -14,17 +13,13 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
     maxParticipants: ''
   })
   const [selectedDates, setSelectedDates] = useState(preSelectedDate ? [preSelectedDate] : [])
-  const [selectedActivities, setSelectedActivities] = useState([activity])
   const [selectedGroups, setSelectedGroups] = useState([])
-  const [visibleToAll, setVisibleToAll] = useState(true)
+  const [visibleToAll, setVisibleToAll] = useState(false)
   const [visibleToFriends, setVisibleToFriends] = useState(false)
   const [userGroups, setUserGroups] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
-  const [showCustomActivityModal, setShowCustomActivityModal] = useState(false)
   const [customActivityName, setCustomActivityName] = useState('')
-
-  const availableActivities = ['Sport', 'Social', 'Autre']
 
   useEffect(() => {
     fetchUserGroups()
@@ -66,13 +61,6 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
     setSelectedDates(prev => prev.filter(date => date !== dateToRemove))
   }
 
-  const handleActivityToggle = (activityName) => {
-    setSelectedActivities(prev => 
-      prev.includes(activityName) 
-        ? prev.filter(act => act !== activityName)
-        : [...prev, activityName]
-    )
-  }
 
   const handleGroupToggle = (groupId) => {
     setSelectedGroups(prev => 
@@ -90,18 +78,14 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
     }
   }
 
-  const handleCustomActivityConfirm = (activityName) => {
-    setCustomActivityName(activityName)
-    setShowCustomActivityModal(false)
-  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
     setError('')
 
-    if (selectedActivities.length === 0) {
-      setError('Veuillez sélectionner au moins une activité')
+    if (!customActivityName.trim()) {
+      setError('Veuillez saisir le nom de l\'activité')
       setIsSubmitting(false)
       return
     }
@@ -118,9 +102,9 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
         heureFin: formData.heureFin,
         description: formData.description,
         lieu: formData.lieu,
-        maxParticipants: formData.maxParticipants,
-        type: selectedActivities,
-        customActivity: customActivityName || null,
+        ...(formData.maxParticipants && formData.maxParticipants > 0 && { maxParticipants: parseInt(formData.maxParticipants) }),
+        type: [customActivityName],
+        customActivity: customActivityName,
         createdBy: currentUser.prenom,
         visibleToGroups: visibleToAll ? [] : selectedGroups,
         visibleToAll: visibleToAll,
@@ -148,15 +132,14 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
       const failedResponses = responses.filter(response => !response.ok)
 
       if (failedResponses.length === 0) {
-        trackSlotCreate(selectedActivities.join(', '), selectedGroups.length > 0)
+        trackSlotCreate(customActivityName, selectedGroups.length > 0)
         alert(`${selectedDates.length} disponibilité(s) ajoutée(s) avec succès !`)
         setFormData({ date: '', heureDebut: '', heureFin: '', description: '', lieu: '', maxParticipants: '' })
         setSelectedDates([])
-        setSelectedActivities([activity])
-        setSelectedGroups([])
-        setVisibleToAll(true)
-        setVisibleToFriends(false)
         setCustomActivityName('')
+        setSelectedGroups([])
+        setVisibleToAll(false)
+        setVisibleToFriends(false)
         // Effacer le filtre de date si onClearDate est disponible
         if (onClearDate) {
           onClearDate()
@@ -259,52 +242,16 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
         </div>
 
           <div className="form-group">
-            <label>Activités concernées</label>
-            <div className="activities-selection">
-              {availableActivities.map(activityName => (
-                <label key={activityName} className="activity-checkbox">
-                  <input
-                    type="checkbox"
-                    checked={selectedActivities.includes(activityName)}
-                    onChange={() => handleActivityToggle(activityName)}
-                  />
-                  <span className="activity-name">{activityName}</span>
-                </label>
-              ))}
-            </div>
-            
-            {(selectedActivities.includes('Autre') || selectedActivities.includes('Sport') || selectedActivities.includes('Social')) && (
-              <div className="custom-activity-section">
-                {customActivityName ? (
-                  <div className="custom-activity-display">
-                    <span className="custom-activity-label">Activité personnalisée :</span>
-                    <span className="custom-activity-name">{customActivityName}</span>
-                    <button 
-                      type="button" 
-                      className="change-activity-btn"
-                      onClick={() => setShowCustomActivityModal(true)}
-                    >
-                      Modifier
-                    </button>
-                  </div>
-                ) : (
-                  <button 
-                    type="button" 
-                    className="add-custom-activity-btn"
-                    onClick={() => setShowCustomActivityModal(true)}
-                  >
-                    + Saisir le nom de l'activité
-                  </button>
-                )}
-              </div>
-            )}
-            
-            {selectedActivities.length === 0 && (
-              <p className="selection-info">
-                ⚠️ Veuillez sélectionner au moins une activité
-              </p>
-            )}
-
+            <label htmlFor="activityName">Nom de l'activité</label>
+            <input
+              type="text"
+              id="activityName"
+              name="activityName"
+              value={customActivityName}
+              onChange={(e) => setCustomActivityName(e.target.value)}
+              placeholder="Ex: Football, Tennis, Cinéma, Restaurant..."
+              required
+            />
           </div>
 
           <div className="form-group">
@@ -386,27 +333,6 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
               </div>
             )}
 
-            {visibleToAll && (
-              <p className="visibility-info">
-                ✅ Cette disponibilité sera visible par tout le monde
-              </p>
-            )}
-            {visibleToFriends && !visibleToAll && (
-              <p className="visibility-info">
-                👥 Cette disponibilité sera visible par vos amis seulement
-              </p>
-            )}
-            {!visibleToAll && selectedGroups.length === 0 && !visibleToFriends && (
-              <p className="visibility-info">
-                ⚠️ Aucun groupe ou ami sélectionné : cette disponibilité sera visible par tous les utilisateurs
-              </p>
-            )}
-            {!visibleToAll && selectedGroups.length > 0 && (
-              <p className="visibility-info">
-                ✅ Cette disponibilité sera visible par {selectedGroups.length} groupe(s) sélectionné(s)
-                {visibleToFriends && " et vos amis"}
-              </p>
-            )}
           </div>
 
 
@@ -431,14 +357,6 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
         </form>
       </div>
       
-      {/* Modal pour saisir le nom d'activité personnalisée */}
-      {showCustomActivityModal && (
-        <CustomActivityModal 
-          isOpen={showCustomActivityModal}
-          onClose={() => setShowCustomActivityModal(false)}
-          onConfirm={handleCustomActivityConfirm}
-        />
-      )}
     </div>
   )
 }
