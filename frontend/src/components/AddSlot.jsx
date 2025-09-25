@@ -175,6 +175,18 @@ function AddSlot({ activity, currentUser, onSlotAdded, preSelectedDate, onClearD
   return (
     <div className="add-slot">
       <div className="add-slot-content">
+        {/* Bouton de retour en haut */}
+        <div className="back-button-container">
+          <button 
+            type="button" 
+            className="back-btn"
+            onClick={() => onSlotAdded()}
+            title="Retour"
+          >
+            ← Retour
+          </button>
+        </div>
+        
         <form onSubmit={handleSubmit} className="slot-form">
           <div className="form-group">
             <label htmlFor="date">Dates (sélectionner plusieurs si nécessaire)</label>
