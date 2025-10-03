@@ -10,6 +10,10 @@ import crypto from 'crypto'
 const resetAttempts = new Map()
 const RESET_COOLDOWN = 15 * 60 * 1000 // 15 minutes
 const MAX_ATTEMPTS = 3 // 3 tentatives max par IP
+
+// CSRF Protection
+const csrfTokens = new Map()
+const CSRF_TOKEN_EXPIRY = 60 * 60 * 1000 // 1 heure
 import {
   initDatabase,
   getAllUsers,
@@ -92,6 +96,64 @@ app.use(cors({
 }))
 app.use(express.json())
 
+// CSRF Protection Middleware
+function generateCSRFToken() {
+  return nanoid(32)
+}
+
+function validateCSRFToken(token, sessionId) {
+  const tokenData = csrfTokens.get(token)
+  if (!tokenData) {
+    return false
+  }
+  
+  // Vérifier l'expiration
+  if (Date.now() > tokenData.expiresAt) {
+    csrfTokens.delete(token)
+    return false
+  }
+  
+  // Vérifier la session
+  return tokenData.sessionId === sessionId
+}
+
+function cleanupExpiredCSRFTokens() {
+  const now = Date.now()
+  for (const [token, data] of csrfTokens.entries()) {
+    if (now > data.expiresAt) {
+      csrfTokens.delete(token)
+    }
+  }
+}
+
+// Nettoyer les tokens CSRF expirés toutes les 30 minutes
+setInterval(cleanupExpiredCSRFTokens, 30 * 60 * 1000)
+
+// Middleware CSRF pour les routes POST/PUT/DELETE
+function csrfProtection(req, res, next) {
+  // Skip CSRF pour les routes publiques et GET
+  if (req.method === 'GET' || 
+      req.path === '/api/login' || 
+      req.path === '/api/register' ||
+      req.path.startsWith('/api/share/') ||
+      req.path.startsWith('/api/forgot-password') ||
+      req.path.startsWith('/api/reset-password')) {
+    return next()
+  }
+  
+  const token = req.headers['x-csrf-token']
+  const sessionId = req.headers['x-session-id'] || req.ip
+  
+  if (!token || !validateCSRFToken(token, sessionId)) {
+    return res.status(403).json({ 
+      error: 'Token CSRF invalide ou expiré',
+      code: 'CSRF_TOKEN_INVALID'
+    })
+  }
+  
+  next()
+}
+
 // Fonction pour hasher les mots de passe
 function hashPassword(password) {
   return crypto.createHash('sha256').update(password).digest('hex')
@@ -166,7 +228,7 @@ app.post('/api/admin/users/:prenom/role', async (req, res) => {
 })
 
 // Changer le mot de passe d'un utilisateur
-app.post('/api/users/:prenom/password', async (req, res) => {
+app.post('/api/users/:prenom/password', csrfProtection, async (req, res) => {
   try {
     const { prenom } = req.params
     const { currentPassword, newPassword } = req.body
@@ -198,7 +260,7 @@ app.post('/api/users/:prenom/password', async (req, res) => {
 })
 
 // Ajouter un email à un utilisateur
-app.post('/api/users/:prenom/email', async (req, res) => {
+app.post('/api/users/:prenom/email', csrfProtection, async (req, res) => {
   try {
     const { prenom } = req.params
     const { email } = req.body
@@ -257,6 +319,23 @@ app.post('/api/users/:prenom/email', async (req, res) => {
 
 
 // Routes
+
+// Générer un token CSRF
+app.get('/api/csrf-token', (req, res) => {
+  const sessionId = req.headers['x-session-id'] || req.ip
+  const token = generateCSRFToken()
+  
+  csrfTokens.set(token, {
+    sessionId: sessionId,
+    expiresAt: Date.now() + CSRF_TOKEN_EXPIRY,
+    createdAt: Date.now()
+  })
+  
+  res.json({ 
+    csrfToken: token,
+    expiresIn: CSRF_TOKEN_EXPIRY
+  })
+})
 
 // Connexion
 app.post('/api/login', async (req, res) => {
@@ -387,7 +466,7 @@ app.put('/api/messages/:messageId', async (req, res) => {
   }
 })
 
-app.delete('/api/messages/:messageId', async (req, res) => {
+app.delete('/api/messages/:messageId', csrfProtection, async (req, res) => {
   try {
     const { messageId } = req.params
     const { userPrenom } = req.body
@@ -458,7 +537,7 @@ app.get('/api/slots', async (req, res) => {
 })
 
 // Ajouter un créneau
-app.post('/api/slots', async (req, res) => {
+app.post('/api/slots', csrfProtection, async (req, res) => {
   try {
     const { date, heureDebut, heureFin, type, customActivity, participants, createdBy, visibleToGroups, visibleToAll, visibleToFriends, description, lieu, maxParticipants, emailNotifications } = req.body
     
@@ -504,7 +583,7 @@ app.get('/api/activities/search', async (req, res) => {
 })
 
 // Rejoindre un créneau
-app.post('/api/slots/:id/join', async (req, res) => {
+app.post('/api/slots/:id/join', csrfProtection, async (req, res) => {
   try {
     const { id } = req.params
     const { participant, userId } = req.body
@@ -542,7 +621,7 @@ app.post('/api/slots/:id/join', async (req, res) => {
 })
 
 // Quitter un créneau
-app.post('/api/slots/:id/leave', async (req, res) => {
+app.post('/api/slots/:id/leave', csrfProtection, async (req, res) => {
   try {
     const { id } = req.params
     const { participant, userId } = req.body
@@ -565,7 +644,7 @@ app.post('/api/slots/:id/leave', async (req, res) => {
 })
 
 // Supprimer un créneau
-app.delete('/api/slots/:id', async (req, res) => {
+app.delete('/api/slots/:id', csrfProtection, async (req, res) => {
   try {
     const { id } = req.params
     const { userRole, createdBy } = req.body
@@ -865,7 +944,7 @@ app.post('/api/slots/friends-slots', async (req, res) => {
 })
 
 // Gestion des amis
-app.post('/api/friends/request', async (req, res) => {
+app.post('/api/friends/request', csrfProtection, async (req, res) => {
   try {
     const { sender, receiver } = req.body
     
@@ -886,7 +965,7 @@ app.post('/api/friends/request', async (req, res) => {
   }
 })
 
-app.post('/api/friends/accept', async (req, res) => {
+app.post('/api/friends/accept', csrfProtection, async (req, res) => {
   try {
     const { requestId } = req.body
     
@@ -953,7 +1032,7 @@ app.get('/api/friends/requests/sent/:prenom', async (req, res) => {
 })
 
 // Accepter une demande d'ami par nom d'utilisateur
-app.post('/api/friends/accept-by-name', async (req, res) => {
+app.post('/api/friends/accept-by-name', csrfProtection, async (req, res) => {
   try {
     const { from, to } = req.body
     
@@ -1046,7 +1125,7 @@ app.get('/api/share/validate-token/:username/:token', async (req, res) => {
 })
 
 // Supprimer une demande d'ami
-app.delete('/api/friends/requests/:requestId', async (req, res) => {
+app.delete('/api/friends/requests/:requestId', csrfProtection, async (req, res) => {
   try {
     const { requestId } = req.params
     
@@ -1068,7 +1147,7 @@ app.delete('/api/friends/requests/:requestId', async (req, res) => {
 })
 
 // Supprimer un ami
-app.delete('/api/friends/:userId/:friendId', async (req, res) => {
+app.delete('/api/friends/:userId/:friendId', csrfProtection, async (req, res) => {
   try {
     const { userId, friendId } = req.params
     
@@ -1123,7 +1202,7 @@ app.delete('/api/friends/:userId/:friendId', async (req, res) => {
 // Routes pour les groupes
 
 // Créer un groupe
-app.post('/api/groups', async (req, res) => {
+app.post('/api/groups', csrfProtection, async (req, res) => {
   try {
     const { name, description, creator } = req.body
     
@@ -1170,7 +1249,7 @@ app.get('/api/groups', async (req, res) => {
 })
 
 // Ajouter un membre à un groupe
-app.post('/api/groups/:id/members', async (req, res) => {
+app.post('/api/groups/:id/members', csrfProtection, async (req, res) => {
   try {
     const { id } = req.params
     const { memberUsername, requester } = req.body
@@ -1206,7 +1285,7 @@ app.post('/api/groups/:id/members', async (req, res) => {
 })
 
 // Supprimer un membre d'un groupe
-app.delete('/api/groups/:id/members', async (req, res) => {
+app.delete('/api/groups/:id/members', csrfProtection, async (req, res) => {
   try {
     const { id } = req.params
     const { memberUsername, requester } = req.body
@@ -1238,7 +1317,7 @@ app.delete('/api/groups/:id/members', async (req, res) => {
 })
 
 // Quitter un groupe (pour les membres)
-app.post('/api/groups/:id/leave', async (req, res) => {
+app.post('/api/groups/:id/leave', csrfProtection, async (req, res) => {
   try {
     const { id } = req.params
     const { memberUsername } = req.body
@@ -1270,7 +1349,7 @@ app.post('/api/groups/:id/leave', async (req, res) => {
 })
 
 // Supprimer un groupe
-app.delete('/api/groups/:id', async (req, res) => {
+app.delete('/api/groups/:id', csrfProtection, async (req, res) => {
   try {
     const { id } = req.params
     const { requester } = req.body
