@@ -2003,87 +2003,13 @@ app.post('/api/slots/:id/notify-organizer', async (req, res) => {
   }
 })
 
-// Test de sécurité - simuler un utilisateur existant
-app.post('/api/test-security', async (req, res) => {
-  try {
-    const { email } = req.body
-    
-    if (!email) {
-      return res.status(400).json({ error: 'Email requis' })
-    }
-    
-    // Simuler un utilisateur existant pour le test
-    const mockUser = {
-      prenom: 'TestUser',
-      email: email,
-      password: 'hashed_password'
-    }
-    
-    console.log('🔒 TEST DE SÉCURITÉ - Simulation utilisateur existant:', email)
-    
-    // Générer un token de test
-    const resetToken = nanoid(32)
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000)
-    const frontendUrl = process.env.FRONTEND_URL || 'https://playzio.fr'
-    const resetUrl = `${frontendUrl}/?token=${resetToken}`
-    
-    console.log('✅ Token de test généré:', resetToken)
-    console.log('🔗 Lien de réinitialisation:', resetUrl)
-    
-    res.json({
-      success: true,
-      message: 'Test de sécurité - Token généré pour utilisateur simulé',
-      user: mockUser.prenom,
-      token: resetToken,
-      resetUrl: resetUrl,
-      expiresAt: expiresAt.toISOString(),
-      securityNote: 'Ceci est un test - en production, seul l\'utilisateur recevrait ce lien par email'
-    })
-  } catch (error) {
-    console.error('Erreur test sécurité:', error)
-    res.status(500).json({ error: 'Erreur serveur' })
-  }
-})
+// Endpoint de test supprimé pour des raisons de sécurité
+// L'endpoint /api/test-security était vulnérable et permettait de bypasser la sécurité
+// Il a été supprimé pour protéger l'application en production
 
-// Test de réinitialisation en mode développement
-app.post('/api/test-reset-dev', async (req, res) => {
-  try {
-    const { email, newPassword } = req.body
-    
-    if (!email || !newPassword) {
-      return res.status(400).json({ error: 'Email et nouveau mot de passe requis' })
-    }
-    
-    console.log('🧪 TEST RÉINITIALISATION DEV - Email:', email)
-    
-    // Créer un utilisateur fictif
-    const user = {
-      prenom: email.split('@')[0],
-      email: email,
-      password: 'hashed_password'
-    }
-    
-    console.log('📝 Utilisateur fictif créé:', user.prenom)
-    
-    // Hasher le nouveau mot de passe
-    const hashedPassword = hashPassword(newPassword)
-    console.log('🔒 Mot de passe hashé:', hashedPassword.substring(0, 20) + '...')
-    
-    // Simuler la mise à jour
-    console.log('✅ Simulation de mise à jour réussie pour:', user.prenom)
-    
-    res.json({
-      success: true,
-      message: 'Test de réinitialisation en mode développement réussi',
-      user: user.prenom,
-      email: user.email,
-      passwordUpdated: true
-    })
-  } catch (error) {
-    console.error('Erreur test reset dev:', error)
-    res.status(500).json({ error: 'Erreur serveur' })
-  }
-})
+// Endpoint de test de développement supprimé pour des raisons de sécurité
+// L'endpoint /api/test-reset-dev était vulnérable et permettait de bypasser la sécurité
+// Il a été supprimé pour protéger l'application en production
 
 // Lister les utilisateurs (pour diagnostic)
 app.get('/api/users-list', async (req, res) => {
