@@ -1,2 +1,6 @@
 1756717200
 Wed Sep  3 21:00:00 CEST 2025 - Force deploy after Vercel payment
+1756718400
+Thu Oct  3 23:00:00 CEST 2025 - Update middleware v2.1.2
+1756719000
+Thu Oct  3 23:10:00 CEST 2025 - Update middleware v2.1.3

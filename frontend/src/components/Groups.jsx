@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react'
 import { API_BASE_URL } from '../config'
 import './Groups.css'
 import { trackGroupCreate, trackGroupMemberAdd, trackGroupMemberRemove, trackGroupLeave, trackGroupDelete } from '../utils/analytics'
+import { useCSRFRequest } from '../hooks/useCSRF'
 
 const Groups = ({ currentUser, onBack }) => {
   const [groups, setGroups] = useState([])
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [showManageForm, setShowManageForm] = useState(false)
   const [selectedGroup, setSelectedGroup] = useState(null)
+  const csrfRequest = useCSRFRequest()
   const [newMember, setNewMember] = useState('')
   const [expandedGroups, setExpandedGroups] = useState(new Set())
   const [createForm, setCreateForm] = useState({
@@ -44,7 +46,7 @@ const Groups = ({ currentUser, onBack }) => {
   const handleCreateGroup = async (e) => {
     e.preventDefault()
     try {
-      const response = await fetch(`${API_BASE_URL}/api/groups`, {
+      const response = await csrfRequest(`${API_BASE_URL}/api/groups`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -75,7 +77,7 @@ const Groups = ({ currentUser, onBack }) => {
     if (!newMember.trim()) return
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/groups/${groupId}/members`, {
+      const response = await csrfRequest(`${API_BASE_URL}/api/groups/${groupId}/members`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -102,7 +104,7 @@ const Groups = ({ currentUser, onBack }) => {
 
   const handleRemoveMember = async (groupId, memberUsername) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/groups/${groupId}/members`, {
+      const response = await csrfRequest(`${API_BASE_URL}/api/groups/${groupId}/members`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
@@ -130,7 +132,7 @@ const Groups = ({ currentUser, onBack }) => {
     if (!confirm('Êtes-vous sûr de vouloir quitter ce groupe ?')) return
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/groups/${groupId}/leave`, {
+      const response = await csrfRequest(`${API_BASE_URL}/api/groups/${groupId}/leave`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -157,7 +159,7 @@ const Groups = ({ currentUser, onBack }) => {
     if (!confirm('Êtes-vous sûr de vouloir supprimer ce groupe ?')) return
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/groups/${groupId}`, {
+      const response = await csrfRequest(`${API_BASE_URL}/api/groups/${groupId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'

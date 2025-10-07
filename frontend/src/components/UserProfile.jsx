@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import './UserProfile.css'
 import { API_BASE_URL } from '../config'
+import { useCSRFRequest } from '../hooks/useCSRF'
 
 function UserProfile({ user, onClose, onUserUpdate }) {
+  const csrfRequest = useCSRFRequest()
   const [showPasswordModal, setShowPasswordModal] = useState(false)
   const [showEmailModal, setShowEmailModal] = useState(false)
   const [userGroups, setUserGroups] = useState([])
@@ -81,7 +83,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
 
   const handleAcceptFriend = async (requestId, senderPrenom) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/friends/accept`, {
+      const response = await csrfRequest(`${API_BASE_URL}/api/friends/accept`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -106,7 +108,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
 
   const handleCancelSentRequest = async (requestId) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/friends/requests/${requestId}`, {
+      const response = await csrfRequest(`${API_BASE_URL}/api/friends/requests/${requestId}`, {
         method: 'DELETE',
       })
 
@@ -147,7 +149,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
 
   const handleSendFriendRequest = async (targetPrenom) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/friends/request`, {
+      const response = await csrfRequest(`${API_BASE_URL}/api/friends/request`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -180,7 +182,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/friends/${user.prenom}/${friendPrenom}`, {
+      const response = await csrfRequest(`${API_BASE_URL}/api/friends/${user.prenom}/${friendPrenom}`, {
         method: 'DELETE',
       })
 
@@ -199,7 +201,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
 
   const handleRejectFriend = async (requestId) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/friends/requests/${requestId}`, {
+      const response = await csrfRequest(`${API_BASE_URL}/api/friends/requests/${requestId}`, {
         method: 'DELETE',
       })
 
@@ -241,7 +243,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
     try {
       console.log('Envoi de l\'email:', emailForm.email, 'pour l\'utilisateur:', user.prenom)
       
-      const response = await fetch(`${API_BASE_URL}/api/users/${encodeURIComponent(user.prenom)}/email`, {
+      const response = await csrfRequest(`${API_BASE_URL}/api/users/${encodeURIComponent(user.prenom)}/email`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -290,7 +292,7 @@ function UserProfile({ user, onClose, onUserUpdate }) {
     setMessage('')
     
     try {
-      const response = await fetch(`${API_BASE_URL}/api/users/${encodeURIComponent(user.prenom)}/password`, {
+      const response = await csrfRequest(`${API_BASE_URL}/api/users/${encodeURIComponent(user.prenom)}/password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -505,16 +507,18 @@ function UserProfile({ user, onClose, onUserUpdate }) {
                 </div>
 
                 <div className="friends-content">
+                  {/* Bouton ajouter un ami - visible sur tous les onglets */}
+                  <div className="add-friend-btn-container">
+                    <button 
+                      className="action-btn primary"
+                      onClick={() => setShowAddFriendModal(true)}
+                    >
+                      Ajouter un ami
+                    </button>
+                  </div>
+
                   {friendsTab === 'friends' && (
                     <div>
-                      <div className="add-friend-btn-container">
-                        <button 
-                          className="action-btn primary"
-                          onClick={() => setShowAddFriendModal(true)}
-                        >
-                          Ajouter un ami
-                        </button>
-                      </div>
                       {userFriends.length === 0 ? (
                         <p className="no-friends-message">Aucun ami pour le moment</p>
                       ) : (

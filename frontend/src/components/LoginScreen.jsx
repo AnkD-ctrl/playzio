@@ -31,13 +31,20 @@ function LoginScreen({ onLogin, isLogin: initialIsLogin = true, onBack }) {
     e.preventDefault()
     setError('')
 
+    // Nettoyer les données (supprimer les espaces en début/fin)
+    const cleanFormData = {
+      ...formData,
+      prenom: formData.prenom ? formData.prenom.trim() : '',
+      email: formData.email ? formData.email.trim() : ''
+    }
+
     // Validation email obligatoire pour l'inscription
     if (!isLogin) {
-      if (!formData.email) {
+      if (!cleanFormData.email) {
         setError('Veuillez entrer une adresse email')
         return
       }
-      if (!validateEmail(formData.email)) {
+      if (!validateEmail(cleanFormData.email)) {
         setError('Veuillez entrer une adresse email valide')
         return
       }
@@ -50,7 +57,7 @@ function LoginScreen({ onLogin, isLogin: initialIsLogin = true, onBack }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(cleanFormData),
       })
 
       const data = await response.json()

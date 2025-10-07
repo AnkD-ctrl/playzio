@@ -23,10 +23,14 @@ import LegalHub from './components/LegalHub'
 import { trackPageView, trackLogin, trackLogout, trackActivitySelect, trackNavigation } from './utils/analytics'
 import { testAnalyticsExclusion } from './utils/testAnalytics'
 import { API_BASE_URL } from './config'
+import { useCSRF } from './hooks/useCSRF'
 
 function App() {
   // Force redeploy - hamburger menu removed successfully
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  
+  // Initialiser le service CSRF
+  const { isReady: csrfReady, error: csrfError, resetCSRF } = useCSRF()
   const [currentUser, setCurrentUser] = useState(null)
   const [currentView, setCurrentView] = useState('landing') // Commencer par la landing page
   const [selectedActivity, setSelectedActivity] = useState(null)
@@ -149,6 +153,9 @@ function App() {
     // Nettoyer la session du localStorage
     localStorage.removeItem('playzio_user')
     localStorage.removeItem('playzio_logged_in')
+    
+    // Réinitialiser le service CSRF
+    resetCSRF()
     
     console.log('Session supprimée')
   }

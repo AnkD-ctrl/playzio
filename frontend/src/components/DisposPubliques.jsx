@@ -110,13 +110,20 @@ function DisposPubliques({ currentUser, onBack }) {
   }
 
   const handleJoinSlot = async (slotId) => {
-    setFilterVersion(prev => prev + 1)
+    // Pas besoin de rafraîchir, SlotList gère les mises à jour localement avec customSlots
     console.log('Slot rejoint avec succès')
   }
 
   const handleLeaveSlot = async (slotId) => {
-    setFilterVersion(prev => prev + 1)
+    // Pas besoin de rafraîchir, SlotList gère les mises à jour localement avec customSlots
     console.log('Slot quitté avec succès')
+  }
+
+  const handleDeleteSlot = async (slotId) => {
+    // Mettre à jour les slots localement quand un slot est supprimé
+    setSlots(prevSlots => prevSlots.filter(slot => slot.id !== slotId))
+    setAllSlots(prevSlots => prevSlots.filter(slot => slot.id !== slotId))
+    console.log('Slot supprimé avec succès')
   }
 
   const handleDateSelect = (date) => {
@@ -238,6 +245,7 @@ function DisposPubliques({ currentUser, onBack }) {
               onAddSlot={() => setAddSlotPage(true)}
               onJoinSlot={handleJoinSlot}
               onLeaveSlot={handleLeaveSlot}
+              onDeleteSlot={handleDeleteSlot}
               customSlots={slots}
             />
           )}

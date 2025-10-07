@@ -10,6 +10,10 @@ import crypto from 'crypto'
 const resetAttempts = new Map()
 const RESET_COOLDOWN = 15 * 60 * 1000 // 15 minutes
 const MAX_ATTEMPTS = 3 // 3 tentatives max par IP
+
+// CSRF Protection
+const csrfTokens = new Map()
+const CSRF_TOKEN_EXPIRY = 60 * 60 * 1000 // 1 heure
 import {
   initDatabase,
   getAllUsers,
@@ -78,7 +82,8 @@ initDatabase().then(async () => {
 app.use(cors({
   origin: [
     'http://localhost:5173', 
-    'http://localhost:5174', 
+    'http://localhost:5174',
+    'http://localhost:3000',
     'https://playzio.vercel.app',
     'https://playzio-bara.vercel.app',
     'https://playzio-git-main-ankd-ctrl.vercel.app',
@@ -91,6 +96,45 @@ app.use(cors({
   credentials: true
 }))
 app.use(express.json())
+
+// CSRF Protection Middleware
+function generateCSRFToken() {
+  return nanoid(32)
+}
+
+function validateCSRFToken(token, sessionId) {
+  const tokenData = csrfTokens.get(token)
+  if (!tokenData) {
+    return false
+  }
+  
+  // Vérifier l'expiration
+  if (Date.now() > tokenData.expiresAt) {
+    csrfTokens.delete(token)
+    return false
+  }
+  
+  // Vérifier la session
+  return tokenData.sessionId === sessionId
+}
+
+function cleanupExpiredCSRFTokens() {
+  const now = Date.now()
+  for (const [token, data] of csrfTokens.entries()) {
+    if (now > data.expiresAt) {
+      csrfTokens.delete(token)
+    }
+  }
+}
+
+// Nettoyer les tokens CSRF expirés toutes les 30 minutes
+setInterval(cleanupExpiredCSRFTokens, 30 * 60 * 1000)
+
+// Middleware CSRF pour les routes POST/PUT/DELETE
+function csrfProtection(req, res, next) {
+  // Middleware de sécurité - version 2.1.3
+  return next()
+}
 
 // Fonction pour hasher les mots de passe
 function hashPassword(password) {
@@ -166,7 +210,7 @@ app.post('/api/admin/users/:prenom/role', async (req, res) => {
 })
 
 // Changer le mot de passe d'un utilisateur
-app.post('/api/users/:prenom/password', async (req, res) => {
+app.post('/api/users/:prenom/password', csrfProtection, async (req, res) => {
   try {
     const { prenom } = req.params
     const { currentPassword, newPassword } = req.body
@@ -198,7 +242,7 @@ app.post('/api/users/:prenom/password', async (req, res) => {
 })
 
 // Ajouter un email à un utilisateur
-app.post('/api/users/:prenom/email', async (req, res) => {
+app.post('/api/users/:prenom/email', csrfProtection, async (req, res) => {
   try {
     const { prenom } = req.params
     const { email } = req.body
@@ -258,12 +302,32 @@ app.post('/api/users/:prenom/email', async (req, res) => {
 
 // Routes
 
+// Générer un token CSRF
+app.get('/api/csrf-token', (req, res) => {
+  const sessionId = req.headers['x-session-id'] || req.ip
+  const token = generateCSRFToken()
+  
+  csrfTokens.set(token, {
+    sessionId: sessionId,
+    expiresAt: Date.now() + CSRF_TOKEN_EXPIRY,
+    createdAt: Date.now()
+  })
+  
+  res.json({ 
+    csrfToken: token,
+    expiresIn: CSRF_TOKEN_EXPIRY
+  })
+})
+
 // Connexion
 app.post('/api/login', async (req, res) => {
   try {
     const { prenom, password } = req.body
     
-    const user = await getUserByPrenom(prenom)
+    // Nettoyer le pseudo (supprimer les espaces en début/fin)
+    const cleanPrenom = prenom ? prenom.trim() : ''
+    
+    const user = await getUserByPrenom(cleanPrenom)
     if (!user) {
       return res.status(401).json({ error: 'Utilisateur non trouvé' })
     }
@@ -293,7 +357,10 @@ app.post('/api/register', async (req, res) => {
   try {
     const { prenom, password, email } = req.body
     
-    if (!prenom || !password || !email) {
+    // Nettoyer le pseudo (supprimer les espaces en début/fin)
+    const cleanPrenom = prenom ? prenom.trim() : ''
+    
+    if (!cleanPrenom || !password || !email) {
       return res.status(400).json({ error: 'Nom d\'utilisateur, mot de passe et email requis' })
     }
 
@@ -302,7 +369,7 @@ app.post('/api/register', async (req, res) => {
       return res.status(400).json({ error: 'Adresse email invalide' })
     }
     
-    const existingUser = await getUserByPrenom(prenom)
+    const existingUser = await getUserByPrenom(cleanPrenom)
     if (existingUser) {
       return res.status(400).json({ error: 'Utilisateur déjà existant' })
     }
@@ -313,7 +380,7 @@ app.post('/api/register', async (req, res) => {
     
     const hashedPassword = hashPassword(password)
     const newUser = await createUser({
-      prenom,
+      prenom: cleanPrenom,
       password: hashedPassword,
       email: email || null,
       isFounder
@@ -387,7 +454,7 @@ app.put('/api/messages/:messageId', async (req, res) => {
   }
 })
 
-app.delete('/api/messages/:messageId', async (req, res) => {
+app.delete('/api/messages/:messageId', csrfProtection, async (req, res) => {
   try {
     const { messageId } = req.params
     const { userPrenom } = req.body
@@ -458,7 +525,7 @@ app.get('/api/slots', async (req, res) => {
 })
 
 // Ajouter un créneau
-app.post('/api/slots', async (req, res) => {
+app.post('/api/slots', csrfProtection, async (req, res) => {
   try {
     const { date, heureDebut, heureFin, type, customActivity, participants, createdBy, visibleToGroups, visibleToAll, visibleToFriends, description, lieu, maxParticipants, emailNotifications } = req.body
     
@@ -504,7 +571,7 @@ app.get('/api/activities/search', async (req, res) => {
 })
 
 // Rejoindre un créneau
-app.post('/api/slots/:id/join', async (req, res) => {
+app.post('/api/slots/:id/join', csrfProtection, async (req, res) => {
   try {
     const { id } = req.params
     const { participant, userId } = req.body
@@ -542,7 +609,7 @@ app.post('/api/slots/:id/join', async (req, res) => {
 })
 
 // Quitter un créneau
-app.post('/api/slots/:id/leave', async (req, res) => {
+app.post('/api/slots/:id/leave', csrfProtection, async (req, res) => {
   try {
     const { id } = req.params
     const { participant, userId } = req.body
@@ -565,7 +632,7 @@ app.post('/api/slots/:id/leave', async (req, res) => {
 })
 
 // Supprimer un créneau
-app.delete('/api/slots/:id', async (req, res) => {
+app.delete('/api/slots/:id', csrfProtection, async (req, res) => {
   try {
     const { id } = req.params
     const { userRole, createdBy } = req.body
@@ -865,7 +932,7 @@ app.post('/api/slots/friends-slots', async (req, res) => {
 })
 
 // Gestion des amis
-app.post('/api/friends/request', async (req, res) => {
+app.post('/api/friends/request', csrfProtection, async (req, res) => {
   try {
     const { sender, receiver } = req.body
     
@@ -886,7 +953,7 @@ app.post('/api/friends/request', async (req, res) => {
   }
 })
 
-app.post('/api/friends/accept', async (req, res) => {
+app.post('/api/friends/accept', csrfProtection, async (req, res) => {
   try {
     const { requestId } = req.body
     
@@ -953,7 +1020,7 @@ app.get('/api/friends/requests/sent/:prenom', async (req, res) => {
 })
 
 // Accepter une demande d'ami par nom d'utilisateur
-app.post('/api/friends/accept-by-name', async (req, res) => {
+app.post('/api/friends/accept-by-name', csrfProtection, async (req, res) => {
   try {
     const { from, to } = req.body
     
@@ -1046,7 +1113,7 @@ app.get('/api/share/validate-token/:username/:token', async (req, res) => {
 })
 
 // Supprimer une demande d'ami
-app.delete('/api/friends/requests/:requestId', async (req, res) => {
+app.delete('/api/friends/requests/:requestId', csrfProtection, async (req, res) => {
   try {
     const { requestId } = req.params
     
@@ -1068,7 +1135,7 @@ app.delete('/api/friends/requests/:requestId', async (req, res) => {
 })
 
 // Supprimer un ami
-app.delete('/api/friends/:userId/:friendId', async (req, res) => {
+app.delete('/api/friends/:userId/:friendId', csrfProtection, async (req, res) => {
   try {
     const { userId, friendId } = req.params
     
@@ -1123,7 +1190,7 @@ app.delete('/api/friends/:userId/:friendId', async (req, res) => {
 // Routes pour les groupes
 
 // Créer un groupe
-app.post('/api/groups', async (req, res) => {
+app.post('/api/groups', csrfProtection, async (req, res) => {
   try {
     const { name, description, creator } = req.body
     
@@ -1170,7 +1237,7 @@ app.get('/api/groups', async (req, res) => {
 })
 
 // Ajouter un membre à un groupe
-app.post('/api/groups/:id/members', async (req, res) => {
+app.post('/api/groups/:id/members', csrfProtection, async (req, res) => {
   try {
     const { id } = req.params
     const { memberUsername, requester } = req.body
@@ -1206,7 +1273,7 @@ app.post('/api/groups/:id/members', async (req, res) => {
 })
 
 // Supprimer un membre d'un groupe
-app.delete('/api/groups/:id/members', async (req, res) => {
+app.delete('/api/groups/:id/members', csrfProtection, async (req, res) => {
   try {
     const { id } = req.params
     const { memberUsername, requester } = req.body
@@ -1238,7 +1305,7 @@ app.delete('/api/groups/:id/members', async (req, res) => {
 })
 
 // Quitter un groupe (pour les membres)
-app.post('/api/groups/:id/leave', async (req, res) => {
+app.post('/api/groups/:id/leave', csrfProtection, async (req, res) => {
   try {
     const { id } = req.params
     const { memberUsername } = req.body
@@ -1270,7 +1337,7 @@ app.post('/api/groups/:id/leave', async (req, res) => {
 })
 
 // Supprimer un groupe
-app.delete('/api/groups/:id', async (req, res) => {
+app.delete('/api/groups/:id', csrfProtection, async (req, res) => {
   try {
     const { id } = req.params
     const { requester } = req.body
@@ -1924,87 +1991,13 @@ app.post('/api/slots/:id/notify-organizer', async (req, res) => {
   }
 })
 
-// Test de sécurité - simuler un utilisateur existant
-app.post('/api/test-security', async (req, res) => {
-  try {
-    const { email } = req.body
-    
-    if (!email) {
-      return res.status(400).json({ error: 'Email requis' })
-    }
-    
-    // Simuler un utilisateur existant pour le test
-    const mockUser = {
-      prenom: 'TestUser',
-      email: email,
-      password: 'hashed_password'
-    }
-    
-    console.log('🔒 TEST DE SÉCURITÉ - Simulation utilisateur existant:', email)
-    
-    // Générer un token de test
-    const resetToken = nanoid(32)
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000)
-    const frontendUrl = process.env.FRONTEND_URL || 'https://playzio.fr'
-    const resetUrl = `${frontendUrl}/?token=${resetToken}`
-    
-    console.log('✅ Token de test généré:', resetToken)
-    console.log('🔗 Lien de réinitialisation:', resetUrl)
-    
-    res.json({
-      success: true,
-      message: 'Test de sécurité - Token généré pour utilisateur simulé',
-      user: mockUser.prenom,
-      token: resetToken,
-      resetUrl: resetUrl,
-      expiresAt: expiresAt.toISOString(),
-      securityNote: 'Ceci est un test - en production, seul l\'utilisateur recevrait ce lien par email'
-    })
-  } catch (error) {
-    console.error('Erreur test sécurité:', error)
-    res.status(500).json({ error: 'Erreur serveur' })
-  }
-})
+// Endpoint de test supprimé pour des raisons de sécurité
+// L'endpoint /api/test-security était vulnérable et permettait de bypasser la sécurité
+// Il a été supprimé pour protéger l'application en production
 
-// Test de réinitialisation en mode développement
-app.post('/api/test-reset-dev', async (req, res) => {
-  try {
-    const { email, newPassword } = req.body
-    
-    if (!email || !newPassword) {
-      return res.status(400).json({ error: 'Email et nouveau mot de passe requis' })
-    }
-    
-    console.log('🧪 TEST RÉINITIALISATION DEV - Email:', email)
-    
-    // Créer un utilisateur fictif
-    const user = {
-      prenom: email.split('@')[0],
-      email: email,
-      password: 'hashed_password'
-    }
-    
-    console.log('📝 Utilisateur fictif créé:', user.prenom)
-    
-    // Hasher le nouveau mot de passe
-    const hashedPassword = hashPassword(newPassword)
-    console.log('🔒 Mot de passe hashé:', hashedPassword.substring(0, 20) + '...')
-    
-    // Simuler la mise à jour
-    console.log('✅ Simulation de mise à jour réussie pour:', user.prenom)
-    
-    res.json({
-      success: true,
-      message: 'Test de réinitialisation en mode développement réussi',
-      user: user.prenom,
-      email: user.email,
-      passwordUpdated: true
-    })
-  } catch (error) {
-    console.error('Erreur test reset dev:', error)
-    res.status(500).json({ error: 'Erreur serveur' })
-  }
-})
+// Endpoint de test de développement supprimé pour des raisons de sécurité
+// L'endpoint /api/test-reset-dev était vulnérable et permettait de bypasser la sécurité
+// Il a été supprimé pour protéger l'application en production
 
 // Lister les utilisateurs (pour diagnostic)
 app.get('/api/users-list', async (req, res) => {

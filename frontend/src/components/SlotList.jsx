@@ -4,11 +4,15 @@ import { API_BASE_URL } from '../config'
 import { trackSlotJoin, trackSlotLeave } from '../utils/analytics'
 import SlotDiscussion from './SlotDiscussion'
 import ActivitySearchModal from './ActivitySearchModal'
+import { useCSRFRequest } from '../hooks/useCSRF'
 
-function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, onAddSlot, onJoinSlot, onLeaveSlot, viewToggleContainer, customSlots }) {
+function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilter, onSearchFilterChange, lieuFilter, organizerFilter, onAddSlot, onJoinSlot, onLeaveSlot, onDeleteSlot, viewToggleContainer, customSlots }) {
   const [slots, setSlots] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  
+  // Hook CSRF pour les requêtes protégées
+  const csrfRequest = useCSRFRequest()
   const [selectedSlot, setSelectedSlot] = useState(null)
   const [showSearchModal, setShowSearchModal] = useState(false)
   const [searchInput, setSearchInput] = useState('')
@@ -184,7 +188,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
   const handleJoinSlot = async (slotId) => {
     console.log('🚀 handleJoinSlot appelé pour slotId:', slotId)
     try {
-      const response = await fetch(`${API_BASE_URL}/api/slots/${slotId}/join`, {
+      const response = await csrfRequest(`${API_BASE_URL}/api/slots/${slotId}/join`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -224,7 +228,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
 
   const handleLeaveSlot = async (slotId) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/slots/${slotId}/leave`, {
+      const response = await csrfRequest(`${API_BASE_URL}/api/slots/${slotId}/leave`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -287,7 +291,7 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/slots/${slotId}`, {
+      const response = await csrfRequest(`${API_BASE_URL}/api/slots/${slotId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -300,7 +304,19 @@ function SlotList({ activity, currentUser, selectedDate, onClearDate, searchFilt
 
       if (response.ok) {
         alert('Disponibilité supprimée avec succès')
-        fetchSlots()
+        
+        // Mettre à jour localement le slot supprimé
+        if (customSlots) {
+          // Si on utilise customSlots, mettre à jour localement
+          setSlots(prevSlots => prevSlots.filter(slot => slot.id !== slotId))
+          // Notifier le parent pour mettre à jour ses données
+          if (onDeleteSlot) {
+            onDeleteSlot(slotId)
+          }
+        } else {
+          // Sinon, rafraîchir depuis l'API
+          fetchSlots()
+        }
       } else {
         const data = await response.json()
         alert(data.error || 'Erreur lors de la suppression')
